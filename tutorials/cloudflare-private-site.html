@@ -191,21 +191,10 @@
       </table>
       <p>最終的な確認URLは次のとおり</p>
       <p><a class="repo-link external-item" href="https://documentation.sg7r3den.workers.dev/">https://documentation.sg7r3den.workers.dev/</a></p>
-
-      <h2 id="troubleshooting">発生したエラーと修正内容</h2>
-      <table>
-        <thead><tr><th>事象</th><th>原因</th><th>修正</th></tr></thead>
-        <tbody>
-          <tr><td><code>A compatibility_date is required</code></td><td>設定ファイルがない状態でWranglerへ互換性日付を渡していない</td><td>Deploy commandへ<code>--compatibility-date 2026-09-03</code>を追加</td></tr>
-          <tr><td>Worker nameが<code>undefined</code>という警告</td><td>Wrangler設定ファイルにWorker名がなく、Workers Builds側の名前と一致しない</td><td>CIが<code>documentation</code>へ上書きするためデプロイは継続。恒久対応では<code>wrangler.jsonc</code>へ名前を定義</td></tr>
-          <tr><td><code>--assets=.</code>で公開範囲が広すぎる</td><td>リポジトリ直下の全ファイルがStatic Assets候補になる</td><td>公開専用の<code>dist</code>へ必要ファイルだけを集約</td></tr>
-          <tr><td>Access認証後にアプリケーションを開けない</td><td>AllowポリシーまたはMFA登録が完了していない</td><td>Cloudflare account membersのAllowポリシーとAuthenticator登録を確認</td></tr>
-        </tbody>
-      </table>
-
-      <h2 id="temporary-share">採用関係者へ一時共有する場合</h2>
-      <p>恒久URLのAccessポリシーを緩めず、共有期間だけ使用する別のWorkersアプリケーションを作成する方法が安全<br>認証なしで公開する場合は、推測しにくい名前、検索エンジンの<code>noindex</code>、終了日時、削除確認をセットで管理する</p>
-      <div class="callout callout-warning"><strong>⚠️ URLを知る人は全員閲覧可能</strong><p>認証なしのURLは、転送、ブラウザー履歴、アクセスログなどから第三者へ渡る可能性がある。機密情報を除外した共有専用コピーを使用し、選考終了後はWorkersアプリケーションを削除する。より安全に共有する場合は、対象者のメールアドレスをAccessポリシーへ限定してOne-time PINを使用する</p></div>
+      <figure class="screenshot-wide">
+        <figcaption>Cloudflare Accessの認証後、確認用URLでDocumentationを表示できた状態</figcaption>
+        <img src="../assets/img/cloudflare-private-site/05-private-site-final-verification.png" alt="Cloudflare Accessで保護したDocumentationの表示確認画面">
+      </figure>
 
     </main>
 
@@ -219,8 +208,6 @@
       <a href="#mfa">5. AuthenticatorアプリのMFAを必須化</a>
       <a href="#private-repository">6. GitHubリポジトリをPrivateへ変更</a>
       <a href="#deployment-check">7. Private化後の自動デプロイを確認</a>
-      <a href="#troubleshooting">発生したエラーと修正内容</a>
-      <a href="#temporary-share">採用関係者へ一時共有する場合</a>
     </aside>
   </div>
   <script src="../assets/app.js?v=20260823-ref1"></script>
