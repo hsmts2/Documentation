@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="橋本峻秀のAWSインフラエンジニア職務経歴書。職務要約、スキル、担当案件、実績、資格を掲載。">
   <title>職務経歴書 | 橋本 峻秀</title>
-  <link rel="stylesheet" href="assets/career.css?v=20260831-career23">
+  <link rel="stylesheet" href="assets/career.css?v=20260907-career29">
 </head>
 <body id="top">
   <header class="site-bar">
@@ -22,13 +22,13 @@
     <header class="resume-header">
       <h1>職務経歴書</h1>
       <div class="resume-identity">
-        <p>2026年9月1日現在</p>
+        <p>2026年9月7日現在</p>
         <p><span>氏名</span><strong>橋本 峻秀</strong></p>
       </div>
     </header>
 
     <dl class="profile-summary">
-      <div><dt>エンジニア歴</dt><dd>4年1か月（2022年7月開始）</dd></div>
+      <div><dt>エンジニア歴</dt><dd>4年2か月（2022年7月開始）</dd></div>
       <div><dt>現在の職種</dt><dd>AWSインフラエンジニア</dd></div>
       <div><dt>得意領域</dt><dd>AWS / Linux / IaC</dd></div>
       <div><dt>選出実績</dt><dd>2025・2026 Japan All AWS Certifications Engineer</dd></div>
@@ -118,11 +118,39 @@
               </tr>
               <tr>
                 <th>設計・構築・自動化</th>
-                <td><ul class="achievement-list"><li><strong>案件実績：</strong>チーム内の稼働状況に応じてアサインされ、AWS基盤の設計・構築・検証案件を16件担当。サーバー、データベース、ネットワーク、VDI、監視・セキュリティを組み合わせた検証・本番環境を構築</li><li><strong>更改・移行：</strong>RDS相当構成からEC2/PostgreSQLへの移行、Amazon Linux 2からAmazon Linux 2023への段階移行、Aurora PostgreSQL 12.16から16.6への更新検証、RDS for MySQL 8.0系から8.4系への更新検証2件、AWS Client VPN 3基の再構築等を実施</li><li><strong>IaC・自動化：</strong>CloudFormation、AWS CDK、TerraformによるAWSリソース構築、AWX/AnsibleによるOS・ミドルウェア・監視設定の展開、EventBridge SchedulerによるEC2・RDS自動停止、AWS Network Firewallポリシー切り替え、Cost Optimizer for Amazon WorkSpaces導入に対応</li></ul></td>
+                <td>
+                  <ul class="achievement-list">
+                    <li><strong>案件実績：</strong>チーム内の稼働状況に応じてアサインされ、AWS基盤の設計・構築・検証案件を16件担当。サーバー、データベース、ネットワーク、VDI、監視・セキュリティを組み合わせた検証・本番環境を構築</li>
+                  </ul>
+                  <div class="achievement-build-examples">
+                    <p class="achievement-build-heading">代表的な構築例</p>
+                    <ol class="achievement-build-list">
+                      <li>
+                        <span class="achievement-build-number" aria-hidden="true">①</span>
+                        <strong><span class="achievement-build-type">（新規構築）</span>Web／アプリケーション／DB基盤の新規構築・リプレイス</strong>
+                        <span>業務系Web検証環境、検査・申請系Webシステム、公共系申請システムの検証・本番・追加環境を構築。Amazon Linux 2からAmazon Linux 2023への段階移行と夜間切り替えにも対応（構成図①）</span>
+                      </li>
+                      <li>
+                        <span class="achievement-build-number" aria-hidden="true">②</span>
+                        <strong><span class="achievement-build-type">（リプレイス）</span>データベース移行・メジャーバージョン更新検証</strong>
+                        <span>RDS相当構成からEC2/PostgreSQLへの移行、Aurora PostgreSQL 12.16から16.6への更新検証、RDS for MySQL 8.0系から8.4系への更新検証2件を担当</span>
+                      </li>
+                      <li>
+                        <span class="achievement-build-number" aria-hidden="true">③</span>
+                        <strong><span class="achievement-build-type">（PoC・新規構築）</span>Windows Server・VDI基盤</strong>
+                        <span>Sysprep済みAMIから分析用Windows Server 5台を展開し、暗号化・監視・接続試験を実施。Amazon WorkSpaces検証基盤とCost Optimizerも構築</span>
+                      </li>
+                    </ol>
+                  </div>
+                  <ul class="achievement-list achievement-list-followup">
+                    <li><strong>更改・移行：</strong>既存構成の調査、移行・更新方式の設計、検証環境構築、データ移行、切り替え、事後確認まで一貫して対応</li>
+                    <li><strong>IaC・自動化：</strong>CloudFormation、AWS CDK、TerraformによるAWSリソース構築、AWX/AnsibleによるOS・ミドルウェア・監視設定の展開、EventBridge SchedulerによるEC2・RDS自動停止、AWS Network Firewallポリシー切り替え、Cost Optimizer for Amazon WorkSpaces導入に対応</li>
+                  </ul>
+                </td>
               </tr>
               <tr>
                 <th>特定顧客・専任対応</th>
-                <td><ul class="achievement-list"><li><strong>担当体制：</strong>ヘルスケアおよび同一顧客の医療情報案件を2年2か月にわたり、エンジニア2名・営業1名の固定体制で担当し、月額約400万円規模のAWS環境を継続支援</li><li><strong>主な専任案件：</strong><ul class="achievement-project-list"><li>ヘルスケア系データ基盤の複製・AWS Client VPN再構築</li><li>分析用Windowsサーバ5台の増設</li><li>リモート開発用VDI基盤・コスト最適化<br><small>構成図：VPC Peering経由によるAmazon WorkSpaces認証連携の検証</small></li><li>医療情報系マルチVPC・ハイブリッド基盤構築<br><small>構成図：マルチVPC・閉域WorkSpaces基盤（本番構成）</small></li><li>VGW・AWS Network Firewall設定<br><small>構成図：AWS Network Firewallの通信制御・運用自動化基盤</small></li></ul></li><li><strong>顧客定例：</strong>隔週1時間の定例会で、要件、技術検証結果、構成提案、対応方針、作業状況を自ら説明</li><li><strong>継続改善：</strong>新規AWSサービスの技術検証、設定書・構成図の定期更新、運用コスト削減策の検討を実施</li></ul></td>
+                <td><ul class="achievement-list"><li><strong>担当体制：</strong>ヘルスケアおよび同一顧客の医療情報案件を2年2か月にわたり、エンジニア2名・営業1名の固定体制で担当し、月額約400万円規模のAWS環境を継続支援</li><li><strong>主な専任案件：</strong><ul class="achievement-project-list"><li>ヘルスケア系データ基盤の複製・AWS Client VPN再構築</li><li>分析用Windowsサーバ5台の増設</li><li>リモート開発用VDI基盤・コスト最適化（構成図②）</li><li>医療情報系マルチVPC・ハイブリッド基盤構築（構成図③）</li><li>VGW・AWS Network Firewall設定（構成図④）</li></ul></li><li><strong>顧客定例：</strong>隔週1時間の定例会で、要件、技術検証結果、構成提案、対応方針、作業状況を自ら説明</li><li><strong>継続改善：</strong>新規AWSサービスの技術検証、設定書・構成図の定期更新、運用コスト削減策の検討を実施</li></ul></td>
               </tr>
               <tr>
                 <th>顧客調整・メンバー支援</th>
@@ -135,33 +163,32 @@
 
       <div class="project-visuals" aria-labelledby="project-visuals-title">
         <div class="project-visuals-heading">
-          <h2 id="project-visuals-title">構成設計・技術検証資料</h2>
-          <p>顧客名、ホスト名、各種識別子は公開用に一般化</p>
+          <h2 id="project-visuals-title">構成設計・技術検証資料 <small>※顧客名、ホスト名、各種識別子は公開用に一般化</small></h2>
         </div>
         <div class="project-visuals-grid">
-          <figure class="architecture-card">
+          <figure id="architecture-1" class="architecture-card">
+            <figcaption><strong>構成図①　公共系申請システムのAWS基盤（本番構成）</strong><span>外部・内部ロードバランサー、Linux・Windows Server、RDSを2AZで構成</span></figcaption>
             <a href="assets/career-architectures/architecture-public-application-production.png" target="_blank" rel="noopener noreferrer">
               <img src="assets/career-architectures/architecture-public-application-production.png" width="1600" height="900" loading="lazy" alt="公共系申請システムのAWS本番基盤構成図">
             </a>
-            <figcaption><strong>公共系申請システムのAWS基盤（本番構成）</strong><span>外部・内部ロードバランサー、Linux・Windows Server、RDSを2AZで構成</span></figcaption>
           </figure>
-          <figure class="architecture-card">
-            <a href="assets/career-architectures/architecture-network-firewall-automation.png" target="_blank" rel="noopener noreferrer">
-              <img src="assets/career-architectures/architecture-network-firewall-automation.png" width="1600" height="900" loading="lazy" alt="AWS Network Firewallの通信制御と運用自動化基盤の構成図">
-            </a>
-            <figcaption><strong>AWS Network Firewallの通信制御・運用自動化基盤</strong><span>Network Firewall、EventBridge Scheduler、Lambda、SSM Maintenance Windowsを連携</span></figcaption>
-          </figure>
-          <figure class="architecture-card">
+          <figure id="architecture-2" class="architecture-card">
+            <figcaption><strong>構成図②　VPC Peering経由によるAmazon WorkSpaces認証連携の検証</strong><span>別VPCのAWS Managed Microsoft ADをAD Connectorから利用する認証方式を事前検証</span></figcaption>
             <a href="assets/career-architectures/architecture-workspaces-cross-vpc-auth-validation.png" target="_blank" rel="noopener noreferrer">
               <img src="assets/career-architectures/architecture-workspaces-cross-vpc-auth-validation.png" width="1600" height="900" loading="lazy" alt="VPC Peering経由でAmazon WorkSpacesの認証連携を検証した構成図">
             </a>
-            <figcaption><strong>VPC Peering経由によるAmazon WorkSpaces認証連携の検証</strong><span>別VPCのAWS Managed Microsoft ADをAD Connectorから利用する認証方式を事前検証</span></figcaption>
           </figure>
-          <figure class="architecture-card">
+          <figure id="architecture-3" class="architecture-card">
+            <figcaption><strong>構成図③　マルチVPC・閉域WorkSpaces基盤（本番構成）</strong><span>Direct Connect、DXGW、Private VIF、VGW、Managed Microsoft AD、AD Connector、WorkSpaces、FSxを組み合わせた構成</span></figcaption>
             <a href="assets/career-architectures/architecture-workspaces-multivpc-private-production.png" target="_blank" rel="noopener noreferrer">
               <img src="assets/career-architectures/architecture-workspaces-multivpc-private-production.png" width="1600" height="900" loading="lazy" alt="医療情報系案件のマルチVPC・閉域Amazon WorkSpaces本番基盤構成図">
             </a>
-            <figcaption><strong>マルチVPC・閉域WorkSpaces基盤（本番構成）</strong><span>Direct Connect、DXGW、Private VIF、VGW、Managed Microsoft AD、AD Connector、WorkSpaces、FSxを組み合わせた構成</span></figcaption>
+          </figure>
+          <figure id="architecture-4" class="architecture-card">
+            <figcaption><strong>構成図④　AWS Network Firewallの通信制御・運用自動化基盤</strong><span>Network Firewall、EventBridge Scheduler、Lambda、SSM Maintenance Windowsを連携</span></figcaption>
+            <a href="assets/career-architectures/architecture-network-firewall-automation.png" target="_blank" rel="noopener noreferrer">
+              <img src="assets/career-architectures/architecture-network-firewall-automation.png" width="1600" height="900" loading="lazy" alt="AWS Network Firewallの通信制御と運用自動化基盤の構成図">
+            </a>
           </figure>
         </div>
       </div>
