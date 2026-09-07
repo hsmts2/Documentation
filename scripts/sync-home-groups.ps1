@@ -31,44 +31,56 @@ if ($groupMatches.Count -ne $sectionIds.Count) {
     throw "Expected $($sectionIds.Count) sidebar groups, found $($groupMatches.Count)"
 }
 
-$cards = @{}
-foreach ($cardMatch in [regex]::Matches($content, '(?s)        <article class="card">.*?</article>')) {
-    $hrefMatch = [regex]::Match($cardMatch.Value, 'href="tutorials/([^"]+)"')
+$sidebarLinks = @{}
 
-    if ($hrefMatch.Success) {
-        $cards[$hrefMatch.Groups[1].Value] = $cardMatch.Value
+foreach ($group in $groupMatches) {
+    foreach ($linkMatch in [regex]::Matches($group.Groups[2].Value, 'href="tutorials/([^"]+)">([^<]+)</a>')) {
+        $sidebarLinks[$linkMatch.Groups[1].Value] = $linkMatch.Groups[2].Value
     }
 }
+
+$homeSections = @(
+    [pscustomobject]@{ Id = 'articles'; Label = $groupMatches[0].Groups[1].Value; Files = @('cloudflare-private-site.html') },
+    [pscustomobject]@{ Id = 'terraform'; Label = 'Terraform'; Files = @('terraform.html', 'hcp-terraform.html') },
+    [pscustomobject]@{ Id = 'reference'; Label = $groupMatches[4].Groups[1].Value; Files = @('writing-style-guide.html', 'troubleshooting.html', 'eol.html') },
+    [pscustomobject]@{ Id = 'aws-platform'; Label = 'AWS &#22522;&#30436;&#65295;CLI'; Files = @('cloudformation.html', 'aws-cli.html', 'aws-cli-reference.html') },
+    [pscustomobject]@{ Id = 'aws-services'; Label = 'AWS &#12469;&#12540;&#12499;&#12473;'; Files = @('eventbridge-scheduler.html', 'amazon-workspaces.html', 'amazon-ses.html', 'amazon-ses-monitoring.html', 'amazon-rds-blue-green.html', 'apache-acm-certificate-update.html') },
+    [pscustomobject]@{ Id = 'operating-systems'; Label = 'OS'; Files = @('rhel9.html', 'rhel10.html', 'amazon-linux-2023.html', 'windows-server-2022.html', 'windows-server-2025.html', 'windows-server-2016-upgrade.html') },
+    [pscustomobject]@{ Id = 'web-databases'; Label = 'Web&#65295;&#12487;&#12540;&#12479;&#12505;&#12540;&#12473;'; Files = @('apache.html', 'apache-self-signed-ssl-termination.html', 'redis.html', 'mariadb.html', 'postgresql.html') },
+    [pscustomobject]@{ Id = 'storage-filesharing'; Label = '&#12473;&#12488;&#12524;&#12540;&#12472;&#65295;&#12501;&#12449;&#12452;&#12523;&#20849;&#26377;'; Files = @('storage.html', 'nfs.html', 'samba.html') }
+)
 
 $lines = [System.Collections.Generic.List[string]]::new()
 $lines.Add('      <!-- home-groups:start -->')
+$lines.Add('      <section class="document-directory" aria-labelledby="all-documents">')
+$lines.Add('        <h2 id="all-documents">&#12377;&#12409;&#12390;&#12398;&#12489;&#12461;&#12517;&#12513;&#12531;&#12488;</h2>')
+$lines.Add('        <div class="document-directory-grid">')
 
-for ($groupIndex = 0; $groupIndex -lt $groupMatches.Count; $groupIndex++) {
-    $group = $groupMatches[$groupIndex]
-    $groupLabel = $group.Groups[1].Value
-    $linkMatches = [regex]::Matches($group.Groups[2].Value, 'href="tutorials/([^"]+)"')
+foreach ($section in $homeSections) {
+    $lines.Add("          <section class=`"document-directory-group`" aria-labelledby=`"$($section.Id)`">")
+    $lines.Add("            <h3 id=`"$($section.Id)`">$($section.Label)</h3>")
+    $lines.Add('            <ul class="document-link-list">')
 
-    $lines.Add("      <h2 id=`"$($sectionIds[$groupIndex])`">$groupLabel</h2>")
-    $lines.Add("      <section class=`"card-grid`" aria-label=`"$groupLabel`">")
-
-    foreach ($linkMatch in $linkMatches) {
-        $file = $linkMatch.Groups[1].Value
-
-        if (-not $cards.ContainsKey($file)) {
-            $errors.Add("Home card not found for: $file")
+    foreach ($file in $section.Files) {
+        if ($file -eq 'writing-style-guide.html') {
+            $lines.Add('              <li><a href="writing-style-guide.html">[GitHub Pages] &#35352;&#27861;&#12539;&#12486;&#12531;&#12503;&#12524;&#12540;&#12488;</a></li>')
             continue
         }
 
-        $lines.Add($cards[$file])
+        if (-not $sidebarLinks.ContainsKey($file)) {
+            $errors.Add("Sidebar link not found for: $file")
+            continue
+        }
+
+        $lines.Add("              <li><a href=`"tutorials/$file`">$($sidebarLinks[$file])</a></li>")
     }
 
-    $lines.Add('      </section>')
-
-    if ($groupIndex -lt ($groupMatches.Count - 1)) {
-        $lines.Add('')
-    }
+    $lines.Add('            </ul>')
+    $lines.Add('          </section>')
 }
 
+$lines.Add('        </div>')
+$lines.Add('      </section>')
 $lines.Add('      <!-- home-groups:end -->')
 $expectedGroups = $lines -join $newline
 $groupPattern = if ($content.Contains('<!-- home-groups:start -->')) {
@@ -94,9 +106,10 @@ $tocLines = [System.Collections.Generic.List[string]]::new()
 $tocLines.Add('    <aside class="toc" aria-label="Table of contents">')
 $tocLines.Add("      <h2>$pageInside</h2>")
 
-for ($groupIndex = 0; $groupIndex -lt $groupMatches.Count; $groupIndex++) {
-    $activeClass = if ($groupIndex -eq 0) { ' class="active"' } else { '' }
-    $tocLines.Add("      <a$activeClass href=`"#$($sectionIds[$groupIndex])`">$($groupMatches[$groupIndex].Groups[1].Value)</a>")
+for ($sectionIndex = 0; $sectionIndex -lt $homeSections.Count; $sectionIndex++) {
+    $section = $homeSections[$sectionIndex]
+    $activeClass = if ($sectionIndex -eq 0) { ' class="active"' } else { '' }
+    $tocLines.Add("      <a$activeClass href=`"#$($section.Id)`">$($section.Label)</a>")
 }
 
 $tocLines.Add('    </aside>')

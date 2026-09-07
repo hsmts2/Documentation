@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Documentation</title>
-  <link rel="stylesheet" href="assets/styles.css?v=20260823-ref1">
+  <link rel="stylesheet" href="assets/styles.css?v=20260907-home1">
 </head>
 <body>
   <header class="site-header">
@@ -69,144 +69,81 @@
       </nav>
 
       <h1>Documentation</h1>
-      <p class="lead">Terraform、AWS、OS、ミドルウェア、リファレンスの構築・運用手順を分野別に整理する</p>
-
-      <section class="template-feature" aria-label="GitHub Pages notation and template">
-        <strong><a href="writing-style-guide.html">[GitHub Pages] 記法・テンプレート</a></strong>
-        <p>コードブロック、入力パラメータ、表、コールアウト、強調表現の表示例とHTML記法をまとめる</p>
-      </section>
 
       <!-- home-groups:start -->
-      <h2 id="articles">記事</h2>
-      <section class="card-grid" aria-label="記事">
-        <article class="card">
-          <strong><a href="tutorials/cloudflare-private-site.html">Private GitHubリポジトリをCloudflare Workersで認証付き公開してみた</a></strong>
-          <p>GitHub連携、静的ファイルのデプロイ、Cloudflare AccessとAuthenticatorによるMFA、Private化後の自動デプロイ確認をまとめる</p>
-        </article>
-      </section>
-
-      <h2 id="terraform">Terraform</h2>
-      <section class="card-grid" aria-label="Terraform">
-        <article class="card">
-          <strong><a href="tutorials/terraform.html">Terraform 概要</a></strong>
-          <p>Terraformのインストール、CLIコマンド、AWS構成ブロック、認証・権限、エラー対処を整理する</p>
-        </article>
-        <article class="card">
-          <strong><a href="tutorials/hcp-terraform.html">HCP Terraform（Terraform Cloud）</a></strong>
-          <p>Organization、Workspace、CLIログイン、State移行、実行モード、AWS認証情報を整理する</p>
-        </article>
-      </section>
-
-      <h2 id="aws-cloud">AWS</h2>
-      <section class="card-grid" aria-label="AWS">
-        <article class="card">
-          <strong><a href="tutorials/cloudformation.html">CloudFormation 運用手順集</a></strong>
-          <p>デプロイ方法、変更セット、ロールバック、ドリフト検出、削除前確認などを整理する</p>
-        </article>
-        <article class="card">
-          <strong><a href="tutorials/aws-cli.html">AWS CLI 特殊対応</a></strong>
-          <p>CLI/APIでしか変更・切り戻し・復旧できない運用手順をまとめる</p>
-        </article>
-        <article class="card">
-          <strong><a href="tutorials/aws-cli-reference.html">AWS CLI コマンドリファレンス</a></strong>
-          <p>認証確認、Security Group、Prefix List、SNSなど、日常運用で使う基本コマンドを整理する</p>
-        </article>
-        <article class="card">
-          <strong><a href="tutorials/eventbridge-scheduler.html">EventBridge Scheduler</a></strong>
-          <p>EC2、RDS、WorkSpacesなどを、AWS APIのスケジュール実行で停止・起動する設計と手順を整理する</p>
-        </article>
-        <article class="card">
-          <strong><a href="tutorials/amazon-workspaces.html">Amazon WorkSpaces</a></strong>
-          <p>WorkSpacesのディレクトリ登録、Web Access、カスタムイメージ、Cost Optimizer、トラブル対応を整理する</p>
-        </article>
-        <article class="card">
-          <strong><a href="tutorials/amazon-ses.html">Amazon SES SMTPリレー</a></strong>
-          <p>カスタムMAIL FROM、Route 53レコード、PostfixからSES SMTPへのリレー、送信テストを整理する</p>
-        </article>
-        <article class="card">
-          <strong><a href="tutorials/amazon-ses-monitoring.html">Amazon SES 配信監視</a></strong>
-          <p>Configuration Set、イベント通知、レピュテーション、サプレッションリスト、VDMを整理する</p>
-        </article>
-        <article class="card">
-          <strong><a href="tutorials/amazon-rds-blue-green.html">Amazon RDS Blue/Green Deployments</a></strong>
-          <p>インプレース更新との差分、仕組み、制約、切替、監視、復旧計画、本番適用手順を整理する</p>
-        </article>
-        <article class="card">
-          <strong><a href="tutorials/apache-acm-certificate-update.html">AWS Certificate Manager (ACM)</a></strong>
-          <p>ACM証明書の有効期間と更新方式を整理し、エクスポート可能な証明書をRHEL 9.8上のApacheへ配置してTLS通信を確認する</p>
-        </article>
-      </section>
-
-      <h2 id="os-server">OS／ミドルウェア</h2>
-      <section class="card-grid" aria-label="OS／ミドルウェア">
-        <article class="card">
-          <strong><a href="tutorials/rhel9.html">Red Hat Enterprise Linux 9</a></strong>
-          <p>基本パッケージ導入、logrotate設定、ミドルウェア別logrotate設定の注意点を整理する</p>
-        </article>
-        <article class="card">
-          <strong><a href="tutorials/rhel10.html">Red Hat Enterprise Linux 10</a></strong>
-          <p>x86-64-v3、RHUI / RHSM、DNFモジュール廃止を踏まえた初期構築手順を整理する</p>
-        </article>
-        <article class="card">
-          <strong><a href="tutorials/amazon-linux-2023.html">Amazon Linux 2023</a></strong>
-          <p>Amazon Linux 2023の初期設定、追加パッケージ、rsyslog、cron、リリース固定を整理する</p>
-        </article>
-        <article class="card">
-          <strong><a href="tutorials/windows-server-2022.html">Windows Server 2022</a></strong>
-          <p>EC2起動、RDP接続、ローカルユーザー作成、OS初期設定、Windows Updateの確認観点を整理する</p>
-        </article>
-        <article class="card">
-          <strong><a href="tutorials/windows-server-2025.html">Windows Server 2025</a></strong>
-          <p>Windows Server 2022との差分、Credential Guard、OpenSSH、SMBセキュリティを含む構築手順を整理する</p>
-        </article>
-        <article class="card">
-          <strong><a href="tutorials/windows-server-2016-upgrade.html">Windows Server 2016 インプレースアップグレード</a></strong>
-          <p>EC2上のWindows Server 2016を、インストールメディアでWindows Server 2025へインプレースアップグレードする手順を整理する</p>
-        </article>
-        <article class="card">
-          <strong><a href="tutorials/storage.html">ストレージ管理</a></strong>
-          <p>GPT、XFS、LVM、iSCSI、Device Mapper Multipathの構築と保守手順を整理する</p>
-        </article>
-        <article class="card">
-          <strong><a href="tutorials/apache.html">Apache</a></strong>
-          <p>Apacheの構築・運用で必要なTLS、SELinux、認証、リバースプロキシ、ログ調査を整理する</p>
-        </article>
-        <article class="card">
-          <strong><a href="tutorials/apache-self-signed-ssl-termination.html">Apache SSL終端（自己署名証明書）</a></strong>
-          <p>EC2上のRHEL 9.8でApacheへ自己署名証明書を設定し、HTTPからHTTPSへのリダイレクトとSSL終端を確認する</p>
-        </article>
-        <article class="card">
-          <strong><a href="tutorials/redis.html">Redis（KVS）</a></strong>
-          <p>Redisの待受、認証、永続化、レプリケーション、Sentinelの構築と運用を整理する</p>
-        </article>
-        <article class="card">
-          <strong><a href="tutorials/nfs.html">NFS</a></strong>
-          <p>NFSv4共有、クライアントマウント、ACL、Kerberos保護の構築と運用を整理する</p>
-        </article>
-        <article class="card">
-          <strong><a href="tutorials/samba.html">Samba</a></strong>
-          <p>認証付きSMB共有、SELinux、Linuxクライアント、Windows ACLの構築と運用を整理する</p>
-        </article>
-        <article class="card">
-          <strong><a href="tutorials/mariadb.html">MariaDB</a></strong>
-          <p>RHEL 8 / 9でのバージョン選択、設定、ユーザー管理、バックアップ、クライアント更新を整理する</p>
-        </article>
-        <article class="card">
-          <strong><a href="tutorials/postgresql.html">PostgreSQL</a></strong>
-          <p>RHEL 8 / 9でのバージョン選択、初期化、認証、ロール管理、バックアップ、クライアント更新を整理する</p>
-        </article>
-      </section>
-
-      <h2 id="reference">リファレンス</h2>
-      <section class="card-grid" aria-label="リファレンス">
-        <article class="card">
-          <strong><a href="tutorials/troubleshooting.html">障害切り分けチェックリスト</a></strong>
-          <p>Linux障害発生時の初動記録、ログ、リソース、ネットワーク、サービス状態の確認観点を整理する</p>
-        </article>
-        <article class="card">
-          <strong><a href="tutorials/eol.html">EOL / ライフサイクル一覧表</a></strong>
-          <p>OS、AWSサービス、ミドルウェア、エージェントのサポート期限と確認リンクを整理する</p>
-        </article>
+      <section class="document-directory" aria-labelledby="all-documents">
+        <h2 id="all-documents">&#12377;&#12409;&#12390;&#12398;&#12489;&#12461;&#12517;&#12513;&#12531;&#12488;</h2>
+        <div class="document-directory-grid">
+          <section class="document-directory-group" aria-labelledby="articles">
+            <h3 id="articles">記事</h3>
+            <ul class="document-link-list">
+              <li><a href="tutorials/cloudflare-private-site.html">Private GitHubリポジトリをCloudflare Workersで認証付き公開してみた</a></li>
+            </ul>
+          </section>
+          <section class="document-directory-group" aria-labelledby="terraform">
+            <h3 id="terraform">Terraform</h3>
+            <ul class="document-link-list">
+              <li><a href="tutorials/terraform.html">Terraform 概要</a></li>
+              <li><a href="tutorials/hcp-terraform.html">HCP Terraform（Terraform Cloud）</a></li>
+            </ul>
+          </section>
+          <section class="document-directory-group" aria-labelledby="reference">
+            <h3 id="reference">リファレンス</h3>
+            <ul class="document-link-list">
+              <li><a href="writing-style-guide.html">[GitHub Pages] &#35352;&#27861;&#12539;&#12486;&#12531;&#12503;&#12524;&#12540;&#12488;</a></li>
+              <li><a href="tutorials/troubleshooting.html">障害切り分けチェックリスト</a></li>
+              <li><a href="tutorials/eol.html">EOL / ライフサイクル一覧表</a></li>
+            </ul>
+          </section>
+          <section class="document-directory-group" aria-labelledby="aws-platform">
+            <h3 id="aws-platform">AWS &#22522;&#30436;&#65295;CLI</h3>
+            <ul class="document-link-list">
+              <li><a href="tutorials/cloudformation.html">CloudFormation 運用手順集</a></li>
+              <li><a href="tutorials/aws-cli.html">AWS CLI 特殊対応</a></li>
+              <li><a href="tutorials/aws-cli-reference.html">AWS CLI コマンドリファレンス</a></li>
+            </ul>
+          </section>
+          <section class="document-directory-group" aria-labelledby="aws-services">
+            <h3 id="aws-services">AWS &#12469;&#12540;&#12499;&#12473;</h3>
+            <ul class="document-link-list">
+              <li><a href="tutorials/eventbridge-scheduler.html">EventBridge Scheduler</a></li>
+              <li><a href="tutorials/amazon-workspaces.html">Amazon WorkSpaces</a></li>
+              <li><a href="tutorials/amazon-ses.html">Amazon SES SMTPリレー</a></li>
+              <li><a href="tutorials/amazon-ses-monitoring.html">Amazon SES 配信監視</a></li>
+              <li><a href="tutorials/amazon-rds-blue-green.html">Amazon RDS Blue/Green Deployments</a></li>
+              <li><a href="tutorials/apache-acm-certificate-update.html">証明書更新（ACMエクスポート）</a></li>
+            </ul>
+          </section>
+          <section class="document-directory-group" aria-labelledby="operating-systems">
+            <h3 id="operating-systems">OS</h3>
+            <ul class="document-link-list">
+              <li><a href="tutorials/rhel9.html">Red Hat Enterprise Linux 9</a></li>
+              <li><a href="tutorials/rhel10.html">Red Hat Enterprise Linux 10</a></li>
+              <li><a href="tutorials/amazon-linux-2023.html">Amazon Linux 2023</a></li>
+              <li><a href="tutorials/windows-server-2022.html">Windows Server 2022</a></li>
+              <li><a href="tutorials/windows-server-2025.html">Windows Server 2025</a></li>
+              <li><a href="tutorials/windows-server-2016-upgrade.html">Windows Server 2016 インプレースアップグレード</a></li>
+            </ul>
+          </section>
+          <section class="document-directory-group" aria-labelledby="web-databases">
+            <h3 id="web-databases">Web&#65295;&#12487;&#12540;&#12479;&#12505;&#12540;&#12473;</h3>
+            <ul class="document-link-list">
+              <li><a href="tutorials/apache.html">Apache</a></li>
+              <li><a href="tutorials/apache-self-signed-ssl-termination.html">Apache SSL終端（自己署名証明書）</a></li>
+              <li><a href="tutorials/redis.html">Redis（KVS）</a></li>
+              <li><a href="tutorials/mariadb.html">MariaDB</a></li>
+              <li><a href="tutorials/postgresql.html">PostgreSQL</a></li>
+            </ul>
+          </section>
+          <section class="document-directory-group" aria-labelledby="storage-filesharing">
+            <h3 id="storage-filesharing">&#12473;&#12488;&#12524;&#12540;&#12472;&#65295;&#12501;&#12449;&#12452;&#12523;&#20849;&#26377;</h3>
+            <ul class="document-link-list">
+              <li><a href="tutorials/storage.html">ストレージ管理</a></li>
+              <li><a href="tutorials/nfs.html">NFS</a></li>
+              <li><a href="tutorials/samba.html">Samba</a></li>
+            </ul>
+          </section>
+        </div>
       </section>
       <!-- home-groups:end -->
     </main>
@@ -215,9 +152,12 @@
       <h2>ページ内</h2>
       <a class="active" href="#articles">記事</a>
       <a href="#terraform">Terraform</a>
-      <a href="#aws-cloud">AWS</a>
-      <a href="#os-server">OS／ミドルウェア</a>
       <a href="#reference">リファレンス</a>
+      <a href="#aws-platform">AWS &#22522;&#30436;&#65295;CLI</a>
+      <a href="#aws-services">AWS &#12469;&#12540;&#12499;&#12473;</a>
+      <a href="#operating-systems">OS</a>
+      <a href="#web-databases">Web&#65295;&#12487;&#12540;&#12479;&#12505;&#12540;&#12473;</a>
+      <a href="#storage-filesharing">&#12473;&#12488;&#12524;&#12540;&#12472;&#65295;&#12501;&#12449;&#12452;&#12523;&#20849;&#26377;</a>
     </aside>
   </div>
   <script src="assets/app.js?v=20260823-ref1"></script>

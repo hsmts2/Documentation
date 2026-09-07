@@ -792,6 +792,61 @@ mark {
   color: var(--muted);
 }
 
+.document-directory {
+  margin-top: 26px;
+}
+
+.document-directory > h2 {
+  margin: 0 0 22px;
+  padding: 0;
+}
+
+.document-directory-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  border-top: 1px solid var(--line);
+  border-left: 1px solid var(--line);
+}
+
+.document-directory-group {
+  min-width: 0;
+  padding: 24px;
+  border-right: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+
+.document-directory-group h3 {
+  margin: 0 0 18px;
+  padding: 0;
+  font-size: 16px;
+}
+
+.document-link-list {
+  display: grid;
+  gap: 7px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.document-link-list li {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.document-link-list a {
+  display: inline-block;
+  padding: 1px 0;
+  font-weight: 650;
+}
+
+@media (max-width: 1100px) {
+  .document-directory-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
 .example-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1492,6 +1547,10 @@ figure > figcaption:first-child {
 
   .cards,
   .card-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .document-directory-grid {
     grid-template-columns: 1fr;
   }
 
