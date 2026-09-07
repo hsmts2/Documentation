@@ -155,7 +155,11 @@
         <li>AuthenticatorアプリでQRコードを読み取り、表示された6桁コードで登録</li>
         <li>対象Access applicationのMFAを<code class="ui-value">Custom</code>へ変更し、Authenticator applicationだけを必須化</li>
       </ol>
-      <div class="callout callout-warning"><strong>⚠️ MFA登録情報を記録・公開しない</strong><p>QRコードとセットアップキーはTOTPの共有秘密であり、第三者が取得すると同じワンタイムコードを生成できる。手順書の画像にはQRコード、セットアップキー、入力した6桁コードを含めない</p></div>
+      <figure class="screenshot-wide">
+        <figcaption>Authenticatorアプリの登録画面。QRコード、セットアップキー、6桁コード、Accessチーム名は完全にマスクしている</figcaption>
+        <img src="../assets/img/cloudflare-private-site/04-authenticator-mfa-enrollment-redacted.png" alt="Cloudflare AccessでAuthenticatorアプリを登録する画面">
+      </figure>
+      <div class="callout callout-warning"><strong>⚠️ MFA登録情報を記録・公開しない</strong><p>QRコードとセットアップキーはTOTPの共有秘密であり、第三者が取得すると同じワンタイムコードを生成できる。登録画面を掲載する場合は、QRコード、セットアップキー、入力した6桁コードを復元できない不透明な図形で完全にマスクする</p></div>
       <p class="source">出典：<a href="https://developers.cloudflare.com/cloudflare-one/access-controls/access-settings/independent-mfa/">Cloudflare Access Independent MFA</a></p>
 
       <h2 id="private-repository">6. GitHubリポジトリをPrivateへ変更</h2>
