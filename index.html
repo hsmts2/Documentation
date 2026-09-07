@@ -16,8 +16,8 @@
       <button class="icon-button theme-toggle" type="button" title="テーマを切り替え" aria-label="テーマを切り替え">☀</button>
       <nav class="nav" aria-label="Global navigation">
         <a href="./"><span class="nav-icon" aria-hidden="true">⌂</span>Home</a>
-        <a href="https://github.com/thsmt"><span class="nav-icon" aria-hidden="true">▦</span>Repositories</a>
-        <a href="https://github.com/thsmt/Documentation"><span class="nav-icon" aria-hidden="true">◆</span>GitHub</a>
+        <a href="https://github.com/hsmts2"><span class="nav-icon" aria-hidden="true">▦</span>Repositories</a>
+        <a href="https://github.com/hsmts2/Documentation"><span class="nav-icon" aria-hidden="true">◆</span>GitHub</a>
       </nav>
     </div>
   </header>
@@ -27,6 +27,8 @@
       <div class="sidebar-heading">
         <button class="icon-button sidebar-toggle sidebar-toggle-inline" type="button" aria-controls="site-sidebar" aria-expanded="true" title="ナビゲーションを閉じる" aria-label="ナビゲーションを閉じる">☰</button>
       </div>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">✎</span>記事</p>
+      <a href="tutorials/cloudflare-private-site.html">Private GitHubリポジトリをCloudflare Workersで認証付き公開してみた</a>
       <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">◈</span>Terraform</p>
       <a href="tutorials/terraform.html">Terraform 概要</a>
       <a href="tutorials/hcp-terraform.html">HCP Terraform（Terraform Cloud）</a>
@@ -75,6 +77,14 @@
       </section>
 
       <!-- home-groups:start -->
+      <h2 id="articles">記事</h2>
+      <section class="card-grid" aria-label="記事">
+        <article class="card">
+          <strong><a href="tutorials/cloudflare-private-site.html">Private GitHubリポジトリをCloudflare Workersで認証付き公開してみた</a></strong>
+          <p>GitHub連携、静的ファイルのデプロイ、Cloudflare AccessとAuthenticatorによるMFA、Private化後の自動デプロイ確認をまとめる</p>
+        </article>
+      </section>
+
       <h2 id="terraform">Terraform</h2>
       <section class="card-grid" aria-label="Terraform">
         <article class="card">
@@ -203,7 +213,8 @@
 
     <aside class="toc" aria-label="Table of contents">
       <h2>ページ内</h2>
-      <a class="active" href="#terraform">Terraform</a>
+      <a class="active" href="#articles">記事</a>
+      <a href="#terraform">Terraform</a>
       <a href="#aws-cloud">AWS</a>
       <a href="#os-server">OS／ミドルウェア</a>
       <a href="#reference">リファレンス</a>

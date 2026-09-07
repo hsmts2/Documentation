@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Private GitHubリポジトリをCloudflare Workersで認証付き公開してみた | Documentation</title>
+  <meta name="description" content="Private GitHubリポジトリの静的サイトをCloudflare Workersへ自動デプロイし、Cloudflare AccessとAuthenticatorアプリのMFAで保護した手順。">
+  <link rel="stylesheet" href="../assets/styles.css?v=20260823-ref1">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="../"><img src="../assets/icon.jpg" alt="Documentation icon"><span>Documentation</span></a>
+    <div class="header-actions">
+      <button class="icon-button theme-toggle" type="button" title="テーマを切り替え" aria-label="テーマを切り替え">☀</button>
+      <nav class="nav" aria-label="Global navigation">
+        <a href="../"><span class="nav-icon" aria-hidden="true">⌂</span>Home</a>
+        <a href="https://github.com/hsmts2"><span class="nav-icon" aria-hidden="true">▦</span>Repositories</a>
+        <a href="https://github.com/hsmts2/Documentation"><span class="nav-icon" aria-hidden="true">◆</span>GitHub</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="layout">
+    <aside id="site-sidebar" class="sidebar" aria-label="Page list">
+      <div class="sidebar-heading">
+        <button class="icon-button sidebar-toggle sidebar-toggle-inline" type="button" aria-controls="site-sidebar" aria-expanded="true" title="ナビゲーションを閉じる" aria-label="ナビゲーションを閉じる">☰</button>
+      </div>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">✎</span>記事</p>
+      <a class="active" href="cloudflare-private-site.html">Private GitHubリポジトリをCloudflare Workersで認証付き公開してみた</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">◈</span>Terraform</p>
+      <a href="terraform.html">Terraform 概要</a>
+      <a href="hcp-terraform.html">HCP Terraform（Terraform Cloud）</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">☁︎</span>AWS</p>
+      <a href="cloudformation.html">CloudFormation 運用手順集</a>
+      <a href="aws-cli.html">AWS CLI 特殊対応</a>
+      <a href="aws-cli-reference.html">AWS CLI コマンドリファレンス</a>
+      <a href="eventbridge-scheduler.html">EventBridge Scheduler</a>
+      <a href="amazon-workspaces.html">Amazon WorkSpaces</a>
+      <a href="amazon-ses.html">Amazon SES SMTPリレー</a>
+      <a href="amazon-ses-monitoring.html">Amazon SES 配信監視</a>
+      <a href="amazon-rds-blue-green.html">Amazon RDS Blue/Green Deployments</a>
+      <a href="apache-acm-certificate-update.html">証明書更新（ACMエクスポート）</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">⚙︎</span>OS／ミドルウェア</p>
+      <a href="rhel9.html">Red Hat Enterprise Linux 9</a>
+      <a href="rhel10.html">Red Hat Enterprise Linux 10</a>
+      <a href="amazon-linux-2023.html">Amazon Linux 2023</a>
+      <a href="windows-server-2022.html">Windows Server 2022</a>
+      <a href="windows-server-2025.html">Windows Server 2025</a>
+      <a href="windows-server-2016-upgrade.html">Windows Server 2016 インプレースアップグレード</a>
+      <a href="storage.html">ストレージ管理</a>
+      <a href="apache.html">Apache</a>
+      <a href="apache-self-signed-ssl-termination.html">Apache SSL終端（自己署名証明書）</a>
+      <a href="redis.html">Redis（KVS）</a>
+      <a href="nfs.html">NFS</a>
+      <a href="samba.html">Samba</a>
+      <a href="mariadb.html">MariaDB</a>
+      <a href="postgresql.html">PostgreSQL</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">▤</span>リファレンス</p>
+      <a href="troubleshooting.html">障害切り分けチェックリスト</a>
+      <a href="eol.html">EOL / ライフサイクル一覧表</a>
+    </aside>
+
+    <main class="content cloudflare-private-site-guide">
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="../"><span class="nav-icon" aria-hidden="true">⌂</span>Home</a>
+        <span>トピック</span>
+      </nav>
+
+      <h1>Private GitHubリポジトリをCloudflare Workersで認証付き公開してみた</h1>
+      <p class="lead">GitHubで管理する静的ドキュメントをCloudflare Workersへ自動デプロイし、Cloudflare AccessとAuthenticatorアプリのMFAで閲覧を保護した手順をまとめる<br>リポジトリ連携、公開ファイルの分離、Access設定、Private化、自動デプロイと最終URLの確認までを実際の構成に沿って整理する</p>
+
+      <h2 id="overview">今回実現した構成</h2>
+      <p>ソースはPrivateのGitHubリポジトリで管理し、<code>main</code>へのPushをCloudflare Workers Buildsが検知して静的ファイルだけをWorkersへデプロイする<br>閲覧時はCloudflare Accessで本人確認を行い、AuthenticatorアプリのTOTPを追加認証として必須にする</p>
+      <div class="architecture-flow" aria-label="公開構成">
+        <span>Private GitHubリポジトリ</span><b>→ Push</b>
+        <span>Workers Builds</span><b>→ Deploy</b>
+        <span>Cloudflare Workers</span><b>→ Access</b>
+        <span>Authenticator MFA</span>
+      </div>
+      <table>
+        <thead><tr><th>対象</th><th>今回の設定</th><th>目的</th></tr></thead>
+        <tbody>
+          <tr><td>GitHubリポジトリ</td><td><code>Private</code></td><td>ソースコードと画像を一般公開しない</td></tr>
+          <tr><td>デプロイ元ブランチ</td><td><code>main</code></td><td>確定した変更だけを自動公開する</td></tr>
+          <tr><td>ホスティング</td><td>Cloudflare Workers Static Assets</td><td>静的HTML、CSS、JavaScript、画像を配信する</td></tr>
+          <tr><td>閲覧制御</td><td>Cloudflare Access</td><td>認証を通過した利用者だけに公開する</td></tr>
+          <tr><td>多要素認証</td><td>AuthenticatorアプリのTOTP</td><td>メールを受信できない端末でも6桁コードで本人確認する</td></tr>
+        </tbody>
+      </table>
+      <div class="callout callout-warning"><strong>⚠️ Privateリポジトリと非公開サイトは別</strong><p>GitHub Pagesは、利用プランや構成によってPrivateリポジトリから公開できても、サイト自体がインターネットへ公開される。ソースの非公開化だけで閲覧制御まで完了したと判断せず、Cloudflare Accessの認証を別に設定する</p></div>
+      <p class="source">出典：<a href="https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site">GitHub Pagesの公開ソースとサイト公開範囲</a></p>
+
+      <h2 id="github-integration">1. GitHubリポジトリをCloudflareへ連携</h2>
+      <p>Cloudflare Workers and PagesのGitHub Appをインストールし、連携対象を必要なリポジトリだけへ限定する<br><code class="ui-value">All repositories</code>ではなく<code class="ui-value">Only select repositories</code>を選択し、<code>Documentation</code>だけを指定する</p>
+      <ol>
+        <li>Cloudflareダッシュボードで<code class="ui-value">Workers &amp; Pages</code> ＞ <code class="ui-value">アプリケーションを作成する</code>を選択</li>
+        <li>GitHubアカウントを選択し、Cloudflare Workers and PagesのGitHub Appを開く</li>
+        <li><code class="ui-value">Only select repositories</code>を選択し、公開元のリポジトリだけを追加</li>
+        <li>表示される権限と対象リポジトリを確認し、<code class="ui-value">Install &amp; Authorize</code>を選択</li>
+      </ol>
+      <figure class="screenshot-compact">
+        <figcaption>GitHub Appのアクセス対象をDocumentationリポジトリだけに限定した状態</figcaption>
+        <img src="../assets/img/cloudflare-private-site/01-github-app-repository-scope-redacted.png" alt="Cloudflare Workers and PagesのGitHub Appで対象リポジトリを限定する画面">
+      </figure>
+
+      <h2 id="worker-create">2. Workersアプリケーションを作成</h2>
+      <p>連携したGitHubアカウントから<code>Documentation</code>を選択し、Workersアプリケーションを作成する<br>プロジェクト名は<code>documentation</code>、Production branchは<code>main</code>、Root directoryは<code>/</code>とする</p>
+      <ol>
+        <li>Cloudflareダッシュボードで<code class="ui-value">Workers &amp; Pages</code> ＞ <code class="ui-value">アプリケーションを作成する</code>を開く</li>
+        <li><code class="ui-value">リポジトリを選択する</code>で<code>Documentation</code>を選択</li>
+        <li>プロジェクト名、Production branch、ビルドコマンド、デプロイコマンドを入力</li>
+        <li>非本番ブランチからの自動デプロイを使用しない場合は、Non-production branch buildsを無効化</li>
+      </ol>
+      <p class="source">出典：<a href="https://developers.cloudflare.com/workers/ci-cd/builds/configuration/">Workers Buildsの構成</a></p>
+
+      <h2 id="build-settings">3. 公開するファイルだけをデプロイ</h2>
+      <p>リポジトリ直下をそのまま公開対象にせず、ビルド時に<code>dist</code>を作成してHTML、CSS、JavaScript、画像だけをコピーする<br>この構成により、<code>.git</code>、<code>README.md</code>、<code>CONTRIBUTING.md</code>、検査スクリプトをWorkersへアップロードしない</p>
+      <table>
+        <thead><tr><th>設定項目</th><th>設定値</th></tr></thead>
+        <tbody>
+          <tr><td>Build command</td><td><code>mkdir dist &amp;&amp; cp ./*.html dist/ &amp;&amp; cp -r assets tutorials dist/</code></td></tr>
+          <tr><td>Deploy command</td><td><code>npx wrangler deploy --assets=dist --compatibility-date 2026-09-03</code></td></tr>
+          <tr><td>Root directory</td><td><code>/</code></td></tr>
+          <tr><td>Production branch</td><td><code>main</code></td></tr>
+          <tr><td>Non-production branch builds</td><td><code>OFF</code></td></tr>
+        </tbody>
+      </table>
+      <p>Build commandへ次の内容を設定</p>
+      <div class="code"><div class="code-header"><span>bash</span><button class="copy" type="button">Copy</button></div><pre><code>mkdir dist &amp;&amp; cp ./*.html dist/ &amp;&amp; cp -r assets tutorials dist/</code></pre></div>
+      <p>Deploy commandへ次の内容を設定</p>
+      <div class="code"><div class="code-header"><span>bash</span><button class="copy" type="button">Copy</button></div><pre><code>npx wrangler deploy --assets=dist --compatibility-date 2026-09-03</code></pre></div>
+      <div class="callout callout-error"><strong>❌ <code>--assets=.</code>は指定しない</strong><p>リポジトリ直下をStatic Assetsとして指定すると、公開を意図していない管理ファイルまでアップロード対象になる。先に公開専用ディレクトリを作成し、<code>--assets=dist</code>のように対象を限定する</p></div>
+      <p class="source">出典：<a href="https://developers.cloudflare.com/workers/static-assets/">Cloudflare Workers Static Assets</a></p>
+
+      <h2 id="access-enable">4. Cloudflare Accessでサイトを保護</h2>
+      <p>Workersアプリケーションの<code class="ui-value">Access</code>から保護を有効化し、Production URLとPreview URLを認証対象にする<br>Zero Trustの利用プランは<code>Zero Trust Free</code>を選択し、組織名とApp Launcherを作成する</p>
+      <ol>
+        <li><code class="ui-value">Workers &amp; Pages</code> ＞ <code class="ui-value">documentation</code> ＞ <code class="ui-value">Access</code>を開く</li>
+        <li><code class="ui-value">Protect with Cloudflare Access</code>を有効化</li>
+        <li>保護範囲でProduction URLとPreview URLを選択</li>
+        <li>Cloudflare Oneの初期設定を開き、<code class="ui-value">Zero Trust Free</code>を選択</li>
+        <li>Access applicationのAllowポリシーへCloudflare account membersを指定</li>
+      </ol>
+      <figure class="screenshot-wide">
+        <figcaption>Cloudflare OneでZero Trust Freeが有効になった状態</figcaption>
+        <img src="../assets/img/cloudflare-private-site/02-zero-trust-free-overview-redacted.png" alt="Cloudflare OneのZero Trust Free概要画面">
+      </figure>
+
+      <h2 id="mfa">5. AuthenticatorアプリのMFAを必須化</h2>
+      <p>Cloudflare AccessのIndependent MFAを有効化し、許可する方式を<code class="ui-value">Authenticator application</code>だけに限定する<br>サイト用アプリケーションのMFAを<code class="ui-value">Custom</code>、セッション時間を<code class="ui-value">24 hours</code>として保存する</p>
+      <ol>
+        <li>Cloudflare Oneで<code class="ui-value">設定</code> ＞ <code class="ui-value">認証</code> ＞ <code class="ui-value">MFA</code>を開く</li>
+        <li>Independent MFAで<code class="ui-value">Authenticator application</code>を許可</li>
+        <li>App Launcherの<code class="ui-value">Account</code> ＞ <code class="ui-value">MFA devices</code> ＞ <code class="ui-value">Add an MFA device</code>を開く</li>
+        <li>AuthenticatorアプリでQRコードを読み取り、表示された6桁コードで登録</li>
+        <li>対象Access applicationのMFAを<code class="ui-value">Custom</code>へ変更し、Authenticator applicationだけを必須化</li>
+      </ol>
+      <div class="callout callout-warning"><strong>⚠️ MFA登録情報を記録・公開しない</strong><p>QRコードとセットアップキーはTOTPの共有秘密であり、第三者が取得すると同じワンタイムコードを生成できる。手順書の画像にはQRコード、セットアップキー、入力した6桁コードを含めない</p></div>
+      <p class="source">出典：<a href="https://developers.cloudflare.com/cloudflare-one/access-controls/access-settings/independent-mfa/">Cloudflare Access Independent MFA</a></p>
+
+      <h2 id="private-repository">6. GitHubリポジトリをPrivateへ変更</h2>
+      <p>Cloudflareからの初回デプロイとAccess認証を確認した後、GitHubリポジトリを<code>Private</code>へ変更する<br>先にGitHub Appの対象へリポジトリを追加しておくことで、Private化後もWorkers Buildsがソースを取得できる状態を維持する</p>
+      <ol>
+        <li>GitHubの対象リポジトリで<code class="ui-value">Settings</code> ＞ <code class="ui-value">General</code>を開く</li>
+        <li><code class="ui-value">Danger Zone</code> ＞ <code class="ui-value">Change repository visibility</code>を選択</li>
+        <li><code class="ui-value">Make private</code>を選択し、対象リポジトリ名を確認して確定</li>
+        <li>ログアウト状態でGitHubのリポジトリURLを開き、ソースを閲覧できないことを確認</li>
+      </ol>
+      <div class="callout callout-info"><strong>ℹ️ GitHub Pagesの扱い</strong><p>個人アカウントのGitHub Freeで公開中のPagesサイトは、リポジトリをPrivateへ変更すると自動的に非公開化される。今回は公開先をCloudflare Workersへ切り替え、旧GitHub Pages URLが表示されないことも確認する</p></div>
+      <p class="source">出典：<a href="https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/managing-repository-settings/setting-repository-visibility">GitHubリポジトリの可視性変更</a></p>
+
+      <h2 id="deployment-check">7. Private化後の自動デプロイを確認</h2>
+      <p><code>main</code>へ変更をPushし、Workers BuildsがPrivateリポジトリをCloneしてBuild commandとDeploy commandを順に実行できることを確認する<br>今回の検証では171ファイルを読み込み、23秒でデプロイが完了した</p>
+      <figure class="screenshot-wide">
+        <figcaption>PrivateリポジトリへのPushを検知し、Workers Buildsが正常終了した状態</figcaption>
+        <img src="../assets/img/cloudflare-private-site/03-private-repository-auto-deploy-success-redacted.png" alt="Cloudflare Workers Buildsの自動デプロイ成功画面">
+      </figure>
+      <table>
+        <thead><tr><th>確認対象</th><th>確認結果</th></tr></thead>
+        <tbody>
+          <tr><td>GitHubリポジトリ</td><td>Private化後、未認証アクセスは<code>404</code></td></tr>
+          <tr><td>旧GitHub Pages URL</td><td>未公開となり<code>404</code></td></tr>
+          <tr><td>Workers URL</td><td>未認証アクセスはCloudflare Accessへ<code>302</code>リダイレクト</td></tr>
+          <tr><td>Access認証</td><td>Cloudflareアカウント認証とAuthenticator MFAの通過後にDocumentationを表示</td></tr>
+          <tr><td>Private化後のPush</td><td>Workers Buildsが自動実行され、正常にデプロイ</td></tr>
+        </tbody>
+      </table>
+      <p>最終的な確認URLは次のとおり</p>
+      <p><a class="repo-link external-item" href="https://documentation.sg7r3den.workers.dev/">https://documentation.sg7r3den.workers.dev/</a></p>
+
+      <h2 id="troubleshooting">発生したエラーと修正内容</h2>
+      <table>
+        <thead><tr><th>事象</th><th>原因</th><th>修正</th></tr></thead>
+        <tbody>
+          <tr><td><code>A compatibility_date is required</code></td><td>設定ファイルがない状態でWranglerへ互換性日付を渡していない</td><td>Deploy commandへ<code>--compatibility-date 2026-09-03</code>を追加</td></tr>
+          <tr><td>Worker nameが<code>undefined</code>という警告</td><td>Wrangler設定ファイルにWorker名がなく、Workers Builds側の名前と一致しない</td><td>CIが<code>documentation</code>へ上書きするためデプロイは継続。恒久対応では<code>wrangler.jsonc</code>へ名前を定義</td></tr>
+          <tr><td><code>--assets=.</code>で公開範囲が広すぎる</td><td>リポジトリ直下の全ファイルがStatic Assets候補になる</td><td>公開専用の<code>dist</code>へ必要ファイルだけを集約</td></tr>
+          <tr><td>Access認証後にアプリケーションを開けない</td><td>AllowポリシーまたはMFA登録が完了していない</td><td>Cloudflare account membersのAllowポリシーとAuthenticator登録を確認</td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="temporary-share">採用関係者へ一時共有する場合</h2>
+      <p>恒久URLのAccessポリシーを緩めず、共有期間だけ使用する別のWorkersアプリケーションを作成する方法が安全<br>認証なしで公開する場合は、推測しにくい名前、検索エンジンの<code>noindex</code>、終了日時、削除確認をセットで管理する</p>
+      <div class="callout callout-warning"><strong>⚠️ URLを知る人は全員閲覧可能</strong><p>認証なしのURLは、転送、ブラウザー履歴、アクセスログなどから第三者へ渡る可能性がある。機密情報を除外した共有専用コピーを使用し、選考終了後はWorkersアプリケーションを削除する。より安全に共有する場合は、対象者のメールアドレスをAccessポリシーへ限定してOne-time PINを使用する</p></div>
+
+    </main>
+
+    <aside class="toc" aria-label="Table of contents">
+      <h2>ページ内</h2>
+      <a href="#overview">今回実現した構成</a>
+      <a href="#github-integration">1. GitHubリポジトリをCloudflareへ連携</a>
+      <a href="#worker-create">2. Workersアプリケーションを作成</a>
+      <a href="#build-settings">3. 公開するファイルだけをデプロイ</a>
+      <a href="#access-enable">4. Cloudflare Accessでサイトを保護</a>
+      <a href="#mfa">5. AuthenticatorアプリのMFAを必須化</a>
+      <a href="#private-repository">6. GitHubリポジトリをPrivateへ変更</a>
+      <a href="#deployment-check">7. Private化後の自動デプロイを確認</a>
+      <a href="#troubleshooting">発生したエラーと修正内容</a>
+      <a href="#temporary-share">採用関係者へ一時共有する場合</a>
+    </aside>
+  </div>
+  <script src="../assets/app.js?v=20260823-ref1"></script>
+</body>
+</html>

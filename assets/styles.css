@@ -368,7 +368,8 @@ main {
 .rhel10-guide > h2,
 .windows-server-2022-guide > h2,
 .windows-server-2025-guide > h2,
-.windows-server-2016-upgrade-guide > h2 {
+.windows-server-2016-upgrade-guide > h2,
+.cloudflare-private-site-guide > h2 {
   margin-top: 68px;
   padding-top: 30px;
   border-top: 1px solid var(--line);

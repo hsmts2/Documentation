@@ -8,6 +8,13 @@ $root = Split-Path -Parent $PSScriptRoot
 $tutorialsRoot = Join-Path $root 'tutorials'
 $groups = @(
     [pscustomobject]@{
+        Label = '記事'
+        Icon = '✎'
+        Pages = @(
+            [pscustomobject]@{ File = 'cloudflare-private-site.html'; Label = 'Private GitHubリポジトリをCloudflare Workersで認証付き公開してみた' }
+        )
+    }
+    [pscustomobject]@{
         Label = 'Terraform'
         Icon = '◈'
         Pages = @(
