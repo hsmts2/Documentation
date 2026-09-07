@@ -1,10 +1,12 @@
 ﻿$ErrorActionPreference = "Stop"
 
 $repositoryRoot = Split-Path -Parent $PSScriptRoot
+$careerPagePath = Join-Path $repositoryRoot "career.html"
 $targetFiles = Get-ChildItem -LiteralPath $repositoryRoot -Recurse -File |
     Where-Object {
         $_.Extension -in ".html", ".md" -and
-        $_.FullName -notmatch "[\\/]\.git[\\/]"
+        $_.FullName -notmatch "[\\/]\.git[\\/]" -and
+        $_.FullName -ne $careerPagePath
     }
 
 $fullStop = [char]0x3002

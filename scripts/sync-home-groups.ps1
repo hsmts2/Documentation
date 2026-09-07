@@ -40,15 +40,16 @@ foreach ($group in $groupMatches) {
 }
 
 $homeSections = @(
-    [pscustomobject]@{ Id = 'articles'; Label = $groupMatches[0].Groups[1].Value; Files = @('cloudflare-private-site.html') },
-    [pscustomobject]@{ Id = 'terraform'; Label = 'Terraform'; Files = @('terraform.html', 'hcp-terraform.html') },
-    [pscustomobject]@{ Id = 'reference'; Label = $groupMatches[4].Groups[1].Value; Files = @('writing-style-guide.html', 'troubleshooting.html', 'eol.html') },
-    [pscustomobject]@{ Id = 'aws-platform'; Label = 'AWS &#22522;&#30436;&#65295;CLI'; Files = @('cloudformation.html', 'aws-cli.html', 'aws-cli-reference.html') },
-    [pscustomobject]@{ Id = 'aws-services'; Label = 'AWS &#12469;&#12540;&#12499;&#12473;'; Files = @('eventbridge-scheduler.html', 'amazon-workspaces.html', 'amazon-ses.html', 'amazon-ses-monitoring.html', 'amazon-rds-blue-green.html', 'apache-acm-certificate-update.html') },
-    [pscustomobject]@{ Id = 'operating-systems'; Label = 'OS'; Files = @('rhel9.html', 'rhel10.html', 'amazon-linux-2023.html', 'windows-server-2022.html', 'windows-server-2025.html', 'windows-server-2016-upgrade.html') },
-    [pscustomobject]@{ Id = 'web-databases'; Label = 'Web&#65295;&#12487;&#12540;&#12479;&#12505;&#12540;&#12473;'; Files = @('apache.html', 'apache-self-signed-ssl-termination.html', 'redis.html', 'mariadb.html', 'postgresql.html') },
-    [pscustomobject]@{ Id = 'storage-filesharing'; Label = '&#12473;&#12488;&#12524;&#12540;&#12472;&#65295;&#12501;&#12449;&#12452;&#12523;&#20849;&#26377;'; Files = @('storage.html', 'nfs.html', 'samba.html') }
+    [pscustomobject]@{ Id = 'articles'; Icon = '&#128221;'; Label = $groupMatches[0].Groups[1].Value; Files = @('cloudflare-private-site.html') },
+    [pscustomobject]@{ Id = 'terraform'; Icon = '&#129521;'; Label = 'Terraform'; Files = @('terraform.html', 'hcp-terraform.html') },
+    [pscustomobject]@{ Id = 'reference'; Icon = '&#128218;'; Label = $groupMatches[4].Groups[1].Value; Files = @('writing-style-guide.html', 'troubleshooting.html', 'eol.html') },
+    [pscustomobject]@{ Id = 'aws-platform'; Icon = '&#128736;&#65039;'; Label = 'AWS &#22522;&#30436;&#65295;CLI'; Files = @('cloudformation.html', 'aws-cli.html', 'aws-cli-reference.html') },
+    [pscustomobject]@{ Id = 'aws-services'; Icon = '&#9729;&#65039;'; Label = 'AWS &#12469;&#12540;&#12499;&#12473;'; Files = @('eventbridge-scheduler.html', 'amazon-workspaces.html', 'amazon-ses.html', 'amazon-ses-monitoring.html', 'amazon-rds-blue-green.html', 'apache-acm-certificate-update.html') },
+    [pscustomobject]@{ Id = 'operating-systems'; Icon = '&#128187;'; Label = 'OS'; Files = @('rhel9.html', 'rhel10.html', 'amazon-linux-2023.html', 'windows-server-2022.html', 'windows-server-2025.html', 'windows-server-2016-upgrade.html') },
+    [pscustomobject]@{ Id = 'web-databases'; Icon = '&#127760;'; Label = 'Web&#65295;&#12487;&#12540;&#12479;&#12505;&#12540;&#12473;'; Files = @('apache.html', 'apache-self-signed-ssl-termination.html', 'redis.html', 'mariadb.html', 'postgresql.html') },
+    [pscustomobject]@{ Id = 'storage-filesharing'; Icon = '&#128190;'; Label = '&#12473;&#12488;&#12524;&#12540;&#12472;&#65295;&#12501;&#12449;&#12452;&#12523;&#20849;&#26377;'; Files = @('storage.html', 'nfs.html', 'samba.html') }
 )
+$sidebarLinks['writing-style-guide.html'] = '[GitHub Pages] &#35352;&#27861;&#12539;&#12486;&#12531;&#12503;&#12524;&#12540;&#12488;'
 
 $lines = [System.Collections.Generic.List[string]]::new()
 $lines.Add('      <!-- home-groups:start -->')
@@ -57,26 +58,38 @@ $lines.Add('        <h2 id="all-documents">&#12377;&#12409;&#12390;&#12398;&#124
 $lines.Add('        <div class="document-directory-grid">')
 
 foreach ($section in $homeSections) {
-    $lines.Add("          <section class=`"document-directory-group`" aria-labelledby=`"$($section.Id)`">")
-    $lines.Add("            <h3 id=`"$($section.Id)`">$($section.Label)</h3>")
-    $lines.Add('            <ul class="document-link-list">')
-
-    foreach ($file in $section.Files) {
-        if ($file -eq 'writing-style-guide.html') {
-            $lines.Add('              <li><a href="writing-style-guide.html">[GitHub Pages] &#35352;&#27861;&#12539;&#12486;&#12531;&#12503;&#12524;&#12540;&#12488;</a></li>')
-            continue
-        }
-
+    for ($fileIndex = 0; $fileIndex -lt $section.Files.Count; $fileIndex++) {
+        $file = $section.Files[$fileIndex]
         if (-not $sidebarLinks.ContainsKey($file)) {
             $errors.Add("Sidebar link not found for: $file")
             continue
         }
 
-        $lines.Add("              <li><a href=`"tutorials/$file`">$($sidebarLinks[$file])</a></li>")
-    }
+        $isRootFile = $file -eq 'writing-style-guide.html'
+        $href = if ($isRootFile) { $file } else { "tutorials/$file" }
+        $filePath = if ($isRootFile) { Join-Path $root $file } else { Join-Path (Join-Path $root 'tutorials') $file }
 
-    $lines.Add('            </ul>')
-    $lines.Add('          </section>')
+        if (-not (Test-Path -LiteralPath $filePath -PathType Leaf)) {
+            $errors.Add("Document file not found: $file")
+            continue
+        }
+
+        $documentContent = [System.IO.File]::ReadAllText($filePath)
+        $descriptionMatch = [regex]::Match($documentContent, '<meta\s+name="description"\s+content="([^"]+)"')
+
+        if (-not $descriptionMatch.Success) {
+            $errors.Add("Meta description not found: $file")
+            continue
+        }
+
+        $description = $descriptionMatch.Groups[1].Value.TrimEnd([char[]]@([char]0x3002, [char]0x002E))
+        $anchor = if ($fileIndex -eq 0) { " id=`"$($section.Id)`"" } else { '' }
+        $lines.Add("          <article class=`"document-card`"$anchor>")
+        $lines.Add("            <p class=`"document-card-category document-card-category-$($section.Id)`"><span aria-hidden=`"true`">$($section.Icon)</span> $($section.Label)</p>")
+        $lines.Add("            <h3><a href=`"$href`">$($sidebarLinks[$file])</a></h3>")
+        $lines.Add("            <p>$description</p>")
+        $lines.Add('          </article>')
+    }
 }
 
 $lines.Add('        </div>')

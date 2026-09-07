@@ -792,6 +792,35 @@ mark {
   color: var(--muted);
 }
 
+.career-profile-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin: 24px 0 8px;
+  padding: 18px 22px;
+  border: 1px solid var(--line);
+  border-left: 5px solid var(--accent);
+  border-radius: 8px;
+  background: var(--panel-soft);
+  color: var(--text);
+  font-size: 18px;
+  font-weight: 750;
+}
+
+.career-profile-link:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.career-profile-link-arrow {
+  flex: 0 0 auto;
+  color: var(--accent);
+  font-size: 22px;
+  line-height: 1;
+}
+
 .document-directory {
   margin-top: 26px;
 }
@@ -803,42 +832,101 @@ mark {
 
 .document-directory-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   border-top: 1px solid var(--line);
   border-left: 1px solid var(--line);
 }
 
-.document-directory-group {
+.document-card {
   min-width: 0;
-  padding: 24px;
+  min-height: 218px;
+  padding: 26px;
   border-right: 1px solid var(--line);
   border-bottom: 1px solid var(--line);
 }
 
-.document-directory-group h3 {
-  margin: 0 0 18px;
+.document-card-category {
+  display: inline-block;
+  margin: 0 0 20px;
+  padding: 2px 8px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: var(--panel-soft);
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 650;
+  line-height: 1.5;
+}
+
+.document-card-category-articles {
+  border-color: rgba(207, 34, 46, 0.42);
+  background: rgba(207, 34, 46, 0.1);
+  color: #ff7b72;
+}
+
+.document-card-category-terraform {
+  border-color: rgba(163, 113, 247, 0.46);
+  background: rgba(163, 113, 247, 0.11);
+  color: #d2a8ff;
+}
+
+.document-card-category-reference {
+  border-color: rgba(88, 166, 255, 0.46);
+  background: rgba(88, 166, 255, 0.11);
+  color: #79c0ff;
+}
+
+.document-card-category-aws-platform {
+  border-color: rgba(255, 153, 0, 0.5);
+  background: rgba(255, 153, 0, 0.11);
+  color: #ffa657;
+}
+
+.document-card-category-aws-services {
+  border-color: rgba(250, 204, 21, 0.48);
+  background: rgba(250, 204, 21, 0.1);
+  color: #f2cc60;
+}
+
+.document-card-category-operating-systems {
+  border-color: rgba(63, 185, 80, 0.46);
+  background: rgba(63, 185, 80, 0.1);
+  color: #7ee787;
+}
+
+.document-card-category-web-databases {
+  border-color: rgba(219, 97, 162, 0.48);
+  background: rgba(219, 97, 162, 0.11);
+  color: #ff80c8;
+}
+
+.document-card-category-storage-filesharing {
+  border-color: rgba(57, 210, 192, 0.46);
+  background: rgba(57, 210, 192, 0.1);
+  color: #56d4dd;
+}
+
+:root[data-theme="light"] .document-card-category-articles { color: #a40e26; }
+:root[data-theme="light"] .document-card-category-terraform { color: #6639ba; }
+:root[data-theme="light"] .document-card-category-reference { color: #0969da; }
+:root[data-theme="light"] .document-card-category-aws-platform { color: #9a6700; }
+:root[data-theme="light"] .document-card-category-aws-services { color: #7d4e00; }
+:root[data-theme="light"] .document-card-category-operating-systems { color: #116329; }
+:root[data-theme="light"] .document-card-category-web-databases { color: #9e3670; }
+:root[data-theme="light"] .document-card-category-storage-filesharing { color: #096b72; }
+
+.document-card h3 {
+  margin: 0 0 10px;
   padding: 0;
   font-size: 16px;
-}
-
-.document-link-list {
-  display: grid;
-  gap: 7px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.document-link-list li {
-  margin: 0;
-  font-size: 14px;
   line-height: 1.45;
 }
 
-.document-link-list a {
-  display: inline-block;
-  padding: 1px 0;
-  font-weight: 650;
+.document-card > p:last-child {
+  margin: 0;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.65;
 }
 
 @media (max-width: 1100px) {

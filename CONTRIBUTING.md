@@ -179,6 +179,7 @@ CloudWatchコンソールで<code class="ui-value">メトリクス</code> ＞ <c
 
 - 文体を一括整形する場合は `powershell -File scripts/normalize-writing-style.ps1` を実行する
 - 文末表現と句点は `powershell -File scripts/check-writing-style.ps1` で確認する
+- `career.html`は職務経歴書専用の文章とレイアウトを維持するため、手順書向けの文体検査対象外とする
 - ページ内リンクは `powershell -File scripts/check-page-links.ps1` で確認する
 - ページ構造と共通要素は `powershell -File scripts/check-page-consistency.ps1` で確認する
 - 全HTMLで要約が1件だけ表示され、見出し、文字サイズ、アクセント線、本文が正しいことをブラウザーで確認する
