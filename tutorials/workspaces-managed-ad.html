@@ -1,0 +1,1214 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AWS Managed Microsoft AD 構築・管理 | Documentation</title>
+  <meta name="description" content="AWS Managed Microsoft ADの構成、作成、ユーザー・グループ管理をまとめた実機検証手順">
+  <link rel="stylesheet" href="../assets/styles.css?v=20260908-skill-transfer1">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="../"><img src="../assets/icon.jpg" alt="Documentation icon"><span>Documentation</span></a>
+    <div class="header-actions">
+      <button class="icon-button theme-toggle" type="button" title="テーマを切り替え" aria-label="テーマを切り替え">☀</button>
+      <nav class="nav" aria-label="Global navigation">
+        <a href="../"><span class="nav-icon" aria-hidden="true">⌂</span>Home</a>
+        <a href="https://github.com/hsmts2"><span class="nav-icon" aria-hidden="true">▦</span>Repositories</a>
+        <a href="https://github.com/hsmts2/Documentation"><span class="nav-icon" aria-hidden="true">◆</span>GitHub</a>
+      </nav>
+    </div>
+  </header>
+  <div class="layout layout-wide">
+    <aside id="site-sidebar" class="sidebar" aria-label="Page list">
+      <div class="sidebar-heading">
+        <button class="icon-button sidebar-toggle sidebar-toggle-inline" type="button" aria-controls="site-sidebar" aria-expanded="true" title="ナビゲーションを閉じる" aria-label="ナビゲーションを閉じる">☰</button>
+      </div>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">✎</span>記事</p>
+      <a href="cloudflare-private-site.html">Private GitHubリポジトリをCloudflare Workersで認証付き公開してみた</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">◈</span>Terraform</p>
+      <a href="terraform.html">Terraform 概要</a>
+      <a href="hcp-terraform.html">HCP Terraform（Terraform Cloud）</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">☁︎</span>AWS</p>
+      <a href="cloudformation.html">CloudFormation 運用手順集</a>
+      <a href="aws-cli.html">AWS CLI 特殊対応</a>
+      <a href="aws-cli-reference.html">AWS CLI コマンドリファレンス</a>
+      <a href="eventbridge-scheduler.html">EventBridge Scheduler</a>
+      <a href="amazon-workspaces.html">Amazon WorkSpaces</a>
+      <a href="workspaces-skill-transfer.html">Amazon WorkSpaces 技術移管</a>
+      <a class="active" href="workspaces-managed-ad.html">AWS Managed Microsoft AD 構築・管理</a>
+      <a href="workspaces-management-ec2.html">管理用EC2・Active Directory管理</a>
+      <a href="workspaces-ad-connector.html">AD Connector 構築・権限委任</a>
+      <a href="workspaces-provisioning-gpo.html">Amazon WorkSpaces 構築・OU・GPO</a>
+      <a href="workspaces-image-bundle.html">WorkSpaces カスタムイメージ・バンドル</a>
+      <a href="workspaces-patch-manager.html">Systems Manager Patch Manager</a>
+      <a href="amazon-ses.html">Amazon SES SMTPリレー</a>
+      <a href="amazon-ses-monitoring.html">Amazon SES 配信監視</a>
+      <a href="amazon-rds-blue-green.html">Amazon RDS Blue/Green Deployments</a>
+      <a href="apache-acm-certificate-update.html">証明書更新（ACMエクスポート）</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">⚙︎</span>OS／ミドルウェア</p>
+      <a href="rhel9.html">Red Hat Enterprise Linux 9</a>
+      <a href="rhel10.html">Red Hat Enterprise Linux 10</a>
+      <a href="amazon-linux-2023.html">Amazon Linux 2023</a>
+      <a href="windows-server-2022.html">Windows Server 2022</a>
+      <a href="windows-server-2025.html">Windows Server 2025</a>
+      <a href="windows-server-2016-upgrade.html">Windows Server 2016 インプレースアップグレード</a>
+      <a href="storage.html">ストレージ管理</a>
+      <a href="apache.html">Apache</a>
+      <a href="apache-self-signed-ssl-termination.html">Apache SSL終端（自己署名証明書）</a>
+      <a href="redis.html">Redis（KVS）</a>
+      <a href="nfs.html">NFS</a>
+      <a href="samba.html">Samba</a>
+      <a href="mariadb.html">MariaDB</a>
+      <a href="postgresql.html">PostgreSQL</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">▤</span>リファレンス</p>
+      <a href="troubleshooting.html">障害切り分けチェックリスト</a>
+      <a href="eol.html">EOL / ライフサイクル一覧表</a>
+    </aside>
+    <main class="content workspaces-skill-transfer-guide">
+      <nav class="breadcrumb" aria-label="Breadcrumb"><a href="../"><span class="nav-icon" aria-hidden="true">⌂</span>Home</a><span>技術移管</span></nav>
+      <h1>AWS Managed Microsoft AD 構築・管理</h1>
+      <p class="lead">2つのAvailability Zoneへ配置するAWS Managed Microsoft ADの構成と作成手順をまとめる<br>ディレクトリ作成後のユーザー、グループ、パスワードおよび可用性確認まで整理する</p>
+<h2 id="aws-managed-microsoft-adの2台ドメインコントローラー構成-役割">AWS Managed Microsoft ADの2台ドメインコントローラー構成・役割</h2>
+<h3 id="1-本資料の目的">1. 本資料の目的</h3>
+<p>本資料は、AWS Managed Microsoft ADを作成したときに2台のドメインコントローラーと2つのDNSアドレスが用意される理由、2台の役割、および障害時の動作をお客様へ説明するための構成資料</p>
+<p>操作手順ではなく、サービス仕様と運用上の考え方を説明する</p>
+<h3 id="2-お客様向けの結論">2. お客様向けの結論</h3>
+<div class="callout callout-info"><p><strong>2台のうち1台がメイン、もう1台が待機専用という構成ではありません</strong><br>2台とも通常時から稼働する書き込み可能なドメインコントローラーです。ユーザー認証、コンピューター認証、DNS、Kerberos、LDAP、グループポリシーなどのActive Directory機能を提供し、ディレクトリ情報を相互にレプリケーションする</p>
+</div>
+<figure class="screenshot-wide"><figcaption>2台のドメインコントローラー構成と役割</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-managed-ad/001-2台のドメインコントローラー構成と役割.png" alt="2台のドメインコントローラー構成と役割" width="1920" height="1080" loading="lazy"></div></figure>
+
+
+
+<h3 id="3-awsが2台を作成する理由">3. AWSが2台を作成する理由</h3>
+<p>AWS Managed Microsoft ADでは、ディレクトリ作成時に2台のドメインコントローラーが異なるアベイラビリティゾーンのサブネットへ1台ずつ配置されます。目的は、1台または1つのアベイラビリティゾーンへ障害やメンテナンスの影響が生じても、もう1台を利用できる構成にすること</p>
+<p>AWS Directory Serviceコンソールでは、この初期2台を <strong>Required</strong> と表示します。Requiredは「主系」という意味ではなく、可用性を確保するために削除できない必須の2台という意味です。可用性や処理性能をさらに高めるために追加したDCは <strong>Additional</strong> と表示される</p>
+<figure class="screenshot-wide"><figcaption>AWS公式の複数AZドメインコントローラー構成</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-managed-ad/002-aws公式の複数azドメインコントローラー構成.png" alt="AWS公式の複数AZドメインコントローラー構成" width="606" height="576" loading="lazy"></div></figure>
+
+
+
+<h4 id="requiredとadditionalの違い">RequiredとAdditionalの違い</h4>
+<table>
+<thead>
+<tr>
+<th>AWSコンソール上の区分</th>
+<th>意味</th>
+<th>削除・縮退</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Required DC</td>
+<td>ディレクトリ作成時にAWSが作成する初期2台。異なるAZへ分散される</td>
+<td>2台未満にはできない</td>
+</tr>
+<tr>
+<td>Additional DC</td>
+<td>可用性、耐障害性または認証処理性能を高めるために追加するDC</td>
+<td>合計2台を下限として削減可能</td>
+</tr>
+</tbody></table>
+<p>AWS公式ページの一部には、削除できない初期2台を「primary and secondary domain controllers」と表現した箇所があります。ただし、これはADの処理方式が主系／待機系であることを示すものではありません。同じAWS公式資料ではすべてのDCが書き込み可能であると説明されているため、本資料では誤解の少ない <strong>Required DC-1／Required DC-2</strong> という表現へ統一する</p>
+<h3 id="4-どちらが-メイン-なのか">4. どちらが「メイン」なのか</h3>
+<h4 id="4-1-通常の認証-検索処理には固定のメインdcはない">4.1 通常の認証・検索処理には固定のメインDCはない</h4>
+<p>Microsoft Active Directory Domain Servicesはマルチマスター方式です。書き込み可能な各DCは、ユーザーやコンピューターなどのディレクトリ変更を受け付け、変更内容を他のDCへレプリケーションします。このため、AWS Managed Microsoft ADの2台を一般的なアクティブ／スタンバイ構成として説明しない</p>
+<p>AWSの公式ホワイトペーパーでも、AWS Managed Microsoft ADのすべてのDCは書き込み可能であり、DCとFSMOロールの割り当てはAWSが管理すると説明されている</p>
+<h4 id="4-2-pdc-emulatorは-全体のメインdc-ではない">4.2 PDC Emulatorは「全体のメインDC」ではない</h4>
+<p>Active Directoryでは、競合を避ける必要がある一部の処理だけを1台が担当します。この役割をFSMO（Flexible Single Master Operations、操作マスター）と呼び、PDC EmulatorもFSMOの1つ</p>
+<table>
+<thead>
+<tr>
+<th>PDC Emulatorの主な役割</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>パスワード変更の優先処理</td>
+<td>最近変更されたパスワード情報を優先的に受け取り、別DCでパスワード不一致となった場合の照会先になる</td>
+</tr>
+<tr>
+<td>アカウントロックアウト</td>
+<td>ロックアウト関連処理の中心的な役割を持つ</td>
+</tr>
+<tr>
+<td>時刻同期</td>
+<td>フォレストルートドメインのPDC Emulatorがドメイン階層の時刻基準になる</td>
+</tr>
+<tr>
+<td>GPO編集</td>
+<td>既定ではGPOの変更先としてPDC Emulatorが使用される</td>
+</tr>
+</tbody></table>
+<p>PDC Emulatorを保持するDCが1台存在しても、そのDCだけが認証、DNS、LDAP、Kerberosなどの通常処理を担当するわけではありません。もう1台も停止待機ではなく、通常時からサービスを提供するDC</p>
+<p>AWS Managed Microsoft ADでは、DCのOS管理、FSMOロールの割り当て、障害時の復旧をAWSが管理します。お客様がPDC Emulatorを「主系」に指定したり、通常運用でFSMOロールを手動移行したりする構成ではない</p>
+<h3 id="5-クライアントはどちらのdcを利用するのか">5. クライアントはどちらのDCを利用するのか</h3>
+<p>WindowsのクライアントやActive Directory対応アプリケーションは、通常、次の流れでDCを選択する</p>
+<ol>
+<li>DCがDNSへ登録したLDAP、Kerberos、グローバルカタログ、サイトなどのSRVレコードを照会</li>
+<li>候補DCへLDAP UDP pingを送信し、利用可能性を確認</li>
+<li>サイトとサブネットの情報がある場合は、同じサイトまたは最適なサイトのDCを優先</li>
+<li>応答した適切なDCを利用し、選択結果を一定時間キャッシュ</li>
+<li>選択中のDCが応答しなくなった場合は、別の利用可能なDCを再探索</li>
+</ol>
+<p>したがって、毎回2台へ単純にラウンドロビンする動作でも、常に「DNSアドレスの1番目」だけを使用する動作でもありません。アプリケーションからDCのホスト名またはIPアドレスを固定せず、Windows DC Locatorを利用することが重要</p>
+<h3 id="6-2台間でレプリケーションされるもの">6. 2台間でレプリケーションされるもの</h3>
+<p>代表的には、次の情報が2台のDC間でレプリケーションされる</p>
+<ul>
+<li>ユーザー、グループ、コンピューターなどのActive Directoryオブジェクト</li>
+<li>パスワードおよびグループメンバーシップなどの属性</li>
+<li>Active Directory統合DNSゾーンの情報</li>
+<li>グループポリシーのディレクトリ情報とSYSVOL上のファイル</li>
+</ul>
+<figure class="screenshot-wide"><figcaption>Microsoft公式のAD DSレプリケーション概念</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-managed-ad/003-microsoft公式のad-dsレプリケーション概念.png" alt="Microsoft公式のAD DSレプリケーション概念" width="532" height="396" loading="lazy"></div></figure>
+
+
+
+<h3 id="7-片方のdcへ障害またはメンテナンスが発生した場合">7. 片方のDCへ障害またはメンテナンスが発生した場合</h3>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>動作</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>クライアントの接続</td>
+<td>選択中のDCが応答しなければ、DC Locatorにより別の利用可能なDCを再探索する</td>
+</tr>
+<tr>
+<td>認証・名前解決</td>
+<td>ネットワークからもう1台へ到達できれば、通常処理を継続できる構成となる</td>
+</tr>
+<tr>
+<td>AWSのパッチ適用</td>
+<td>AWSはDCを順番にパッチし、同時に必要な稼働DC数を失わないよう管理する</td>
+</tr>
+<tr>
+<td>DC障害</td>
+<td>AWSが同じAZ内で同じIPアドレスを使用して障害DCを自動的に置き換える</td>
+</tr>
+<tr>
+<td>FSMO依存処理</td>
+<td>PDC Emulatorなど特定ロールへ依存する一部処理では、一時的な遅延または制限が生じる可能性がある</td>
+</tr>
+</tbody></table>
+<p>「1台故障しても必ず無瞬断・無影響」とは説明しません。アプリケーション側のDNSキャッシュ、DC選択のキャッシュ、接続タイムアウト、ネットワーク到達性、FSMO依存処理によっては、一時的な遅延や再試行が発生する</p>
+<h3 id="8-検証環境のコンソール表示例">8. 検証環境のコンソール表示例</h3>
+<p>本資料で使用した検証環境では、AWS Directory Serviceコンソールで次の値を確認済みです。お客様環境へ適用する際は、実際のコンソールに表示される値を正とする</p>
+<table>
+<thead>
+<tr>
+<th>確認項目</th>
+<th>確認値</th>
+<th>意味</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>アベイラビリティゾーン</td>
+<td><code>ap-northeast-1a</code>、<code>ap-northeast-1c</code></td>
+<td>2台のDCを異なるAZへ配置する</td>
+</tr>
+<tr>
+<td>DNS IPv4アドレス</td>
+<td><code>192.168.225.68</code>、<code>192.168.225.126</code></td>
+<td>2台のDCが提供するディレクトリDNSのアドレス</td>
+</tr>
+</tbody></table>
+<figure class="screenshot-wide"><figcaption>検証環境の2AZと2つのDNSアドレス</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-managed-ad/004-検証環境の2azと2つのdnsアドレス.png" alt="検証環境の2AZと2つのDNSアドレス" width="1616" height="1304" loading="lazy"></div></figure>
+
+
+
+<p><strong>画像内の番号</strong></p>
+<ul>
+<li>① 2台のDCが配置される2つのアベイラビリティゾーン</li>
+<li>② 2台のDCが提供する2つのDNS IPv4アドレス</li>
+</ul>
+<p>この画面だけでは、各DNS IPと各AZの1対1の対応は表示されません。対応関係を個別に確認する場合は、Directory Serviceの「スケールと共有」タブにあるドメインコントローラー一覧、またはAWS CLIの取得結果で確認する</p>
+<h3 id="9-awsとお客様の管理責任">9. AWSとお客様の管理責任</h3>
+<table>
+<thead>
+<tr>
+<th>AWSが管理するもの</th>
+<th>お客様が確認・管理するもの</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>DCのプロビジョニング、OS、パッチ適用</td>
+<td>VPC、サブネット、ルート、NACL、セキュリティグループの到達性</td>
+</tr>
+<tr>
+<td>DC、DNS、ADレプリケーションの監視</td>
+<td>DHCPオプションセットまたはクライアントDNS設定で2つのDNS IPを利用できること</td>
+</tr>
+<tr>
+<td>日次バックアップ、DC障害時の自動置換</td>
+<td>アプリケーションが特定のDC/IPへ固定接続していないこと</td>
+</tr>
+<tr>
+<td>FSMOロールの割り当てと管理</td>
+<td>ユーザー、グループ、OU、委任、GPOなど許可された範囲のディレクトリ管理</td>
+</tr>
+<tr>
+<td>AWS管理領域のセキュリティと復旧</td>
+<td>2台のDCを経由した認証・DNS・GPO適用の業務試験</td>
+</tr>
+</tbody></table>
+<h3 id="10-お客様説明時の回答例">10. お客様説明時の回答例</h3>
+<h4 id="q1-どちらがメインのドメインコントローラーですか">Q1. どちらがメインのドメインコントローラーですか</h4>
+<p>どちらか一方を通常処理のメインとして固定する構成ではありません。2台とも書き込み可能な稼働DCです。特定のDCがPDC EmulatorなどのFSMOロールを保持しますが、これは一部処理の役割分担であり、認証全体の主系という意味ではない</p>
+<h4 id="q2-もう1台は待機系ですか">Q2. もう1台は待機系ですか</h4>
+<p>待機専用ではありません。通常時から認証、DNS、LDAP、Kerberos、グローバルカタログなどを提供し、もう1台とディレクトリ情報をレプリケーションしている</p>
+<h4 id="q3-コンソールの2つのdns-ipはプライマリとセカンダリですか">Q3. コンソールの2つのDNS IPはプライマリとセカンダリですか</h4>
+<p>2つのIPは、別々のAZに配置された2台のDC兼DNSサーバーのアドレスです。DNSクライアント側で表示順はありますが、Active DirectoryのDC選択はDNS SRVレコードとDC Locatorによって行われるため、1番目のIPが認証処理全体の主系という意味ではない</p>
+<h4 id="q4-片方が停止したら自動的に切り替わりますか">Q4. 片方が停止したら自動的に切り替わりますか</h4>
+<p>Windowsクライアントは、利用中のDCが応答しない場合に別の利用可能なDCを再探索します。AWSは障害DCを同じAZ・同じIPで自動置換します。ただし、キャッシュや接続タイムアウトにより一時的な遅延が生じる可能性があるため、無瞬断とは説明しない</p>
+<h4 id="q5-2台より増やせますか">Q5. 2台より増やせますか</h4>
+<p>増やせます。認証要求が多い場合や、可用性をさらに高めたい場合はAdditional DCを追加できます。追加したDCも、ディレクトリが使用する既存のAZとサブネットへ分散される</p>
+<h3 id="11-運用確認に使用できるコマンド">11. 運用確認に使用できるコマンド</h3>
+<p>管理用EC2またはドメイン参加済み端末で、必要に応じて次を実行します。いずれも確認用の読み取り操作</p>
+<div class="code" data-prompt="$"><div class="code-header"><span>powershell</span><button class="copy" type="button">Copy</button></div><pre><code>## 現在のログオンで使用したDC
+$env:LOGONSERVER
+
+## ドメイン内で検出できるDC
+nltest /dclist:p-pm.example.com
+
+## DC LocatorによるDCの再検出
+nltest /dsgetdc:p-pm.example.com /force
+
+## DC、IP、サイト、Global Catalogの確認
+Get-ADDomainController -Filter * |
+    Select-Object HostName, IPv4Address, Site, IsGlobalCatalog
+
+## 現在のFSMOロール保持先
+Get-ADDomain |
+    Select-Object PDCEmulator, RIDMaster, InfrastructureMaster</code></pre></div>
+<p>コマンド結果は確認時点の状態です。特定DCを通常接続先として固定する目的には使用しない</p>
+<h3 id="12-参考資料">12. 参考資料</h3>
+<ul>
+<li>出典：<a href="https://docs.aws.amazon.com/ja_jp/directoryservice/latest/admin-guide/ms_ad_getting_started.html">AWS公式：AWS Managed Microsoft ADの開始方法</a></li>
+<li>出典：<a href="https://docs.aws.amazon.com/ja_jp/directoryservice/latest/admin-guide/ms_ad_getting_started_what_gets_created.html">AWS公式：AWS Managed Microsoft ADを作成すると作成されるもの</a></li>
+<li>出典：<a href="https://docs.aws.amazon.com/ja_jp/directoryservice/latest/admin-guide/ms_ad_key_concepts.html">AWS公式：AWS Managed Microsoft ADの主要概念（パッチ適用と可用性）</a></li>
+<li>出典：<a href="https://docs.aws.amazon.com/ja_jp/directoryservice/latest/admin-guide/ms_ad_deploy_additional_dcs.html">AWS公式：追加のドメインコントローラーのデプロイ</a></li>
+<li>出典：<a href="https://docs.aws.amazon.com/ja_jp/directoryservice/latest/admin-guide/ms_ad_best_practices.html">AWS公式：AWS Managed Microsoft ADのベストプラクティス</a></li>
+<li>出典：<a href="https://docs.aws.amazon.com/pdfs/whitepapers/latest/active-directory-domain-services/active-directory-domain-services.pdf">AWS公式ホワイトペーパー：Active Directory Domain Services on AWS</a></li>
+<li>出典：<a href="https://learn.microsoft.com/ja-jp/windows-server/identity/ad-ds/plan/planning-operations-master-role-placement">Microsoft公式：操作マスターの役割の配置を計画する</a></li>
+<li>出典：<a href="https://learn.microsoft.com/ja-jp/windows-server/identity/ad-ds/manage/understand-fsmo-roles">Microsoft公式：Windows Serverにおける操作マスター役割</a></li>
+<li>出典：<a href="https://learn.microsoft.com/ja-jp/windows-server/identity/ad-ds/manage/dc-locator">Microsoft公式：WindowsおよびWindows ServerでのActive Directoryドメインコントローラーの検索</a></li>
+<li>出典：<a href="https://learn.microsoft.com/ja-jp/windows-server/identity/ad-ds/plan/site-functions">Microsoft公式：サイト機能</a></li>
+<li>出典：<a href="https://learn.microsoft.com/ja-jp/windows-server/identity/ad-ds/get-started/replication/active-directory-replication-concepts">Microsoft公式：Active Directoryレプリケーションの概念</a></li>
+</ul>
+<hr>
+<p><strong>資料上の表現ルール</strong></p>
+<ul>
+<li>2台を「主系／待機系」「アクティブ／スタンバイ」と表記しない</li>
+<li>PDC Emulatorを「メインDC」と表記しない</li>
+<li>片方の障害時に「無瞬断」「影響なし」と断定しない</li>
+<li>AWS公式図とMicrosoft一般仕様図を、同一の物理構成図として扱わない</li>
+</ul>
+<hr>
+
+<h2 id="aws-managed-microsoft-ad構築手順と前提条件の確認">AWS Managed Microsoft AD構築手順と前提条件の確認</h2>
+<h3 id="概要">概要</h3>
+<p>本書では、AWS Directory Serviceを使用してAWS Managed Microsoft ADを作成し、ステータスが「アクティブ」になることを確認する手順を記載する</p>
+<p>作成先には共通リソース環境のVPC <code>p-pm-vpc-002</code> を使用し、異なるアベイラビリティゾーンに配置された2つのプライベートサブネットを選択する。AWS Managed Microsoft ADの作成により、2台のドメインコントローラーとDNSサービスが構成される</p>
+<p>本手順の対象は、ディレクトリ作成画面での設定、作成要求の実行、および作成完了の確認までとする。次の工程は<a href="workspaces-skill-transfer.html">全体構築作業順序</a>で確認し、ディレクトリが「アクティブ」になったら、まず<a href="workspaces-management-ec2.html">管理用EC2起動・接続・AD管理開始手順</a>へ進む。Amazon WorkSpaces、VPCエンドポイント、Amazon FSxなどの後続リソースは個別の手順で作成する</p>
+<p>AWS Managed Microsoft ADの作成時には、主に次のリソースがAWSによって作成される</p>
+<ul>
+<li>異なるアベイラビリティゾーンに配置される2台のドメインコントローラー</li>
+<li>各ドメインコントローラーとVPCを接続するENI</li>
+<li>Active Directory通信に必要なセキュリティグループ</li>
+<li>2つのDNS IPアドレス</li>
+<li>1日1回の自動バックアップ</li>
+</ul>
+<p>2台は主系／待機系ではなく、どちらも通常時から稼働する書き込み可能なDCである。2台の役割、PDC Emulatorとの違い、クライアントによるDC選択および障害時の動作は、<a href="workspaces-managed-ad.html">AWS Managed Microsoft ADの2台ドメインコントローラー構成・役割</a>を参照する</p>
+<h3 id="前提条件">前提条件</h3>
+<h4 id="aws-managed-microsoft-adのサービス要件">AWS Managed Microsoft ADのサービス要件</h4>
+<ul>
+<li>同一のネットワークタイプで、異なるアベイラビリティゾーンに配置された2つ以上のサブネットがあること</li>
+<li>VPCのハードウェアテナンシーが「デフォルト」であること</li>
+<li>VPCで <code>198.18.0.0/15</code> のアドレス空間を使用していないこと</li>
+<li>作業者のIAM IDに <code>ds:CreateMicrosoftAD</code> と、VPC・サブネットの参照、セキュリティグループおよびENIの作成などに必要なEC2権限が付与されていること</li>
+</ul>
+<h4 id="本環境の構築条件">本環境の構築条件</h4>
+<ul>
+<li>操作リージョンがアジアパシフィック（東京）<code>ap-northeast-1</code> であること</li>
+<li>VPC <code>p-pm-vpc-002</code> のステータスが利用可能であること</li>
+<li>VPCのDNS解決とDNSホスト名が有効であること</li>
+<li>次の2つのプライベートサブネットが利用可能であること</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>用途</th>
+<th>サブネット名</th>
+<th>CIDR</th>
+<th>アベイラビリティゾーン</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Directory Service用（1台目）</td>
+<td><code>p-pm-pri-sub-002-002a</code></td>
+<td><code>192.168.225.64/27</code></td>
+<td><code>ap-northeast-1a</code></td>
+</tr>
+<tr>
+<td>Directory Service用（2台目）</td>
+<td><code>p-pm-pri-sub-002-002c</code></td>
+<td><code>192.168.225.96/27</code></td>
+<td><code>ap-northeast-1c</code></td>
+</tr>
+</tbody></table>
+<ul>
+<li><code>Admin</code>ユーザーに設定するパスワードを準備していること。パスワードは手順書、チケット、画面キャプチャなどへ記録しないこと</li>
+</ul>
+<h3 id="ディレクトリの作成">ディレクトリの作成</h3>
+<h4 id="directory-serviceのセットアップを開始する">Directory Serviceのセットアップを開始する</h4>
+<ol>
+<li>AWSマネジメントコンソールへサインイン</li>
+<li>画面右上で、リージョンが「アジアパシフィック（東京）」になっていることを確認</li>
+<li>サービス検索から「Directory Service」を開く</li>
+<li>「ディレクトリのセットアップ」で「AWS Managed Microsoft AD」を選択</li>
+<li>「ディレクトリのセットアップ」を選択</li>
+</ol>
+<figure class="screenshot-wide"><figcaption>Directory Serviceのセットアップ開始画面</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-managed-ad/005-directory-serviceのセットアップ開始画面.png" alt="Directory Serviceのセットアップ開始画面" width="1616" height="1304" loading="lazy"></div></figure>
+
+
+
+<p><strong>画像内の番号</strong></p>
+<ul>
+<li>① 画面右上のリージョンが「アジアパシフィック（東京）」であることを確認する</li>
+<li>② ディレクトリの種類で「AWS Managed Microsoft AD」を選択する</li>
+<li>③ 「ディレクトリのセットアップ」を選択して、作成画面へ進む</li>
+</ul>
+<h4 id="ディレクトリタイプを選択する">ディレクトリタイプを選択する</h4>
+<ol>
+<li>「ディレクトリタイプ」で「AWS Managed Microsoft AD」を選択</li>
+<li>「AWS Managed Microsoft ADの使用を開始する」で「AWS managed ADドメインを新規作成」を選択</li>
+<li>「次へ」を選択</li>
+</ol>
+<p>既存のセルフマネージドADをAWSへ拡張する構成ではないため、「既存のADドメインをハイブリッドディレクトリで拡張・新規」は選択しない</p>
+<figure class="screenshot-wide"><figcaption>ディレクトリタイプの選択</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-managed-ad/006-ディレクトリタイプの選択.png" alt="ディレクトリタイプの選択" width="1616" height="1304" loading="lazy"></div></figure>
+
+
+
+<p><strong>画像内の番号</strong></p>
+<ul>
+<li>① ディレクトリタイプで「AWS Managed Microsoft AD」を選択する</li>
+<li>② 「AWS managed ADドメインを新規作成」を選択する</li>
+<li>③ 「次へ」を選択して、ディレクトリ情報の入力画面へ進む</li>
+</ul>
+<h4 id="ディレクトリ情報を入力する">ディレクトリ情報を入力する</h4>
+<p>「ディレクトリ情報を入力」画面で、次の値を設定する</p>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>設定値</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>ディレクトリのタイプ</td>
+<td>Microsoft AD</td>
+</tr>
+<tr>
+<td>オペレーティングシステムのバージョン</td>
+<td>Windows Server 2019</td>
+</tr>
+<tr>
+<td>エディション</td>
+<td>Standard Edition</td>
+</tr>
+<tr>
+<td>ディレクトリのDNS名</td>
+<td><code>p-pm.example.com</code></td>
+</tr>
+<tr>
+<td>ディレクトリのNetBIOS名</td>
+<td><code>p-pm</code></td>
+</tr>
+<tr>
+<td>ディレクトリの説明</td>
+<td>任意。今回の画面では未入力</td>
+</tr>
+</tbody></table>
+<p>DNS名はActive Directoryで使用する完全修飾ドメイン名である。NetBIOS名はドメインの短縮名として使用する</p>
+<p>同じ名前のAmazon Route 53プライベートホストゾーンを使用すると、名前解決に問題が発生する可能性があるため、既存のDNS名前空間と重複していないことを確認する</p>
+<p>ディレクトリを作成しただけでは、VPC内のすべてのクライアントが自動的にこのDNSを使用するわけではない。管理用EC2などのクライアントから名前解決するためのDHCPオプションセットまたはクライアントDNS設定は、後続手順で実施する</p>
+<div class="callout callout-info"><p><strong>設計確認事項</strong>
+現行のAWS作成画面で「ユーザーとグループの管理」が表示された場合は、有効・無効の採用値を記録する。この機能はAWSマネジメントコンソール、AWS CLI、またはAWS Tools for PowerShellからユーザーとグループを管理するための任意設定である。今回の取得画像では項目を確認できないため、本手順では採用値を確定しない。ドメイン参加済み管理用EC2のAD管理ツールを使う運用とは別の設定である</p>
+</div>
+<figure class="screenshot-wide"><figcaption>ディレクトリ情報の入力</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-managed-ad/007-ディレクトリ情報の入力.png" alt="ディレクトリ情報の入力" width="1616" height="1304" loading="lazy"></div></figure>
+
+
+
+<p><strong>画像内の番号</strong></p>
+<ul>
+<li>① エディションで「Standard Edition」を選択する</li>
+<li>② ディレクトリのDNS名に <code>p-pm.example.com</code> を入力する</li>
+<li>③ ディレクトリのNetBIOS名に <code>p-pm</code> を入力する</li>
+</ul>
+<h4 id="adminパスワードを入力する">Adminパスワードを入力する</h4>
+<ol>
+<li>「Adminパスワード」に、準備したパスワードを入力</li>
+<li>「パスワードを確認」に、同じパスワードを再入力</li>
+<li>次のパスワード要件を満たしていることを確認します<ul>
+<li>8文字以上64文字以下であること</li>
+<li>小文字、大文字、数字、英数字以外の文字の4分類のうち、3分類以上を含むこと</li>
+<li><code>admin</code>という単語を含まないこと</li>
+</ul>
+</li>
+<li>パスワードを手順書、チケット、画面キャプチャなどへ記録しないでください</li>
+<li>「次へ」を選択</li>
+</ol>
+<figure class="screenshot-wide"><figcaption>Adminパスワードの入力</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-managed-ad/008-adminパスワードの入力.png" alt="Adminパスワードの入力" width="1616" height="1304" loading="lazy"></div></figure>
+
+
+
+<p><strong>画像内の番号</strong></p>
+<ul>
+<li>① 準備したAdminパスワードを入力します。入力値は画面上で伏字になる</li>
+<li>② 確認用として、①と同じパスワードを再入力する</li>
+<li>③ 「次へ」を選択して、VPCとサブネットの選択画面へ進む</li>
+</ul>
+<h4 id="vpcとサブネットを選択する">VPCとサブネットを選択する</h4>
+<p>「VPCとサブネットを選択」画面で、次の値を設定する</p>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>設定値</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>VPC</td>
+<td><code>p-pm-vpc-002</code>（<code>192.168.225.0/24</code>）</td>
+</tr>
+<tr>
+<td>ネットワークタイプ</td>
+<td>IPv4のみ</td>
+</tr>
+<tr>
+<td>サブネット1</td>
+<td><code>p-pm-pri-sub-002-002a</code>（<code>192.168.225.64/27</code>、<code>ap-northeast-1a</code>）</td>
+</tr>
+<tr>
+<td>サブネット2</td>
+<td><code>p-pm-pri-sub-002-002c</code>（<code>192.168.225.96/27</code>、<code>ap-northeast-1c</code>）</td>
+</tr>
+<tr>
+<td>初期ADサイト名</td>
+<td><code>Default-First-Site-Name</code></td>
+</tr>
+</tbody></table>
+<p>2つのサブネットが同一のネットワークタイプで、異なるアベイラビリティゾーンに配置されていることを確認し、「次へ」を選択する</p>
+<figure class="screenshot-wide"><figcaption>VPCとサブネットの選択</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-managed-ad/009-vpcとサブネットの選択.png" alt="VPCとサブネットの選択" width="1616" height="1304" loading="lazy"></div></figure>
+
+
+
+<p><strong>画像内の番号</strong></p>
+<ul>
+<li>① VPCで <code>p-pm-vpc-002</code> を選択する</li>
+<li>② ネットワークタイプで「IPv4のみ」を選択する</li>
+<li>③ 1つ目のサブネットに <code>p-pm-pri-sub-002-002a</code>（<code>ap-northeast-1a</code>）を選択する</li>
+<li>④ 2つ目のサブネットに <code>p-pm-pri-sub-002-002c</code>（<code>ap-northeast-1c</code>）を選択する</li>
+<li>⑤ 「次へ」を選択して、確認画面へ進む</li>
+</ul>
+<h4 id="設定内容を確認して作成する">設定内容を確認して作成する</h4>
+<p>「確認と作成」画面で、次の内容を確認する</p>
+<ul>
+<li>ディレクトリタイプが「Microsoft AD」であること</li>
+<li>エディションが「Standard」であること</li>
+<li>オペレーティングシステムのバージョンが「Windows Server 2019」であること</li>
+<li>DNS名が <code>p-pm.example.com</code> であること</li>
+<li>NetBIOS名が <code>p-pm</code> であること</li>
+<li>VPCが <code>p-pm-vpc-002</code> であること</li>
+<li>サブネットが <code>p-pm-pri-sub-002-002a</code> と <code>p-pm-pri-sub-002-002c</code> であること</li>
+<li>画面に表示される料金および無料利用枠の条件を確認したこと</li>
+</ul>
+<p>内容に問題がなければ、「ディレクトリの作成」を選択する</p>
+<figure class="screenshot-wide"><figcaption>ディレクトリ作成前の設定確認</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-managed-ad/010-ディレクトリ作成前の設定確認.png" alt="ディレクトリ作成前の設定確認" width="1616" height="1304" loading="lazy"></div></figure>
+
+
+
+<p><strong>画像内の番号</strong></p>
+<ul>
+<li>① 表示された設定内容と料金を確認し、問題がなければ「ディレクトリの作成」を選択する</li>
+</ul>
+<h3 id="作成完了を確認する">作成完了を確認する</h3>
+<ol>
+<li>ディレクトリ一覧で、作成したディレクトリのステータスを確認</li>
+<li>ステータスは通常「リクエスト済み（Requested）」から「作成中（Creating）」へ遷移します。通常、作成には20～45分程度かかりますが、システム負荷により変動</li>
+<li>ステータスが「アクティブ」になったことを確認</li>
+<li>ディレクトリの詳細画面を開き、次の情報を作業記録へ記載</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>確認項目</th>
+<th>確認内容</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>ディレクトリID</td>
+<td>AWSが発行したディレクトリID</td>
+</tr>
+<tr>
+<td>ステータス</td>
+<td>アクティブ</td>
+</tr>
+<tr>
+<td>DNS名</td>
+<td><code>p-pm.example.com</code></td>
+</tr>
+<tr>
+<td>DNSアドレス</td>
+<td>作成された2つのDNS IPアドレス</td>
+</tr>
+<tr>
+<td>VPC</td>
+<td><code>p-pm-vpc-002</code></td>
+</tr>
+<tr>
+<td>サブネット</td>
+<td><code>p-pm-pri-sub-002-002a</code>、<code>p-pm-pri-sub-002-002c</code></td>
+</tr>
+</tbody></table>
+<figure class="screenshot-wide"><figcaption>ディレクトリ作成完了</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-managed-ad/011-ディレクトリ作成完了.png" alt="ディレクトリ作成完了" width="1622" height="292" loading="lazy"></div></figure>
+
+
+
+<p><strong>画像の見方</strong></p>
+<ul>
+<li>赤枠のステータスが「アクティブ」であることを確認します。この画像では、確認対象をステータスだけに絞っている</li>
+</ul>
+<p>証跡として、一覧画面に加えてディレクトリの詳細画面も取得し、DNS名、2つのDNS IP、VPC、2つのサブネットとAZ、ネットワークタイプ、およびAWSが作成したセキュリティグループを確認する</p>
+<p>「失敗（Failed）」になった場合は、前提条件とネットワーク設定を再確認したうえで失敗したディレクトリを削除する。問題が継続する場合はAWSサポートへ問い合わせる。「障害（Impaired）」が40分以上継続する場合も、トラブルシューティング後にAWSサポートへ問い合わせる</p>
+<h3 id="留意事項">留意事項</h3>
+<ul>
+<li><code>Admin</code>パスワードは再表示できない。忘れた場合はDirectory Serviceからパスワードをリセットする</li>
+<li>デフォルトドメインポリシーでは、<code>Admin</code>を含むユーザーのパスワード最長有効期間は42日である。期限切れを防ぐため、運用開始時にパスワード変更・保管・期限管理の担当者と手順を決定する</li>
+<li>ディレクトリが存在する間は、使用中のVPCおよびサブネットを削除・変更しない</li>
+<li>Directory Serviceが作成したENIは、VPCとドメインコントローラー間の接続に必要であるため削除しない</li>
+<li>Directory Serviceが作成したセキュリティグループを変更する場合は、ドメインコントローラーとの通信を遮断しないよう影響を確認する</li>
+<li>料金や無料利用枠は変更される可能性があるため、作成時にAWSマネジメントコンソールへ表示された内容を確認する</li>
+<li>管理用EC2、Amazon WorkSpaces、VPCエンドポイント、Amazon FSxなどの接続設定は、ディレクトリが「アクティブ」になった後に個別の手順で実施する</li>
+</ul>
+<hr>
+
+<h2 id="aws-directory-serviceによるユーザーおよびグループメンバーシップ管理手順">AWS Directory Serviceによるユーザーおよびグループメンバーシップ管理手順</h2>
+<h3 id="文書の位置づけ">文書の位置づけ</h3>
+<p>本書では、AWS Managed Microsoft ADのユーザーと、既存グループに対するメンバーシップをAWS Directory Serviceのマネジメントコンソールから管理する手順を記載する</p>
+<p>対象となる操作は次のとおり</p>
+<ol>
+<li>「ユーザーとグループの管理」機能を有効化</li>
+<li>ユーザーを新規作成</li>
+<li>既存ユーザーを既存グループへ追加</li>
+<li>既存ユーザーをグループから削除</li>
+<li>ユーザーアカウントを削除</li>
+</ol>
+<p>グループオブジェクト自体の作成・更新・削除、およびActive Directoryユーザーとコンピューター（ADUC）から行う操作は本書の対象外とする。各操作は作業申請に応じて個別に実施し、申請されていない章は実施しない</p>
+<div class="callout callout-warning"><p><strong>重要</strong></p>
+<p>図12・図13は、検証時に<code>Admin</code>と<code>sampleadmin</code>の2ユーザーを<code>AWS Delegated FSx Administrators</code>へ追加した画面である。このグループはFSx管理権限を付与する高権限グループであり、図の状態は一般ユーザー向けの推奨構成ではない。本番では、承認済みの対象ユーザーだけを、業務上必要な最小権限のグループへ追加する</p>
+</div>
+<h3 id="前提条件-2">前提条件</h3>
+<ul>
+<li>対象がAWS Managed Microsoft ADであり、ディレクトリのステータスが「アクティブ」であること</li>
+<li>Directory Service Dataに対応するリージョンであり、対象ディレクトリのプライマリリージョンから操作すること</li>
+<li>Directory ID、DNS名、リージョンおよび作業対象が、承認済みの申請内容と一致していること</li>
+<li>ユーザー削除または高権限グループへの追加は、対象者、理由、承認者および実施日時を記録していること</li>
+<li>パスワードを本書、作業チケット、チャット、コマンド履歴および画面キャプチャへ記録しないこと</li>
+<li>作業後にCloudTrailの管理イベントと変更後の一覧を確認できること</li>
+</ul>
+<h4 id="iam権限">IAM権限</h4>
+<p>IAM権限とActive Directory内のグループ権限は別物である。AWSマネジメントコンソールを操作できても、Active Directoryの管理権限が自動的に付与されることはない。逆も同様である</p>
+<p>日常運用へ<code>AWSDirectoryServiceDataFullAccess</code>を一律に付与せず、対象Directory ARNへ必要なアクションだけを許可する</p>
+<table>
+<thead>
+<tr>
+<th>役割</th>
+<th>主なアクション例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>機能の状態確認</td>
+<td><code>ds:DescribeDirectories</code>、<code>ds:DescribeDirectoryDataAccess</code></td>
+</tr>
+<tr>
+<td>機能の有効化</td>
+<td>上記に加えて<code>ds:EnableDirectoryDataAccess</code></td>
+</tr>
+<tr>
+<td>機能の無効化</td>
+<td>必要時のみ<code>ds:DisableDirectoryDataAccess</code></td>
+</tr>
+<tr>
+<td>ユーザー参照・作成</td>
+<td><code>ds:AccessDSData</code>、<code>ds-data:ListUsers</code>、<code>ds-data:DescribeUser</code>、<code>ds-data:CreateUser</code></td>
+</tr>
+<tr>
+<td>グループ参照・メンバー操作</td>
+<td><code>ds:AccessDSData</code>、<code>ds-data:ListGroups</code>、<code>ds-data:DescribeGroup</code>、<code>ds-data:ListGroupMembers</code>、<code>ds-data:AddGroupMember</code>、<code>ds-data:RemoveGroupMember</code></td>
+</tr>
+<tr>
+<td>ユーザー削除</td>
+<td><code>ds:AccessDSData</code>、参照系アクション、<code>ds-data:DeleteUser</code></td>
+</tr>
+</tbody></table>
+<p>削除権限は、参照・作成・メンバー操作の担当権限から分離することを推奨する</p>
+<h3 id="aws-managed-microsoft-adの管理上の注意">AWS Managed Microsoft ADの管理上の注意</h3>
+<h4 id="adminとadministrator"><code>Admin</code>と<code>Administrator</code></h4>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th><code>Admin</code></th>
+<th><code>Administrator</code></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>管理主体</td>
+<td>お客様</td>
+<td>AWS</td>
+</tr>
+<tr>
+<td>用途</td>
+<td>お客様用OUとAWSから委任された範囲の管理</td>
+<td>AWSによるディレクトリ運用</td>
+</tr>
+<tr>
+<td>Domain Admins / Enterprise Admins</td>
+<td>メンバーではない</td>
+<td>AWSが排他的に管理する組み込み高特権アカウント</td>
+</tr>
+<tr>
+<td>お客様による利用</td>
+<td>初期設定・緊急時。日常運用は個人識別できる管理ユーザーを推奨</td>
+<td>利用・変更しない</td>
+</tr>
+</tbody></table>
+<p><code>Admin</code>のパスワードは後から取得できない。リセットを行う場合は、対象アカウントが無効化されていたときに再び有効となる仕様があるため、リセット後にアカウント状態を確認する</p>
+<h4 id="awsが管理するオブジェクト">AWSが管理するオブジェクト</h4>
+<ul>
+<li><code>AWS Reserved</code> OU内の<code>AWS_</code>で始まるアカウント、<code>krbtgt</code>および<code>Administrator</code>は変更しない</li>
+<li><code>AWS Delegated Groups</code>はOU名であり、その配下に用途別の<code>AWS Delegated ...</code>グループがある</li>
+<li><code>AWS Delegated Administrators</code>は非常に強い委任管理権限を持つ。一般ユーザーへ付与しない</li>
+<li><code>AWS Delegated FSx Administrators</code>はFSx管理用の高権限グループである。FSx管理担当者以外へ付与しない</li>
+<li>既存のグループの入れ子関係は、ユーザー追加・削除作業と分けて管理する。図11に表示される既存の<code>AWS Delegated Administrators</code>グループは、本作業で変更しない</li>
+<li>既定オブジェクトとして確認できない環境固有グループは、所有者と用途が確定するまで変更しない</li>
+</ul>
+<h4 id="パスワードポリシー">パスワードポリシー</h4>
+<p>AWS Managed Microsoft ADの既定ドメインポリシーでは、パスワードの最大有効期間は42日であり、<code>Admin</code>にも適用される。Fine-Grained Password Policy（FGPP）が割り当てられている場合は、その実効ポリシーが優先される</p>
+<p>ユーザー作成前に、次を運用記録へ残す</p>
+<ul>
+<li>適用されるパスワードポリシー</li>
+<li>初期パスワードの安全な受け渡し方法</li>
+<li>初回変更の要否</li>
+<li>有効期限の監視担当者と次回更新予定日</li>
+</ul>
+<h3 id="検証画面の値">検証画面の値</h3>
+<p>本書の画像は画面遷移を説明する検証例であり、本番作業時は承認された値へ読み替える</p>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>検証画像の値</th>
+<th>本番での扱い</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>新規作成ユーザー</td>
+<td><code>sampleadmin</code></td>
+<td>申請されたログイン名</td>
+</tr>
+<tr>
+<td>グループ追加の画像</td>
+<td><code>Admin</code>、<code>sampleadmin</code></td>
+<td>承認されたユーザーだけを選択</td>
+</tr>
+<tr>
+<td>グループ削除の画像</td>
+<td><code>sampleadmin</code></td>
+<td>削除申請されたメンバーだけを選択</td>
+</tr>
+<tr>
+<td>ユーザー削除の画像</td>
+<td><code>samplework</code></td>
+<td>削除申請されたユーザー</td>
+</tr>
+<tr>
+<td>ユーザー作成時の所属グループ</td>
+<td><code>AWS Delegated Administrators</code></td>
+<td>承認された場合だけ選択。本番の一般ユーザーには付与しない</td>
+</tr>
+<tr>
+<td>グループ追加の対象</td>
+<td><code>AWS Delegated FSx Administrators</code></td>
+<td>申請された最小権限グループ</td>
+</tr>
+<tr>
+<td>グループ削除の対象</td>
+<td><code>AWS Delegated Administrators</code></td>
+<td>削除申請されたグループ</td>
+</tr>
+<tr>
+<td>メールアドレス</td>
+<td><code>t_hashimoto@example.com</code></td>
+<td>必要な場合だけ承認済みの値を入力</td>
+</tr>
+</tbody></table>
+<h3 id="ユーザーとグループの管理機能を有効化する">ユーザーとグループの管理機能を有効化する</h3>
+<p>この操作は対象ディレクトリで一度だけ行う初期設定である。作業のたびに有効化し直す必要はない</p>
+<h4 id="操作手順">操作手順</h4>
+<ol>
+<li>AWSマネジメントコンソールへサインイン</li>
+<li>対象ディレクトリのプライマリリージョンを選択</li>
+<li>Directory Serviceの「ディレクトリ」を開く</li>
+<li>Directory ID、DNS名、ディレクトリタイプおよびステータスを照合し、対象ディレクトリを選択</li>
+</ol>
+<figure class="screenshot-wide"><figcaption>対象のAWS Managed Microsoft ADを選択</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-managed-ad/012-対象のaws-managed-microsoft-adを選択.png" alt="対象のAWS Managed Microsoft ADを選択" width="1616" height="1304" loading="lazy"></div></figure>
+
+
+
+<p><strong>画像内の番号</strong></p>
+<ul>
+<li>① 対象行の情報を照合したうえで、ディレクトリIDのリンクを選択して詳細画面を開く</li>
+</ul>
+<ol start="5">
+<li>「ユーザー」タブを選択</li>
+<li>「ユーザーとグループの管理」が「無効」であることを確認し、「有効にする」を選択</li>
+</ol>
+<figure class="screenshot-wide"><figcaption>ユーザーとグループの管理機能が無効である状態</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-managed-ad/013-ユーザーとグループの管理機能が無効である状態.png" alt="ユーザーとグループの管理機能が無効である状態" width="1616" height="1304" loading="lazy"></div></figure>
+
+
+
+<p><strong>画像内の番号</strong></p>
+<ul>
+<li>① 「有効にする」を選択して、確認ダイアログを表示する</li>
+</ul>
+<ol start="7">
+<li>確認ダイアログの対象を確認し、「有効にする」を選択</li>
+</ol>
+<figure class="screenshot-wide aws-console-identity"><figcaption>ユーザーとグループの管理機能の有効化確認</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-managed-ad/014-ユーザーとグループの管理機能の有効化確認.png" alt="ユーザーとグループの管理機能の有効化確認" width="1616" height="1304" loading="lazy"></div></figure>
+
+
+
+<p><strong>画像内の番号</strong></p>
+<ul>
+<li>① ダイアログの説明と対象ディレクトリを確認し、「有効にする」を選択する</li>
+</ul>
+<ol start="8">
+<li>「ユーザーとグループの管理」が「有効」と表示されることを確認</li>
+<li>「ユーザー」タブに一覧と「ユーザーを作成」が表示されることを確認</li>
+</ol>
+<figure class="screenshot-wide"><figcaption>ユーザーとグループの管理機能の有効化完了</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-managed-ad/015-ユーザーとグループの管理機能の有効化完了.png" alt="ユーザーとグループの管理機能の有効化完了" width="1616" height="1304" loading="lazy"></div></figure>
+
+
+
+<p><strong>画像内の番号</strong></p>
+<ul>
+<li>① 「ユーザーを作成」ボタンが表示されていることを確認します。引き続きユーザーを作成する場合は、このボタンを選択する</li>
+</ul>
+<h4 id="期待結果と戻し方">期待結果と戻し方</h4>
+<ul>
+<li>管理機能が「有効」と表示され、ユーザーとグループを参照できること</li>
+<li>誤って有効化した場合は、Directory Service Dataを利用する運用・自動処理がないことを確認し、同じ詳細画面から無効化する</li>
+</ul>
+<h3 id="ユーザーを新規作成する">ユーザーを新規作成する</h3>
+<h4 id="作成前の確認">作成前の確認</h4>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>確認内容</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>ユーザーログイン名</td>
+<td>ディレクトリ内で一意、20文字以内、命名規則に合致していること</td>
+</tr>
+<tr>
+<td>氏名・表示名</td>
+<td>作業申請と一致していること</td>
+</tr>
+<tr>
+<td>メールアドレス</td>
+<td>必要な場合だけ入力し、承認された値であること</td>
+</tr>
+<tr>
+<td>初期パスワード</td>
+<td>実効パスワードポリシーを満たし、安全に受け渡せること</td>
+</tr>
+<tr>
+<td>所属グループ</td>
+<td>業務上必要な最小権限だけであること</td>
+</tr>
+</tbody></table>
+<p>ユーザーログイン名は作成後に変更できないため、確定前に綴りと命名規則を再確認する</p>
+<h4 id="操作手順-2">操作手順</h4>
+<ol>
+<li>対象ディレクトリの「ユーザー」タブで「ユーザーを作成」を選択</li>
+<li>ユーザーログイン名と初期パスワードを入力</li>
+<li>必要に応じて氏名、表示名、説明および連絡先を入力</li>
+<li>パスワードが伏字であることを確認し、「次へ」を選択</li>
+</ol>
+<figure class="screenshot-wide aws-console-identity"><figcaption>新規ユーザーの詳細入力</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-managed-ad/016-新規ユーザーの詳細入力.png" alt="新規ユーザーの詳細入力" width="1616" height="1297" loading="lazy"></div></figure>
+
+
+
+<p><strong>画像内の番号</strong></p>
+<ul>
+<li>① 申請されたユーザーログイン名を入力します。作成後は変更できないため、綴りと命名規則を確認する</li>
+<li>② 初期パスワードを入力します。パスワードは画面上で伏字になる</li>
+<li>③ 確認用として、②と同じパスワードを再入力する</li>
+<li>④ 必要に応じて、申請された「名」を入力する</li>
+<li>⑤ 必要に応じて、申請された「姓」を入力する</li>
+<li>⑥ 必要に応じて、申請された表示名を入力する</li>
+</ul>
+<ol start="5">
+<li>「ユーザーをグループに追加」で、申請されたグループだけを選択します。作成時に権限付与しない場合は、グループを選択せずに進む</li>
+<li>「次へ」を選択</li>
+</ol>
+<figure class="screenshot-wide"><figcaption>新規ユーザーの所属グループ選択</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-managed-ad/017-新規ユーザーの所属グループ選択.png" alt="新規ユーザーの所属グループ選択" width="1718" height="1304" loading="lazy"></div></figure>
+
+
+
+<p><strong>画像内の番号</strong></p>
+<ul>
+<li>① 申請された所属グループだけを選択します。検証画像では <code>AWS Delegated Administrators</code> を選択している</li>
+<li>② 選択内容を確認して「次へ」を選択する</li>
+</ul>
+<div class="callout callout-warning"><p><strong>重要</strong></p>
+<p>検証画像で選択している<code>AWS Delegated Administrators</code>は、強い委任管理権限を持つグループです。本番では、承認された場合を除き一般ユーザーへ付与しない</p>
+</div>
+<ol start="7">
+<li>確認画面で、ログイン名、氏名、表示名、メールアドレスおよび所属予定グループを照合</li>
+<li>内容に問題がなければ「ユーザーを作成」を選択</li>
+</ol>
+<figure class="screenshot-wide"><figcaption>新規ユーザー作成内容の確認</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-managed-ad/018-新規ユーザー作成内容の確認.png" alt="新規ユーザー作成内容の確認" width="1718" height="1304" loading="lazy"></div></figure>
+
+
+
+<p><strong>画像内の番号</strong></p>
+<ul>
+<li>① ユーザーログイン名、氏名および表示名を申請内容と照合する</li>
+<li>② 所属予定グループを申請内容と照合する</li>
+<li>③ 内容に問題がなければ「ユーザーを作成」を選択する</li>
+</ul>
+<ol start="9">
+<li>作成成功メッセージと、ユーザー一覧のステータス「有効」を確認</li>
+</ol>
+<figure class="screenshot-wide"><figcaption>新規ユーザー作成完了</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-managed-ad/019-新規ユーザー作成完了.png" alt="新規ユーザー作成完了" width="1718" height="1304" loading="lazy"></div></figure>
+
+
+
+<p><strong>画像の見方</strong></p>
+<ul>
+<li>上部の作成成功メッセージと、ユーザー一覧に表示された対象ユーザーおよびステータス「有効」を確認する</li>
+</ul>
+<ol start="10">
+<li>グループを指定した場合は、ユーザー詳細または対象グループのメンバー一覧で所属を確認</li>
+</ol>
+<figure class="screenshot-wide"><figcaption>ユーザー詳細とグループメンバーシップの確認</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-managed-ad/020-ユーザー詳細とグループメンバーシップの確認.png" alt="ユーザー詳細とグループメンバーシップの確認" width="1616" height="1297" loading="lazy"></div></figure>
+
+
+
+<p><strong>画像の見方</strong></p>
+<ul>
+<li>赤枠内で、選択中のグループメンバーシップを確認します。本番では、申請された最小権限のグループだけが選択されていることを確認します。検証画像の<code>AWS Delegated FSx Administrators</code>は高権限グループ</li>
+</ul>
+<div class="callout callout-info"><strong>ℹ️ 確認事項</strong><p>図9上部の「1人のメンバーが正常に追加されました」はグループメンバー追加の結果です。ユーザー作成の完了は、図8の作成成功メッセージとユーザー一覧で確認する</p>
+</div>
+<h4 id="期待結果と注意事項">期待結果と注意事項</h4>
+<ul>
+<li>申請されたログイン名のアカウントが1件だけ作成され、ステータスが「有効」であること</li>
+<li>指定した場合だけ、承認済みグループのメンバーになっていること</li>
+<li>ADレプリケーションにより表示が遅れることがある。未反映時は更新して待機し、CloudTrailと一覧で結果を確認するまで同じ作成操作を再実行しない</li>
+<li>パスワード入力中の画面を撮影しない。撮影する場合は伏字であることを必ず確認する</li>
+</ul>
+<h3 id="既存ユーザーをグループへ追加する">既存ユーザーをグループへ追加する</h3>
+<h4 id="操作手順-3">操作手順</h4>
+<ol>
+<li>対象ディレクトリの「グループ」タブを開く</li>
+<li>申請されたグループ名を検索</li>
+</ol>
+<figure class="screenshot-wide"><figcaption>追加先グループの検索</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-managed-ad/021-追加先グループの検索.png" alt="追加先グループの検索" width="1616" height="1297" loading="lazy"></div></figure>
+
+
+
+<p><strong>画像内の番号</strong></p>
+<ul>
+<li>① 検索条件に、申請された対象グループ名が指定されていることを確認する</li>
+<li>② 検索結果から対象グループ名のリンクを選択して、詳細画面を開く</li>
+</ul>
+<ol start="3">
+<li>グループを選択し、識別名、SID、グループタイプ、グループの範囲および既存メンバーを確認</li>
+<li>「メンバーを追加」から「ユーザーを追加」を選択</li>
+</ol>
+<figure class="screenshot-wide"><figcaption>対象グループでユーザーを追加を選択</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-managed-ad/022-対象グループでユーザーを追加を選択.png" alt="対象グループでユーザーを追加を選択" width="1616" height="1297" loading="lazy"></div></figure>
+
+
+
+<p><strong>画像内の番号</strong></p>
+<ul>
+<li>① 「メンバーを追加」を選択して、追加方法のメニューを開く</li>
+<li>② 「ユーザーを追加」を選択します。「グループを追加」は選択しないでください</li>
+</ul>
+<ol start="5">
+<li>申請されたユーザーを検索し、ログイン名、氏名およびステータスを照合</li>
+<li>「選択したユーザー」に、承認済みの対象ユーザーだけが表示されていることを確認</li>
+<li>「ユーザーをグループに追加」を選択</li>
+</ol>
+<figure class="screenshot-wide"><figcaption>グループへ追加する既存ユーザーの選択</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-managed-ad/023-グループへ追加する既存ユーザーの選択.png" alt="グループへ追加する既存ユーザーの選択" width="1616" height="1297" loading="lazy"></div></figure>
+
+
+
+<p><strong>画像内の番号</strong></p>
+<ul>
+<li>① 検証では <code>Admin</code> を選択しています。本番では、承認済みの場合だけ対象ユーザーを選択する</li>
+<li>② 検証では <code>sampleadmin</code> を選択しています。本番では、申請されたユーザーだけを選択する</li>
+<li>③ 「選択したユーザー」に、追加対象のユーザーだけが表示されていることを確認する</li>
+<li>④ 対象に誤りがなければ「ユーザーをグループに追加」を選択する</li>
+</ul>
+<ol start="8">
+<li>成功メッセージと、追加後のメンバー一覧を確認</li>
+</ol>
+<figure class="screenshot-wide"><figcaption>ユーザーのグループ追加完了</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-managed-ad/024-ユーザーのグループ追加完了.png" alt="ユーザーのグループ追加完了" width="1616" height="1297" loading="lazy"></div></figure>
+
+
+
+<p><strong>画像内の番号</strong></p>
+<ul>
+<li>① メンバーの追加成功メッセージを確認する</li>
+<li>② 検証で追加した <code>Admin</code> がメンバー一覧に表示されていることを確認する</li>
+<li>③ 検証で追加した <code>sampleadmin</code> がメンバー一覧に表示されていることを確認します。本番では、承認済みユーザーだけが追加されていることを確認する</li>
+</ul>
+<h4 id="期待結果と戻し方-2">期待結果と戻し方</h4>
+<ul>
+<li>承認された対象ユーザーだけが対象グループへ追加されていること</li>
+<li>対象外ユーザーと既存の子グループを含め、他のメンバー構成が変更されていないこと</li>
+<li>未反映時は更新して待機し、状態確認前に同じ追加操作を繰り返さない</li>
+<li>誤追加した場合は対象と結果を記録し、次章に従って誤ったユーザーだけを削除する</li>
+</ul>
+<h3 id="ユーザーをグループから削除する">ユーザーをグループから削除する</h3>
+<p>この操作はグループメンバーシップだけを削除し、ユーザーアカウント自体は残す</p>
+<h4 id="操作手順-4">操作手順</h4>
+<ol>
+<li>対象ディレクトリの「グループ」タブで、申請されたグループを開く</li>
+<li>「メンバー」タブで、削除対象のログイン名とメンバータイプが「ユーザー」であることを確認</li>
+<li>削除対象ユーザーだけを選択し、グループ名とユーザーログイン名を再確認</li>
+</ol>
+<figure class="screenshot-wide"><figcaption>グループメンバー削除直前</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-managed-ad/025-グループメンバー削除直前.png" alt="グループメンバー削除直前" width="1718" height="1304" loading="lazy"></div></figure>
+
+
+
+<p><strong>画像内の番号</strong></p>
+<ul>
+<li>① 削除申請されたユーザーだけを選択します。検証画像では <code>sampleadmin</code> を選択している</li>
+<li>② 対象に誤りがなければ「削除」を選択します。この操作で削除されるのはグループメンバーシップであり、ユーザーアカウントではない</li>
+</ul>
+<div class="callout callout-warning"><p><strong>重要</strong></p>
+<p>この画面では「削除」を選択した後に確認ダイアログは表示されず、グループメンバーシップの削除が直ちに実行されます。「削除」を選択する前に、対象グループと対象ユーザーを必ず再確認してください</p>
+</div>
+<ol start="4">
+<li>対象に誤りがない場合だけ「削除」を選択</li>
+<li>成功メッセージと削除後のメンバー一覧を確認</li>
+</ol>
+<figure class="screenshot-wide"><figcaption>グループメンバー削除完了</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-managed-ad/026-グループメンバー削除完了.png" alt="グループメンバー削除完了" width="1718" height="1304" loading="lazy"></div></figure>
+
+
+
+<p><strong>画像の見方</strong></p>
+<ul>
+<li>上部の削除成功メッセージを確認する</li>
+<li>削除後の一覧を確認し、対象ユーザーだけが消え、その他のユーザーや子グループが残っていることを確認する</li>
+</ul>
+<ol start="6">
+<li>「ユーザー」タブで対象ユーザーを検索し、アカウント自体が残っていることを確認</li>
+</ol>
+<h4 id="期待結果と戻し方-3">期待結果と戻し方</h4>
+<ul>
+<li>対象ユーザーが指定グループに表示されず、ユーザーアカウントは残っていること</li>
+<li>対象外ユーザーと既存の子グループが変更されていないこと</li>
+<li>誤削除した場合は申請と作業記録を確認し、前章に従って対象グループへ再追加する</li>
+<li>グループから削除すると、そのグループから継承した権限を失う。関連サービスでは再サインイン後の確認が必要になる場合がある</li>
+</ul>
+<h3 id="ユーザーアカウントを削除する">ユーザーアカウントを削除する</h3>
+<h4 id="削除前の確認">削除前の確認</h4>
+<table>
+<thead>
+<tr>
+<th>確認項目</th>
+<th>確認内容</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>対象</td>
+<td>ログイン名、表示名、氏名が申請と一致していること</td>
+</tr>
+<tr>
+<td>状態</td>
+<td>有効・無効の状態と最終利用状況を確認したこと</td>
+</tr>
+<tr>
+<td>復旧情報</td>
+<td>SIDと全グループメンバーシップを保存したこと</td>
+</tr>
+<tr>
+<td>関連サービス</td>
+<td>WorkSpaces、FSx、共有フォルダー、バッチ、サービスアカウントなどで未使用であること</td>
+</tr>
+<tr>
+<td>退職・異動運用</td>
+<td>削除前の無効化期間やデータ引継ぎを完了したこと</td>
+</tr>
+<tr>
+<td>承認</td>
+<td>削除対象と実施日時が承認済みであること</td>
+</tr>
+</tbody></table>
+<h4 id="操作手順-5">操作手順</h4>
+<ol>
+<li>対象ディレクトリの「ユーザー」タブを開く</li>
+<li>申請されたログイン名を検索し、削除対象ユーザーだけを選択</li>
+</ol>
+<figure class="screenshot-wide"><figcaption>削除対象ユーザーの選択</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-managed-ad/027-削除対象ユーザーの選択.png" alt="削除対象ユーザーの選択" width="1718" height="1304" loading="lazy"></div></figure>
+
+
+
+<p><strong>画像内の番号</strong></p>
+<ul>
+<li>① 削除申請されたユーザーだけを選択します。検証画像では <code>samplework</code> を選択している</li>
+</ul>
+<ol start="3">
+<li>「アクション」から「ユーザーアカウントを削除」を選択</li>
+</ol>
+<figure class="screenshot-wide"><figcaption>削除対象ユーザーと削除アクションの選択</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-managed-ad/028-削除対象ユーザーと削除アクションの選択.png" alt="削除対象ユーザーと削除アクションの選択" width="1718" height="1304" loading="lazy"></div></figure>
+
+
+
+<p><strong>画像内の番号</strong></p>
+<ul>
+<li>② 「アクション」を選択して、操作メニューを開く</li>
+<li>③ 「ユーザーアカウントを削除」を選択します。グループメンバーシップの削除とは異なり、ユーザーアカウント自体を削除する操作</li>
+</ul>
+<ol start="4">
+<li>確認ダイアログのログイン名と表示名を申請内容と照合</li>
+<li>ユーザー情報とアクセスに必要な情報が削除される旨を確認</li>
+<li>対象に誤りがなければ「ユーザーアカウントを削除」を選択</li>
+</ol>
+<figure class="screenshot-wide aws-console-identity"><figcaption>ユーザーアカウント削除前の最終確認</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-managed-ad/029-ユーザーアカウント削除前の最終確認.png" alt="ユーザーアカウント削除前の最終確認" width="1718" height="1304" loading="lazy"></div></figure>
+
+
+
+<p><strong>画像内の番号</strong></p>
+<ul>
+<li>④ 「ユーザーアカウントを削除」が最終確定ボタンです。ログイン名と表示名を申請内容と再照合し、対象に誤りがない場合だけ選択する</li>
+</ul>
+<ol start="7">
+<li>削除成功メッセージを確認</li>
+<li>「ユーザー」タブで対象ログイン名を検索し、一覧に表示されないことを確認</li>
+<li>CloudTrailで<code>DeleteUser</code>の結果を確認</li>
+</ol>
+<figure class="screenshot-wide"><figcaption>ユーザーアカウント削除完了</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-managed-ad/030-ユーザーアカウント削除完了.png" alt="ユーザーアカウント削除完了" width="1718" height="1304" loading="lazy"></div></figure>
+
+
+
+<p><strong>画像の見方</strong></p>
+<ul>
+<li>上部の削除成功メッセージを確認する</li>
+<li>ユーザー一覧を確認し、削除した<code>samplework</code>が表示されず、対象外のユーザーが残っていることを確認する</li>
+</ul>
+<h4 id="期待結果と復旧">期待結果と復旧</h4>
+<ul>
+<li>対象ユーザーだけが一覧から削除され、対象外ユーザーが残っていること</li>
+<li>未反映時は更新して待機し、状態確認前に削除を再実行しない</li>
+<li>誤削除時は追加変更を停止し、対象、時刻、SID、グループメンバーシップおよびCloudTrailイベントを運用責任者へ連絡する</li>
+<li>同じログイン名で新規作成してもSIDが変わるため、削除前のアクセス権は自動復旧しない。運用手順が整備されている場合は、管理用のドメイン参加端末からActive Directory Recycle Binによる復元を優先する</li>
+<li>ディレクトリのスナップショット復元はディレクトリ全体へ影響するため、単一ユーザーの通常復旧として実施しない。必要時はAWS Supportを含めて影響を評価する</li>
+</ul>
+<h3 id="監査証跡">監査証跡</h3>
+<p>Directory Service Dataのコンソール操作とAPI呼び出しは、CloudTrailの管理イベントとして記録される。作業チケットには次を記録する</p>
+<ul>
+<li>実施日時とIAMプリンシパル</li>
+<li>Directory ID</li>
+<li>対象ユーザーのSAMアカウント名</li>
+<li>対象グループ名</li>
+<li><code>CreateUser</code>、<code>AddGroupMember</code>、<code>RemoveGroupMember</code>、<code>DeleteUser</code>などのイベント名</li>
+<li>成否、<code>requestID</code>および<code>eventID</code></li>
+<li>変更前後の一覧または詳細画面</li>
+</ul>
+<p>CloudTrailでは<code>eventSource</code>が<code>ds.amazonaws.com</code>として記録される。イベント履歴で参照できる管理イベントは直近90日であるため、長期保管が必要な場合はTrailまたはCloudTrail Lakeを使用する。ADUCやActive Directory PowerShellからの直接操作はCloudTrailではなく、Directory Serviceのセキュリティログ転送など別の監査経路で確認する</p>
+<h3 id="作業完了確認">作業完了確認</h3>
+<p>申請された操作だけを「実施」とし、対象外の行は「対象外」と記録する</p>
+<table>
+<thead>
+<tr>
+<th align="right">No.</th>
+<th>作業種別</th>
+<th>期待結果</th>
+<th>実施状況</th>
+<th>結果</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="right">1</td>
+<td>管理機能の有効化</td>
+<td>管理機能が「有効」</td>
+<td><code>［実施 / 対象外］</code></td>
+<td><code>［記入］</code></td>
+</tr>
+<tr>
+<td align="right">2</td>
+<td>ユーザー作成</td>
+<td>申請どおりのユーザーが1件存在し「有効」</td>
+<td><code>［実施 / 対象外］</code></td>
+<td><code>［記入］</code></td>
+</tr>
+<tr>
+<td align="right">3</td>
+<td>グループへの追加</td>
+<td>承認対象だけが追加済み</td>
+<td><code>［実施 / 対象外］</code></td>
+<td><code>［記入］</code></td>
+</tr>
+<tr>
+<td align="right">4</td>
+<td>グループからの削除</td>
+<td>対象メンバーだけを削除し、ユーザーは存続</td>
+<td><code>［実施 / 対象外］</code></td>
+<td><code>［記入］</code></td>
+</tr>
+<tr>
+<td align="right">5</td>
+<td>ユーザー削除</td>
+<td>対象ユーザーだけが一覧から消えている</td>
+<td><code>［実施 / 対象外］</code></td>
+<td><code>［記入］</code></td>
+</tr>
+<tr>
+<td align="right">6</td>
+<td>他オブジェクトへの影響</td>
+<td>変更なし</td>
+<td><code>［実施］</code></td>
+<td><code>［記入］</code></td>
+</tr>
+<tr>
+<td align="right">7</td>
+<td>CloudTrail確認</td>
+<td>対象イベントの成功を確認</td>
+<td><code>［実施］</code></td>
+<td><code>［記入］</code></td>
+</tr>
+<tr>
+<td align="right">8</td>
+<td>パスワードの非記録</td>
+<td>本文・チケット・証跡に露出なし</td>
+<td><code>［実施］</code></td>
+<td><code>［記入］</code></td>
+</tr>
+</tbody></table>
+
+    </main>
+  </div>
+  <script src="../assets/app.js?v=20260908-skill-transfer1"></script>
+</body>
+</html>

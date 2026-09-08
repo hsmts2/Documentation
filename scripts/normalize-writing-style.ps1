@@ -9,11 +9,21 @@ $blockPattern = [regex]::new(
     "<(?<tag>p|li|td|th|strong|figcaption)(?:\s[^>]*)?>(?<body>.*?)</\k<tag>>",
     [System.Text.RegularExpressions.RegexOptions]::Singleline
 )
-$inlineClosingTags = "(?=(?:\s*</(?:a|code|strong|em|span)>)*\s*$)"
+$inlineClosingTags = "(?=(?:\s*</(?:a|code|strong|em|span|p)>)*\s*$)"
 $structuralClosingTags = "(?=(?:\s*</(?:a|code|strong|em|span)>)*\s*</(?:div|section|aside|main|article|h[1-6])>)"
 $fullStop = [string][char]0x3002
 
 $commonReplacements = @(
+    @{ From = "記載しております"; To = "記載する" },
+    @{ From = "読み替えます"; To = "読み替える" },
+    @{ From = "対応付けます"; To = "対応付ける" },
+    @{ From = "割り当てます"; To = "割り当てる" },
+    @{ From = "控えます"; To = "控える" },
+    @{ From = "閉じます"; To = "閉じる" },
+    @{ From = "進みません"; To = "進まない" },
+    @{ From = "扱いません"; To = "扱わない" },
+    @{ From = "待ちます"; To = "待機する" },
+    @{ From = "押します"; To = "押下する" },
     @{ From = "権限にします"; To = "権限へ制限" },
     @{ From = "戻します"; To = "戻す" },
     @{ From = "戻する"; To = "戻す" },
@@ -105,7 +115,9 @@ foreach ($file in $targetFiles) {
             $prefix = $content.Substring(0, $match.Index)
             $isOrderedListItem = $tag -eq "li" -and
                 $prefix.LastIndexOf("<ol") -gt $prefix.LastIndexOf("</ol>")
-            $isProcedure = $isOrderedListItem -or (
+            $isNestedOrderedListParagraph = $tag -eq "p" -and
+                $prefix.LastIndexOf("<ol") -gt $prefix.LastIndexOf("</ol>")
+            $isProcedure = $isOrderedListItem -or $isNestedOrderedListParagraph -or (
                 $tag -eq "p" -and
                 $match.Value -match '^<p[^>]*\bclass="[^"]*\bprocedure-step\b'
             )
@@ -128,7 +140,7 @@ foreach ($file in $targetFiles) {
                 $suruReplacement
             )
 
-            if ($isProcedure -and $tag -eq "p") {
+            if ($isProcedure) {
                 $body = [regex]::Replace(
                     $body,
                     [regex]::Escape("する") + $inlineClosingTags,

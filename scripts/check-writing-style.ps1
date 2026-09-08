@@ -54,6 +54,7 @@ $wrappedCodeBlockPattern = [regex]::new(
 
 foreach ($file in $htmlFiles) {
     $content = Get-Content -LiteralPath $file.FullName -Raw -Encoding UTF8
+    $usesNarrativeProcedureStyle = $content -match '<main class="content workspaces-skill-transfer-guide">'
 
     foreach ($match in $structuralPoliteEnding.Matches($content)) {
         $lineNumber = 1 + ([regex]::Matches($content.Substring(0, $match.Index), "`n")).Count
@@ -110,6 +111,7 @@ foreach ($file in $htmlFiles) {
         }
 
         if (
+            -not $usesNarrativeProcedureStyle -and
             ($isOrderedListItem -or $isProcedureStep) -and
             $textWithoutFullStop -match $procedureVerbEnding
         ) {

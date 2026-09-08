@@ -1,4 +1,4 @@
-param(
+﻿param(
     [switch]$Check
 )
 
@@ -31,6 +31,13 @@ $groups = @(
             [pscustomobject]@{ File = 'aws-cli-reference.html'; Label = 'AWS CLI コマンドリファレンス' }
             [pscustomobject]@{ File = 'eventbridge-scheduler.html'; Label = 'EventBridge Scheduler' }
             [pscustomobject]@{ File = 'amazon-workspaces.html'; Label = 'Amazon WorkSpaces' }
+            [pscustomobject]@{ File = 'workspaces-skill-transfer.html'; Label = 'Amazon WorkSpaces 技術移管' }
+            [pscustomobject]@{ File = 'workspaces-managed-ad.html'; Label = 'AWS Managed Microsoft AD 構築・管理' }
+            [pscustomobject]@{ File = 'workspaces-management-ec2.html'; Label = '管理用EC2・Active Directory管理' }
+            [pscustomobject]@{ File = 'workspaces-ad-connector.html'; Label = 'AD Connector 構築・権限委任' }
+            [pscustomobject]@{ File = 'workspaces-provisioning-gpo.html'; Label = 'Amazon WorkSpaces 構築・OU・GPO' }
+            [pscustomobject]@{ File = 'workspaces-image-bundle.html'; Label = 'WorkSpaces カスタムイメージ・バンドル' }
+            [pscustomobject]@{ File = 'workspaces-patch-manager.html'; Label = 'Systems Manager Patch Manager' }
             [pscustomobject]@{ File = 'amazon-ses.html'; Label = 'Amazon SES SMTPリレー' }
             [pscustomobject]@{ File = 'amazon-ses-monitoring.html'; Label = 'Amazon SES 配信監視' }
             [pscustomobject]@{ File = 'amazon-rds-blue-green.html'; Label = 'Amazon RDS Blue/Green Deployments' }
