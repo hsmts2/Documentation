@@ -229,6 +229,196 @@ const sanitizeMarkdown = (input) => {
   return value.trim();
 };
 
+const buildManagedAdArchitectureSummary = (sourceMarkdown) => {
+  const suffix = sourceMarkdown.match(/^## AWSとお客様の管理責任[\s\S]*$/m)?.[0] || "";
+  return `# 仕様
+
+AWS Managed Microsoft ADは、異なるアベイラビリティーゾーンへ2台の書き込み可能なドメインコントローラーを配置する
+
+2台とも通常時から認証、DNS、Kerberos、LDAP、グループポリシーを提供するため、主系／待機系の構成として扱わない
+
+## ドメインコントローラーの構成
+
+ディレクトリ作成時の2台は、可用性を確保するために削除できない **Required DC** として異なるアベイラビリティーゾーンへ配置される
+
+可用性、耐障害性または認証処理性能をさらに高める場合は **Additional DC** を追加できる
+
+| AWSコンソール上の区分 | 仕様 | 削除・縮退 |
+|---|---|---|
+| Required DC | ディレクトリ作成時にAWSが作成する初期2台 | 2台未満にはできない |
+| Additional DC | 必要に応じて追加する書き込み可能なDC | 合計2台を下限として削減可能 |
+
+AWS公式資料で初期2台を「primary and secondary domain controllers」と表現する場合がありますが、Active Directoryの処理方式が主系／待機系であることを示すものではない
+
+本資料では、誤解を避けるため **Required DC-1／Required DC-2** と表記する
+
+出典：[AWS公式：AWS Managed Microsoft ADで作成される内容](https://docs.aws.amazon.com/ja_jp/directoryservice/latest/admin-guide/ms_ad_getting_started_what_gets_created.html)
+
+出典：[AWS公式：追加のドメインコントローラーのデプロイ](https://docs.aws.amazon.com/ja_jp/directoryservice/latest/admin-guide/ms_ad_deploy_additional_dcs.html)
+
+## 処理方式とPDC Emulator
+
+AWS Managed Microsoft ADはマルチマスター方式で動作し、すべてのDCが書き込み可能です。ユーザーやコンピューターなどの変更は、DC間で相互にレプリケーションされる
+
+FSMOロールは競合を避ける必要がある一部処理を1台へ割り当てる仕組みであり、PDC Emulatorを保持するDCが認証全体の主系になるわけではない
+
+| PDC Emulatorの主な役割 | 仕様 |
+|---|---|
+| パスワード変更 | 最近変更されたパスワード情報を優先的にレプリケーションし、別DCで不一致となった場合の照会先になる |
+| アカウントロックアウト | ロックアウト関連処理の中心的な役割を持つ |
+| 時刻同期 | フォレストルートドメインの時刻基準になる |
+| GPO編集 | 既定のGPO変更先として使用される |
+
+DCのOS管理、FSMOロールの割り当ておよび障害時の復旧はAWSが管理するため、お客様がPDC Emulatorを主系として指定したり、通常運用でFSMOロールを移行したりしない
+
+出典：[AWS公式ホワイトペーパー：FSMOロールと書き込み可能なドメインコントローラー](https://docs.aws.amazon.com/whitepapers/latest/active-directory-domain-services/other-considerations.html)
+
+出典：[Microsoft公式：Windows Serverにおける操作マスター役割](https://learn.microsoft.com/ja-jp/windows-server/identity/ad-ds/manage/understand-fsmo-roles)
+
+## クライアントによるDCの選択
+
+WindowsクライアントやActive Directory対応アプリケーションは、次の流れで接続先DCを選択する
+
+1. DNSに登録されたLDAP、Kerberos、グローバルカタログおよびサイトのSRVレコードを照会
+2. 候補DCの応答とサイト／サブネット情報を基に、利用可能なDCを選択
+3. 選択結果を一定時間キャッシュし、応答しない場合は別のDCを再探索
+
+毎回2台へ単純にラウンドロビンする動作でも、DNSアドレスの1番目だけを常に使用する動作でもない
+
+アプリケーションから特定DCのホスト名やIPアドレスを固定せず、Windows DC Locatorを利用する
+
+出典：[Microsoft公式：Active Directoryドメインコントローラーの検索](https://learn.microsoft.com/ja-jp/windows-server/identity/ad-ds/manage/dc-locator)
+
+## レプリケーションと障害時の動作
+
+DC間では、Active Directoryオブジェクト、パスワードやグループメンバーシップ、Active Directory統合DNS、GPOおよびSYSVOL上のファイルをレプリケーションする
+
+| 項目 | 仕様 |
+|---|---|
+| クライアント接続 | 選択中のDCが応答しない場合、DC Locatorが別の利用可能なDCを再探索する |
+| 認証・名前解決 | ネットワークからもう1台へ到達できる場合、通常処理を継続できる構成となる |
+| AWSのメンテナンス | 必要な稼働DC数を同時に失わないよう、DCのパッチ適用をAWSが管理する |
+| DC障害 | AWSが障害DCを同じアベイラビリティーゾーン内で同じIPアドレスを使用して自動的に置き換える |
+| FSMO依存処理 | 特定ロールへ依存する一部処理では、一時的な遅延または制限が生じる可能性がある |
+
+アプリケーション側のDNSキャッシュ、DC選択のキャッシュ、接続タイムアウト、ネットワーク到達性によっては、一時的な遅延や再試行が発生するため、1台の障害時も必ず無瞬断・無影響とは限らない
+
+出典：[AWS公式：AWS Managed Microsoft ADの主要概念](https://docs.aws.amazon.com/ja_jp/directoryservice/latest/admin-guide/ms_ad_key_concepts.html)
+
+## パラメータ
+
+| パラメータ | 説明 |
+|---|---|
+| アベイラビリティーゾーン | \`ap-northeast-1a\`と\`ap-northeast-1c\`へDCを1台ずつ配置 |
+| DNS IPv4アドレス | \`192.168.225.68\`と\`192.168.225.126\`をディレクトリDNSとして使用 |
+
+![ディレクトリの2つのAZとDNSアドレス](<構成図/図2_ディレクトリの2AZとDNSアドレス.png>)
+
+**画像内の番号**
+
+- ① 2台のDCが配置される2つのアベイラビリティーゾーン
+- ② 2台のDCが提供する2つのDNS IPv4アドレス
+
+この画面だけでは、各DNS IPと各AZの1対1の対応は表示されない
+
+対応関係を確認する場合は、Directory Serviceの **スケールと共有** にあるドメインコントローラー一覧、またはAWS CLIの取得結果を使用する
+
+${suffix}`.trim();
+};
+
+const sourcePreviewMetadata = {
+  "https://docs.aws.amazon.com/ja_jp/directoryservice/latest/admin-guide/ms_ad_getting_started_what_gets_created.html": {
+    title: "AWS Managed Microsoft AD で作成される内容",
+    description: "ディレクトリ作成時にプロビジョニングされるドメインコントローラー、ネットワークインターフェイス、セキュリティグループおよび管理用オブジェクトを説明します。",
+    site: "AWS Documentation",
+    product: "AWS Directory Service",
+  },
+  "https://docs.aws.amazon.com/ja_jp/directoryservice/latest/admin-guide/ms_ad_deploy_additional_dcs.html": {
+    title: "AWS Managed Microsoft AD 用の追加のドメインコントローラーのデプロイ",
+    description: "可用性とパフォーマンスを高める追加ドメインコントローラーの配置、追加および削減方法を説明します。",
+    site: "AWS Documentation",
+    product: "AWS Directory Service",
+  },
+  "https://docs.aws.amazon.com/whitepapers/latest/active-directory-domain-services/other-considerations.html": {
+    title: "Other considerations - Active Directory Domain Services on AWS",
+    description: "Cloud is now the center of most enterprise IT strategies. Many enterprises find that a well-planned move to the cloud results in an immediate business payoff.",
+    site: "AWS Whitepapers",
+    product: "Active Directory on AWS",
+  },
+  "https://learn.microsoft.com/ja-jp/windows-server/identity/ad-ds/manage/understand-fsmo-roles": {
+    title: "Windows Server における操作マスター役割",
+    description: "Active Directory Domain Services（AD DS）における操作マスター（FSMO）役割とその適切な配置方法について説明します。",
+    author: "Orin-Thomas",
+    site: "Microsoft Learn",
+    product: "Windows Server",
+  },
+  "https://learn.microsoft.com/ja-jp/windows-server/identity/ad-ds/manage/dc-locator": {
+    title: "WindowsおよびWindows Serverでドメインコントローラーを検索する",
+    description: "クライアントがDNS、LDAP pingおよびサイト情報を使用して適切なドメインコントローラーを検出する流れを説明します。",
+    site: "Microsoft Learn",
+    product: "Windows Server",
+  },
+  "https://docs.aws.amazon.com/ja_jp/directoryservice/latest/admin-guide/ms_ad_key_concepts.html": {
+    title: "AWS Managed Microsoft ADの主要概念",
+    description: "ドメインコントローラー、サイト、パッチ適用および障害時の自動復旧など、サービス運用の主要概念を説明します。",
+    site: "AWS Documentation",
+    product: "AWS Directory Service",
+  },
+  "https://docs.aws.amazon.com/ja_jp/directoryservice/latest/admin-guide/ms_ad_best_practices.html": {
+    title: "AWS Managed Microsoft ADのベストプラクティス",
+    description: "ネットワーク、可用性、管理アカウントおよび運用に関する推奨事項をまとめています。",
+    site: "AWS Documentation",
+    product: "AWS Directory Service",
+  },
+  "https://docs.aws.amazon.com/ja_jp/directoryservice/latest/admin-guide/ms_ad_password_policies.html": {
+    title: "AWS Managed Microsoft ADのパスワードポリシー",
+    description: "既定のドメインパスワードポリシーと、きめ細かなパスワードポリシーを使用する際の設定を説明します。",
+    site: "AWS Documentation",
+    product: "AWS Directory Service",
+  },
+  "https://docs.aws.amazon.com/directoryservice/latest/admin-guide/ms_ad_manage_users_groups.html": {
+    title: "Manage users and groups in AWS Managed Microsoft AD",
+    description: "AWS Directory Service Dataを使用して、AWS Managed Microsoft ADのユーザーとグループを管理する方法を説明します。",
+    site: "AWS Documentation",
+    product: "AWS Directory Service",
+  },
+  "https://docs.aws.amazon.com/ja_jp/directoryservice/latest/admin-guide/ms_ad_create_user.html": {
+    title: "AWS Managed Microsoft ADユーザーの作成",
+    description: "AWS Directory Serviceコンソールから新しいユーザーを作成し、必要なグループへ所属させる手順を説明します。",
+    site: "AWS Documentation",
+    product: "AWS Directory Service",
+  },
+};
+
+const convertSourceLinksToCards = (body) => body.replace(
+  /<p>出典：<a href="(https?:\/\/[^\"]+)">([^<]+)<\/a><\/p>/g,
+  (_all, href, label) => {
+    const hostname = new URL(href).hostname.replace(/^www\./, "");
+    const provider = /(?:amazonaws\.com|aws\.amazon\.com)$/.test(hostname) ? "AWS" : /microsoft\.com$/.test(hostname) ? "Microsoft" : "公式資料";
+    const providerClass = provider === "AWS" ? "aws" : provider === "Microsoft" ? "microsoft" : "generic";
+    const metadata = sourcePreviewMetadata[href] || {
+      title: label.replace(/^(?:AWS公式(?:ホワイトペーパー)?|Microsoft公式)：/, ""),
+      description: "リンク先の公式資料で詳細な仕様と手順を確認できます。",
+      site: provider === "Microsoft" ? "Microsoft Learn" : provider === "AWS" ? "AWS Documentation" : hostname,
+      product: hostname,
+    };
+    const favicon = provider === "Microsoft"
+      ? '<span class="source-preview-favicon source-preview-favicon-microsoft" aria-hidden="true"></span>'
+      : provider === "AWS"
+        ? '<span class="source-preview-favicon source-preview-favicon-aws" aria-hidden="true">◇</span>'
+        : '<span class="source-preview-favicon source-preview-favicon-generic" aria-hidden="true">↗</span>';
+    const author = metadata.author
+      ? `<span class="source-preview-author"><span class="source-preview-avatar" aria-hidden="true">♙</span><span>作成元: ${htmlEscape(metadata.author)}</span></span>`
+      : "";
+    const art = provider === "Microsoft"
+      ? '<span class="source-preview-microsoft-lockup"><span class="source-preview-microsoft-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span><strong>Microsoft Learn</strong></span>'
+      : provider === "AWS"
+        ? '<span class="source-preview-aws-lockup"><strong>aws</strong><i aria-hidden="true"></i></span>'
+        : '<span class="source-preview-generic-lockup">公式資料</span>';
+    return `<a class="external-item source-preview-card source-preview-${providerClass}" href="${htmlEscape(href)}" target="_blank" rel="noopener noreferrer"><span class="source-preview-copy"><span class="source-preview-title-row">${favicon}<strong>${htmlEscape(metadata.title)}</strong></span>${author}<span class="source-preview-description">${htmlEscape(metadata.description)}</span><span class="source-preview-footer">${favicon}${htmlEscape(provider === "Microsoft" ? metadata.site : metadata.product)}</span></span><span class="source-preview-art" aria-hidden="true">${art}</span></a>`;
+  },
+);
+
 const isAwsConsoleScreenshot = async (imagePath) => {
   try {
     const image = sharp(imagePath);
@@ -312,6 +502,7 @@ const transformDocument = async (key, pageAssetFolder, sequenceStart) => {
   }
 
   if (key === "managedAdArchitecture") {
+    markdown = buildManagedAdArchitectureSummary(markdown);
     markdown = markdown.replace(
       /^!\[(?:2台のドメインコントローラー構成と役割|AWS公式の複数AZドメインコントローラー構成|Microsoft公式のAD DSレプリケーション概念)\]\((?:<[^>]+>|[^)]+)\)\s*$/gm,
       "",
@@ -450,6 +641,17 @@ for (const page of pageSpecs) {
     sections.push(transformed.markdown);
   }
   let body = marked.parse(sections.join("\n\n<hr>\n\n"), { renderer, gfm: true });
+  if (page.file === "workspaces-managed-ad.html") {
+    body = body.replace(
+      /<p><strong>目次<\/strong><\/p>\s*<!-- Confluenceでは、この位置に目次マクロを配置する -->/g,
+      "",
+    );
+    body = body.replace(
+      '<a href="workspaces-managed-ad.html">AWS Managed Microsoft ADの2台ドメインコントローラー構成・役割</a>',
+      '<a href="#仕様">AWS Managed Microsoft ADの仕様</a>',
+    );
+    body = convertSourceLinksToCards(body);
+  }
   if (page.hero) {
     body = `<nav class="skill-transfer-journey" aria-label="技術移管の詳細手順">
       <a href="workspaces-managed-ad.html"><strong>1. Managed AD</strong><span>構成・作成・ユーザー管理</span></a>
