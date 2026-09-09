@@ -556,70 +556,8 @@
 <p>対象ユーザーの実効PSOは、Active Directory PowerShellで <strong>Get-ADUserResultantPasswordPolicy -Identity &#39;対象ユーザー名&#39;</strong> を実行して確認する。net userの出力だけをPSOの証跡にしない。PSOが割り当てられていない場合は、Default Domain Policyが使用される</p>
 </div>
 <p>AWS Managed Microsoft ADの既定GPOを直接変更しない。パスワード要件を対象別に変更する場合は、AWSが用意する細かなパスワードポリシーの採用、対象グループ、優先順位、切り戻しおよび実効確認を別作業として設計する</p>
-<h3 id="13-作業完了確認">13. 作業完了確認</h3>
-<p>次のすべてを確認する</p>
-<table>
-<thead>
-<tr>
-<th>確認項目</th>
-<th align="center">完了</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>対象Directory IDとリージョンを確認した</td>
-<td align="center">□</td>
-</tr>
-<tr>
-<td>図2の入力値を承認済みパラメータと照合した</td>
-<td align="center">□</td>
-</tr>
-<tr>
-<td>管理用EC2が「実行中」である</td>
-<td align="center">□</td>
-</tr>
-<tr>
-<td>ステータスチェックがすべて正常である</td>
-<td align="center">□</td>
-</tr>
-<tr>
-<td>Fleet Managerに対象ノードが表示される</td>
-<td align="center">□</td>
-</tr>
-<tr>
-<td>Fleet Managerから対象管理用EC2へ接続できる</td>
-<td align="center">□</td>
-</tr>
-<tr>
-<td>管理用EC2が対象ドメインへ参加している</td>
-<td align="center">□</td>
-</tr>
-<tr>
-<td>GPMCを承認済みドメインユーザーとして起動できる</td>
-<td align="center">□</td>
-</tr>
-<tr>
-<td>GPO一覧を変更前の基準値として確認した</td>
-<td align="center">□</td>
-</tr>
-<tr>
-<td>Default Domain Policyを読み取り確認した</td>
-<td align="center">□</td>
-</tr>
-<tr>
-<td>図8と実効PSOを混同していない</td>
-<td align="center">□</td>
-</tr>
-<tr>
-<td>Managed ADのDC用SG、管理用EC2のSG、AD ConnectorのSGを区別して記録した</td>
-<td align="center">□</td>
-</tr>
-<tr>
-<td>画像にパスワード、秘密鍵またはシークレットが写っていない</td>
-<td align="center">□</td>
-</tr>
-</tbody></table>
-<h3 id="14-異常時の確認順序">14. 異常時の確認順序</h3>
-<h4 id="14-1-automationが失敗する">14.1 Automationが失敗する</h4>
+<h3 id="13-異常時の確認順序">13. 異常時の確認順序</h3>
+<h4 id="13-1-automationが失敗する">13.1 Automationが失敗する</h4>
 <ol>
 <li>Systems Manager Automationの実行履歴を開く</li>
 <li>失敗したステップとエラーメッセージを確認</li>
@@ -627,7 +565,7 @@
 <li>原因を修正してから再実行</li>
 <li>失敗実行で作成されたEC2、ENI、EBS、SGまたはIAMリソースが残っていないか確認</li>
 </ol>
-<h4 id="14-2-fleet-managerに表示されない">14.2 Fleet Managerに表示されない</h4>
+<h4 id="13-2-fleet-managerに表示されない">13.2 Fleet Managerに表示されない</h4>
 <ol>
 <li>EC2が実行中であることを確認</li>
 <li>対象リージョンが一致していることを確認</li>
@@ -635,14 +573,14 @@
 <li>IAMインスタンスプロファイルのSystems Manager権限を確認</li>
 <li>DNSおよびSystems Managerエンドポイントへの到達性を確認</li>
 </ol>
-<h4 id="14-3-gpmcに対象ドメインが表示されない">14.3 GPMCに対象ドメインが表示されない</h4>
+<h4 id="13-3-gpmcに対象ドメインが表示されない">13.3 GPMCに対象ドメインが表示されない</h4>
 <ol>
 <li>図5のドメイン参加状態を再確認</li>
 <li>GPMCを起動したユーザーが対象ドメインの資格情報であることを確認</li>
 <li>DNSで対象ドメインとADのSRVレコードを解決できることを確認</li>
 <li>管理用EC2からドメインコントローラーへの必要通信が許可されていることを確認</li>
 </ol>
-<h4 id="14-4-gpmcの参照先ドメインコントローラーを切り替えて表示差異を再確認する-異常時のみ">14.4 GPMCの参照先ドメインコントローラーを切り替えて表示差異を再確認する（異常時のみ）</h4>
+<h4 id="13-4-gpmcの参照先ドメインコントローラーを切り替えて表示差異を再確認する-異常時のみ">13.4 GPMCの参照先ドメインコントローラーを切り替えて表示差異を再確認する（異常時のみ）</h4>
 <p>複数のドメインコントローラー間でGPO、リンクまたは更新日時の表示が一致しない場合だけ実施する。これはGPMCが問い合わせる参照先ドメインコントローラーを一時的に切り替える操作であり、AWS Managed Microsoft ADのドメインコントローラー自体を変更、交換または再起動する操作ではない。また、Active DirectoryまたはSYSVOLのレプリケーション障害そのものを修復する操作でもない。2台は主系／待機系ではないため、この操作を「主系切替」と説明しない。2台の役割は、<a href="workspaces-managed-ad.html">AWS Managed Microsoft ADの2台ドメインコントローラー構成・役割</a>を参照する</p>
 <ol>
 <li>GPMCの左ペインで対象ドメイン<code>ad.example.com</code>を右クリック</li>
@@ -679,7 +617,7 @@
 <div class="callout callout-warning"><p><strong>注意</strong></p>
 <p>参照先の切り替えは通常の構築手順には含めない。レプリケーションの収束確認や障害調査で使用し、どのドメインコントローラーを参照して取得した証跡かを作業記録へ残す</p>
 </div>
-<h3 id="15-停止-削除時の注意">15. 停止・削除時の注意</h3>
+<h3 id="14-停止-削除時の注意">14. 停止・削除時の注意</h3>
 <ul>
 <li>管理作業が終わったらFleet Managerの接続を終了する</li>
 <li>管理用EC2を常時稼働させない設計では、承認済みの運用手順に従って停止または削除する</li>
@@ -687,7 +625,7 @@
 <li>Automationが作成したSG、IAMロールまたはインスタンスプロファイルを削除する場合は、他リソースから参照されていないことを確認する</li>
 <li>Managed ADのドメインコントローラー用SG、Directory ServiceのENIおよびAWS管理GPOを、管理用EC2の後片付けとして削除しない</li>
 </ul>
-<h3 id="16-後続手順">16. 後続手順</h3>
+<h3 id="15-後続手順">15. 後続手順</h3>
 <p>管理用EC2の利用開始を確認した後は、次の順に進む</p>
 <ol>
 <li>AD Connector用サービスアカウント、Connectorsグループ、WorkSpaces用OUおよび委任権限を準備</li>

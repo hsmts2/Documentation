@@ -103,92 +103,75 @@
 <li>✔ Run Commandの出力が指定したS3プレフィックスに保存されている</li>
 </ul>
 <p>現時点では、<code>Scan/NoReboot</code>の単独確認と、実際に不足パッチがある状態での<code>Install</code>・再起動・復旧確認が残っているため、本手順書の全完了条件は未達成</p>
-<h3 id="本番環境と今回の設定値">本番環境と今回の設定値</h3>
+<h3 id="今回の設定値">今回の設定値</h3>
 <table>
 <thead>
 <tr>
 <th>項目</th>
-<th>本番環境の設定値</th>
 <th>今回の設定値</th>
 </tr>
 </thead>
 <tbody><tr>
 <td>リージョン</td>
 <td>アジアパシフィック（東京）<code>ap-northeast-1</code></td>
-<td>アジアパシフィック（東京）<code>ap-northeast-1</code></td>
 </tr>
 <tr>
 <td>EC2インスタンス</td>
-<td><code>Sample-mng-001</code></td>
 <td><code>Sample-mng-001</code></td>
 </tr>
 <tr>
 <td>AMI</td>
 <td><code>ami-0e951cd6c484ba795</code>／<code>Windows_Server-2022-Japanese-Full-Base-2026.08.12</code></td>
-<td><code>ami-0e951cd6c484ba795</code>／<code>Windows_Server-2022-Japanese-Full-Base-2026.08.12</code></td>
 </tr>
 <tr>
 <td>EC2用IAMロール</td>
 <td><code>Sample_EC2Role</code></td>
-<td><code>Sample_EC2Role</code></td>
 </tr>
 <tr>
 <td>IAMポリシー</td>
-<td><code>AmazonEC2RoleforSSM</code>、<code>AmazonSSMFullAccess</code>、<code>AmazonSSMManagedInstanceCore</code>、<code>CloudWatchAgentAdminPolicy</code></td>
 <td><code>AmazonSSMManagedInstanceCore</code></td>
 </tr>
 <tr>
 <td>S3出力先</td>
-<td><code>skyarch-pid-2849-logs/patchmanager/</code></td>
 <td><code>sample-mw-bucket/patchmanager/</code></td>
 </tr>
 <tr>
 <td>パッチベースライン</td>
-<td><code>AWS-DefaultPatchBaseline</code>／<code>pb-04ba050f612fba3a6</code></td>
 <td>実行出力上は<code>AWS-DefaultPatchBaseline</code>／<code>pb-04ba050f612fba3a6</code>。Patch Groupとの直接照会は未実施</td>
 </tr>
 <tr>
 <td>Patch Group</td>
-<td><code>ad-window</code></td>
 <td><code>sample-window</code></td>
 </tr>
 <tr>
 <td>メンテナンスウィンドウ</td>
-<td><code>ad-mw-windowsupdate</code></td>
 <td><code>Sample-MW-WindowsUpdate</code></td>
 </tr>
 <tr>
 <td>ターゲット</td>
-<td><code>Patch Group=ad-window</code></td>
 <td><code>PatchingTarget</code>／<code>Patch Group=sample-window</code></td>
 </tr>
 <tr>
 <td>Run Commandタスク</td>
 <td><code>Sample-TASK-WindowsUpdate</code></td>
-<td><code>Sample-TASK-WindowsUpdate</code></td>
 </tr>
 <tr>
 <td>スケジュール</td>
-<td><code>cron(0 17 ? * THU#4 *)</code>／<code>UTC</code></td>
 <td><code>cron(0 17 ? * THU#4 *)</code>／<code>UTC</code></td>
 </tr>
 <tr>
 <td>Duration／Cutoff</td>
 <td>1時間／0時間</td>
-<td>1時間／0時間</td>
 </tr>
 <tr>
 <td>初回テスト</td>
-<td><code>Scan/NoReboot</code></td>
 <td>手順上は<code>Scan/NoReboot</code>。実行証跡は未取得</td>
 </tr>
 <tr>
 <td>確認済みの実行</td>
-<td><code>Install/RebootIfNeeded</code>が<code>Success</code></td>
 <td><code>Install/RebootIfNeeded</code>が<code>Success</code>。新規適用対象0件</td>
 </tr>
 </tbody></table>
-<p>本番環境列のうち、<code>ad-window</code>と<code>ad-mw-windowsupdate</code>は既存設計値を記載しています。それ以外の未提示項目は今回の設定値を暫定転記しているため、本番作業前に現行値と照合する</p>
 <p>今回の設定値ではIAMポリシーを<code>AmazonSSMManagedInstanceCore</code>だけと記載していますが、このポリシーだけでは任意のS3バケットへの<code>PutObject</code>権限を説明できません。<code>sample-mw-bucket/patchmanager/</code>への出力成功を最小権限構成の証跡として使用する前に、EC2インスタンスプロファイルの管理ポリシー／インラインポリシー、S3バケットポリシーおよびKMSキーの権限を確認し、実際の許可元を本表へ反映する</p>
 <h3 id="全体構成と各機能の役割">全体構成と各機能の役割</h3>
 <figure class="screenshot-wide"><figcaption>Systems ManagerによるWindowsパッチ管理の全体像</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-patch-manager/001-systems-managerによるwindowsパッチ管理の全体像.png" alt="Systems ManagerによるWindowsパッチ管理の全体像" width="1672" height="941" loading="lazy"></div></figure>
@@ -364,7 +347,7 @@
 </ol>
 <p>出典：<a href="https://docs.aws.amazon.com/systems-manager/latest/userguide/monitoring-sns-notifications.html">Monitoring Systems Manager status changes using Amazon SNS notifications</a></p>
 <h3 id="検証用windows-ec2を作成する">検証用Windows EC2を作成する</h3>
-<h4 id="今回の設定値">今回の設定値</h4>
+<h4 id="今回の設定値-2">今回の設定値</h4>
 <ul>
 <li>インスタンス名：<code>Sample-mng-001</code></li>
 <li>AMI：<code>ami-0e951cd6c484ba795</code></li>

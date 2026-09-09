@@ -63,6 +63,30 @@ const replacementFor = (value) => {
 const manualReplacementsFor = (file) => {
   const directoryName = path.basename(path.dirname(file));
   const fileName = path.basename(file);
+  if (directoryName === "workspaces-managed-ad" && fileName.includes("ディレクトリのエディションとドメイン名の入力")) {
+    return [
+      {
+        left: 558,
+        top: 629,
+        width: 142,
+        height: 22,
+        text: publicDomain,
+        background: "#ffffff",
+        foreground: "#202124",
+        fontSize: 10,
+      },
+      {
+        left: 558,
+        top: 728,
+        width: 54,
+        height: 22,
+        text: publicPrefix,
+        background: "#ffffff",
+        foreground: "#202124",
+        fontSize: 10,
+      },
+    ];
+  }
   if (directoryName === "workspaces-management-ec2" && fileName.startsWith("005-")) {
     return [{
       left: 428,
@@ -157,4 +181,12 @@ const run = async (worker) => {
 
 await Promise.all(workers.map(run));
 await Promise.all(workers.map((worker) => worker.terminate()));
-console.log(JSON.stringify({ scanned: imagePaths.length, replacements: report.length, files: new Set(report.map((item) => item.file)).size }, null, 2));
+const ocrReplacements = report.filter((item) => item.from !== "manual override");
+const manualReplacements = report.filter((item) => item.from === "manual override");
+console.log(JSON.stringify({
+  scanned: imagePaths.length,
+  replacements: report.length,
+  files: new Set(report.map((item) => item.file)).size,
+  ocrReplacements: ocrReplacements.map((item) => ({ file: item.file, from: item.from, to: item.to })),
+  manualReplacements: manualReplacements.length,
+}, null, 2));

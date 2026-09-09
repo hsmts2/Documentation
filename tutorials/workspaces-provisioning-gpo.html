@@ -97,58 +97,48 @@
 <li>✔ ターゲットOUと<code>Connectors</code>グループへの委任先が同じOUである</li>
 <li>✔ <code>Amazon WorkSpaces DCV Policy</code>がWorkSpaces OUへ直接リンクされている</li>
 </ul>
-<h3 id="本番環境と今回の設定値">本番環境と今回の設定値</h3>
+<h3 id="今回の設定値">今回の設定値</h3>
 <table>
 <thead>
 <tr>
 <th>項目</th>
-<th>本番環境の設定値</th>
 <th>今回の設定値</th>
 </tr>
 </thead>
 <tbody><tr>
 <td>ディレクトリDNS名</td>
 <td><code>ad.example.com</code></td>
-<td><code>ad.example.com</code></td>
 </tr>
 <tr>
 <td>お客様管理OU</td>
-<td><code>ad</code></td>
 <td><code>ad</code></td>
 </tr>
 <tr>
 <td>WorkSpacesコンピューター格納先</td>
 <td><code>ad\Computers\WorkSpaces</code></td>
-<td><code>ad\Computers\WorkSpaces</code></td>
 </tr>
 <tr>
 <td>ターゲットOU</td>
-<td><code>OU=WorkSpaces,OU=Computers,OU=ad,DC=ad,DC=example,DC=com</code></td>
 <td><code>OU=WorkSpaces,OU=Computers,OU=ad,DC=ad,DC=example,DC=com</code></td>
 </tr>
 <tr>
 <td>委任先グループ</td>
 <td><code>Connectors</code></td>
-<td><code>Connectors</code></td>
 </tr>
 <tr>
 <td>継続利用するGPO</td>
-<td><code>Amazon WorkSpaces DCV Policy</code></td>
 <td><code>Amazon WorkSpaces DCV Policy</code></td>
 </tr>
 <tr>
 <td>GPOの直接リンク先</td>
 <td><code>ad\Computers\WorkSpaces</code></td>
-<td><code>ad\Computers\WorkSpaces</code></td>
 </tr>
 <tr>
 <td>リンク設定</td>
 <td>有効、強制なし、WMIフィルターなし</td>
-<td>有効、強制なし、WMIフィルターなし</td>
 </tr>
 <tr>
 <td>DCV設定</td>
-<td><code>Configure clipboard redirection</code>＝有効／<code>Copy and Paste</code></td>
 <td><code>Configure clipboard redirection</code>＝有効／<code>Copy and Paste</code></td>
 </tr>
 </tbody></table>
@@ -194,87 +184,71 @@
 <li>✔ WorkSpaceが<code>AVAILABLE</code>となり、対象OUへコンピューターオブジェクトが作成されている</li>
 <li>✔ WorkSpacesクライアントからドメインユーザーで接続できる</li>
 </ul>
-<h3 id="本番環境と今回の設定値-2">本番環境と今回の設定値</h3>
+<h3 id="今回の設定値-2">今回の設定値</h3>
 <table>
 <thead>
 <tr>
 <th>項目</th>
-<th>本番環境の設定値</th>
 <th>今回の設定値</th>
 </tr>
 </thead>
 <tbody><tr>
 <td>WorkSpacesタイプ</td>
 <td>Personal</td>
-<td>Personal</td>
 </tr>
 <tr>
 <td>ディレクトリDNS名</td>
-<td><code>ad.example.com</code></td>
 <td><code>ad.example.com</code></td>
 </tr>
 <tr>
 <td>ユーザー</td>
 <td><code>sampleadmin</code></td>
-<td><code>sampleadmin</code></td>
 </tr>
 <tr>
 <td>コンピューティングタイプ</td>
-<td>PowerPro</td>
 <td>PowerPro</td>
 </tr>
 <tr>
 <td>OSベース</td>
 <td>Windows Server 2022</td>
-<td>Windows Server 2022</td>
 </tr>
 <tr>
 <td>クライアントプロトコル</td>
-<td>DCV（旧WSP）</td>
 <td>DCV（旧WSP）</td>
 </tr>
 <tr>
 <td>バンドル</td>
 <td><code>PowerPro with Windows 10 (Server 2022 based)</code></td>
-<td><code>PowerPro with Windows 10 (Server 2022 based)</code></td>
 </tr>
 <tr>
 <td>バンドルID</td>
-<td><code>wsb-391xpys5j</code></td>
 <td><code>wsb-391xpys5j</code></td>
 </tr>
 <tr>
 <td>ルートボリューム</td>
 <td>80GB</td>
-<td>80GB</td>
 </tr>
 <tr>
 <td>ユーザーボリューム</td>
-<td>50GB</td>
 <td>50GB</td>
 </tr>
 <tr>
 <td>実行モード</td>
 <td>AutoStop</td>
-<td>AutoStop</td>
 </tr>
 <tr>
 <td>自動停止時間</td>
-<td>1時間</td>
 <td>1時間</td>
 </tr>
 <tr>
 <td>ボリューム暗号化</td>
 <td>ルート・ユーザーとも未選択</td>
-<td>ルート・ユーザーとも未選択</td>
 </tr>
 <tr>
 <td>WorkSpaces格納先OU</td>
-<td>本番ドメインの<code>ad\Computers\WorkSpaces</code></td>
 <td><code>ad\Computers\WorkSpaces</code></td>
 </tr>
 </tbody></table>
-<p>本番環境列のうち、ディレクトリDNS名とOU以外は今回の設定値を暫定転記しています。本番作業前にユーザー、Bundle ID、実行モード、暗号化および停止時間を現行設定と照合する</p>
 <p>バンドル名とIDは提供時期やリージョンによって変わる可能性があるため、名前の一部や過去のIDだけで選択せず、OS、プロトコル、コンピューティングタイプおよびストレージを含めて確認する</p>
 <h4 id="vpc別workspaces用サブネット">VPC別WorkSpaces用サブネット</h4>
 <table>
@@ -494,53 +468,44 @@ Resolve-DnsName -Type SRV '_kerberos._tcp.ad.example.com'</code></pre></div>
 <li>✔ WorkSpacesのターゲットOUが委任先OUと一致している</li>
 <li>✔ 設定後に新規作成したWorkSpaceが対象OUへ自動配置されている</li>
 </ul>
-<h3 id="本番環境と今回の設定値-3">本番環境と今回の設定値</h3>
+<h3 id="今回の設定値-3">今回の設定値</h3>
 <table>
 <thead>
 <tr>
 <th>項目</th>
-<th>本番環境の設定値</th>
 <th>今回の設定値</th>
 </tr>
 </thead>
 <tbody><tr>
 <td>ディレクトリDNS名</td>
 <td><code>ad.example.com</code></td>
-<td><code>ad.example.com</code></td>
 </tr>
 <tr>
 <td>お客様管理OU</td>
-<td><code>ad</code></td>
 <td><code>ad</code></td>
 </tr>
 <tr>
 <td>親OU</td>
 <td><code>ad\Computers</code></td>
-<td><code>ad\Computers</code></td>
 </tr>
 <tr>
 <td>WorkSpaces OU</td>
-<td><code>ad\Computers\WorkSpaces</code></td>
 <td><code>ad\Computers\WorkSpaces</code></td>
 </tr>
 <tr>
 <td>ターゲットOUのDN</td>
 <td><code>OU=WorkSpaces,OU=Computers,OU=ad,DC=ad,DC=example,DC=com</code></td>
-<td><code>OU=WorkSpaces,OU=Computers,OU=ad,DC=ad,DC=example,DC=com</code></td>
 </tr>
 <tr>
 <td>委任先グループ</td>
-<td><code>Connectors</code></td>
 <td><code>Connectors</code></td>
 </tr>
 <tr>
 <td>委任対象</td>
 <td>コンピューターオブジェクト</td>
-<td>コンピューターオブジェクト</td>
 </tr>
 <tr>
 <td>委任権限</td>
-<td>作成、削除、読み取り、書き込み</td>
 <td>作成、削除、読み取り、書き込み</td>
 </tr>
 </tbody></table>
@@ -785,58 +750,48 @@ Get-ADComputer -SearchBase $workSpacesOu -Filter * -Properties DistinguishedName
 <li>✔ <code>gpresult</code>で対象WorkSpaceへのGPO適用を確認している</li>
 <li>✔ 検証用GPOだけを削除し、継続利用するGPOを残している</li>
 </ul>
-<h3 id="本番環境と今回の設定値-4">本番環境と今回の設定値</h3>
+<h3 id="今回の設定値-4">今回の設定値</h3>
 <table>
 <thead>
 <tr>
 <th>項目</th>
-<th>本番環境の設定値</th>
 <th>今回の設定値</th>
 </tr>
 </thead>
 <tbody><tr>
 <td>ドメイン</td>
 <td><code>ad.example.com</code></td>
-<td><code>ad.example.com</code></td>
 </tr>
 <tr>
 <td>WorkSpaces OU</td>
-<td><code>ad\Computers\WorkSpaces</code></td>
 <td><code>ad\Computers\WorkSpaces</code></td>
 </tr>
 <tr>
 <td>DCV用GPO</td>
 <td><code>Amazon WorkSpaces DCV Policy</code></td>
-<td><code>Amazon WorkSpaces DCV Policy</code></td>
 </tr>
 <tr>
 <td>GPOの直接リンク先</td>
-<td><code>ad\Computers\WorkSpaces</code></td>
 <td><code>ad\Computers\WorkSpaces</code></td>
 </tr>
 <tr>
 <td>セキュリティフィルター</td>
 <td><code>Authenticated Users</code></td>
-<td><code>Authenticated Users</code></td>
 </tr>
 <tr>
 <td>WMIフィルター</td>
-<td>なし</td>
 <td>なし</td>
 </tr>
 <tr>
 <td>強制</td>
 <td>なし</td>
-<td>なし</td>
 </tr>
 <tr>
 <td>DCV設定</td>
 <td><code>Configure clipboard redirection</code>＝有効／<code>Copy and Paste</code></td>
-<td><code>Configure clipboard redirection</code>＝有効／<code>Copy and Paste</code></td>
 </tr>
 <tr>
 <td>操作確認用GPO</td>
-<td><code>WorkSpaces-Computer-Policy</code>（確認後に削除）</td>
 <td><code>WorkSpaces-Computer-Policy</code>（確認後に削除）</td>
 </tr>
 </tbody></table>

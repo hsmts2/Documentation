@@ -94,87 +94,71 @@
 <li>✔ カスタムバンドルから作成した検証用WorkSpaceでアプリケーション、DCV、OUおよびGPOを確認している</li>
 <li>✔ 共有先AWSアカウントでイメージをコピーし、共有先の新しいイメージIDを確認している</li>
 </ul>
-<h3 id="本番環境と今回の設定値">本番環境と今回の設定値</h3>
+<h3 id="今回の設定値">今回の設定値</h3>
 <table>
 <thead>
 <tr>
 <th>項目</th>
-<th>本番環境の設定値</th>
 <th>今回の設定値</th>
 </tr>
 </thead>
 <tbody><tr>
 <td>リージョン</td>
 <td>アジアパシフィック（東京）</td>
-<td>アジアパシフィック（東京）</td>
 </tr>
 <tr>
 <td>作成元Directory ID</td>
-<td><code>d-956739e3e4</code></td>
 <td><code>d-956739e3e4</code></td>
 </tr>
 <tr>
 <td>参照WorkSpace ID</td>
 <td><code>ws-jkxz7js0s</code></td>
-<td><code>ws-jkxz7js0s</code></td>
 </tr>
 <tr>
 <td>イメージ名</td>
-<td><code>WindowsServer2022-Japanese-DCV</code></td>
 <td><code>WindowsServer2022-Japanese-DCV</code></td>
 </tr>
 <tr>
 <td>イメージの説明</td>
 <td><code>Source wsb-391xpys5j - Windows Server 2022 Desktop Experience - Japanese - TPM - DCV - Mozilla Firefox</code></td>
-<td><code>Source wsb-391xpys5j - Windows Server 2022 Desktop Experience - Japanese - TPM - DCV - Mozilla Firefox</code></td>
 </tr>
 <tr>
 <td>カスタムイメージID</td>
-<td><code>wsi-dvdtfbh29</code></td>
 <td><code>wsi-dvdtfbh29</code></td>
 </tr>
 <tr>
 <td>カスタムバンドル名</td>
 <td><code>WindowsServer2022-Japanese-DCV-PowerPro</code></td>
-<td><code>WindowsServer2022-Japanese-DCV-PowerPro</code></td>
 </tr>
 <tr>
 <td>カスタムバンドルID</td>
-<td><code>wsb-757191hn0</code></td>
 <td><code>wsb-757191hn0</code></td>
 </tr>
 <tr>
 <td>OS</td>
 <td>Windows Server 2022</td>
-<td>Windows Server 2022</td>
 </tr>
 <tr>
 <td>プロトコル</td>
-<td>DCV（旧WSP）</td>
 <td>DCV（旧WSP）</td>
 </tr>
 <tr>
 <td>コンピューティング</td>
 <td>PowerPro</td>
-<td>PowerPro</td>
 </tr>
 <tr>
 <td>ルート／ユーザーボリューム</td>
-<td>80GB／50GB</td>
 <td>80GB／50GB</td>
 </tr>
 <tr>
 <td>ボリューム暗号化</td>
 <td>イメージ作成元は暗号化なし</td>
-<td>イメージ作成元は暗号化なし</td>
 </tr>
 <tr>
 <td>共有先AWSアカウント</td>
 <td><code>7321********</code></td>
-<td><code>7321********</code></td>
 </tr>
 </tbody></table>
-<p>本番環境列は今回の設定値を暫定転記しています。本番作業前に作成元Directory ID、参照WorkSpace ID、イメージ／バンドルID、ボリューム、暗号化および共有先AWSアカウントを現行設定と照合する</p>
 <p>イメージの説明には作成元バンドル、OS、言語、TPM、プロトコルおよび主要アプリケーションを記載します。作成日はAWSコンソールに表示されるため、説明へ重複して記載しない</p>
 <h3 id="イメージ-バンドルおよび展開対象">イメージ、バンドルおよび展開対象</h3>
 <table>
@@ -303,7 +287,7 @@ $remainingStagedPackages</code></pre></div>
 </li>
 <li><p>イメージ名へ<code>WindowsServer2022-Japanese-DCV</code>を入力</p>
 </li>
-<li><p>説明へ本番環境と今回の設定値に記載した文字列を入力</p>
+<li><p>説明へ今回の設定値に記載した文字列を入力</p>
 </li>
 <li><p>作成元バンドル、OS、言語、TPM、プロトコルおよび主要アプリケーションを照合</p>
 </li>
@@ -463,53 +447,44 @@ $remainingStagedPackages</code></pre></div>
 <li>✔ 調査後にRDPセッションを終了し、一時許可ルールを削除している</li>
 <li>✔ セキュリティグループなどのAWS API操作はCloudTrailの管理イベントで確認し、RDPログオンなどのWindows側イベントは監査設定と保持期間の範囲内でWindowsイベントログから確認している</li>
 </ul>
-<h3 id="本番環境と今回の設定値-2">本番環境と今回の設定値</h3>
+<h3 id="今回の設定値-2">今回の設定値</h3>
 <table>
 <thead>
 <tr>
 <th>項目</th>
-<th>本番環境の設定値</th>
 <th>今回の設定値</th>
 </tr>
 </thead>
 <tbody><tr>
 <td>通常の接続方法</td>
 <td>WorkSpacesクライアント</td>
-<td>WorkSpacesクライアント</td>
 </tr>
 <tr>
 <td>RDPの用途</td>
-<td>障害調査・承認済み保守だけ</td>
 <td>障害調査・承認済み保守だけ</td>
 </tr>
 <tr>
 <td>接続先</td>
 <td>対象WorkSpaceのプライベートIP</td>
-<td>対象WorkSpaceのプライベートIP</td>
 </tr>
 <tr>
 <td>接続元</td>
-<td>承認済み管理用EC2／管理用ネットワーク</td>
 <td>管理用EC2または承認済みの同一ディレクトリ内WorkSpace</td>
 </tr>
 <tr>
 <td>通信</td>
 <td>TCP 3389</td>
-<td>TCP 3389</td>
 </tr>
 <tr>
 <td>接続元制限</td>
-<td>管理用SGまたは承認済みCIDR</td>
 <td><code>0.0.0.0/0</code>および<code>::/0</code>は使用しない</td>
 </tr>
 <tr>
 <td>AWS側の証跡</td>
 <td>CloudTrailの管理イベント（セキュリティグループなどのAWS API操作）</td>
-<td>CloudTrailの管理イベント（セキュリティグループなどのAWS API操作）</td>
 </tr>
 <tr>
 <td>Windows側の証跡</td>
-<td>監査設定と保持期間の範囲内で記録されたRDPログオンなどのイベント</td>
 <td>監査設定と保持期間の範囲内で記録されたRDPログオンなどのイベント</td>
 </tr>
 </tbody></table>

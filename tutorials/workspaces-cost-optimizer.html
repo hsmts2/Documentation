@@ -99,23 +99,19 @@
 <thead>
 <tr>
 <th>項目</th>
-<th>本番環境の設定値</th>
 <th>今回の設定値</th>
 </tr>
 </thead>
 <tbody><tr>
 <td>ソリューションバージョン</td>
-<td>v2.8.1</td>
 <td>v2.9.10</td>
 </tr>
 <tr>
 <td>デプロイ方式</td>
-<td>単一アカウント／ハブテンプレート（暫定。移行前に再確認）</td>
 <td>単一アカウント／ハブテンプレート</td>
 </tr>
 <tr>
 <td>Dry Run解除後の実処理</td>
-<td>未確認</td>
 <td>未確認</td>
 </tr>
 </tbody></table>
@@ -207,28 +203,23 @@
 <thead>
 <tr>
 <th>項目</th>
-<th>本番環境の設定値</th>
 <th>今回の設定値</th>
 </tr>
 </thead>
 <tbody><tr>
 <td>スタック名</td>
-<td><code>sample-cfn-co-001</code>（暫定。移行前に正式名へ変更）</td>
 <td><code>sample-cfn-co-001</code></td>
 </tr>
 <tr>
 <td>ソリューションバージョン</td>
-<td>v2.8.1</td>
 <td>v2.9.10</td>
 </tr>
 <tr>
 <td>VPC方式</td>
-<td>新規VPC（暫定。移行前に再確認）</td>
 <td>新規VPC</td>
 </tr>
 <tr>
 <td>Dry Run</td>
-<td><code>Yes</code>（暫定。初期構築時）</td>
 <td><code>Yes</code>（初期構築時）</td>
 </tr>
 </tbody></table>
@@ -619,23 +610,19 @@
 <thead>
 <tr>
 <th>項目</th>
-<th>本番環境の設定値</th>
 <th>今回の設定値</th>
 </tr>
 </thead>
 <tbody><tr>
 <td>確認対象スタック</td>
-<td><code>sample-cfn-co-001</code>（暫定。移行前に正式名へ変更）</td>
 <td><code>sample-cfn-co-001</code></td>
 </tr>
 <tr>
 <td>取得済みレポート</td>
-<td>Dry Run有効時・1台分（暫定。移行前に再取得）</td>
 <td>Dry Run有効時・1台分</td>
 </tr>
 <tr>
 <td>Dry Run解除後の結果</td>
-<td>未確認（初回日次処理後に確認）</td>
 <td>未確認</td>
 </tr>
 </tbody></table>
@@ -694,7 +681,7 @@
 <li>対象期間を実行時刻が含まれる範囲に</li>
 <li>総WorkSpaces数、Hourly／Monthly、DryRun／実変換、終了、失敗・スキップ、ECS処理時間を確認</li>
 </ol>
-<p>取得済み証跡では総数1、Hourly 1、Monthly 0を確認しました。変換や終了がなければ該当ウィジェットが空になることは正常</p>
+<p>取得済み証跡では総数1、Hourly 1、Monthly 0を確認しました。変換や終了がなければ該当ウィジェットが空になることは正常な状態</p>
 <figure class="screenshot-wide aws-console-identity"><figcaption>図2_CloudWatch_ダッシュボード_実績1台</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/012-図2-cloudwatch-ダッシュボード-実績1台.png" alt="図2_CloudWatch_ダッシュボード_実績1台" width="1554" height="1304" loading="lazy"></div></figure>
 
 
@@ -869,18 +856,15 @@
 <thead>
 <tr>
 <th>項目</th>
-<th>本番環境の設定値</th>
 <th>今回の設定値</th>
 </tr>
 </thead>
 <tbody><tr>
 <td>データ種別</td>
-<td>お客様実データは掲載しない</td>
 <td>架空5台</td>
 </tr>
 <tr>
 <td>実測証跡</td>
-<td>Dry Run有効時・1台分（暫定。移行前に再取得）</td>
 <td>別フォルダのDry Run有効時・1台分</td>
 </tr>
 </tbody></table>
@@ -1059,23 +1043,19 @@
 <thead>
 <tr>
 <th>項目</th>
-<th>本番環境の設定値</th>
 <th>今回の設定値</th>
 </tr>
 </thead>
 <tbody><tr>
 <td>Dry Run</td>
-<td><code>Yes</code>から<code>No</code>へ変更（暫定。実施前に再承認）</td>
 <td><code>Yes</code>から<code>No</code>へ更新済み（取得済み証跡）</td>
 </tr>
 <tr>
 <td>未使用WorkSpace終了</td>
-<td><code>No</code>（暫定。移行前に再確認）</td>
 <td><code>No</code></td>
 </tr>
 <tr>
 <td>Dry Run解除後の実処理</td>
-<td>未確認（初回日次処理後に確認）</td>
 <td>未確認</td>
 </tr>
 </tbody></table>
@@ -1364,18 +1344,15 @@
 <thead>
 <tr>
 <th>項目</th>
-<th>本番環境の設定値</th>
 <th>今回の設定値</th>
 </tr>
 </thead>
 <tbody><tr>
 <td>日次実行時刻</td>
-<td>06:00 JST／<code>cron(0 21 * * ? *)</code></td>
 <td>08:00 JST／<code>cron(0 23 * * ? *)</code>へ復元</td>
 </tr>
 <tr>
 <td>EventBridgeルール</td>
-<td>有効（暫定。作業直前に現状確認）</td>
 <td>2026年9月8日の証跡取得時点では一時無効</td>
 </tr>
 </tbody></table>
@@ -1592,18 +1569,15 @@
 <thead>
 <tr>
 <th>項目</th>
-<th>本番環境の設定値</th>
 <th>今回の設定値</th>
 </tr>
 </thead>
 <tbody><tr>
 <td>ソリューションバージョン</td>
-<td>v2.8.1</td>
 <td>v2.9.10</td>
 </tr>
 <tr>
 <td>料金しきい値</td>
-<td>後掲のv2.8.1配布テンプレート値を参照</td>
 <td>後掲のv2.9.10配布テンプレート値および現行ガイド掲載値を参照</td>
 </tr>
 </tbody></table>
@@ -1872,23 +1846,19 @@
 <thead>
 <tr>
 <th>項目</th>
-<th>本番環境の設定値</th>
 <th>今回の設定値</th>
 </tr>
 </thead>
 <tbody><tr>
 <td>ソリューションバージョン</td>
-<td>v2.8.1</td>
 <td>v2.9.10</td>
 </tr>
 <tr>
 <td>作成リソース数</td>
-<td>41件（暫定。移行前にCloudFormationで再確認）</td>
 <td>41件（取得済み証跡）</td>
 </tr>
 <tr>
 <td>VPC方式</td>
-<td>新規VPC（暫定。移行前に再確認）</td>
 <td>新規VPC</td>
 </tr>
 </tbody></table>

@@ -132,6 +132,34 @@ const slugify = (value) => value
   .replace(/^-+|-+$/g, "")
   .toLowerCase() || "section";
 
+const splitMarkdownTableRow = (line) => {
+  const trimmed = line.trim();
+  if (!trimmed.startsWith("|") || !trimmed.endsWith("|")) return null;
+  return trimmed.slice(1, -1).split("|").map((cell) => cell.trim());
+};
+
+const removeProductionValueColumns = (input) => {
+  const lines = input.split("\n");
+  for (let index = 0; index < lines.length - 1; index += 1) {
+    const header = splitMarkdownTableRow(lines[index]);
+    const separator = splitMarkdownTableRow(lines[index + 1]);
+    if (!header || !separator || !separator.every((cell) => /^:?-{3,}:?$/.test(cell))) continue;
+
+    const removeIndexes = header
+      .map((cell, cellIndex) => (/^本番環境(?:の)?(?:設定)?値$/.test(cell.replace(/\s/g, "")) ? cellIndex : -1))
+      .filter((cellIndex) => cellIndex >= 0);
+    if (!removeIndexes.length) continue;
+
+    for (let rowIndex = index; rowIndex < lines.length; rowIndex += 1) {
+      const cells = splitMarkdownTableRow(lines[rowIndex]);
+      if (!cells) break;
+      const filtered = cells.filter((_cell, cellIndex) => !removeIndexes.includes(cellIndex));
+      lines[rowIndex] = `| ${filtered.join(" | ")} |`;
+    }
+  }
+  return lines.join("\n");
+};
+
 const sanitizeMarkdown = (input) => {
   let value = input.replace(/\r\n?/g, "\n");
   const sourceAccountAlias = process.env.SOURCE_ACCOUNT_ALIAS;
@@ -181,6 +209,12 @@ const sanitizeMarkdown = (input) => {
   }
   value = value.replace(/\b\d{12}\b/g, "<AWS_ACCOUNT_ID>");
   value = value.replace(/^.*(?:検証環境リソースは提出前にすべて削除|現行方針では環境固有値へ追加マスキング|提出条件が変わる場合は公開範囲).*$(?:\n)?/gm, "");
+  value = value.replace(/^.*(?:本番環境列|本番環境の設定値は、確認用として今回の設定値と同じ値を仮記載).*$(?:\n)?/gm, "");
+  value = value
+    .replaceAll("本番環境と今回の設定値", "今回の設定値")
+    .replaceAll("本番環境と今回の確認値", "今回の確認値")
+    .replaceAll("VPC別の本番環境設定値", "VPC別の設定値");
+  value = removeProductionValueColumns(value);
   value = value.replace(/^## 参考資料[\s\S]*$/m, "");
   value = value.replace(/。(?=(?:\*\*|<br\s*\/?>|\s*$))/gm, "");
   value = value.replace(
@@ -218,7 +252,8 @@ const copyPublishedImage = async (sourceImage, destination, awsConsole, metadata
     return;
   }
 
-  const overlayWidth = Math.round(Math.min(280, Math.max(140, metadata.width * 0.12)));
+  // AWSコンソール右上のアカウント表示だけを置換し、左隣のリージョン表示は覆わない。
+  const overlayWidth = Math.round(Math.min(120, Math.max(96, metadata.width * 0.07)));
   const overlayHeight = Math.round(Math.min(58, Math.max(34, metadata.height * 0.04)));
   const fontSize = Math.round(Math.min(18, Math.max(12, overlayHeight * 0.34)));
   const svg = Buffer.from(`<svg width="${overlayWidth}" height="${overlayHeight}" xmlns="http://www.w3.org/2000/svg">
@@ -244,6 +279,22 @@ const transformDocument = async (key, pageAssetFolder, sequenceStart) => {
       .replace(/^## 5\. /gm, "## 4. ")
       .replace(/^## 6\. /gm, "## 5. ")
       .replace(/^## 7\. /gm, "## 6. ");
+  }
+
+  if (key === "managedAdArchitecture") {
+    markdown = markdown.replace(
+      /^!\[(?:2台のドメインコントローラー構成と役割|AWS公式の複数AZドメインコントローラー構成|Microsoft公式のAD DSレプリケーション概念)\]\((?:<[^>]+>|[^)]+)\)\s*$/gm,
+      "",
+    );
+  }
+
+  if (key === "managementEc2") {
+    markdown = markdown.replace(/^## 13\. 作業完了確認[\s\S]*?(?=^## 14\.)/m, "");
+    markdown = markdown
+      .replace(/^## 14\. /gm, "## 13. ")
+      .replace(/^### 14\.([0-9]+) /gm, "### 13.$1 ")
+      .replace(/^## 15\. /gm, "## 14. ")
+      .replace(/^## 16\. /gm, "## 15. ");
   }
 
   const imagePattern = /!\[([^\]]*)\]\((?:<([^>]+)>|([^)]+))\)/g;
@@ -358,7 +409,8 @@ for (const page of pageSpecs) {
   const pageAssetFolder = path.join(assetRoot, page.file.replace(/\.html$/, ""));
   fs.rmSync(pageAssetFolder, { recursive: true, force: true });
   fs.mkdirSync(pageAssetFolder, { recursive: true });
-  let sequence = 0;
+  // Managed ADの削除済み3図は欠番として保持し、既存スクリーンショットのURLを変えない。
+  let sequence = page.file === "workspaces-managed-ad.html" ? 3 : 0;
   const sections = [];
   for (const key of page.docs) {
     const transformed = await transformDocument(key, pageAssetFolder, sequence);

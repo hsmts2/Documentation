@@ -89,17 +89,9 @@
 <div class="callout callout-info"><p><strong>結論：2台とも稼働し、一方は待機専用ではない</strong></p>
 <p>2台とも通常時から稼働する書き込み可能なドメインコントローラーです。ユーザー認証、コンピューター認証、DNS、Kerberos、LDAP、グループポリシーなどのActive Directory機能を提供し、ディレクトリ情報を相互にレプリケーションする</p>
 </div>
-<figure class="screenshot-wide"><figcaption>2台のドメインコントローラー構成と役割</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-managed-ad/001-2台のドメインコントローラー構成と役割.png" alt="2台のドメインコントローラー構成と役割" width="1920" height="1080" loading="lazy"></div></figure>
-
-
-
 <h3 id="awsが2台を作成する理由">AWSが2台を作成する理由</h3>
 <p>AWS Managed Microsoft ADでは、ディレクトリ作成時に2台のドメインコントローラーが異なるアベイラビリティーゾーンのサブネットへ1台ずつ配置されます。目的は、1台または1つのアベイラビリティーゾーンへ障害やメンテナンスの影響が生じても、もう1台を利用できる構成にすること</p>
 <p>AWS Directory Serviceコンソールでは、この初期2台を <strong>Required</strong> と表示します。Requiredは「主系」という意味ではなく、可用性を確保するために削除できない必須の2台という意味です。可用性や処理性能をさらに高めるために追加したDCは <strong>Additional</strong> と表示される</p>
-<figure class="screenshot-wide"><figcaption>AWS公式の複数AZドメインコントローラー構成</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-managed-ad/002-aws公式の複数azドメインコントローラー構成.png" alt="AWS公式の複数AZドメインコントローラー構成" width="606" height="576" loading="lazy"></div></figure>
-
-
-
 <p>出典：<a href="https://docs.aws.amazon.com/ja_jp/directoryservice/latest/admin-guide/ms_ad_getting_started_what_gets_created.html">AWS公式：AWS Managed Microsoft ADで作成される内容</a></p>
 <h4 id="requiredとadditionalの違い">RequiredとAdditionalの違い</h4>
 <table>
@@ -175,10 +167,6 @@
 <li>Active Directory統合DNSゾーンの情報</li>
 <li>グループポリシーのディレクトリ情報とSYSVOL上のファイル</li>
 </ul>
-<figure class="screenshot-wide"><figcaption>Microsoft公式のAD DSレプリケーション概念</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-managed-ad/003-microsoft公式のad-dsレプリケーション概念.png" alt="Microsoft公式のAD DSレプリケーション概念" width="532" height="396" loading="lazy"></div></figure>
-
-
-
 <h3 id="片方のdcへ障害またはメンテナンスが発生した場合">片方のDCへ障害またはメンテナンスが発生した場合</h3>
 <table>
 <thead>
@@ -210,13 +198,11 @@
 </tbody></table>
 <p>「1台故障しても必ず無瞬断・無影響」とは説明しません。アプリケーション側のDNSキャッシュ、DC選択のキャッシュ、接続タイムアウト、ネットワーク到達性、FSMO依存処理によっては、一時的な遅延や再試行が発生する</p>
 <p>出典：<a href="https://docs.aws.amazon.com/ja_jp/directoryservice/latest/admin-guide/ms_ad_key_concepts.html">AWS公式：AWS Managed Microsoft ADの主要概念</a></p>
-<h3 id="本番環境と今回の確認値">本番環境と今回の確認値</h3>
-<p>本番環境の設定値は、確認用として今回の設定値と同じ値を仮記載しています。お客様環境の確認後に、本番環境列を確定値へ更新する</p>
+<h3 id="今回の確認値">今回の確認値</h3>
 <table>
 <thead>
 <tr>
 <th>確認項目</th>
-<th>本番環境の設定値</th>
 <th>今回の設定値</th>
 <th>意味</th>
 </tr>
@@ -224,12 +210,10 @@
 <tbody><tr>
 <td>アベイラビリティーゾーン</td>
 <td><code>ap-northeast-1a</code>、<code>ap-northeast-1c</code></td>
-<td><code>ap-northeast-1a</code>、<code>ap-northeast-1c</code></td>
 <td>2台のDCを異なるAZへ配置する</td>
 </tr>
 <tr>
 <td>DNS IPv4アドレス</td>
-<td><code>192.168.225.68</code>、<code>192.168.225.126</code></td>
 <td><code>192.168.225.68</code>、<code>192.168.225.126</code></td>
 <td>2台のDCが提供するディレクトリDNSのアドレス</td>
 </tr>
@@ -498,38 +482,31 @@ Get-ADDomain |
 <thead>
 <tr>
 <th>項目</th>
-<th>本番環境の設定値</th>
 <th>今回の設定値</th>
 </tr>
 </thead>
 <tbody><tr>
 <td>ディレクトリのタイプ</td>
 <td>Microsoft AD</td>
-<td>Microsoft AD</td>
 </tr>
 <tr>
 <td>エディション</td>
-<td>Standard Edition</td>
 <td>Standard Edition</td>
 </tr>
 <tr>
 <td>ディレクトリのDNS名</td>
 <td><code>ad.example.com</code></td>
-<td><code>ad.example.com</code></td>
 </tr>
 <tr>
 <td>ディレクトリのNetBIOS名</td>
-<td><code>ad</code></td>
 <td><code>ad</code></td>
 </tr>
 <tr>
 <td>ディレクトリの説明</td>
 <td>未入力</td>
-<td>未入力</td>
 </tr>
 <tr>
 <td>ユーザーとグループの管理</td>
-<td>無効（作成後に有効化）</td>
 <td>無効（作成後に有効化）</td>
 </tr>
 </tbody></table>
@@ -581,33 +558,27 @@ Get-ADDomain |
 <thead>
 <tr>
 <th>項目</th>
-<th>本番環境の設定値</th>
 <th>今回の設定値</th>
 </tr>
 </thead>
 <tbody><tr>
 <td>VPC</td>
 <td><code>ad-vpc-002</code>（<code>192.168.225.0/24</code>）</td>
-<td><code>ad-vpc-002</code>（<code>192.168.225.0/24</code>）</td>
 </tr>
 <tr>
 <td>ネットワークタイプ</td>
-<td>IPv4のみ</td>
 <td>IPv4のみ</td>
 </tr>
 <tr>
 <td>サブネット1</td>
 <td><code>ad-pri-sub-002-002a</code>（<code>192.168.225.64/27</code>、<code>ap-northeast-1a</code>）</td>
-<td><code>ad-pri-sub-002-002a</code>（<code>192.168.225.64/27</code>、<code>ap-northeast-1a</code>）</td>
 </tr>
 <tr>
 <td>サブネット2</td>
 <td><code>ad-pri-sub-002-002c</code>（<code>192.168.225.96/27</code>、<code>ap-northeast-1c</code>）</td>
-<td><code>ad-pri-sub-002-002c</code>（<code>192.168.225.96/27</code>、<code>ap-northeast-1c</code>）</td>
 </tr>
 <tr>
 <td>初期ADサイト名</td>
-<td><code>Default-First-Site-Name</code></td>
 <td><code>Default-First-Site-Name</code></td>
 </tr>
 </tbody></table>
@@ -674,59 +645,48 @@ Get-ADDomain |
 <h4 id="本手順書で実施すること-2">本手順書で実施すること</h4>
 <p>AWS Managed Microsoft AD<code>ad.example.com</code>に対して、AWS Directory Service Dataの「ユーザーとグループの管理」を有効化し、AWSマネジメントコンソールからユーザーの作成・削除と既存グループのメンバー追加・削除を行う</p>
 <p>今回の手順では、<code>sampleadmin</code>の作成、<code>Admin</code>と<code>sampleadmin</code>の<code>AWS Delegated FSx Administrators</code>への追加、<code>sampleadmin</code>の<code>AWS Delegated Administrators</code>からの削除、および<code>samplework</code>の削除を確認する。各操作は承認された作業だけを実施する</p>
-<h4 id="本番環境と今回の設定値">本番環境と今回の設定値</h4>
-<p>本番環境の設定値は、確認用として今回の設定値と同じ値を仮記載しています。お客様環境の確認後に、本番環境列を確定値へ更新する</p>
+<h4 id="今回の設定値">今回の設定値</h4>
 <table>
 <thead>
 <tr>
 <th>項目</th>
-<th>本番環境の設定値</th>
 <th>今回の設定値</th>
 </tr>
 </thead>
 <tbody><tr>
 <td>ディレクトリDNS名</td>
 <td><code>ad.example.com</code></td>
-<td><code>ad.example.com</code></td>
 </tr>
 <tr>
 <td>管理方法</td>
-<td>AWS Directory Service Dataコンソール</td>
 <td>AWS Directory Service Dataコンソール</td>
 </tr>
 <tr>
 <td>新規作成ユーザー</td>
 <td><code>sampleadmin</code></td>
-<td><code>sampleadmin</code></td>
 </tr>
 <tr>
 <td>グループ追加先</td>
-<td><code>AWS Delegated FSx Administrators</code></td>
 <td><code>AWS Delegated FSx Administrators</code></td>
 </tr>
 <tr>
 <td>グループへ追加するユーザー</td>
 <td><code>Admin</code>、<code>sampleadmin</code></td>
-<td><code>Admin</code>、<code>sampleadmin</code></td>
 </tr>
 <tr>
 <td>グループ削除元</td>
-<td><code>AWS Delegated Administrators</code></td>
 <td><code>AWS Delegated Administrators</code></td>
 </tr>
 <tr>
 <td>グループから削除するユーザー</td>
 <td><code>sampleadmin</code></td>
-<td><code>sampleadmin</code></td>
 </tr>
 <tr>
 <td>削除するユーザー</td>
 <td><code>samplework</code></td>
-<td><code>samplework</code></td>
 </tr>
 <tr>
 <td>メールアドレス</td>
-<td><code>t_hashimoto@example.com</code></td>
 <td><code>t_hashimoto@example.com</code></td>
 </tr>
 </tbody></table>

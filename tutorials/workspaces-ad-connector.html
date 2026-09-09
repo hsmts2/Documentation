@@ -108,58 +108,48 @@
 <li>✔ パスワードを手順書、作業チケット、チャット、コマンド履歴および画面キャプチャへ記録しない運用になっている</li>
 </ul>
 <p>ローカルの<code>Administrator</code>で管理端末へサインインしただけでは、Active Directoryを変更できません。ADUCと確認用PowerShellは、対象ドメインの管理資格情報で起動する</p>
-<h3 id="本番環境と今回の設定値">本番環境と今回の設定値</h3>
+<h3 id="今回の設定値">今回の設定値</h3>
 <table>
 <thead>
 <tr>
 <th>項目</th>
-<th>本番環境の設定値</th>
 <th>今回の設定値</th>
 </tr>
 </thead>
 <tbody><tr>
 <td>DNSドメイン</td>
 <td><code>ad.example.com</code></td>
-<td><code>ad.example.com</code></td>
 </tr>
 <tr>
 <td>NetBIOS名</td>
-<td><code>ad</code></td>
 <td><code>ad</code></td>
 </tr>
 <tr>
 <td>お客様管理OU</td>
 <td><code>ad</code></td>
-<td><code>ad</code></td>
 </tr>
 <tr>
 <td>ユーザー・グループ配置先</td>
-<td><code>ad\Users</code></td>
 <td><code>ad\Users</code></td>
 </tr>
 <tr>
 <td>コンピューターOU</td>
 <td><code>ad\Computers</code></td>
-<td><code>ad\Computers</code></td>
 </tr>
 <tr>
 <td>WorkSpacesコンピューターOU</td>
-<td><code>ad\Computers\WorkSpaces</code></td>
 <td><code>ad\Computers\WorkSpaces</code></td>
 </tr>
 <tr>
 <td>委任用グループ</td>
 <td><code>Connectors</code></td>
-<td><code>Connectors</code></td>
 </tr>
 <tr>
 <td>サービスアカウント</td>
 <td><code>ADConnectorService</code></td>
-<td><code>ADConnectorService</code></td>
 </tr>
 <tr>
 <td>UPN</td>
-<td><code>ADConnectorService@ad.example.com</code></td>
 <td><code>ADConnectorService@ad.example.com</code></td>
 </tr>
 </tbody></table>
@@ -610,58 +600,49 @@ Get-ADPrincipalGroupMembership 'ADConnectorService' |
 <li>✔ <code>_ldap._tcp.&lt;DNSドメイン名&gt;</code>と<code>_kerberos._tcp.&lt;DNSドメイン名&gt;</code>のSRVレコードを接続先DNSで解決できる</li>
 <li>✔ <a href="workspaces-ad-connector.html">AD Connector用サービスアカウント作成・権限委任・運用手順</a>を完了している</li>
 </ul>
-<h3 id="本番環境と今回の設定値-2">本番環境と今回の設定値</h3>
+<h3 id="今回の設定値-2">今回の設定値</h3>
 <table>
 <thead>
 <tr>
 <th>項目</th>
-<th>本番環境の設定値</th>
 <th>今回の設定値</th>
 </tr>
 </thead>
 <tbody><tr>
 <td>接続先DNSドメイン</td>
 <td><code>ad.example.com</code></td>
-<td><code>ad.example.com</code></td>
 </tr>
 <tr>
 <td>NetBIOS名</td>
-<td><code>ad</code></td>
 <td><code>ad</code></td>
 </tr>
 <tr>
 <td>Managed AD配置VPC</td>
 <td><code>ad-vpc-002</code>／<code>192.168.225.0/24</code></td>
-<td><code>ad-vpc-002</code>／<code>192.168.225.0/24</code></td>
 </tr>
 <tr>
 <td>AD Connector配置VPC</td>
-<td>VPC003／<code>192.168.226.0/23</code></td>
 <td><code>ad-vpc-003</code>／<code>192.168.226.0/23</code></td>
 </tr>
 <tr>
 <td>接続先DNS／DC IP</td>
-<td><code>192.168.225.68</code>、<code>192.168.225.110</code>（構築前に現行コンソールで再確認）</td>
 <td><code>192.168.225.68</code>、<code>192.168.225.126</code></td>
 </tr>
 <tr>
 <td>AD Connector用サブネット</td>
 <td><code>192.168.226.128/28</code>、<code>192.168.226.160/28</code></td>
-<td><code>192.168.226.128/28</code>、<code>192.168.226.160/28</code></td>
 </tr>
 <tr>
 <td>AD Connectorサイズ</td>
-<td>Small</td>
 <td>Small</td>
 </tr>
 <tr>
 <td>サービスアカウント</td>
 <td><code>ADConnectorService</code></td>
-<td><code>ADConnectorService</code></td>
 </tr>
 </tbody></table>
 <p>Directory ID、SG ID、VPC IDおよびサブネットIDは、作業時点のAWSコンソールで確認する。パスワードは本文および画像へ記録しない</p>
-<h4 id="vpc別の本番環境設定値">VPC別の本番環境設定値</h4>
+<h4 id="vpc別の設定値">VPC別の設定値</h4>
 <table>
 <thead>
 <tr>
@@ -876,7 +857,7 @@ foreach ($dnsServer in $dnsServers) {
 <p><strong>画像内の番号</strong></p>
 <p>① 変更完了の成功メッセージ、② ルール件数、③ 追加したCIDRと説明を確認する</p>
 <ol start="7">
-<li>VPC004～006も作成する場合は、「VPC別の本番環境設定値」のCIDRを用いて1VPCずつ追加</li>
+<li>VPC004～006も作成する場合は、「VPC別の設定値」のCIDRを用いて1VPCずつ追加</li>
 </ol>
 <h4 id="実施後の確認-6">実施後の確認</h4>
 <ul>
@@ -915,7 +896,7 @@ foreach ($dnsServer in $dnsServers) {
 <ol>
 <li>対象VPCを選択します。VPC003の場合は<code>ad-vpc-003</code>を選択</li>
 <li>ネットワークタイプで「IPv4のみ」を選択</li>
-<li>「本番環境と今回の設定値」に記載したAD Connector用サブネットを、異なる2つのアベイラビリティーゾーンから選択</li>
+<li>「今回の設定値」に記載したAD Connector用サブネットを、異なる2つのアベイラビリティーゾーンから選択</li>
 <li>WorkSpaces用の<code>003-003a/c</code>サブネットと取り違えていないことを確認</li>
 <li>「次へ」を選択</li>
 </ol>
@@ -931,38 +912,31 @@ foreach ($dnsServer in $dnsServers) {
 <thead>
 <tr>
 <th>項目</th>
-<th>本番環境の設定値</th>
 <th>今回の設定値</th>
 </tr>
 </thead>
 <tbody><tr>
 <td>ディレクトリのDNS名</td>
 <td><code>ad.example.com</code></td>
-<td><code>ad.example.com</code></td>
 </tr>
 <tr>
 <td>ディレクトリのNetBIOS名</td>
 <td><code>ad</code></td>
-<td><code>ad</code></td>
 </tr>
 <tr>
 <td>DNS IPアドレス1</td>
-<td><code>192.168.225.68</code>（構築前に再確認）</td>
 <td><code>192.168.225.68</code></td>
 </tr>
 <tr>
 <td>DNS IPアドレス2</td>
-<td><code>192.168.225.110</code>（構築前に再確認）</td>
 <td><code>192.168.225.126</code></td>
 </tr>
 <tr>
 <td>サービスアカウントのユーザー名</td>
 <td><code>ADConnectorService</code></td>
-<td><code>ADConnectorService</code></td>
 </tr>
 <tr>
 <td>サービスアカウントのパスワード</td>
-<td>承認済みの保管先から入力</td>
 <td>承認済みの保管先から入力</td>
 </tr>
 </tbody></table>
