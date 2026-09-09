@@ -1,0 +1,307 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AWS Directory Service 運用手順 | Documentation</title>
+  <meta name="description" content="AWS Managed Microsoft ADの構築、ユーザー・グループ管理、AD Connector、GPO管理を整理した運用手順">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="../"><img src="../assets/icon.jpg" alt="Documentation icon"><span>Documentation</span></a>
+    <div class="header-actions"><button class="icon-button theme-toggle" type="button" title="テーマを切り替え" aria-label="テーマを切り替え">☀</button><nav class="nav" aria-label="Global navigation"><a href="../"><span class="nav-icon" aria-hidden="true">⌂</span>Home</a><a href="https://github.com/thsmt"><span class="nav-icon" aria-hidden="true">▦</span>Repositories</a><a href="https://github.com/thsmt/Documentation"><span class="nav-icon" aria-hidden="true">◆</span>GitHub</a></nav></div>
+  </header>
+  <div class="layout">
+    <aside id="site-sidebar" class="sidebar" aria-label="Page list">
+      <div class="sidebar-heading">
+        <button class="icon-button sidebar-toggle sidebar-toggle-inline" type="button" aria-controls="site-sidebar" aria-expanded="true" title="ナビゲーションを閉じる" aria-label="ナビゲーションを閉じる">☰</button>
+      </div>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">✎</span>記事</p>
+      <a href="cloudflare-private-site.html">Private GitHubリポジトリをCloudflare Workersで認証付き公開してみた</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">◈</span>Terraform</p>
+      <a href="terraform.html">Terraform 概要</a>
+      <a href="hcp-terraform.html">HCP Terraform（Terraform Cloud）</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">☁︎</span>AWS</p>
+      <a href="cloudformation.html">CloudFormation 運用手順集</a>
+      <a href="aws-cli.html">AWS CLI 特殊対応</a>
+      <a href="aws-cli-reference.html">AWS CLI コマンドリファレンス</a>
+      <a href="eventbridge-scheduler.html">EventBridge Scheduler</a>
+      <a class="active" href="aws-directory-service.html">AWS Directory Service 運用手順</a>
+      <a href="amazon-workspaces.html">Amazon WorkSpaces</a>
+      <details class="sidebar-nested-menu">
+        <summary>PoC 閉域VPC・AD／VDI環境</summary>
+        <div class="sidebar-subnav">
+          <a href="workspaces-skill-transfer.html">全体構築・運用順序</a>
+          <a href="workspaces-managed-ad.html">AWS Managed Microsoft AD 構築・管理</a>
+          <a href="workspaces-management-ec2.html">管理用EC2・Active Directory管理</a>
+          <a href="workspaces-ad-connector.html">AD Connector 構築・権限委任</a>
+          <a href="workspaces-provisioning-gpo.html">Amazon WorkSpaces 構築・OU・GPO</a>
+          <a href="workspaces-image-bundle.html">WorkSpaces カスタムイメージ・バンドル</a>
+          <a href="workspaces-patch-manager.html">Systems Manager Patch Manager</a>
+          <a href="workspaces-cost-optimizer.html">Amazon WorkSpaces Cost Optimizer</a>
+          <a href="workspaces-cloudwatch-monitoring.html">CloudWatch・SNS 監視／通知</a>
+        </div>
+      </details>
+      <a href="amazon-ses.html">Amazon SES SMTPリレー</a>
+      <a href="amazon-ses-monitoring.html">Amazon SES 配信監視</a>
+      <a href="amazon-rds-blue-green.html">Amazon RDS Blue/Green Deployments</a>
+      <a href="apache-acm-certificate-update.html">証明書更新（ACMエクスポート）</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">⚙︎</span>OS／ミドルウェア</p>
+      <a href="rhel9.html">Red Hat Enterprise Linux 9</a>
+      <a href="rhel10.html">Red Hat Enterprise Linux 10</a>
+      <a href="amazon-linux-2023.html">Amazon Linux 2023</a>
+      <a href="windows-server-2022.html">Windows Server 2022</a>
+      <a href="windows-server-2025.html">Windows Server 2025</a>
+      <a href="windows-server-2016-upgrade.html">Windows Server 2016 インプレースアップグレード</a>
+      <a href="storage.html">ストレージ管理</a>
+      <a href="apache.html">Apache</a>
+      <a href="apache-self-signed-ssl-termination.html">Apache SSL終端（自己署名証明書）</a>
+      <a href="redis.html">Redis（KVS）</a>
+      <a href="nfs.html">NFS</a>
+      <a href="samba.html">Samba</a>
+      <a href="mariadb.html">MariaDB</a>
+      <a href="postgresql.html">PostgreSQL</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">▤</span>リファレンス</p>
+      <a href="../writing-style-guide.html">[GitHub Pages] 記法・テンプレート</a>
+      <a href="troubleshooting.html">障害切り分けチェックリスト</a>
+      <a href="eol.html">EOL / ライフサイクル一覧表</a>
+    </aside>
+    <main class="content">
+      <nav class="breadcrumb" aria-label="Breadcrumb"><a href="../"><span class="nav-icon" aria-hidden="true">⌂</span>Home</a><span>AWS</span></nav>
+      <h1>AWS Directory Service 運用手順</h1>
+      <div class="page-summary"><strong>⚡ このページの要約</strong><p class="lead">AWS Managed Microsoft ADの構築から、ユーザー・グループ、AD Connector、GPOの運用までを一連の手順として整理する<br>権限分離、変更前確認、反映確認、削除時の影響確認を含め、安全に保守するための判断基準をまとめる</p></div>
+
+      <h2 id="scope">1. 対象範囲</h2>
+      <table>
+        <thead><tr><th>分類</th><th>対象</th><th>主な操作</th></tr></thead>
+        <tbody>
+          <tr><td>ディレクトリ</td><td>AWS Managed Microsoft AD</td><td>作成、状態確認、管理端末の準備</td></tr>
+          <tr><td>アカウント</td><td>ユーザー、グループ</td><td>作成、削除、メンバー追加・削除</td></tr>
+          <tr><td>接続</td><td>AD Connector</td><td>サービスアカウント、権限委任、作成、状態確認</td></tr>
+          <tr><td>ポリシー</td><td>Group Policy Object（GPO）</td><td>作成、設定、リンク、優先度、リンク解除、削除</td></tr>
+        </tbody>
+      </table>
+      <div class="callout callout-warning"><strong>⚠️ 公開情報の扱い</strong><p>画面例ではDirectory ID、EC2インスタンスID、AWSアカウントIDをマスクしている。実環境のパスワード、IPアドレス、接続先、顧客名は手順書や作業記録へ記載せず、承認された保管先で管理する</p></div>
+
+      <h2 id="architecture">2. 検証構成</h2>
+      <p>ディレクトリと接続元をVPCで分離し、VPCピアリング、ルート、セキュリティグループ、DNS到達性を揃えて接続する。図には公開可能なVPC名とCIDRだけを記載する</p>
+      <figure class="screenshot-wide">
+        <figcaption>Directory Service検証構成</figcaption>
+        <svg viewBox="0 0 1100 520" role="img" aria-labelledby="ds-architecture-title ds-architecture-desc" style="display:block;width:100%;height:auto;background:#f8fafc;border:1px solid #cbd5e1;border-radius:12px">
+          <title id="ds-architecture-title">AWS Directory Service検証構成図</title>
+          <desc id="ds-architecture-desc">192.168.225.0/24のディレクトリVPCと192.168.224.0/24の接続元VPCをVPCピアリングで接続し、Managed Microsoft AD、管理用EC2、AD Connector、WorkSpacesが連携する構成</desc>
+          <defs>
+            <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#475569"/></marker>
+            <linearGradient id="awsBlue" x1="0" x2="1"><stop offset="0" stop-color="#0f3d66"/><stop offset="1" stop-color="#2563eb"/></linearGradient>
+          </defs>
+          <rect x="25" y="25" width="1050" height="64" rx="10" fill="url(#awsBlue)"/>
+          <text x="550" y="65" text-anchor="middle" font-size="25" font-weight="700" fill="#fff">AWS Directory Service 検証環境</text>
+          <rect x="45" y="120" width="445" height="320" rx="16" fill="#eef6ff" stroke="#2563eb" stroke-width="2"/>
+          <text x="68" y="153" font-size="20" font-weight="700" fill="#0f172a">p-pm-vpc-002</text>
+          <text x="68" y="180" font-size="17" fill="#334155">Directory VPC：192.168.225.0/24</text>
+          <rect x="75" y="210" width="180" height="88" rx="10" fill="#fff" stroke="#60a5fa"/>
+          <text x="165" y="244" text-anchor="middle" font-size="16" font-weight="700" fill="#0f172a">Managed Microsoft AD</text>
+          <text x="165" y="272" text-anchor="middle" font-size="14" fill="#475569">2 AZ / 2 Domain Controllers</text>
+          <rect x="280" y="210" width="180" height="88" rx="10" fill="#fff" stroke="#60a5fa"/>
+          <text x="370" y="244" text-anchor="middle" font-size="16" font-weight="700" fill="#0f172a">管理用EC2</text>
+          <text x="370" y="272" text-anchor="middle" font-size="14" fill="#475569">ADUC / GPMC / RSAT</text>
+          <line x1="255" y1="254" x2="278" y2="254" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+          <rect x="75" y="330" width="385" height="72" rx="10" fill="#dbeafe" stroke="#93c5fd"/>
+          <text x="267" y="360" text-anchor="middle" font-size="15" font-weight="700" fill="#0f172a">ユーザー・グループ・OU・GPO</text>
+          <text x="267" y="384" text-anchor="middle" font-size="14" fill="#475569">専用管理アカウントと委任グループで運用</text>
+          <rect x="610" y="120" width="445" height="320" rx="16" fill="#fff7ed" stroke="#f59e0b" stroke-width="2"/>
+          <text x="633" y="153" font-size="20" font-weight="700" fill="#0f172a">p-pm-vpc-001</text>
+          <text x="633" y="180" font-size="17" fill="#334155">Application VPC：192.168.224.0/24</text>
+          <rect x="640" y="210" width="180" height="88" rx="10" fill="#fff" stroke="#fbbf24"/>
+          <text x="730" y="244" text-anchor="middle" font-size="16" font-weight="700" fill="#0f172a">AD Connector</text>
+          <text x="730" y="272" text-anchor="middle" font-size="14" fill="#475569">認証要求をADへ転送</text>
+          <rect x="845" y="210" width="180" height="88" rx="10" fill="#fff" stroke="#fbbf24"/>
+          <text x="935" y="244" text-anchor="middle" font-size="16" font-weight="700" fill="#0f172a">WorkSpaces</text>
+          <text x="935" y="272" text-anchor="middle" font-size="14" fill="#475569">利用者デスクトップ</text>
+          <line x1="823" y1="254" x2="843" y2="254" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+          <rect x="640" y="330" width="385" height="72" rx="10" fill="#ffedd5" stroke="#fdba74"/>
+          <text x="832" y="360" text-anchor="middle" font-size="15" font-weight="700" fill="#0f172a">接続元アプリケーション</text>
+          <text x="832" y="384" text-anchor="middle" font-size="14" fill="#475569">認証・DNS・ドメイン参加</text>
+          <line x1="490" y1="280" x2="608" y2="280" stroke="#475569" stroke-width="3" marker-start="url(#arrow)" marker-end="url(#arrow)"/>
+          <rect x="496" y="236" width="108" height="66" rx="10" fill="#fff" stroke="#94a3b8"/>
+          <text x="550" y="260" text-anchor="middle" font-size="14" font-weight="700" fill="#0f172a">VPC Peering</text>
+          <text x="550" y="282" text-anchor="middle" font-size="12" fill="#475569">Route / SG / DNS</text>
+          <text x="550" y="482" text-anchor="middle" font-size="14" fill="#64748b">VPC ID・AWSアカウントID・個別IPアドレスは非掲載</text>
+        </svg>
+      </figure>
+      <table>
+        <thead><tr><th>確認対象</th><th>確認内容</th></tr></thead>
+        <tbody>
+          <tr><td>AD DNS名</td><td><code>ad.example.com</code></td></tr>
+          <tr><td>サブネット</td><td>ディレクトリ用サブネットを異なるAvailability Zoneへ配置</td></tr>
+          <tr><td>ルート</td><td>両VPCの対象サブネットから相手CIDRへの戻り経路を含めて設定</td></tr>
+          <tr><td>DNS</td><td>接続元からAD DNSサーバーへ名前解決できることを確認</td></tr>
+          <tr><td>通信</td><td>DNS、Kerberos、LDAP、SMB、RPCなど、Directory Serviceの要件に沿って許可</td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="managed-ad">3. AWS Managed Microsoft ADの作成</h2>
+      <ol>
+        <li>Directory Serviceコンソールで<code class="ui-value">ディレクトリのセットアップ</code>を選択</li>
+        <li><code class="ui-value">AWS Managed Microsoft AD</code>を選択し、エディション、DNS名、NetBIOS名を入力</li>
+        <li>管理用<code>Admin</code>パスワードをパスワード管理基盤へ登録し、手順書や画面キャプチャへ記載しない</li>
+        <li>対象VPCと、異なるAvailability Zoneにある同一ネットワークタイプの2サブネットを選択</li>
+        <li>設定を確認して作成し、ステータスが<code class="ui-value">アクティブ</code>になるまで待機</li>
+        <li>DNSアドレス、セキュリティグループ、ログ転送、バックアップ方針を記録</li>
+      </ol>
+      <div class="callout callout-warning"><strong>⚠️ 管理アカウント</strong><p><code>Admin</code>はディレクトリ管理専用とし、通常利用やWorkSpaceの割り当てに使用しない。AWS予約OU、予約アカウント、AWS管理GPOは変更・削除しない</p></div>
+      <figure class="screenshot-wide">
+        <figcaption>Managed Microsoft ADの作成完了とアクティブ状態</figcaption>
+        <img src="../assets/img/aws-directory-service/managed-ad-active-redacted.png" alt="AWS Directory ServiceコンソールでManaged Microsoft ADがアクティブになった画面。Directory IDはマスク済み" width="2167" height="363" loading="lazy">
+      </figure>
+
+      <h2 id="users-groups">4. ユーザーとグループの管理</h2>
+      <p>AWS Directory Service Dataを有効にすると、プライマリリージョンのコンソールから標準的なユーザー・グループ管理を実行できる。OU、詳細属性、委任などの操作は、ドメイン参加済み管理端末のActive Directoryユーザーとコンピューター（ADUC）を使用する</p>
+      <h3 id="directory-data-enable">ユーザー・グループ管理の有効化</h3>
+      <ol>
+        <li>対象ディレクトリの詳細を開き、<code class="ui-value">ユーザーとグループの管理</code>を確認</li>
+        <li>無効の場合は<code class="ui-value">有効化</code>を選択</li>
+        <li>作業者へ必要最小限のDirectory Service Data権限を付与</li>
+        <li>ユーザーとグループのタブが表示され、参照できることを確認</li>
+      </ol>
+      <h3 id="user-create-delete">ユーザーの作成・削除</h3>
+      <ol>
+        <li><code class="ui-value">ユーザーを作成</code>を選択し、ログイン名、氏名、初期パスワードを入力</li>
+        <li>既存の命名規則、重複、所属部署、利用期限を確認して作成</li>
+        <li>作成後、対象ユーザーのステータスが有効であることを確認</li>
+        <li>削除時は、WorkSpaces、グループ、ファイル所有権、アプリケーション割り当てを確認</li>
+        <li>対象を再確認して削除し、検索結果から消えたことを確認</li>
+      </ol>
+      <figure class="screenshot-wide">
+        <figcaption>検証用ユーザーの作成完了</figcaption>
+        <img src="../assets/img/aws-directory-service/user-created-redacted.png" alt="AWS Directory Service Dataで検証用ユーザーを作成した画面。Directory IDとEC2インスタンスIDはマスク済み" width="1440" height="1092" loading="lazy">
+      </figure>
+      <h3 id="group-membership">グループへの追加・削除</h3>
+      <ol>
+        <li>対象グループを開き、用途、スコープ、権限所有者を確認</li>
+        <li><code class="ui-value">メンバーを追加</code>から対象ユーザーを選択</li>
+        <li>追加後のメンバー一覧とユーザー側の所属グループを確認</li>
+        <li>削除時は権限喪失の影響と代替グループを確認</li>
+        <li>対象メンバーだけを削除し、一覧と実効権限を再確認</li>
+      </ol>
+      <div class="callout"><strong>ℹ️ 検証用アカウント</strong><p>画面取得や手順確認には、本番利用者や特権グループではなく、削除可能な検証専用ユーザーを使用する。パスワード変更、無効化、削除の実行者と時刻を作業記録へ残す</p></div>
+
+      <h2 id="ad-connector-account">5. AD Connector用サービスアカウント</h2>
+      <p>Domain Adminsを常用せず、AD Connector専用のサービスアカウントと委任グループを作成する。通常はユーザー・グループの読み取り権限を付与し、WorkSpacesまたはシームレスドメイン参加を使用する場合だけ、対象OUへのコンピューターオブジェクト作成権限を追加する</p>
+      <ol>
+        <li>ADUCでグローバル・セキュリティグループ<code>Connectors</code>を作成</li>
+        <li>コンピューターオブジェクトを作成する専用OUを決定</li>
+        <li>委任ウィザードで<code>Connectors</code>へ必要な読み取り権限を付与</li>
+        <li>WorkSpacesを使用する場合は、対象OUに限ってコンピューターオブジェクトの作成・削除・書き込み権限を追加</li>
+        <li>専用サービスアカウントを作成し、<code>Connectors</code>へ追加</li>
+        <li>対話ログオンを許可せず、パスワードの保管、更新日、更新担当、AD Connector側の更新手順を定義</li>
+      </ol>
+      <div class="callout callout-warning"><strong>⚠️ 委任範囲</strong><p>ドメインルート全体ではなく、AD Connectorが使用するOUへ限定する。サービスアカウントをDomain Adminsへ追加しない。パスワード変更後はDirectory Service側のサービスアカウント認証情報も更新する</p></div>
+
+      <h2 id="ad-connector">6. AD Connectorの作成</h2>
+      <ol>
+        <li>接続元VPCの2サブネットから既存ADのDNSサーバーへ到達できることを確認</li>
+        <li>Directory Serviceコンソールで<code class="ui-value">AD Connector</code>を選択</li>
+        <li>サイズ、説明、完全修飾ドメイン名、NetBIOS名、DNSサーバーIPを入力</li>
+        <li>接続元VPCと異なるAvailability Zoneの2サブネットを選択</li>
+        <li>専用サービスアカウントのユーザー名とパスワードを入力</li>
+        <li>作成後、ステータスが<code class="ui-value">アクティブ</code>であることを確認</li>
+        <li>Directory ID、接続ドメイン、VPC、サブネット、DNSアドレス、サービスアカウント名を照合</li>
+      </ol>
+      <figure class="screenshot-wide">
+        <figcaption>AD Connectorの詳細確認</figcaption>
+        <img src="../assets/img/aws-directory-service/ad-connector-details-redacted.png" alt="AWS Directory ServiceコンソールのAD Connector詳細画面。Directory IDはマスク済み" width="1983" height="550" loading="lazy">
+      </figure>
+      <div class="callout callout-warning"><strong>⚠️ 作成失敗時の確認順序</strong><p>完全修飾ドメイン名、DNSサーバーIP、サービスアカウントの資格情報、委任権限、ルート、セキュリティグループ、ネットワークACL、時刻同期の順に切り分ける。資格情報をログへ出力しない</p></div>
+
+      <h2 id="gpo">7. GPO管理</h2>
+      <p>GPO本体、リンク、リンク順序は別の管理対象である。変更前にGPOバックアップ、対象OU、既存リンク、継承、セキュリティフィルター、WMIフィルターを記録する</p>
+      <h3 id="gpo-create">GPOの新規作成</h3>
+      <ol>
+        <li>管理端末で<code>gpmc.msc</code>を開き、対象ドメインの<code class="ui-value">グループ ポリシー オブジェクト</code>を選択</li>
+        <li><code class="ui-value">新規</code>を選択し、用途と対象が分かる名称を入力</li>
+        <li>新規GPOに設定がないこと、既存GPOを誤って選択していないことを確認</li>
+      </ol>
+      <h3 id="gpo-settings">GPOへの設定値の反映</h3>
+      <ol>
+        <li>対象GPOを右クリックして<code class="ui-value">編集</code>を選択</li>
+        <li>コンピューターまたはユーザーの構成から対象ポリシーを開く</li>
+        <li>変更前値、変更後値、根拠、影響範囲、戻し値を作業記録へ残す</li>
+        <li>GPMCの<code class="ui-value">設定</code>タブで意図した値だけが反映されたことを確認</li>
+      </ol>
+      <h3 id="gpo-link">ドメインまたはOUへのリンクと解除</h3>
+      <ol>
+        <li>対象ドメインまたはOUを選択し、<code class="ui-value">既存のGPOのリンク</code>を選択</li>
+        <li>GPO名と対象OUを再確認してリンク</li>
+        <li>リンク解除時は対象OUのリンクを選択し、GPO本体ではなくリンクだけを削除</li>
+        <li>別のOUにリンクが残る場合、GPO本体の設定は引き続き適用されることを確認</li>
+      </ol>
+      <h3 id="gpo-order">適用順序の変更</h3>
+      <ol>
+        <li>対象OUの<code class="ui-value">リンクされたグループ ポリシー オブジェクト</code>を表示</li>
+        <li>上矢印・下矢印でリンク順序を変更</li>
+        <li>同じ設定が競合するGPO、継承、強制、ブロックの状態を確認</li>
+        <li><code>gpresult /h</code>でクライアントの実効結果を確認</li>
+      </ol>
+      <h3 id="gpo-delete">GPOの削除</h3>
+      <ol>
+        <li>GPOをバックアップし、全リンク、所有者、委任、セキュリティフィルターを確認</li>
+        <li>必要なリンクを解除し、対象OUへの影響を確認</li>
+        <li>GPO本体を削除する必要がある場合だけ、<code class="ui-value">グループ ポリシー オブジェクト</code>配下から削除</li>
+        <li>削除後、GPMC検索、イベントログ、対象端末の<code>gpresult</code>を確認</li>
+      </ol>
+      <div class="callout callout-error"><strong>❌ リンク解除とGPO削除は別操作</strong><p>OU上のリンクを削除してもGPO本体は残る。GPO本体を削除すると、そのGPOを参照するすべてのリンクへ影響する。全リンクを確認できない状態では削除しない</p></div>
+
+      <h2 id="validation">8. 反映確認</h2>
+      <p>管理者としてコマンドプロンプトまたはPowerShellを開き、ポリシー更新と実効結果を確認する</p>
+      <div class="code"><div class="code-header"><span>administrator shell</span><button class="copy" type="button">Copy</button></div><pre><code>gpupdate /force
+gpresult /r
+gpresult /h C:\Temp\gpresult.html</code></pre></div>
+      <table>
+        <thead><tr><th>確認対象</th><th>判定</th></tr></thead>
+        <tbody>
+          <tr><td>Managed Microsoft AD</td><td>ステータスがアクティブで、2つのDNSアドレスを確認できる</td></tr>
+          <tr><td>ユーザー</td><td>サインイン、無効化、パスワード変更、削除が承認どおりに反映</td></tr>
+          <tr><td>グループ</td><td>メンバー一覧と対象ユーザーの実効権限が一致</td></tr>
+          <tr><td>AD Connector</td><td>ステータスがアクティブで、接続ドメインとサービスアカウントが一致</td></tr>
+          <tr><td>GPO</td><td>適用GPO、リンク順序、設定値が<code>gpresult</code>と一致</td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="operations">9. 運用上の注意</h2>
+      <ul>
+        <li>ユーザー削除、グループ権限変更、GPO削除は、申請者と作業者を分離し、対象を相互確認</li>
+        <li>Directory Service Dataの書き込み権限は常設せず、必要な担当者と用途へ限定</li>
+        <li>サービスアカウントは人の操作に使用せず、パスワード更新時はADとAD Connectorを同一作業で更新</li>
+        <li>デフォルトドメインポリシー、Fine-Grained Password Policy（PSO）、各OUのGPOを混同しない</li>
+        <li>PSOはユーザーまたはグローバルセキュリティグループへ割り当てる。OUへリンクするGPOとは適用方式が異なる</li>
+        <li>変更後は設定画面だけでなく、対象端末の実効結果とイベントログで確認</li>
+      </ul>
+
+      <h2 id="references">10. AWS公式リファレンス</h2>
+      <ul>
+        <li>AWS公式手順：<a href="https://docs.aws.amazon.com/directoryservice/latest/admin-guide/ms_ad_getting_started.html">Getting started with AWS Managed Microsoft AD</a></li>
+        <li>AWS公式手順：<a href="https://docs.aws.amazon.com/directoryservice/latest/admin-guide/ms_ad_manage_users_groups.html">User and group management in AWS Managed Microsoft AD</a></li>
+        <li>AWS公式手順：<a href="https://docs.aws.amazon.com/directoryservice/latest/admin-guide/ad_connector_getting_started.html">Getting started with AD Connector</a></li>
+        <li>AWS公式手順：<a href="https://docs.aws.amazon.com/directoryservice/latest/admin-guide/ms_ad_password_policies.html">Understanding AWS Managed Microsoft AD password policies</a></li>
+      </ul>
+    </main>
+
+    <aside class="toc" aria-label="Table of contents">
+      <h2>ページ内</h2>
+      <a class="active" href="#scope">1. 対象範囲</a>
+      <a href="#architecture">2. 検証構成</a>
+      <a href="#managed-ad">3. AWS Managed Microsoft ADの作成</a>
+      <a href="#users-groups">4. ユーザーとグループの管理</a>
+      <a href="#ad-connector-account">5. AD Connector用サービスアカウント</a>
+      <a href="#ad-connector">6. AD Connectorの作成</a>
+      <a href="#gpo">7. GPO管理</a>
+      <a href="#validation">8. 反映確認</a>
+      <a href="#operations">9. 運用上の注意</a>
+      <a href="#references">10. AWS公式リファレンス</a>
+    </aside>
+  </div>
+  <script src="../assets/app.js?v=20260823-ref1"></script>
+</body>
+</html>

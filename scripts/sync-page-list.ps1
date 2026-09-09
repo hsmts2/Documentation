@@ -30,6 +30,7 @@ $groups = @(
             [pscustomobject]@{ File = 'aws-cli.html'; Label = 'AWS CLI 特殊対応' }
             [pscustomobject]@{ File = 'aws-cli-reference.html'; Label = 'AWS CLI コマンドリファレンス' }
             [pscustomobject]@{ File = 'eventbridge-scheduler.html'; Label = 'EventBridge Scheduler' }
+            [pscustomobject]@{ File = 'aws-directory-service.html'; Label = 'AWS Directory Service 運用手順' }
             [pscustomobject]@{ File = 'amazon-workspaces.html'; Label = 'Amazon WorkSpaces' }
             [pscustomobject]@{
                 Label = 'PoC 閉域VPC・AD／VDI環境'
@@ -75,6 +76,7 @@ $groups = @(
         Label = 'リファレンス'
         Icon = '▤'
         Pages = @(
+            [pscustomobject]@{ RootFile = 'writing-style-guide.html'; Label = '[GitHub Pages] 記法・テンプレート' }
             [pscustomobject]@{ File = 'troubleshooting.html'; Label = '障害切り分けチェックリスト' }
             [pscustomobject]@{ File = 'eol.html'; Label = 'EOL / ライフサイクル一覧表' }
         )
@@ -87,7 +89,7 @@ $pages = @(
                 foreach ($child in $page.Children) {
                     $child
                 }
-            } else {
+            } elseif ($page.File) {
                 $page
             }
         }
@@ -109,6 +111,12 @@ foreach ($page in $pages) {
 
     if (-not (Test-Path -LiteralPath (Join-Path $tutorialsRoot $page.File))) {
         $errors.Add("Missing tutorial page: $($page.File)")
+    }
+}
+
+foreach ($rootPage in @($groups.Pages | Where-Object { $_.RootFile })) {
+    if (-not (Test-Path -LiteralPath (Join-Path $root $rootPage.RootFile))) {
+        $errors.Add("Missing root page: $($rootPage.RootFile)")
     }
 }
 
@@ -158,7 +166,10 @@ foreach ($target in $targets) {
         $lines.Add("      <p class=`"sidebar-group`"><span class=`"sidebar-group-icon`" aria-hidden=`"true`">$($group.Icon)</span>$($group.Label)</p>")
 
         foreach ($page in $group.Pages) {
-            if ($page.Children) {
+            if ($page.RootFile) {
+                $rootHref = if ($isIndex) { $page.RootFile } else { "../$($page.RootFile)" }
+                $lines.Add("      <a href=`"$rootHref`">$($page.Label)</a>")
+            } elseif ($page.Children) {
                 $isNestedActive = @($page.Children | Where-Object { $_.File -eq $activeFile }).Count -gt 0
                 $openAttribute = if ($isNestedActive) { ' open' } else { '' }
                 $lines.Add("      <details class=`"sidebar-nested-menu`"$openAttribute>")
