@@ -31,18 +31,29 @@ const documents = {
   workspacesOu: "③Amazon WorkSpaces/02_OU設定/Amazon WorkSpaces用OU作成・権限委任・ターゲットOU設定手順.md",
   workspacesGpo: "③Amazon WorkSpaces/03_GPO設定/Amazon WorkSpaces用GPO作成・適用・運用手順.md",
   workspacesImage: "③Amazon WorkSpaces/04_イメージ管理・展開/Amazon WorkSpacesカスタムイメージ・バンドル作成・共有手順.md",
-  workspacesRdp: "③Amazon WorkSpaces/05_RDP接続運用/Amazon WorkSpaces RDP接続運用上の注意.md",
-  systemsManagerOverview: "④Systems Manager/00_構成概要/Systems Manager・Patch Manager構成概要.md",
+  workspacesRdp: "③Amazon WorkSpaces/05_RDP接続運用/Amazon WorkSpaces RDP接続運用手順.md",
   systemsManagerBuild: "④Systems Manager/01_SSM環境設定・Patch Manager/SSM環境設定・Patch Manager運用手順.md",
   managementEc2: "管理用EC2・GPO管理/管理用EC2起動・接続・AD管理開始手順.md",
+  costOptimizerGuide: "⑤Amazon WorkSpaces Cost Optimizer/Amazon WorkSpaces Cost Optimizer_デプロイ・運用手順_v2.9.10.md",
+  costOptimizerVersionDiff: "⑤Amazon WorkSpaces Cost Optimizer/01_CloudFormationデプロイ/参考資料/参考_v2.8.1-v2.9.10差分.md",
+  costOptimizerResources: "⑤Amazon WorkSpaces Cost Optimizer/01_CloudFormationデプロイ/参考資料/参考_作成リソース一覧_v2.9.10.md",
+  costOptimizerDeploy: "⑤Amazon WorkSpaces Cost Optimizer/01_CloudFormationデプロイ/01_CloudFormationデプロイ手順.md",
+  costOptimizerReports: "⑤Amazon WorkSpaces Cost Optimizer/02_レポート・監視/02_レポート・監視手順.md",
+  costOptimizerSample: "⑤Amazon WorkSpaces Cost Optimizer/02_レポート・監視/参考_説明用サンプル5台.md",
+  costOptimizerSettings: "⑤Amazon WorkSpaces Cost Optimizer/03_設定変更・実行結果確認/03_設定変更・実行結果確認手順.md",
+  costOptimizerSchedule: "⑤Amazon WorkSpaces Cost Optimizer/03_設定変更・実行結果確認/参考_実行時刻変更手順.md",
+  cloudWatchSns: "⑥CloudWatch/01_SNS通知/Amazon SNS通知設定手順.md",
+  cloudWatchEc2: "⑥CloudWatch/02_EC2・Windows監視/EC2・Windows OS監視設定手順.md",
+  cloudWatchWorkSpaces: "⑥CloudWatch/03_Amazon WorkSpaces監視/Amazon WorkSpaces監視設定手順.md",
+  cloudWatchDashboard: "⑥CloudWatch/04_ダッシュボード・動作確認/CloudWatchダッシュボード・動作確認手順.md",
 };
 
 const pageSpecs = [
   {
     file: "workspaces-skill-transfer.html",
     title: "Amazon WorkSpaces 技術移管",
-    description: "AWS Managed Microsoft ADからAmazon WorkSpaces、カスタムイメージ、Patch Managerまでを再構築できる技術移管資料",
-    lead: "AWS Managed Microsoft AD、AD Connector、Amazon WorkSpaces、OU・GPO、カスタムイメージ、Systems Managerを依存関係に沿って再構築する<br>実機検証で確認した設定値、工程ゲート、証跡画像および運用上の判断基準をまとめる",
+    description: "AWS Managed Microsoft ADからAmazon WorkSpaces、カスタムイメージ、Patch Manager、Cost Optimizerまでを再構築できる技術移管資料",
+    lead: "AWS Managed Microsoft AD、AD Connector、Amazon WorkSpaces、OU・GPO、カスタムイメージ、Systems Manager、Cost Optimizerを依存関係に沿って再構築する<br>実機検証で確認した設定値、工程ゲート、証跡画像および運用上の判断基準をまとめる",
     docs: ["overview"],
     hero: true,
   },
@@ -86,7 +97,21 @@ const pageSpecs = [
     title: "Systems Manager Patch Manager",
     description: "Windows Serverを対象としたSystems Manager、Maintenance Window、Patch Managerの構築・運用手順",
     lead: "Windows ServerをSystems Managerのマネージドノードとして登録する<br>Maintenance Window、Patch Group、Scan・Install、S3ログおよび適用後確認まで実機証跡で整理する",
-    docs: ["systemsManagerOverview", "systemsManagerBuild"],
+    docs: ["systemsManagerBuild"],
+  },
+  {
+    file: "workspaces-cost-optimizer.html",
+    title: "Amazon WorkSpaces Cost Optimizer",
+    description: "Amazon WorkSpaces Cost Optimizer v2.9.10の仕様、CloudFormationデプロイ、監視、設定変更および成功確認手順",
+    lead: "Amazon WorkSpaces Cost Optimizer v2.9.10をCloudFormationでデプロイし、課金モードの評価と変更結果を確認する<br>DryRun、料金しきい値、実行時刻、ECSタスク、CloudWatch Logs、S3レポートおよびダッシュボードの確認方法を整理する",
+    docs: ["costOptimizerGuide", "costOptimizerDeploy", "costOptimizerReports", "costOptimizerSample", "costOptimizerSettings", "costOptimizerSchedule", "costOptimizerVersionDiff", "costOptimizerResources"],
+  },
+  {
+    file: "workspaces-cloudwatch-monitoring.html",
+    title: "CloudWatch・SNS 監視／通知",
+    description: "Amazon EC2、Windows OS、Amazon WorkSpacesのCloudWatch監視、SNS通知、ダッシュボードおよび動作確認手順",
+    lead: "Amazon EC2、Windows OSおよびAmazon WorkSpacesのメトリクスをCloudWatchへ集約する<br>SNS通知、アラーム、ダッシュボードおよび監視動作の確認手順を整理する",
+    docs: ["cloudWatchSns", "cloudWatchEc2", "cloudWatchWorkSpaces", "cloudWatchDashboard"],
   },
 ];
 
@@ -111,12 +136,59 @@ const sanitizeMarkdown = (input) => {
   let value = input.replace(/\r\n?/g, "\n");
   const sourceAccountAlias = process.env.SOURCE_ACCOUNT_ALIAS;
   const sourceDirectoryDomain = process.env.SOURCE_DIRECTORY_DOMAIN;
+  const sourceEnvironmentPrefix = process.env.SOURCE_ENVIRONMENT_PREFIX;
+  const publicEnvironmentPrefix = process.env.PUBLIC_ENVIRONMENT_PREFIX || "ad";
+  const publicDirectoryDomain = process.env.PUBLIC_DIRECTORY_DOMAIN || "ad.example.com";
   if (sourceAccountAlias) value = value.replaceAll(sourceAccountAlias, "t_hashimoto");
-  if (sourceDirectoryDomain) value = value.replaceAll(sourceDirectoryDomain, "workspaces.example.com");
+  if (sourceDirectoryDomain) {
+    value = value.replaceAll(sourceDirectoryDomain, publicDirectoryDomain);
+    const sourceDistinguishedName = sourceDirectoryDomain
+      .split(".")
+      .map((label) => `DC=${label}`)
+      .join(",");
+    const publicDistinguishedName = publicDirectoryDomain
+      .split(".")
+      .map((label) => `DC=${label}`)
+      .join(",");
+    value = value.replaceAll(sourceDistinguishedName, publicDistinguishedName);
+  }
+  if (sourceEnvironmentPrefix) value = value.replaceAll(sourceEnvironmentPrefix, publicEnvironmentPrefix);
+  for (const [polite, plain] of [
+    ["してはいけません", "しない"],
+    ["作成されました", "作成された"],
+    ["重複させません", "重複させない"],
+    ["切り替えません", "切り替えない"],
+    ["取り違えません", "取り違えない"],
+    ["置き換えません", "置き換えない"],
+    ["含みません", "含まない"],
+    ["行いません", "行わない"],
+    ["含めません", "含めない"],
+    ["構いません", "使用できる"],
+    ["限りません", "限らない"],
+    ["一致させます", "一致させる"],
+    ["確認します", "確認する"],
+    ["絞り込みます", "絞り込む"],
+    ["適用されます", "適用される"],
+    ["揃えます", "揃える"],
+    ["限ります", "限る"],
+    ["説明図です", "説明図"],
+    ["記録です", "記録"],
+    ["異常ではありません", "異常とは限らない"],
+    ["正常です", "正常な状態"],
+    ["用います", "用いる"],
+  ]) {
+    value = value.replaceAll(polite, plain);
+  }
   value = value.replace(/\b\d{12}\b/g, "<AWS_ACCOUNT_ID>");
   value = value.replace(/^.*(?:検証環境リソースは提出前にすべて削除|現行方針では環境固有値へ追加マスキング|提出条件が変わる場合は公開範囲).*$(?:\n)?/gm, "");
   value = value.replace(/^## 参考資料[\s\S]*$/m, "");
   value = value.replace(/。(?=(?:\*\*|<br\s*\/?>|\s*$))/gm, "");
+  value = value.replace(
+    /(?:詳細は|詳細なコンソール操作は|詳細な条件と最新情報は|作成要件と最新の制約は|設定方法は|この修復方法と背景は)\s*(\[[^\]]+\]\(https?:\/\/[^)]+\))(?:を|も)?参照してください。?/g,
+    "\n\n$1",
+  );
+  value = value.replace(/(\[[^\]]+\]\(https?:\/\/[^)]+\))を確認し、/g, "$1。");
+  value = value.replace(/(\[[^\]]+\]\(https?:\/\/[^)]+\))(?:を|も)?参照してください。?/g, "$1");
   value = value.replace(/(\[[^\]]+\]\(https?:\/\/[^)]+\))/g, "出典：$1");
   value = value.replace(/(?:AWS公式[：:]\s*)?出典：/g, "出典：");
   return value.trim();
@@ -128,12 +200,13 @@ const isAwsConsoleScreenshot = async (imagePath) => {
     const metadata = await image.metadata();
     if (!metadata.width || !metadata.height || metadata.width < 900 || metadata.height < 300) return false;
     const y = Math.min(25, metadata.height - 1);
-    const points = [Math.min(25, metadata.width - 1), Math.max(0, metadata.width - 50)];
+    const points = [0.25, 0.5, 0.75].map((ratio) => Math.min(metadata.width - 1, Math.round(metadata.width * ratio)));
+    let darkPoints = 0;
     for (const x of points) {
       const { data } = await image.clone().extract({ left: x, top: y, width: 1, height: 1 }).raw().toBuffer({ resolveWithObject: true });
-      if (![data[0], data[1], data[2]].every((channel) => channel < 90)) return false;
+      if ([data[0], data[1], data[2]].every((channel) => channel < 90)) darkPoints += 1;
     }
-    return true;
+    return darkPoints >= 2;
   } catch {
     return false;
   }
@@ -173,10 +246,12 @@ const transformDocument = async (key, pageAssetFolder, sequenceStart) => {
       .replace(/^## 7\. /gm, "## 6. ");
   }
 
-  const imagePattern = /!\[([^\]]*)\]\(<([^>]+)>\)/g;
+  const imagePattern = /!\[([^\]]*)\]\((?:<([^>]+)>|([^)]+))\)/g;
   const matches = [...markdown.matchAll(imagePattern)];
   for (const match of matches) {
-    const sourceImage = path.resolve(sourceDir, match[2]);
+    const sourceReference = (match[2] || match[3] || "").trim();
+    if (/^https?:\/\//i.test(sourceReference)) continue;
+    const sourceImage = path.resolve(sourceDir, sourceReference);
     if (!fs.existsSync(sourceImage)) throw new Error(`Missing image: ${sourceImage}`);
     sequence += 1;
     const ext = path.extname(sourceImage).toLowerCase() || ".png";
@@ -194,7 +269,8 @@ const transformDocument = async (key, pageAssetFolder, sequenceStart) => {
   markdown = markdown.replace(/^\*図[^\n]*\*$/gm, "");
   markdown = markdown.replace(/^\*参考図[^\n]*\*$/gm, "");
 
-  markdown = markdown.replace(/\]\(<([^>]+\.md)>\)/g, (_all, rel) => {
+  markdown = markdown.replace(/\]\((?:<([^>]+\.md)>|([^)>]+\.md))\)/g, (_all, angleRel, plainRel) => {
+    const rel = angleRel || plainRel;
     const target = path.resolve(sourceDir, rel);
     const href = documentToPage.get(target) || "workspaces-skill-transfer.html";
     return `](${href})`;
@@ -300,8 +376,10 @@ for (const page of pageSpecs) {
       <a href="workspaces-provisioning-gpo.html"><strong>4. WorkSpaces</strong><span>作成・OU・GPO</span></a>
       <a href="workspaces-image-bundle.html"><strong>5. イメージ展開</strong><span>Image Checker・共有</span></a>
       <a href="workspaces-patch-manager.html"><strong>6. パッチ運用</strong><span>Scan・Install・証跡</span></a>
+      <a href="workspaces-cost-optimizer.html"><strong>7. コスト最適化</strong><span>デプロイ・監視・設定変更</span></a>
+      <a href="workspaces-cloudwatch-monitoring.html"><strong>8. 監視・通知</strong><span>CloudWatch・SNS・動作確認</span></a>
     </nav>
-    <figure class="architecture-figure"><figcaption>全体構成: 共通ディレクトリVPCとWorkSpaces VPCをVPC Peeringで接続し、管理・認証・デスクトップ・パッチ運用を分離する</figcaption><img src="../assets/img/workspaces-skill-transfer/workspaces-skill-transfer-architecture.png" alt="AWS Managed Microsoft ADと複数WorkSpaces VPCの全体構成図" loading="eager"></figure>\n${body}`;
+    <figure class="architecture-figure"><figcaption>全体構成: 4つのVPCとオンプレミス拠点をDirect Connectで接続し、Managed AD、WorkSpaces、ファイル共有および管理機能を分離する</figcaption><img src="../assets/img/workspaces-skill-transfer/workspaces-skill-transfer-architecture.png" alt="4つのVPCとオンプレミス拠点を接続するAmazon WorkSpaces全体ネットワーク構成図" loading="eager"></figure>\n${body}`;
   }
   fs.writeFileSync(path.join(tutorialRoot, page.file), shell(page, body), "utf8");
 }

@@ -1,0 +1,1326 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CloudWatch・SNS 監視／通知 | Documentation</title>
+  <meta name="description" content="Amazon EC2、Windows OS、Amazon WorkSpacesのCloudWatch監視、SNS通知、ダッシュボードおよび動作確認手順">
+  <link rel="stylesheet" href="../assets/styles.css?v=20260908-skill-transfer1">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="../"><img src="../assets/icon.jpg" alt="Documentation icon"><span>Documentation</span></a>
+    <div class="header-actions">
+      <button class="icon-button theme-toggle" type="button" title="テーマを切り替え" aria-label="テーマを切り替え">☀</button>
+      <nav class="nav" aria-label="Global navigation">
+        <a href="../"><span class="nav-icon" aria-hidden="true">⌂</span>Home</a>
+        <a href="https://github.com/hsmts2"><span class="nav-icon" aria-hidden="true">▦</span>Repositories</a>
+        <a href="https://github.com/hsmts2/Documentation"><span class="nav-icon" aria-hidden="true">◆</span>GitHub</a>
+      </nav>
+    </div>
+  </header>
+  <div class="layout layout-wide">
+    <aside id="site-sidebar" class="sidebar" aria-label="Page list">
+      <div class="sidebar-heading">
+        <button class="icon-button sidebar-toggle sidebar-toggle-inline" type="button" aria-controls="site-sidebar" aria-expanded="true" title="ナビゲーションを閉じる" aria-label="ナビゲーションを閉じる">☰</button>
+      </div>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">✎</span>記事</p>
+      <a href="cloudflare-private-site.html">Private GitHubリポジトリをCloudflare Workersで認証付き公開してみた</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">◈</span>Terraform</p>
+      <a href="terraform.html">Terraform 概要</a>
+      <a href="hcp-terraform.html">HCP Terraform（Terraform Cloud）</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">☁︎</span>AWS</p>
+      <a href="cloudformation.html">CloudFormation 運用手順集</a>
+      <a href="aws-cli.html">AWS CLI 特殊対応</a>
+      <a href="aws-cli-reference.html">AWS CLI コマンドリファレンス</a>
+      <a href="eventbridge-scheduler.html">EventBridge Scheduler</a>
+      <a href="amazon-workspaces.html">Amazon WorkSpaces</a>
+      <details class="sidebar-nested-menu" open>
+        <summary>PoC 閉域VPC・AD／VDI環境</summary>
+        <div class="sidebar-subnav">
+          <a href="workspaces-poc-environment.html">環境概要</a>
+          <a href="workspaces-skill-transfer.html">全体構築・運用順序</a>
+          <a href="workspaces-managed-ad.html">AWS Managed Microsoft AD 構築・管理</a>
+          <a href="workspaces-management-ec2.html">管理用EC2・Active Directory管理</a>
+          <a href="workspaces-ad-connector.html">AD Connector 構築・権限委任</a>
+          <a href="workspaces-provisioning-gpo.html">Amazon WorkSpaces 構築・OU・GPO</a>
+          <a href="workspaces-image-bundle.html">WorkSpaces カスタムイメージ・バンドル</a>
+          <a href="workspaces-patch-manager.html">Systems Manager Patch Manager</a>
+          <a href="workspaces-cost-optimizer.html">Amazon WorkSpaces Cost Optimizer</a>
+          <a class="active" href="workspaces-cloudwatch-monitoring.html">CloudWatch・SNS 監視／通知</a>
+        </div>
+      </details>
+      <a href="amazon-ses.html">Amazon SES SMTPリレー</a>
+      <a href="amazon-ses-monitoring.html">Amazon SES 配信監視</a>
+      <a href="amazon-rds-blue-green.html">Amazon RDS Blue/Green Deployments</a>
+      <a href="apache-acm-certificate-update.html">証明書更新（ACMエクスポート）</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">⚙︎</span>OS／ミドルウェア</p>
+      <a href="rhel9.html">Red Hat Enterprise Linux 9</a>
+      <a href="rhel10.html">Red Hat Enterprise Linux 10</a>
+      <a href="amazon-linux-2023.html">Amazon Linux 2023</a>
+      <a href="windows-server-2022.html">Windows Server 2022</a>
+      <a href="windows-server-2025.html">Windows Server 2025</a>
+      <a href="windows-server-2016-upgrade.html">Windows Server 2016 インプレースアップグレード</a>
+      <a href="storage.html">ストレージ管理</a>
+      <a href="apache.html">Apache</a>
+      <a href="apache-self-signed-ssl-termination.html">Apache SSL終端（自己署名証明書）</a>
+      <a href="redis.html">Redis（KVS）</a>
+      <a href="nfs.html">NFS</a>
+      <a href="samba.html">Samba</a>
+      <a href="mariadb.html">MariaDB</a>
+      <a href="postgresql.html">PostgreSQL</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">▤</span>リファレンス</p>
+      <a href="troubleshooting.html">障害切り分けチェックリスト</a>
+      <a href="eol.html">EOL / ライフサイクル一覧表</a>
+    </aside>
+    <main class="content workspaces-skill-transfer-guide">
+      <nav class="breadcrumb" aria-label="Breadcrumb"><a href="../"><span class="nav-icon" aria-hidden="true">⌂</span>Home</a><span>技術移管</span></nav>
+      <h1>CloudWatch・SNS 監視／通知</h1>
+      <p class="lead">Amazon EC2、Windows OSおよびAmazon WorkSpacesのメトリクスをCloudWatchへ集約する<br>SNS通知、アラーム、ダッシュボードおよび監視動作の確認手順を整理する</p>
+<h2 id="01-amazon-sns通知と監視構成">01. Amazon SNS通知と監視構成</h2>
+<h3 id="1-監視構成">1. 監視構成</h3>
+<figure class="screenshot-wide aws-console-identity"><figcaption>CloudWatch監視構成</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cloudwatch-monitoring/001-cloudwatch監視構成.png" alt="CloudWatch監視構成" width="1920" height="1080" loading="lazy"></div></figure>
+
+<p>Amazon EC2とAmazon WorkSpacesの標準メトリクス、およびCloudWatch agentが収集するWindows OSメトリクスをCloudWatchへ集約します。CloudWatchアラームがしきい値違反を検出した場合はAmazon SNSへ通知し、メトリクスとアラーム状態はダッシュボードで確認する</p>
+<table>
+<thead>
+<tr>
+<th>対象</th>
+<th>監視・表示するメトリクス</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Amazon EC2</td>
+<td><code>StatusCheckFailed</code>、<code>CPUUtilization</code></td>
+<td>ステータスチェック失敗とCPU高負荷の検知</td>
+</tr>
+<tr>
+<td>Windows OS</td>
+<td><code>LogicalDisk % Free Space</code>、<code>Memory % Committed Bytes In Use</code></td>
+<td>ディスク空き容量とメモリ使用率の監視。CloudWatch agentが必要</td>
+</tr>
+<tr>
+<td>Amazon WorkSpaces</td>
+<td><code>Unhealthy</code>、<code>ConnectionFailure</code>、<code>UserConnected</code></td>
+<td>異常状態・接続失敗の検知と接続状況の可視化</td>
+</tr>
+<tr>
+<td>Amazon WorkSpaces（追加推奨）</td>
+<td><code>CPUUsage</code>、<code>MemoryUsage</code>、<code>RootVolumeDiskUsage</code>、<code>UserVolumeDiskUsage</code></td>
+<td>リソース不足とボリューム容量逼迫の検知</td>
+</tr>
+<tr>
+<td>Amazon WorkSpaces（接続品質）</td>
+<td><code>SessionLaunchTime</code>、<code>InSessionLatency</code>、<code>UDPPacketLossRate</code>、<code>TCPRetransmissionRate</code></td>
+<td>通常値をダッシュボードで確認した後にアラーム化を検討</td>
+</tr>
+<tr>
+<td>Amazon SNS</td>
+<td><code>sample-sns-cloudwatch-alerts</code></td>
+<td>アラーム状態変更の通知先</td>
+</tr>
+<tr>
+<td>CloudWatchダッシュボード</td>
+<td>上記メトリクスと作成済みアラーム</td>
+<td>状態と傾向の一元確認</td>
+</tr>
+</tbody></table>
+<p>CloudWatchアラームの<code>OK</code>は、設定した評価期間内でしきい値違反が成立していないことを示します。OS、アプリケーション、認証などを含むサービス全体の正常性を保証するものではない</p>
+<h3 id="2-目的">2. 目的</h3>
+<p>CloudWatchアラームが<code>ALARM</code>状態へ変わった際に、運用担当者へ通知するためのSNSトピックとサブスクリプションを設定する</p>
+<h3 id="3-前提-入力値">3. 前提・入力値</h3>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>入力値</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>リージョン</td>
+<td>アジアパシフィック（東京）<code>ap-northeast-1</code></td>
+</tr>
+<tr>
+<td>トピックタイプ</td>
+<td>スタンダード</td>
+</tr>
+<tr>
+<td>トピック名</td>
+<td><code>sample-sns-cloudwatch-alerts</code></td>
+</tr>
+<tr>
+<td>表示名</td>
+<td>任意。SMS利用時のみ意味を持つため、メール通知のみの場合は空欄可</td>
+</tr>
+<tr>
+<td>サブスクリプションプロトコル</td>
+<td>Email（運用方針に応じてHTTPS等も可）</td>
+</tr>
+<tr>
+<td>エンドポイント</td>
+<td>お客様指定の運用通知先</td>
+</tr>
+</tbody></table>
+<h3 id="4-snsトピックを作成する">4. SNSトピックを作成する</h3>
+<h4 id="手順1-snsを開く">手順1：SNSを開く</h4>
+<ol>
+<li>AWSマネジメントコンソールでリージョンが「アジアパシフィック（東京）」であることを確認</li>
+<li><strong>Amazon SNS</strong>を開き、左メニューから<strong>トピック</strong>を選択</li>
+<li>作成前のトピック一覧を確認</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>目的</td>
+<td>既存トピックとの重複を避ける</td>
+</tr>
+<tr>
+<td>期待結果</td>
+<td>同名のトピックが存在しない</td>
+</tr>
+<tr>
+<td>証跡</td>
+<td>トピック一覧画面</td>
+</tr>
+<tr>
+<td>注意</td>
+<td>同名または同一用途のトピックがある場合は新規作成せず、所有者と利用範囲を確認する</td>
+</tr>
+</tbody></table>
+<h4 id="手順2-トピック作成画面へ進む">手順2：トピック作成画面へ進む</h4>
+<p><strong>トピックの作成</strong>を選択する</p>
+<figure class="screenshot-wide aws-console-identity"><figcaption>SNSトピック作成開始</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cloudwatch-monitoring/002-snsトピック作成開始.png" alt="SNSトピック作成開始" width="1730" height="1680" loading="lazy"></div></figure>
+
+<h4 id="手順3-トピック名とタイプを設定する">手順3：トピック名とタイプを設定する</h4>
+<ol>
+<li>タイプで<strong>スタンダード</strong>を選択</li>
+<li>名前に<code>sample-sns-cloudwatch-alerts</code>を入力</li>
+<li>暗号化、アクセスポリシー、配信ステータスのログ記録は、組織のセキュリティ基準で指定がなければ初期値のままと</li>
+<li><strong>トピックの作成</strong>を選択</li>
+</ol>
+<figure class="screenshot-wide aws-console-identity"><figcaption>SNSトピック名とStandard設定</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cloudwatch-monitoring/003-snsトピック名とstandard設定.png" alt="SNSトピック名とStandard設定" width="1730" height="1388" loading="lazy"></div></figure>
+
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>期待結果</td>
+<td>トピックが作成され、トピックARNが表示される</td>
+</tr>
+<tr>
+<td>証跡</td>
+<td>トピック詳細の名前、タイプ、ARN</td>
+</tr>
+<tr>
+<td>注意</td>
+<td>FIFOトピックは本手順では使用しない</td>
+</tr>
+</tbody></table>
+<h4 id="手順4-作成結果を確認する">手順4：作成結果を確認する</h4>
+<p>トピック詳細画面で、名前が<code>sample-sns-cloudwatch-alerts</code>、タイプが<strong>スタンダード</strong>であることを確認する</p>
+<figure class="screenshot-wide aws-console-identity"><figcaption>SNSトピック作成完了</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cloudwatch-monitoring/004-snsトピック作成完了.png" alt="SNSトピック作成完了" width="1880" height="820" loading="lazy"></div></figure>
+
+<h3 id="5-サブスクリプションを作成する">5. サブスクリプションを作成する</h3>
+<div class="callout callout-info"><p><strong>検証環境では未設定</strong><br>実際の通知先が未確定のため、トピックのみ作成済みです。通知先はお客様の運用窓口を確認してから設定してください</p>
+</div>
+<ol>
+<li>作成したトピックの詳細で<strong>サブスクリプションの作成</strong>を選択</li>
+<li>プロトコルで<strong>Email</strong>を選択</li>
+<li>エンドポイントに運用通知先メールアドレスを入力</li>
+<li><strong>サブスクリプションの作成</strong>を選択</li>
+<li>宛先に届いたAWS Notificationメールを開き、<strong>Confirm subscription</strong>を選択</li>
+<li>SNSコンソールでステータスが<code>Confirmed</code>になったことを確認</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>目的</td>
+<td>アラーム通知の配信先を有効化する</td>
+</tr>
+<tr>
+<td>入力値</td>
+<td>お客様指定の通知先メールアドレス</td>
+</tr>
+<tr>
+<td>期待結果</td>
+<td>サブスクリプションのステータスが<code>Confirmed</code></td>
+</tr>
+<tr>
+<td>証跡</td>
+<td>SNSのサブスクリプション一覧と、件名・宛先・受信日時が分かるテスト通知</td>
+</tr>
+<tr>
+<td>注意</td>
+<td><code>Pending confirmation</code>のままでは通知されない。迷惑メールフォルダーも確認する</td>
+</tr>
+<tr>
+<td>ロールバック</td>
+<td>誤ったサブスクリプションのみを選択して削除する</td>
+</tr>
+<tr>
+<td>未検証</td>
+<td>検証環境では通知先未確定のため、購読確認およびメール受信は未実施</td>
+</tr>
+</tbody></table>
+<h3 id="6-セキュリティ-運用上の注意">6. セキュリティ・運用上の注意</h3>
+<ul>
+<li>個人メールアドレスではなく、監視担当者が共同利用する配布リストを推奨する</li>
+<li>本番、検証、開発で通知先を分ける場合は、環境別のトピック名を定義する</li>
+<li>CloudWatchアラーム作成時に、<code>ALARM</code>への遷移通知を本トピックへ関連付けます。必要に応じて<code>OK</code>復旧通知も追加する</li>
+<li>トピックを削除すると、参照中のアラームから通知できなくなります。削除前にCloudWatchアラームのアクションを確認する</li>
+</ul>
+<h3 id="7-公式資料">7. 公式資料</h3>
+<ul>
+<li>出典：<a href="https://docs.aws.amazon.com/sns/latest/dg/sns-create-topic.html">Amazon SNSトピックの作成</a></li>
+<li>出典：<a href="https://docs.aws.amazon.com/sns/latest/dg/sns-create-subscribe-endpoint-to-topic.html">Amazon SNSトピックの購読</a></li>
+<li>出典：<a href="https://docs.aws.amazon.com/sns/latest/dg/sns-email-notifications.html">Amazon SNSのメール通知</a></li>
+<li>出典：<a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Notify_Users_Alarm_Changes.html">CloudWatchアラームからSNSへ通知する</a></li>
+</ul>
+<hr>
+
+<h2 id="02-ec2-windows-os監視">02. EC2・Windows OS監視</h2>
+<h3 id="1-目的">1. 目的</h3>
+<p>EC2の標準メトリクスでインスタンスの死活とCPU負荷を監視し、CloudWatch agentでWindows OSの論理ディスク空き容量とメモリ使用率を監視する</p>
+<h3 id="2-前提-入力値">2. 前提・入力値</h3>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>値</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>検証用EC2</td>
+<td><code>i-05914a8b6088a3a42</code></td>
+</tr>
+<tr>
+<td>EC2名</td>
+<td><code>Sample-mng-001</code></td>
+</tr>
+<tr>
+<td>EC2インスタンスロール</td>
+<td><code>Sample_EC2Role</code></td>
+</tr>
+<tr>
+<td>SNSトピック</td>
+<td><code>sample-sns-cloudwatch-alerts</code></td>
+</tr>
+<tr>
+<td>リージョン</td>
+<td>アジアパシフィック（東京）<code>ap-northeast-1</code></td>
+</tr>
+<tr>
+<td>インスタンス用IAMポリシー</td>
+<td><code>AmazonSSMManagedInstanceCore</code>、<code>CloudWatchAgentServerPolicy</code>（Windows OSメトリクス収集時）</td>
+</tr>
+<tr>
+<td>ネットワーク</td>
+<td>対象EC2からTCP/443でSystems Manager、Parameter Store、CloudWatchの各サービスエンドポイントへ到達できること。インターネットへ直接公開する必要はなく、NAT／プロキシまたは対応VPCエンドポイントを使用可能</td>
+</tr>
+</tbody></table>
+<div class="callout callout-info"><p><strong>権限の考え方</strong><br>EC2上でCloudWatch agentからメトリクス・ログを送信する実行ロールには<code>CloudWatchAgentServerPolicy</code>を使用します。<code>CloudWatchAgentAdminPolicy</code>は、設定ウィザード等からSystems Manager Parameter StoreへCloudWatch agent設定を書き込む管理用途で必要になる権限を含むため、通常の送信用EC2実行ロールには付与しません。設定作成者と送信元EC2の役割を分け、最小権限を優先する</p>
+</div>
+<h3 id="3-ec2ステータスチェックアラームを作成する">3. EC2ステータスチェックアラームを作成する</h3>
+<h4 id="手順1-作成前のアラームを確認する">手順1：作成前のアラームを確認する</h4>
+<p>CloudWatchで<strong>アラーム</strong>－<strong>すべてのアラーム</strong>を開き、同じインスタンス・メトリクスのアラームがないことを確認してから、<strong>アラームの作成</strong>を選択する</p>
+<h4 id="手順2-statuscheckfailedを選択する">手順2：<code>StatusCheckFailed</code>を選択する</h4>
+<ol>
+<li><strong>メトリクスの選択</strong>を選択</li>
+<li><code>AWS/EC2</code>－<strong>インスタンス別メトリクス</strong>を開く</li>
+<li>インスタンスID<code>i-05914a8b6088a3a42</code>、メトリクス名<code>StatusCheckFailed</code>の行を選択</li>
+</ol>
+<figure class="screenshot-wide aws-console-identity"><figcaption>StatusCheckFailedメトリクス選択</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cloudwatch-monitoring/005-statuscheckfailedメトリクス選択.png" alt="StatusCheckFailedメトリクス選択" width="1880" height="1460" loading="lazy"></div></figure>
+
+<h4 id="手順3-条件を設定する">手順3：条件を設定する</h4>
+<table>
+<thead>
+<tr>
+<th>設定項目</th>
+<th>設定値</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>統計</td>
+<td>最大値（Maximum）</td>
+</tr>
+<tr>
+<td>期間</td>
+<td>5分</td>
+</tr>
+<tr>
+<td>しきい値の種類</td>
+<td>静的</td>
+</tr>
+<tr>
+<td>条件</td>
+<td><code>1</code>以上</td>
+</tr>
+<tr>
+<td>アラームを実行するデータポイント</td>
+<td>2/2</td>
+</tr>
+<tr>
+<td>欠落データの処理</td>
+<td>欠落（missing）</td>
+</tr>
+</tbody></table>
+<figure class="screenshot-wide aws-console-identity"><figcaption>StatusCheckFailed条件設定</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cloudwatch-monitoring/006-statuscheckfailed条件設定.png" alt="StatusCheckFailed条件設定" width="2120" height="1580" loading="lazy"></div></figure>
+
+<div class="callout callout-error"><strong>ℹ️ 確認事項</strong><p><code>StatusCheckFailed</code>は、インスタンスまたは基盤側のステータスチェックに失敗した場合に<code>1</code>となります。停止済みインスタンスではメトリクスが途切れ、設定により<code>INSUFFICIENT_DATA</code>となる場合があります。「停止＝ステータスチェック失敗」ではない</p>
+</div>
+<h4 id="手順4-sns通知を設定する">手順4：SNS通知を設定する</h4>
+<ol>
+<li>アラーム状態トリガーで<strong>アラーム状態</strong>を選択</li>
+<li><strong>既存のSNSトピックを選択</strong>を選択</li>
+<li><code>sample-sns-cloudwatch-alerts</code>を選択</li>
+</ol>
+<figure class="screenshot-wide aws-console-identity"><figcaption>StatusCheckFailed SNS通知設定</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cloudwatch-monitoring/007-statuscheckfailed-sns通知設定.png" alt="StatusCheckFailed SNS通知設定" width="2120" height="1530" loading="lazy"></div></figure>
+
+<h4 id="手順5-名前と説明を設定する">手順5：名前と説明を設定する</h4>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>値</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>アラーム名</td>
+<td><code>sample-cw-critical-ec2-statuscheckfailed-i-05914a8b6088a3a42</code></td>
+</tr>
+</tbody></table>
+<figure class="screenshot-wide aws-console-identity"><figcaption>StatusCheckFailed名称設定</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cloudwatch-monitoring/008-statuscheckfailed名称設定.png" alt="StatusCheckFailed名称設定" width="2120" height="1040" loading="lazy"></div></figure>
+
+<h4 id="手順6-内容を確認して作成する">手順6：内容を確認して作成する</h4>
+<p>設定値、対象インスタンス、SNSトピックを確認し、<strong>アラームの作成</strong>を選択する</p>
+<figure class="screenshot-wide aws-console-identity"><figcaption>StatusCheckFailed作成内容確認</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cloudwatch-monitoring/009-statuscheckfailed作成内容確認.png" alt="StatusCheckFailed作成内容確認" width="2120" height="1670" loading="lazy"></div></figure>
+
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>期待結果</td>
+<td>アラームが作成され、メトリクス取得後に状態が<code>OK</code>となる</td>
+</tr>
+<tr>
+<td>証跡</td>
+<td>アラーム詳細、状態、アクション、履歴</td>
+</tr>
+<tr>
+<td>注意</td>
+<td>作成直後は評価データがそろうまで<code>INSUFFICIENT_DATA</code>になる場合がある</td>
+</tr>
+<tr>
+<td>ロールバック</td>
+<td>対象アラームのみを削除する。EC2やSNSトピックは削除しない</td>
+</tr>
+</tbody></table>
+<h3 id="4-cpu使用率アラームを作成する">4. CPU使用率アラームを作成する</h3>
+<p>次の点を除き、前節と同じ流れで作成する</p>
+<table>
+<thead>
+<tr>
+<th>設定項目</th>
+<th>設定値</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>メトリクス</td>
+<td><code>AWS/EC2</code>－<code>CPUUtilization</code></td>
+</tr>
+<tr>
+<td>ディメンション</td>
+<td><code>InstanceId=i-05914a8b6088a3a42</code></td>
+</tr>
+<tr>
+<td>統計</td>
+<td>平均値（Average）</td>
+</tr>
+<tr>
+<td>期間</td>
+<td>5分</td>
+</tr>
+<tr>
+<td>条件</td>
+<td>80%以上</td>
+</tr>
+<tr>
+<td>アラームを実行するデータポイント</td>
+<td>3/3</td>
+</tr>
+<tr>
+<td>欠落データの処理</td>
+<td>正常（notBreaching）</td>
+</tr>
+<tr>
+<td>アラーム名</td>
+<td><code>sample-cw-warning-ec2-cpu-high-i-05914a8b6088a3a42</code></td>
+</tr>
+</tbody></table>
+<figure class="screenshot-wide aws-console-identity"><figcaption>EC2 CPUUtilization条件設定</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cloudwatch-monitoring/010-ec2-cpuutilization条件設定.png" alt="EC2 CPUUtilization条件設定" width="2635" height="1500" loading="lazy"></div></figure>
+
+<figure class="screenshot-wide aws-console-identity"><figcaption>EC2 CPUUtilization作成内容確認</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cloudwatch-monitoring/011-ec2-cpuutilization作成内容確認.png" alt="EC2 CPUUtilization作成内容確認" width="2620" height="2072" loading="lazy"></div></figure>
+
+<div class="callout callout-info"><p><strong>しきい値について</strong><br>80%は検証用の初期値であり、AWSが全ワークロードに推奨する固定値ではありません。導入後の通常値、バースト利用、バッチ処理時間を確認し、継続時間とともに確定する</p>
+</div>
+<h3 id="5-windows-osメトリクスを出力する">5. Windows OSメトリクスを出力する</h3>
+<p>EC2標準メトリクスだけでは、Windowsのメモリ使用率とドライブ別空き容量は取得できません。CloudWatch agentをインストール・設定して<code>CWAgent</code>名前空間へ送信する</p>
+<figure class="screenshot-wide aws-console-identity"><figcaption>CWAgentメトリクス未出力</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cloudwatch-monitoring/012-cwagentメトリクス未出力.png" alt="CWAgentメトリクス未出力" width="1540" height="1020" loading="lazy"></div></figure>
+
+<h4 id="手順1-iam権限を確認する">手順1：IAM権限を確認する</h4>
+<p>EC2に関連付けたインスタンスプロファイルへ、少なくとも次のAWS管理ポリシーが付与されていることを確認する</p>
+<ul>
+<li>Systems Managerで管理する場合：<code>AmazonSSMManagedInstanceCore</code></li>
+<li>CloudWatch agentでメトリクス・ログを送信する場合：<code>CloudWatchAgentServerPolicy</code></li>
+</ul>
+<p>本検証では、<code>Sample_EC2Role</code>に<code>AmazonSSMManagedInstanceCore</code>は付与済みでしたが、<code>CloudWatchAgentServerPolicy</code>が未付与でした。IAMコンソールで<code>CloudWatchAgentServerPolicy</code>を追加し、許可ポリシー一覧に次の3ポリシーが表示されることを確認した</p>
+<ul>
+<li><code>AmazonSSMManagedInstanceCore</code></li>
+<li><code>CloudWatchAgentServerPolicy</code></li>
+<li><code>Sample-Policy</code></li>
+</ul>
+<p>IAMロールの許可ポリシー一覧で、<code>CloudWatchAgentServerPolicy</code>が付与されていることを確認する</p>
+<figure class="screenshot-wide aws-console-identity"><figcaption>CloudWatchAgentServerPolicy付与確認</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cloudwatch-monitoring/013-cloudwatchagentserverpolicy付与確認.png" alt="CloudWatchAgentServerPolicy付与確認" width="1718" height="1304" loading="lazy"></div></figure>
+
+<div class="callout callout-warning"><p><strong>注意：CloudWatch Agent用IAM権限</strong><br><code>AmazonSSMManagedInstanceCore</code>だけでは、CloudWatch Agentによるメトリクス送信に必要な権限を満たしません。Agentを導入する前に、対象EC2のインスタンスロールへ<code>CloudWatchAgentServerPolicy</code>が付与されていることを確認する</p>
+</div>
+<h4 id="手順2-cloudwatch-agentを導入する">手順2：CloudWatch agentを導入する</h4>
+<ol>
+<li>既存設定を上書きしないよう、最初にSystems Managerの<code>AmazonCloudWatch-ManageAgent</code>を<code>Action=status</code>で実行し、agentの導入・稼働状態を確認</li>
+<li>既にagentを利用している場合は、<code>C:\ProgramData\Amazon\AmazonCloudWatchAgent</code>配下の設定と、既存のログ収集設定を確認・退避します。新しい設定は既存設定とマージしてから適用</li>
+<li>未導入の場合はAWS Systems Managerの<strong>Run Command</strong>を開き、AWS管理ドキュメント<code>AWS-ConfigureAWSPackage</code>を選択</li>
+<li><code>Action=Install</code>、<code>Name=AmazonCloudWatchAgent</code>、<code>Version=latest</code>を設定し、対象EC2へ実行</li>
+<li>コマンドの全体的なステータスと詳細なステータスがともに<code>Success</code>（日本語表示では「成功」）であることを確認</li>
+</ol>
+<p>本検証では、導入前の<code>Action=status</code>はWindows側で失敗し、Agentが稼働していないことを確認しました。その後、<code>AWS-ConfigureAWSPackage</code>を次の値で実行し、インストールが成功した</p>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>設定値</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Action</td>
+<td><code>Install</code></td>
+</tr>
+<tr>
+<td>Installation Type</td>
+<td><code>Uninstall and reinstall</code></td>
+</tr>
+<tr>
+<td>Name</td>
+<td><code>AmazonCloudWatchAgent</code></td>
+</tr>
+<tr>
+<td>Version</td>
+<td><code>latest</code></td>
+</tr>
+<tr>
+<td>対象</td>
+<td><code>Sample-mng-001</code>（<code>i-05914a8b6088a3a42</code>）</td>
+</tr>
+<tr>
+<td>S3出力</td>
+<td>無効</td>
+</tr>
+</tbody></table>
+<p>Run Commandの実行結果で、全体的なステータスと詳細なステータスがともに「成功」であることを確認する</p>
+<figure class="screenshot-wide aws-console-identity"><figcaption>CloudWatch Agentインストール成功</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cloudwatch-monitoring/014-cloudwatch-agentインストール成功.png" alt="CloudWatch Agentインストール成功" width="1718" height="1304" loading="lazy"></div></figure>
+
+<h4 id="手順3-収集設定を作成する">手順3：収集設定を作成する</h4>
+<p>設定ウィザードまたはJSON設定で、次のWindows Performance Counterを1分間隔で収集する</p>
+<table>
+<thead>
+<tr>
+<th>オブジェクト</th>
+<th>カウンター</th>
+<th>リソース</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>LogicalDisk</code></td>
+<td><code>% Free Space</code></td>
+<td>監視対象ドライブ。本例は<code>C:</code></td>
+</tr>
+<tr>
+<td><code>Memory</code></td>
+<td><code>% Committed Bytes In Use</code></td>
+<td>なし</td>
+</tr>
+</tbody></table>
+<p>設定例は次のとおりです。環境で必要なドライブだけを対象にし、一時領域やリカバリ領域を除外してください</p>
+<div class="code"><div class="code-header"><span>json</span><button class="copy" type="button">Copy</button></div><pre><code>{
+  &quot;metrics&quot;: {
+    &quot;namespace&quot;: &quot;CWAgent&quot;,
+    &quot;append_dimensions&quot;: {
+      &quot;InstanceId&quot;: &quot;${aws:InstanceId}&quot;
+    },
+    &quot;metrics_collected&quot;: {
+      &quot;LogicalDisk&quot;: {
+        &quot;measurement&quot;: [
+          {
+            &quot;name&quot;: &quot;% Free Space&quot;,
+            &quot;rename&quot;: &quot;LogicalDisk % Free Space&quot;,
+            &quot;unit&quot;: &quot;Percent&quot;
+          }
+        ],
+        &quot;metrics_collection_interval&quot;: 60,
+        &quot;resources&quot;: [&quot;C:&quot;]
+      },
+      &quot;Memory&quot;: {
+        &quot;measurement&quot;: [
+          {
+            &quot;name&quot;: &quot;% Committed Bytes In Use&quot;,
+            &quot;rename&quot;: &quot;Memory % Committed Bytes In Use&quot;,
+            &quot;unit&quot;: &quot;Percent&quot;
+          }
+        ],
+        &quot;metrics_collection_interval&quot;: 60
+      }
+    }
+  }
+}</code></pre></div>
+<h4 id="手順4-parameter-storeへ収集設定を保存する">手順4：Parameter Storeへ収集設定を保存する</h4>
+<ol>
+<li>Systems Managerの<strong>Parameter Store</strong>を開き、<strong>パラメータの作成</strong>を選択</li>
+<li>名前を<code>AmazonCloudWatch-sample-windows-basic-v1</code>、階層を<code>Standard</code>、タイプを<code>String</code>に</li>
+<li>値に前項のJSONを貼り付けて保存</li>
+</ol>
+<p>本検証では、パラメータ<code>AmazonCloudWatch-sample-windows-basic-v1</code>を<code>Standard</code>、<code>String</code>で新規作成し、作成成功メッセージと一覧表示を確認した</p>
+<p>保存したパラメータを開き、名前、利用枠、種類および設定値が指定内容と一致していることを確認する</p>
+<figure class="screenshot-wide aws-console-identity"><figcaption>CWAgent設定パラメータ確認</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cloudwatch-monitoring/015-cwagent設定パラメータ確認.png" alt="CWAgent設定パラメータ確認" width="1718" height="1304" loading="lazy"></div></figure>
+
+<div class="callout callout-info"><strong>ℹ️ 確認事項</strong><p><code>CloudWatchAgentServerPolicy</code>が取得できる標準的な接頭辞に合わせ、本例では<code>AmazonCloudWatch-</code>から始まる名前を使用します。既存の同名パラメータがある場合は上書きせず、内容を確認してバージョン名を変更してください</p>
+</div>
+<h4 id="手順5-設定を適用し-メトリクスを確認する">手順5：設定を適用し、メトリクスを確認する</h4>
+<ol>
+<li>Systems Managerの<strong>Run Command</strong>で<code>AmazonCloudWatch-ManageAgent</code>を選択</li>
+<li><code>Action=configure</code>、<code>Mode=ec2</code>、<code>Optional Configuration Source=ssm</code>、<code>Optional Configuration Location=AmazonCloudWatch-sample-windows-basic-v1</code>、<code>Optional Restart=yes</code>を指定し、対象EC2へ実行</li>
+<li>Run Commandが<code>Success</code>となり、<code>AmazonCloudWatch-ManageAgent</code>の<code>Action=status</code>でAgentが<code>running</code>かつ<code>configstatus</code>が<code>configured</code>となることを確認</li>
+<li>本設定は1分間隔のため、起動後1～5分を目安にCloudWatchの<strong>すべてのメトリクス</strong>で<code>CWAgent</code>名前空間を開く</li>
+<li>対象インスタンスの<code>LogicalDisk % Free Space</code>（<code>instance=C:</code>）と<code>Memory % Committed Bytes In Use</code>が1分間隔で出力されることを確認する。グラフ化したメトリクスの<strong>期間</strong>も<code>1分</code>に変更</li>
+<li>Windows上のパフォーマンスモニターの値と大きく乖離していないことを確認</li>
+</ol>
+<p>設定適用コマンドが成功し、コマンドパラメータが指定内容と一致していることを確認する</p>
+<figure class="screenshot-wide aws-console-identity"><figcaption>CloudWatch Agent設定適用成功</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cloudwatch-monitoring/016-cloudwatch-agent設定適用成功.png" alt="CloudWatch Agent設定適用成功" width="1718" height="1304" loading="lazy"></div></figure>
+
+<p>状態確認コマンドの出力で、<code>status</code>が<code>running</code>、<code>configstatus</code>が<code>configured</code>であることを確認する</p>
+<figure class="screenshot-wide aws-console-identity"><figcaption>CloudWatch Agent稼働確認</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cloudwatch-monitoring/017-cloudwatch-agent稼働確認.png" alt="CloudWatch Agent稼働確認" width="1718" height="1304" loading="lazy"></div></figure>
+
+<p>CloudWatchで対象メトリクスをグラフ化し、ディスク空き容量とメモリ使用率のデータが1分間隔で表示されることを確認する</p>
+<figure class="screenshot-wide aws-console-identity"><figcaption>CWAgentメトリクス確認</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cloudwatch-monitoring/018-cwagentメトリクス確認.png" alt="CWAgentメトリクス確認" width="1718" height="1304" loading="lazy"></div></figure>
+
+<p>本検証では、設定適用後の状態確認で次の結果を確認した</p>
+<table>
+<thead>
+<tr>
+<th>確認項目</th>
+<th>確認結果</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Agent status</td>
+<td><code>running</code></td>
+</tr>
+<tr>
+<td>configstatus</td>
+<td><code>configured</code></td>
+</tr>
+<tr>
+<td>Agent version</td>
+<td><code>1.300072.0b1766</code></td>
+</tr>
+<tr>
+<td>CloudWatch名前空間</td>
+<td><code>CWAgent</code></td>
+</tr>
+<tr>
+<td>論理ディスクメトリクス</td>
+<td><code>LogicalDisk % Free Space</code>、<code>instance=C:</code></td>
+</tr>
+<tr>
+<td>メモリメトリクス</td>
+<td><code>Memory % Committed Bytes In Use</code></td>
+</tr>
+<tr>
+<td>ディメンション</td>
+<td><code>InstanceId=i-05914a8b6088a3a42</code></td>
+</tr>
+<tr>
+<td>グラフ表示</td>
+<td>両メトリクスの最新データを1分期間で表示</td>
+</tr>
+</tbody></table>
+<p>ログ確認先：<code>C:\ProgramData\Amazon\AmazonCloudWatchAgent\Logs\amazon-cloudwatch-agent.log</code></p>
+<div class="callout callout-info"><strong>ℹ️ 確認事項</strong><p>本例は<code>unit</code>を<code>Percent</code>として明示します。既存設定で単位が<code>None</code>の場合は、しきい値<code>20</code>または<code>80</code>が意図どおりの百分率として送信されていることを、グラフとWindows側の値で確認してからアラームを作成する</p>
+</div>
+<h3 id="6-windows-osアラームを作成する">6. Windows OSアラームを作成する</h3>
+<p>前節で<code>CWAgent</code>メトリクスの値・単位・最新データ時刻を確認した後、EC2アラームと同じ流れで<strong>メトリクスと条件の指定→SNS通知→名称と説明→レビューと作成</strong>を行う</p>
+<h4 id="論理ディスク空き容量">論理ディスク空き容量</h4>
+<table>
+<thead>
+<tr>
+<th>設定項目</th>
+<th>初期設計値</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>名前空間</td>
+<td><code>CWAgent</code></td>
+</tr>
+<tr>
+<td>メトリクス</td>
+<td><code>LogicalDisk % Free Space</code></td>
+</tr>
+<tr>
+<td>統計</td>
+<td>Average</td>
+</tr>
+<tr>
+<td>期間</td>
+<td>1分</td>
+</tr>
+<tr>
+<td>条件</td>
+<td>20以下</td>
+</tr>
+<tr>
+<td>評価</td>
+<td>3/3</td>
+</tr>
+<tr>
+<td>欠損</td>
+<td>notBreaching</td>
+</tr>
+<tr>
+<td>SNSトピック</td>
+<td><code>sample-sns-cloudwatch-alerts</code></td>
+</tr>
+<tr>
+<td>命名例</td>
+<td><code>sample-cw-warning-windows-disk-free-low-&lt;instance-id&gt;-c</code></td>
+</tr>
+</tbody></table>
+<h4 id="メモリ使用率">メモリ使用率</h4>
+<table>
+<thead>
+<tr>
+<th>設定項目</th>
+<th>初期設計値</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>名前空間</td>
+<td><code>CWAgent</code></td>
+</tr>
+<tr>
+<td>メトリクス</td>
+<td><code>Memory % Committed Bytes In Use</code></td>
+</tr>
+<tr>
+<td>統計</td>
+<td>Average</td>
+</tr>
+<tr>
+<td>期間</td>
+<td>1分</td>
+</tr>
+<tr>
+<td>条件</td>
+<td>80以上</td>
+</tr>
+<tr>
+<td>評価</td>
+<td>3/3</td>
+</tr>
+<tr>
+<td>欠損</td>
+<td>notBreaching</td>
+</tr>
+<tr>
+<td>SNSトピック</td>
+<td><code>sample-sns-cloudwatch-alerts</code></td>
+</tr>
+<tr>
+<td>命名例</td>
+<td><code>sample-cw-warning-windows-memory-high-&lt;instance-id&gt;</code></td>
+</tr>
+</tbody></table>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>期待結果</td>
+<td><code>CWAgent</code>名前空間に継続して値が入り、アラームが<code>OK</code>となる</td>
+</tr>
+<tr>
+<td>証跡</td>
+<td>agentサービス状態、agentログ、CWAgentメトリクスグラフ、アラーム詳細</td>
+</tr>
+<tr>
+<td>注意</td>
+<td>agent導入の<code>Success</code>だけでは、メトリクス送信成功を保証しない。CloudWatch側の最終データ時刻まで確認する</td>
+</tr>
+<tr>
+<td>ロールバック</td>
+<td>OSアラームを削除し、agent設定を停止する。共有インスタンスロールのポリシー削除は他EC2への影響を確認してから行う</td>
+</tr>
+</tbody></table>
+<p>メトリクスが出力されない場合は、agentログに加えて、対象EC2から<code>monitoring.ap-northeast-1.amazonaws.com</code>およびSystems Manager関連エンドポイントへTCP/443で到達できること、VPCエンドポイントのセキュリティグループとプライベートDNS、プロキシ設定を確認する</p>
+<h3 id="7-公式資料-2">7. 公式資料</h3>
+<ul>
+<li>出典：<a href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/viewing_metrics_with_cloudwatch.html">EC2のCloudWatchメトリクス</a></li>
+<li>出典：<a href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/creating_status_check_alarms.html">EC2ステータスチェックアラームの作成</a></li>
+<li>出典：<a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/metrics-collected-by-CloudWatch-agent.html">CloudWatch agentで収集するメトリクス</a></li>
+<li>出典：<a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/installing-cloudwatch-agent-ssm.html">Systems Managerを使用したCloudWatch agentのインストール</a></li>
+<li>出典：<a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/create-cloudwatch-agent-configuration-file-wizard.html">CloudWatch agent設定ウィザード</a></li>
+<li>出典：<a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Agent-Configuration-File-Details.html">CloudWatch agent設定ファイルの詳細</a></li>
+<li>出典：<a href="https://docs.aws.amazon.com/aws-managed-policy/latest/reference/CloudWatchAgentServerPolicy.html">AWS管理ポリシーCloudWatchAgentServerPolicy</a></li>
+<li>出典：<a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/troubleshooting-CloudWatch-Agent.html">CloudWatch agentのトラブルシューティング</a></li>
+</ul>
+<hr>
+
+<h2 id="03-amazon-workspaces監視">03. Amazon WorkSpaces監視</h2>
+<h3 id="1-目的-2">1. 目的</h3>
+<p>Amazon WorkSpacesの異常状態と接続失敗をアラームで検知し、利用状況をダッシュボードで確認する</p>
+<h3 id="2-前提-入力値-2">2. 前提・入力値</h3>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>値</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>検証用WorkSpace ID</td>
+<td><code>ws-jkxz7js0s</code></td>
+</tr>
+<tr>
+<td>SNSトピック</td>
+<td><code>sample-sns-cloudwatch-alerts</code></td>
+</tr>
+<tr>
+<td>リージョン</td>
+<td>アジアパシフィック（東京）<code>ap-northeast-1</code></td>
+</tr>
+</tbody></table>
+<figure class="screenshot-wide aws-console-identity"><figcaption>WorkSpaces監視対象一覧</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cloudwatch-monitoring/019-workspaces監視対象一覧.png" alt="WorkSpaces監視対象一覧" width="1540" height="650" loading="lazy"></div></figure>
+
+<h3 id="3-unhealthyアラームを作成する">3. <code>Unhealthy</code>アラームを作成する</h3>
+<h4 id="手順">手順</h4>
+<ol>
+<li>CloudWatchで<strong>アラーム</strong>－<strong>すべてのアラーム</strong>－<strong>アラームの作成</strong>を選択</li>
+<li><strong>メトリクスの選択</strong>から<code>AWS/WorkSpaces</code>を開く</li>
+<li><code>WorkspaceId=ws-jkxz7js0s</code>、メトリクス<code>Unhealthy</code>を選択</li>
+<li>次の条件を設定</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>設定項目</th>
+<th>設定値</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>統計</td>
+<td>最大値（Maximum）</td>
+</tr>
+<tr>
+<td>期間</td>
+<td>5分</td>
+</tr>
+<tr>
+<td>条件</td>
+<td>1以上</td>
+</tr>
+<tr>
+<td>アラームを実行するデータポイント</td>
+<td>3/3</td>
+</tr>
+<tr>
+<td>欠落データの処理</td>
+<td>正常（notBreaching）</td>
+</tr>
+<tr>
+<td>SNSトピック</td>
+<td><code>sample-sns-cloudwatch-alerts</code></td>
+</tr>
+<tr>
+<td>アラーム名</td>
+<td><code>sample-cw-critical-workspaces-unhealthy-ws-jkxz7js0s</code></td>
+</tr>
+</tbody></table>
+<figure class="screenshot-wide aws-console-identity"><figcaption>WorkSpaces Unhealthy条件設定</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cloudwatch-monitoring/020-workspaces-unhealthy条件設定.png" alt="WorkSpaces Unhealthy条件設定" width="3260" height="1410" loading="lazy"></div></figure>
+
+<p><code>Unhealthy=1</code>が3期間連続で発生した場合に通知します。瞬間的な状態遷移による誤報を抑えつつ、継続する異常を検知する初期設計</p>
+<h3 id="4-connectionfailureアラームを作成する">4. <code>ConnectionFailure</code>アラームを作成する</h3>
+<h4 id="手順-2">手順</h4>
+<ol>
+<li><code>AWS/WorkSpaces</code>から対象WorkSpaceの<code>ConnectionFailure</code>を選択</li>
+<li>次の条件を設定</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>設定項目</th>
+<th>設定値</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>統計</td>
+<td>合計（Sum）</td>
+</tr>
+<tr>
+<td>期間</td>
+<td>15分</td>
+</tr>
+<tr>
+<td>条件</td>
+<td>3以上</td>
+</tr>
+<tr>
+<td>アラームを実行するデータポイント</td>
+<td>1/1</td>
+</tr>
+<tr>
+<td>欠落データの処理</td>
+<td>正常（notBreaching）</td>
+</tr>
+<tr>
+<td>SNSトピック</td>
+<td><code>sample-sns-cloudwatch-alerts</code></td>
+</tr>
+<tr>
+<td>アラーム名</td>
+<td><code>sample-cw-warning-workspaces-connectionfailure-ws-jkxz7js0s</code></td>
+</tr>
+</tbody></table>
+<figure class="screenshot-wide aws-console-identity"><figcaption>WorkSpaces ConnectionFailure条件設定</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cloudwatch-monitoring/021-workspaces-connectionfailure条件設定.png" alt="WorkSpaces ConnectionFailure条件設定" width="4030" height="1410" loading="lazy"></div></figure>
+
+<ol start="3">
+<li>説明欄には、監視範囲を明確にするため「クライアント認証後、WorkSpacesセッションの接続開始時に発生した失敗を監視する。事前認証段階のAD認証失敗は含まれない」旨を記載</li>
+<li>設定内容を確認してアラームを作成</li>
+</ol>
+<figure class="screenshot-wide aws-console-identity"><figcaption>WorkSpaces ConnectionFailure作成内容確認</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cloudwatch-monitoring/022-workspaces-connectionfailure作成内容確認.png" alt="WorkSpaces ConnectionFailure作成内容確認" width="4030" height="2040" loading="lazy"></div></figure>
+
+<div class="callout callout-error"><p><strong>誤解しやすい点</strong><br><code>ConnectionFailure</code>は、WorkSpacesクライアントの認証が成功した後、WorkSpaceセッションへの接続が開始されてからの失敗を示します。パスワード誤り、アカウントロック、認証前のActive Directoryエラーをすべて検知するメトリクスではありません。認証関連はDirectory Serviceログ、Windowsイベントログ、認証基盤側の監視と組み合わせる</p>
+</div>
+<h3 id="5-userconnectedをダッシュボードへ追加する">5. <code>UserConnected</code>をダッシュボードへ追加する</h3>
+<p><code>UserConnected</code>は利用状況の可視化に使用し、本手順では固定しきい値アラームを作成しない</p>
+<ol>
+<li>CloudWatchで<strong>ダッシュボード</strong>を開き、対象ダッシュボードを選択</li>
+<li>折れ線または数値ウィジェットを追加</li>
+<li><code>AWS/WorkSpaces</code>－<code>UserConnected</code>を選択</li>
+<li>WorkSpace単位では接続時の値が<code>1</code>、未接続時が<code>0</code>となるため、単体の接続有無はMaximumで表示します。複数台の同時接続数を表示する場合は、各WorkSpaceの0/1系列を同じ期間・時点でメトリクス数式により合算します。期間内の<code>Sum</code>だけを人数として扱うと、同じWorkSpaceの複数データポイントを重複計上するため使用しない</li>
+<li>業務時間帯を含む期間でグラフを確認</li>
+</ol>
+<div class="callout callout-info"><strong>ℹ️ 確認事項</strong><p><code>UserConnected=0</code>は、必ずしも異常とは限らない。利用者が接続していない時間帯やAutoStop状態では正常な状態。固定アラームではなく、利用実態、ライセンス・キャパシティ検討、問い合わせ時の確認に用いる</p>
+</div>
+<h3 id="6-追加を推奨する監視メトリクス">6. 追加を推奨する監視メトリクス</h3>
+<p>現在の画像で作成を確認できるアラームは<code>Unhealthy</code>と<code>ConnectionFailure</code>の2つです。次のメトリクスは、WorkSpaceのリソース不足や利用者の操作感を早期に検知するための追加候補です。現時点では作成画像がないため、設定済みの監視としては扱わない</p>
+<h4 id="優先して追加するアラーム">優先して追加するアラーム</h4>
+<table>
+<thead>
+<tr>
+<th>メトリクス</th>
+<th>検知する内容</th>
+<th>初期設定例</th>
+<th>補足</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>CPUUsage</code></td>
+<td>CPU使用率の継続的な高騰</td>
+<td>Average、5分、80%以上、3/3</td>
+<td>バンドルのコンピューティングタイプ見直しに使用する</td>
+</tr>
+<tr>
+<td><code>MemoryUsage</code></td>
+<td>メモリ使用率の継続的な高騰</td>
+<td>Average、5分、80%以上、3/3</td>
+<td>ページング増加やアプリケーション遅延と併せて確認する</td>
+</tr>
+<tr>
+<td><code>RootVolumeDiskUsage</code></td>
+<td>ルートボリュームの容量逼迫</td>
+<td>Average、5分、80%以上、3/3</td>
+<td>90%以上を重大アラームとする二段階監視も検討する</td>
+</tr>
+<tr>
+<td><code>UserVolumeDiskUsage</code></td>
+<td>ユーザーボリュームの容量逼迫</td>
+<td>Average、5分、80%以上、3/3</td>
+<td>利用者データの増加傾向と併せて確認する</td>
+</tr>
+</tbody></table>
+<p>上記の80%はAWSがすべての環境へ指定する固定値ではなく、導入時の初期値です。業務アプリケーションの通常値とピーク値を確認し、お客様の運用基準に合わせて調整する</p>
+<h4 id="ダッシュボードで傾向を確認してからアラーム化するメトリクス">ダッシュボードで傾向を確認してからアラーム化するメトリクス</h4>
+<table>
+<thead>
+<tr>
+<th>メトリクス</th>
+<th>用途</th>
+<th>設定時の考え方</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>SessionLaunchTime</code></td>
+<td>セッション開始に要した時間</td>
+<td>AverageとMaximumを表示し、通常値と利用者が許容できる時間を確認してからしきい値を決める</td>
+</tr>
+<tr>
+<td><code>InSessionLatency</code></td>
+<td>クライアントとWorkSpace間の往復遅延</td>
+<td>AverageとMaximumを表示し、拠点・回線別の通常値を取得してからアラーム化する</td>
+</tr>
+<tr>
+<td><code>UDPPacketLossRate</code></td>
+<td>ストリーミング通信のUDPパケット損失率</td>
+<td>DCVではゲートウェイからクライアント方向の損失を示す。遅延や画面品質低下時の切り分けに使用する</td>
+</tr>
+<tr>
+<td><code>TCPRetransmissionRate</code></td>
+<td>TCP再送率</td>
+<td>DCVで使用可能。<code>InSessionLatency</code>や<code>Bandwidth</code>と同じ時間帯で確認する</td>
+</tr>
+<tr>
+<td><code>SessionDisconnect</code></td>
+<td>セッション切断回数</td>
+<td>正常な切断を含む可能性があるため、単発通知ではなく増加傾向の確認に使用する</td>
+</tr>
+<tr>
+<td><code>ConnectionAttempt</code>、<code>ConnectionSuccess</code>、<code>ConnectionFailure</code></td>
+<td>接続試行と成否</td>
+<td>同じ期間・ディメンションで並べ、失敗数だけでなく成功率の低下を確認する</td>
+</tr>
+<tr>
+<td><code>Available</code>、<code>Stopped</code>、<code>Maintenance</code></td>
+<td>WorkSpaces全体の状態把握</td>
+<td><code>DirectoryId</code>ディメンションで台数を集約し、運用ダッシュボードへ表示する</td>
+</tr>
+</tbody></table>
+<p><code>Bandwidth</code>、<code>BandwidthInbound</code>、<code>ConnectionDuration</code>、<code>FramesPerSecond</code>もDCVで使用できます。これらは通常値の個体差が大きいため、固定しきい値を先に決めず、接続品質の問い合わせ時に同時刻の推移を確認できるようダッシュボードへ追加します。GPUバンドルを使用する場合だけ<code>GPUUsage</code>も追加する</p>
+<p>信頼されたデバイス機能を有効にする場合だけ、<code>TrustedDeviceValidationFailure</code>と<code>TrustedDeviceCertificateDaysBeforeExpiration</code>も監視対象へ追加する</p>
+<h4 id="ディメンションを選択する">ディメンションを選択する</h4>
+<ul>
+<li>個別障害を検知するアラームでは<code>WorkspaceId</code>を使用する</li>
+<li>全体傾向を把握するダッシュボードでは<code>DirectoryId</code>を使用する</li>
+<li><code>RunningMode</code>、<code>Protocol</code>、<code>ComputeType</code>、<code>BundleId</code>を使用すると、AutoStop／AlwaysOn、DCV、バンドル種別ごとの比較ができる</li>
+<li>接続関連メトリクスは、WorkSpacesクライアントでの認証成功後にセッション接続を開始した時点から記録されます。認証前のADエラーは別途監視する</li>
+</ul>
+<h3 id="7-成功可否と切り分け">7. 成功可否と切り分け</h3>
+<ol>
+<li>アラーム一覧で作成した2アラームの状態が<code>OK</code>で、アクションが有効であることを確認</li>
+<li><code>Unhealthy</code>が<code>ALARM</code>の場合、WorkSpacesコンソールで対象IDの状態、ヘルスチェック、再起動・再構築履歴を確認</li>
+<li><code>ConnectionFailure</code>が<code>ALARM</code>の場合、同時刻のクライアントエラー、ネットワーク経路、Directory Service、セキュリティグループ、証明書・プロキシ設定を確認</li>
+<li><code>ConnectionFailure</code>が<code>OK</code>でも、認証前の失敗は別途確認</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>目的</td>
+<td>WorkSpaceの異常状態と接続失敗の集中を検知する</td>
+</tr>
+<tr>
+<td>期待結果</td>
+<td>作成後に2アラームが<code>OK</code>となり、異常時にSNS通知される</td>
+</tr>
+<tr>
+<td>証跡</td>
+<td>対象WorkSpace一覧、メトリクスグラフ、アラーム詳細・履歴、通知メール</td>
+</tr>
+<tr>
+<td>注意</td>
+<td>停止中や未使用時間帯の欠損を異常扱いしない。認証前失敗は別監視とする</td>
+</tr>
+<tr>
+<td>ロールバック</td>
+<td>対象WorkSpacesアラームとダッシュボードウィジェットのみ削除する</td>
+</tr>
+<tr>
+<td>未検証</td>
+<td>SNSサブスクリプション未設定のため、通知メール受信は未確認</td>
+</tr>
+</tbody></table>
+<h3 id="8-公式資料">8. 公式資料</h3>
+<ul>
+<li>出典：<a href="https://docs.aws.amazon.com/workspaces/latest/adminguide/cloudwatch-metrics.html">Amazon WorkSpacesのCloudWatchメトリクス</a></li>
+<li>出典：<a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/AlarmThatSendsEmail.html">CloudWatchアラームの作成</a></li>
+</ul>
+<hr>
+
+<h2 id="04-ダッシュボード-動作確認">04. ダッシュボード・動作確認</h2>
+<h3 id="1-目的-3">1. 目的</h3>
+<p>作成したアラームを一覧で確認し、監視値をCloudWatchダッシュボードへ集約します。また、SNS通知、アラーム判定、対象サービスの確認を分けて実施する</p>
+<h3 id="2-作成済みアラームを確認する">2. 作成済みアラームを確認する</h3>
+<p>CloudWatchで<strong>アラーム</strong>－<strong>すべてのアラーム</strong>を開き、検索欄へ<code>sample-cw-</code>を入力する</p>
+<figure class="screenshot-wide aws-console-identity"><figcaption>作成済みCloudWatchアラーム4件</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cloudwatch-monitoring/023-作成済みcloudwatchアラーム4件.png" alt="作成済みCloudWatchアラーム4件" width="2300" height="720" loading="lazy"></div></figure>
+
+<p>検証環境では次の4アラームを作成し、いずれも<code>OK</code>、アクション有効であることを確認済み</p>
+<table>
+<thead>
+<tr>
+<th>アラーム名</th>
+<th>対象</th>
+<th>検証結果</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>sample-cw-critical-ec2-statuscheckfailed-i-05914a8b6088a3a42</code></td>
+<td>EC2死活</td>
+<td>OK</td>
+</tr>
+<tr>
+<td><code>sample-cw-warning-ec2-cpu-high-i-05914a8b6088a3a42</code></td>
+<td>EC2 CPU</td>
+<td>OK</td>
+</tr>
+<tr>
+<td><code>sample-cw-critical-workspaces-unhealthy-ws-jkxz7js0s</code></td>
+<td>WorkSpaces状態</td>
+<td>OK</td>
+</tr>
+<tr>
+<td><code>sample-cw-warning-workspaces-connectionfailure-ws-jkxz7js0s</code></td>
+<td>WorkSpaces接続失敗</td>
+<td>OK</td>
+</tr>
+</tbody></table>
+<p>確認項目：</p>
+<ol>
+<li>アラーム名が命名規則に一致</li>
+<li>対象リソースID、メトリクス、統計、期間、しきい値が設計値と一致</li>
+<li>通知先が<code>sample-sns-cloudwatch-alerts</code>である</li>
+<li>アクションが有効である</li>
+</ol>
+<div class="callout callout-info"><strong>ℹ️ 確認事項</strong><p>作成直後は評価に必要なデータポイントがそろわず、<code>INSUFFICIENT_DATA</code>になる場合があります。評価期間分待ってから最終状態を確認する</p>
+</div>
+<h3 id="3-cloudwatchダッシュボードを作成する">3. CloudWatchダッシュボードを作成する</h3>
+<h4 id="入力値">入力値</h4>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>ダッシュボード名</td>
+<td><code>sample-cw-monitoring-dashboard</code></td>
+</tr>
+<tr>
+<td>表示期間</td>
+<td>3時間、1日、1週間を用途に応じて切り替え</td>
+</tr>
+<tr>
+<td>自動更新</td>
+<td>1分または5分</td>
+</tr>
+</tbody></table>
+<h4 id="手順-3">手順</h4>
+<ol>
+<li>CloudWatchで<strong>ダッシュボード</strong>－<strong>ダッシュボードの作成</strong>を選択</li>
+<li>名前に<code>sample-cw-monitoring-dashboard</code>を入力</li>
+<li>次のウィジェットを配置します。検証環境では「今回配置済み」の項目まで作成し、画面表示を確認済み</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>区分</th>
+<th>ウィジェット</th>
+<th>メトリクス</th>
+<th>推奨表示</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>今回配置済み</td>
+<td>EC2負荷</td>
+<td><code>CPUUtilization</code></td>
+<td>折れ線、Average</td>
+</tr>
+<tr>
+<td>今回配置済み</td>
+<td>WorkSpaces状態・利用</td>
+<td><code>Unhealthy</code>、<code>ConnectionFailure</code>、<code>UserConnected</code></td>
+<td>折れ線</td>
+</tr>
+<tr>
+<td>今回配置済み</td>
+<td>アラーム状態</td>
+<td>本書で作成した4アラーム</td>
+<td>アラームステータス</td>
+</tr>
+<tr>
+<td>追加予定</td>
+<td>EC2状態</td>
+<td><code>StatusCheckFailed</code></td>
+<td>数値または折れ線、Maximum</td>
+</tr>
+<tr>
+<td>追加予定</td>
+<td>Windows OS</td>
+<td><code>LogicalDisk % Free Space</code>、<code>Memory % Committed Bytes In Use</code></td>
+<td>折れ線、Average</td>
+</tr>
+<tr>
+<td>追加予定</td>
+<td>WorkSpacesリソース</td>
+<td><code>CPUUsage</code>、<code>MemoryUsage</code>、<code>RootVolumeDiskUsage</code>、<code>UserVolumeDiskUsage</code></td>
+<td>折れ線、Average</td>
+</tr>
+<tr>
+<td>追加予定</td>
+<td>WorkSpaces接続品質</td>
+<td><code>SessionLaunchTime</code>、<code>InSessionLatency</code>、<code>UDPPacketLossRate</code>、<code>TCPRetransmissionRate</code></td>
+<td>折れ線、AverageとMaximum</td>
+</tr>
+</tbody></table>
+<ol start="4">
+<li>リソース名、単位、統計、期間が一目で分かるウィジェットタイトルを設定</li>
+<li><strong>ダッシュボードの保存</strong>を選択</li>
+</ol>
+<figure class="screenshot-wide aws-console-identity"><figcaption>CloudWatch監視ダッシュボード作成完了</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cloudwatch-monitoring/024-cloudwatch監視ダッシュボード作成完了.png" alt="CloudWatch監視ダッシュボード作成完了" width="2720" height="630" loading="lazy"></div></figure>
+
+<div class="callout callout-info"><p><strong>検証範囲</strong><br>ダッシュボード本体、EC2 CPU、WorkSpaces 3指標、作成済みアラームの配置は確認済みです。Windows OSメトリクスは検証環境で未出力のため、空のウィジェットを完成証跡として追加していません。CloudWatch agentの設定完了後に表の「追加予定」を配置する</p>
+</div>
+<h3 id="4-sns通知をテストする">4. SNS通知をテストする</h3>
+<h4 id="4-1-sns単体の配信確認">4.1 SNS単体の配信確認</h4>
+<ol>
+<li>SNSサブスクリプションが<code>Confirmed</code>であることを確認</li>
+<li>変更作業時間帯に、トピック<code>sample-sns-cloudwatch-alerts</code>から「CloudWatch監視通知テスト」と分かるテストメッセージを発行</li>
+<li>宛先で件名、本文、受信時刻を確認</li>
+</ol>
+<p>この確認は「SNSトピックから通知先まで」の配信経路を確認するもので、メトリクスやアラームの判定は確認しない</p>
+<h4 id="4-2-アラームを含む確認">4.2 アラームを含む確認</h4>
+<p>本番リソースに負荷や障害を意図的に発生させないでください。検証環境で次のいずれかを実施する</p>
+<ul>
+<li>一時的なテスト用アラームを作り、現在値に対して安全に<code>ALARM</code>となるしきい値を設定する</li>
+<li>AWS CLIの<code>cloudwatch set-alarm-state</code>を利用できる運用環境では、承認済みのテスト手順に従って一時的に状態を変更する</li>
+</ul>
+<p>確認後はテスト用アラームを削除し、本番アラームのしきい値を変更していないことを確認する</p>
+<h3 id="5-成功可否の判定方法">5. 成功可否の判定方法</h3>
+<h4 id="5-1-cloudwatch上の確認">5.1 CloudWatch上の確認</h4>
+<table>
+<thead>
+<tr>
+<th>状態</th>
+<th>意味</th>
+<th>対応</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>OK</code></td>
+<td>評価期間内でしきい値違反が成立していない</td>
+<td>対象メトリクスの最終時刻も確認する</td>
+</tr>
+<tr>
+<td><code>ALARM</code></td>
+<td>しきい値違反が成立した</td>
+<td>履歴、メトリクス、対象サービスを確認する</td>
+</tr>
+<tr>
+<td><code>INSUFFICIENT_DATA</code></td>
+<td>判定に必要なデータが不足</td>
+<td>停止、削除、agent停止、リージョン、メンテナンスを確認する</td>
+</tr>
+</tbody></table>
+<ol>
+<li>アラーム詳細のグラフで、状態変更前後の値を確認</li>
+<li><strong>履歴</strong>で、状態変更時刻、理由、通知アクションの成否を確認</li>
+<li>SNS通知の受信時刻とアラーム履歴を照合</li>
+<li>対象サービスのコンソール、OSログ、ジョブ履歴で原因と影響を確認</li>
+</ol>
+<h4 id="5-2-成功-ok-正常-を混同しない">5.2 「成功」「OK」「正常」を混同しない</h4>
+<ul>
+<li>アラーム作成画面の成功：設定APIが受理されたこと</li>
+<li>アラーム状態<code>OK</code>：設定したメトリクスが、その期間でしきい値に違反していないこと</li>
+<li>SNS配信成功：SNSから購読先への配信が成功したこと</li>
+<li>サービス正常：業務上必要な機能、OS、アプリケーションおよび認証に問題がないこと</li>
+</ul>
+<p>したがって、<code>OK</code>表示だけで作業完了とせず、「対象メトリクスの最新時刻」「アラーム履歴」「SNS受信」「対象サービス側の状態」を証跡として残す</p>
+<h3 id="6-作業結果">6. 作業結果</h3>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>目的</td>
+<td>複数サービスの監視状態を集約し、通知を含む運用確認を行う</td>
+</tr>
+<tr>
+<td>入力値</td>
+<td>ダッシュボード名、対象メトリクス・アラーム、表示期間</td>
+</tr>
+<tr>
+<td>期待結果</td>
+<td>必要なグラフとアラーム状態が表示され、テスト通知を受信できる</td>
+</tr>
+<tr>
+<td>証跡</td>
+<td>ダッシュボード全体、アラーム詳細・履歴、SNS購読状態、受信メール、対象サービス画面</td>
+</tr>
+<tr>
+<td>注意</td>
+<td>テストで本番リソースへ障害や高負荷を与えない。通知には機密情報を含めない</td>
+</tr>
+<tr>
+<td>ロールバック</td>
+<td>テスト用アラーム・ウィジェットを削除する。本番アラームを変更した場合は承認済み設定へ戻す</td>
+</tr>
+<tr>
+<td>未検証</td>
+<td>SNS購読・受信、Windows OSのウィジェットおよびエンドツーエンド通知試験は未検証。ダッシュボード本体と検証対象メトリクスの表示は確認済み</td>
+</tr>
+</tbody></table>
+<h3 id="7-定期点検">7. 定期点検</h3>
+<ul>
+<li>月次：アラーム一覧、無効アクション、<code>INSUFFICIENT_DATA</code>の長期継続、SNS購読状態を確認</li>
+<li>四半期：しきい値、評価期間、通知先、不要アラーム、ダッシュボード構成を見直す</li>
+<li>構成変更時：新規EC2およびWorkSpaceが監視対象へ追加されたことを確認</li>
+<li>年次または運用規程に基づく周期：SNS通知とCloudWatchアラームの動作試験を実施</li>
+</ul>
+<h3 id="8-公式資料-2">8. 公式資料</h3>
+<ul>
+<li>出典：<a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/create_dashboard.html">CloudWatchダッシュボードの作成</a></li>
+<li>出典：<a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/AlarmThatSendsEmail.html">CloudWatchアラームの使用</a></li>
+<li>出典：<a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Notify_Users_Alarm_Changes.html">アラーム状態変更をユーザーへ通知する</a></li>
+<li>出典：<a href="https://docs.aws.amazon.com/sns/latest/dg/sns-email-notifications.html">Amazon SNSのメール通知</a></li>
+</ul>
+
+    </main>
+  </div>
+  <script src="../assets/app.js?v=20260908-skill-transfer1"></script>
+</body>
+</html>

@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Amazon WorkSpaces 技術移管 | Documentation</title>
-  <meta name="description" content="AWS Managed Microsoft ADからAmazon WorkSpaces、カスタムイメージ、Patch Managerまでを再構築できる技術移管資料">
+  <meta name="description" content="AWS Managed Microsoft ADからAmazon WorkSpaces、カスタムイメージ、Patch Manager、Cost Optimizerまでを再構築できる技術移管資料">
   <link rel="stylesheet" href="../assets/styles.css?v=20260908-skill-transfer1">
 </head>
 <body>
@@ -35,13 +35,21 @@
       <a href="aws-cli-reference.html">AWS CLI コマンドリファレンス</a>
       <a href="eventbridge-scheduler.html">EventBridge Scheduler</a>
       <a href="amazon-workspaces.html">Amazon WorkSpaces</a>
-      <a class="active" href="workspaces-skill-transfer.html">Amazon WorkSpaces 技術移管</a>
-      <a href="workspaces-managed-ad.html">AWS Managed Microsoft AD 構築・管理</a>
-      <a href="workspaces-management-ec2.html">管理用EC2・Active Directory管理</a>
-      <a href="workspaces-ad-connector.html">AD Connector 構築・権限委任</a>
-      <a href="workspaces-provisioning-gpo.html">Amazon WorkSpaces 構築・OU・GPO</a>
-      <a href="workspaces-image-bundle.html">WorkSpaces カスタムイメージ・バンドル</a>
-      <a href="workspaces-patch-manager.html">Systems Manager Patch Manager</a>
+      <details class="sidebar-nested-menu" open>
+        <summary>PoC 閉域VPC・AD／VDI環境</summary>
+        <div class="sidebar-subnav">
+          <a href="workspaces-poc-environment.html">環境概要</a>
+          <a class="active" href="workspaces-skill-transfer.html">全体構築・運用順序</a>
+          <a href="workspaces-managed-ad.html">AWS Managed Microsoft AD 構築・管理</a>
+          <a href="workspaces-management-ec2.html">管理用EC2・Active Directory管理</a>
+          <a href="workspaces-ad-connector.html">AD Connector 構築・権限委任</a>
+          <a href="workspaces-provisioning-gpo.html">Amazon WorkSpaces 構築・OU・GPO</a>
+          <a href="workspaces-image-bundle.html">WorkSpaces カスタムイメージ・バンドル</a>
+          <a href="workspaces-patch-manager.html">Systems Manager Patch Manager</a>
+          <a href="workspaces-cost-optimizer.html">Amazon WorkSpaces Cost Optimizer</a>
+          <a href="workspaces-cloudwatch-monitoring.html">CloudWatch・SNS 監視／通知</a>
+        </div>
+      </details>
       <a href="amazon-ses.html">Amazon SES SMTPリレー</a>
       <a href="amazon-ses-monitoring.html">Amazon SES 配信監視</a>
       <a href="amazon-rds-blue-green.html">Amazon RDS Blue/Green Deployments</a>
@@ -68,7 +76,7 @@
     <main class="content workspaces-skill-transfer-guide">
       <nav class="breadcrumb" aria-label="Breadcrumb"><a href="../"><span class="nav-icon" aria-hidden="true">⌂</span>Home</a><span>技術移管</span></nav>
       <h1>Amazon WorkSpaces 技術移管</h1>
-      <p class="lead">AWS Managed Microsoft AD、AD Connector、Amazon WorkSpaces、OU・GPO、カスタムイメージ、Systems Managerを依存関係に沿って再構築する<br>実機検証で確認した設定値、工程ゲート、証跡画像および運用上の判断基準をまとめる</p>
+      <p class="lead">AWS Managed Microsoft AD、AD Connector、Amazon WorkSpaces、OU・GPO、カスタムイメージ、Systems Manager、Cost Optimizerを依存関係に沿って再構築する<br>実機検証で確認した設定値、工程ゲート、証跡画像および運用上の判断基準をまとめる</p>
 <nav class="skill-transfer-journey" aria-label="技術移管の詳細手順">
       <a href="workspaces-managed-ad.html"><strong>1. Managed AD</strong><span>構成・作成・ユーザー管理</span></a>
       <a href="workspaces-management-ec2.html"><strong>2. 管理用EC2</strong><span>接続・ADUC・GPMC</span></a>
@@ -76,8 +84,10 @@
       <a href="workspaces-provisioning-gpo.html"><strong>4. WorkSpaces</strong><span>作成・OU・GPO</span></a>
       <a href="workspaces-image-bundle.html"><strong>5. イメージ展開</strong><span>Image Checker・共有</span></a>
       <a href="workspaces-patch-manager.html"><strong>6. パッチ運用</strong><span>Scan・Install・証跡</span></a>
+      <a href="workspaces-cost-optimizer.html"><strong>7. コスト最適化</strong><span>デプロイ・監視・設定変更</span></a>
+      <a href="workspaces-cloudwatch-monitoring.html"><strong>8. 監視・通知</strong><span>CloudWatch・SNS・動作確認</span></a>
     </nav>
-    <figure class="architecture-figure"><figcaption>全体構成: 共通ディレクトリVPCとWorkSpaces VPCをVPC Peeringで接続し、管理・認証・デスクトップ・パッチ運用を分離する</figcaption><img src="../assets/img/workspaces-skill-transfer/workspaces-skill-transfer-architecture.png" alt="AWS Managed Microsoft ADと複数WorkSpaces VPCの全体構成図" loading="eager"></figure>
+    <figure class="architecture-figure"><figcaption>全体構成: 4つのVPCとオンプレミス拠点をDirect Connectで接続し、Managed AD、WorkSpaces、ファイル共有および管理機能を分離する</figcaption><img src="../assets/img/workspaces-skill-transfer/workspaces-skill-transfer-architecture.png" alt="4つのVPCとオンプレミス拠点を接続するAmazon WorkSpaces全体ネットワーク構成図" loading="eager"></figure>
 <h2 id="aws基盤-amazon-workspaces-構築-運用作業順序">AWS基盤・Amazon WorkSpaces 構築・運用作業順序</h2>
 <h3 id="1-この文書の目的">1. この文書の目的</h3>
 <p>本書は、AWS Managed Microsoft ADの作成からAmazon WorkSpacesの利用開始、カスタムイメージ／バンドル作成および別AWSアカウントへの共有・展開までを、依存関係に沿って実施するための全体索引です。各画面の操作はリンク先の個別手順書を使用し、この文書では「何を先に終わらせるか」と「次へ進める条件」を確認する</p>

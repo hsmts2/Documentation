@@ -35,13 +35,21 @@
       <a href="aws-cli-reference.html">AWS CLI コマンドリファレンス</a>
       <a href="eventbridge-scheduler.html">EventBridge Scheduler</a>
       <a href="amazon-workspaces.html">Amazon WorkSpaces</a>
-      <a href="workspaces-skill-transfer.html">Amazon WorkSpaces 技術移管</a>
-      <a href="workspaces-managed-ad.html">AWS Managed Microsoft AD 構築・管理</a>
-      <a class="active" href="workspaces-management-ec2.html">管理用EC2・Active Directory管理</a>
-      <a href="workspaces-ad-connector.html">AD Connector 構築・権限委任</a>
-      <a href="workspaces-provisioning-gpo.html">Amazon WorkSpaces 構築・OU・GPO</a>
-      <a href="workspaces-image-bundle.html">WorkSpaces カスタムイメージ・バンドル</a>
-      <a href="workspaces-patch-manager.html">Systems Manager Patch Manager</a>
+      <details class="sidebar-nested-menu" open>
+        <summary>PoC 閉域VPC・AD／VDI環境</summary>
+        <div class="sidebar-subnav">
+          <a href="workspaces-poc-environment.html">環境概要</a>
+          <a href="workspaces-skill-transfer.html">全体構築・運用順序</a>
+          <a href="workspaces-managed-ad.html">AWS Managed Microsoft AD 構築・管理</a>
+          <a class="active" href="workspaces-management-ec2.html">管理用EC2・Active Directory管理</a>
+          <a href="workspaces-ad-connector.html">AD Connector 構築・権限委任</a>
+          <a href="workspaces-provisioning-gpo.html">Amazon WorkSpaces 構築・OU・GPO</a>
+          <a href="workspaces-image-bundle.html">WorkSpaces カスタムイメージ・バンドル</a>
+          <a href="workspaces-patch-manager.html">Systems Manager Patch Manager</a>
+          <a href="workspaces-cost-optimizer.html">Amazon WorkSpaces Cost Optimizer</a>
+          <a href="workspaces-cloudwatch-monitoring.html">CloudWatch・SNS 監視／通知</a>
+        </div>
+      </details>
       <a href="amazon-ses.html">Amazon SES SMTPリレー</a>
       <a href="amazon-ses-monitoring.html">Amazon SES 配信監視</a>
       <a href="amazon-rds-blue-green.html">Amazon RDS Blue/Green Deployments</a>
@@ -293,7 +301,7 @@
 <li>画面右上の「アクション」を開く</li>
 <li>「ディレクトリ管理 EC2 インスタンスの起動」を選択</li>
 </ol>
-<figure class="screenshot-wide"><figcaption>Directory Serviceから管理用EC2インスタンスを起動</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-management-ec2/001-directory-serviceから管理用ec2インスタンスを起動.png" alt="Directory Serviceから管理用EC2インスタンスを起動" width="1616" height="1304" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><figcaption>Directory Serviceから管理用EC2インスタンスを起動</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-management-ec2/001-directory-serviceから管理用ec2インスタンスを起動.png" alt="Directory Serviceから管理用EC2インスタンスを起動" width="1616" height="1304" loading="lazy"></div></figure>
 
 
 
@@ -311,7 +319,7 @@
 <li>入力値を別担当者または承認済みパラメータシートと照合</li>
 <li>問題がなければ⑨の「送信」を選択</li>
 </ol>
-<figure class="screenshot-wide"><figcaption>管理用EC2インスタンスの起動条件</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-management-ec2/002-管理用ec2インスタンスの起動条件.png" alt="管理用EC2インスタンスの起動条件" width="1396" height="1127" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><figcaption>管理用EC2インスタンスの起動条件</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-management-ec2/002-管理用ec2インスタンスの起動条件.png" alt="管理用EC2インスタンスの起動条件" width="1396" height="1127" loading="lazy"></div></figure>
 
 
 
@@ -401,7 +409,7 @@
 
 <p><strong>画像内の番号</strong></p>
 <ul>
-<li>① 「ドメイン」に対象ドメインが表示されることを確認します。検証画像では <strong>p-pm.example.com</strong> </li>
+<li>① 「ドメイン」に対象ドメインが表示されることを確認する。検証画像では <strong>ad.example.com</strong> </li>
 </ul>
 <p><strong>期待結果</strong></p>
 <ul>
@@ -473,7 +481,7 @@
 <li>② アカウントロックアウトポリシーを確認する</li>
 <li>③ Kerberosポリシーを確認する</li>
 </ul>
-<p>検証画像で確認できる値は次のとおりである。これらは <strong>p-pm.example.comの取得時点のDefault Domain Policy</strong> であり、別環境へそのまま転記しない</p>
+<p>検証画像で確認できる値は次のとおりである。これらは <strong>ad.example.comの取得時点のDefault Domain Policy</strong> であり、別環境へそのまま転記しない</p>
 <table>
 <thead>
 <tr>
@@ -637,7 +645,7 @@
 <h4 id="14-4-gpmcの参照先ドメインコントローラーを切り替えて表示差異を再確認する-異常時のみ">14.4 GPMCの参照先ドメインコントローラーを切り替えて表示差異を再確認する（異常時のみ）</h4>
 <p>複数のドメインコントローラー間でGPO、リンクまたは更新日時の表示が一致しない場合だけ実施する。これはGPMCが問い合わせる参照先ドメインコントローラーを一時的に切り替える操作であり、AWS Managed Microsoft ADのドメインコントローラー自体を変更、交換または再起動する操作ではない。また、Active DirectoryまたはSYSVOLのレプリケーション障害そのものを修復する操作でもない。2台は主系／待機系ではないため、この操作を「主系切替」と説明しない。2台の役割は、<a href="workspaces-managed-ad.html">AWS Managed Microsoft ADの2台ドメインコントローラー構成・役割</a>を参照する</p>
 <ol>
-<li>GPMCの左ペインで対象ドメイン<code>p-pm.example.com</code>を右クリック</li>
+<li>GPMCの左ペインで対象ドメイン<code>ad.example.com</code>を右クリック</li>
 <li>「ドメイン コントローラーの変更」を選択</li>
 </ol>
 <figure class="screenshot-wide"><figcaption>GPMCのドメインコントローラー変更メニュー</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-management-ec2/009-gpmcのドメインコントローラー変更メニュー.png" alt="GPMCのドメインコントローラー変更メニュー" width="1363" height="713" loading="lazy"></div></figure>

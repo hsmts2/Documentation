@@ -31,13 +31,21 @@ $groups = @(
             [pscustomobject]@{ File = 'aws-cli-reference.html'; Label = 'AWS CLI コマンドリファレンス' }
             [pscustomobject]@{ File = 'eventbridge-scheduler.html'; Label = 'EventBridge Scheduler' }
             [pscustomobject]@{ File = 'amazon-workspaces.html'; Label = 'Amazon WorkSpaces' }
-            [pscustomobject]@{ File = 'workspaces-skill-transfer.html'; Label = 'Amazon WorkSpaces 技術移管' }
-            [pscustomobject]@{ File = 'workspaces-managed-ad.html'; Label = 'AWS Managed Microsoft AD 構築・管理' }
-            [pscustomobject]@{ File = 'workspaces-management-ec2.html'; Label = '管理用EC2・Active Directory管理' }
-            [pscustomobject]@{ File = 'workspaces-ad-connector.html'; Label = 'AD Connector 構築・権限委任' }
-            [pscustomobject]@{ File = 'workspaces-provisioning-gpo.html'; Label = 'Amazon WorkSpaces 構築・OU・GPO' }
-            [pscustomobject]@{ File = 'workspaces-image-bundle.html'; Label = 'WorkSpaces カスタムイメージ・バンドル' }
-            [pscustomobject]@{ File = 'workspaces-patch-manager.html'; Label = 'Systems Manager Patch Manager' }
+            [pscustomobject]@{
+                Label = 'PoC 閉域VPC・AD／VDI環境'
+                Children = @(
+                    [pscustomobject]@{ File = 'workspaces-poc-environment.html'; Label = '環境概要'; Title = 'PoC 閉域VPC・AD／VDI環境' }
+                    [pscustomobject]@{ File = 'workspaces-skill-transfer.html'; Label = '全体構築・運用順序'; Title = 'Amazon WorkSpaces 技術移管' }
+                    [pscustomobject]@{ File = 'workspaces-managed-ad.html'; Label = 'AWS Managed Microsoft AD 構築・管理' }
+                    [pscustomobject]@{ File = 'workspaces-management-ec2.html'; Label = '管理用EC2・Active Directory管理' }
+                    [pscustomobject]@{ File = 'workspaces-ad-connector.html'; Label = 'AD Connector 構築・権限委任' }
+                    [pscustomobject]@{ File = 'workspaces-provisioning-gpo.html'; Label = 'Amazon WorkSpaces 構築・OU・GPO' }
+                    [pscustomobject]@{ File = 'workspaces-image-bundle.html'; Label = 'WorkSpaces カスタムイメージ・バンドル' }
+                    [pscustomobject]@{ File = 'workspaces-patch-manager.html'; Label = 'Systems Manager Patch Manager' }
+                    [pscustomobject]@{ File = 'workspaces-cost-optimizer.html'; Label = 'Amazon WorkSpaces Cost Optimizer' }
+                    [pscustomobject]@{ File = 'workspaces-cloudwatch-monitoring.html'; Label = 'CloudWatch・SNS 監視／通知' }
+                )
+            }
             [pscustomobject]@{ File = 'amazon-ses.html'; Label = 'Amazon SES SMTPリレー' }
             [pscustomobject]@{ File = 'amazon-ses-monitoring.html'; Label = 'Amazon SES 配信監視' }
             [pscustomobject]@{ File = 'amazon-rds-blue-green.html'; Label = 'Amazon RDS Blue/Green Deployments' }
@@ -76,7 +84,13 @@ $groups = @(
 $pages = @(
     foreach ($group in $groups) {
         foreach ($page in $group.Pages) {
-            $page
+            if ($page.Children) {
+                foreach ($child in $page.Children) {
+                    $child
+                }
+            } else {
+                $page
+            }
         }
     }
 )
@@ -145,8 +159,22 @@ foreach ($target in $targets) {
         $lines.Add("      <p class=`"sidebar-group`"><span class=`"sidebar-group-icon`" aria-hidden=`"true`">$($group.Icon)</span>$($group.Label)</p>")
 
         foreach ($page in $group.Pages) {
-            $activeClass = if ($page.File -eq $activeFile) { ' class="active"' } else { '' }
-            $lines.Add("      <a$activeClass href=`"$hrefPrefix$($page.File)`">$($page.Label)</a>")
+            if ($page.Children) {
+                $isNestedActive = @($page.Children | Where-Object { $_.File -eq $activeFile }).Count -gt 0
+                $openAttribute = if ($isNestedActive) { ' open' } else { '' }
+                $lines.Add("      <details class=`"sidebar-nested-menu`"$openAttribute>")
+                $lines.Add("        <summary>$($page.Label)</summary>")
+                $lines.Add('        <div class="sidebar-subnav">')
+                foreach ($child in $page.Children) {
+                    $activeClass = if ($child.File -eq $activeFile) { ' class="active"' } else { '' }
+                    $lines.Add("          <a$activeClass href=`"$hrefPrefix$($child.File)`">$($child.Label)</a>")
+                }
+                $lines.Add('        </div>')
+                $lines.Add('      </details>')
+            } else {
+                $activeClass = if ($page.File -eq $activeFile) { ' class="active"' } else { '' }
+                $lines.Add("      <a$activeClass href=`"$hrefPrefix$($page.File)`">$($page.Label)</a>")
+            }
         }
     }
 

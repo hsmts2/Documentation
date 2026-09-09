@@ -267,7 +267,8 @@ body.sidebar-collapsed .sidebar-heading {
 body.sidebar-collapsed .sidebar-heading h2,
 body.sidebar-collapsed .sidebar-group,
 body.sidebar-collapsed .sidebar a,
-body.sidebar-collapsed .sidebar-page-menu {
+body.sidebar-collapsed .sidebar-page-menu,
+body.sidebar-collapsed .sidebar-nested-menu {
   display: none;
 }
 
@@ -351,6 +352,47 @@ body.sidebar-collapsed .sidebar-page-menu {
 .sidebar .sidebar-subnav a {
   padding: 3px 0;
   font-size: 13px;
+}
+
+.sidebar-nested-menu {
+  margin: 2px 0 6px;
+}
+
+.sidebar-nested-menu summary {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  padding: 5px 0;
+  color: var(--muted);
+  font-weight: 700;
+  line-height: 1.45;
+  cursor: pointer;
+  list-style: none;
+}
+
+.sidebar-nested-menu summary::-webkit-details-marker {
+  display: none;
+}
+
+.sidebar-nested-menu summary::before {
+  content: "▶";
+  flex: 0 0 auto;
+  margin-top: 3px;
+  color: var(--accent-strong);
+  font-size: 10px;
+}
+
+.sidebar-nested-menu[open] summary {
+  color: var(--text);
+}
+
+.sidebar-nested-menu[open] summary::before {
+  content: "▼";
+}
+
+.sidebar-nested-menu .sidebar-subnav {
+  margin-top: 2px;
+  margin-bottom: 4px;
 }
 
 main {

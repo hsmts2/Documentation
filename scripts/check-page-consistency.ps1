@@ -6,12 +6,13 @@ $errors = [System.Collections.Generic.List[string]]::new()
 $manifestContent = [System.IO.File]::ReadAllText((Join-Path $PSScriptRoot 'sync-page-list.ps1'))
 $manifestEntries = [regex]::Matches(
     $manifestContent,
-    "\[pscustomobject\]@\{ File = '([^']+)'; Label = '([^']+)' \}"
+    "\[pscustomobject\]@\{ File = '([^']+)'; Label = '([^']+)'(?:; Title = '([^']+)')? \}"
 )
 
 foreach ($entry in $manifestEntries) {
     $fileName = $entry.Groups[1].Value
     $manifestLabel = $entry.Groups[2].Value
+    $expectedTitle = if ($entry.Groups[3].Success) { $entry.Groups[3].Value } else { $manifestLabel }
     $file = Get-Item -LiteralPath (Join-Path $tutorialsRoot $fileName)
     $content = [System.IO.File]::ReadAllText($file.FullName)
     $titleMatch = [regex]::Match($content, '<title>(.*?) \| Documentation</title>')
@@ -39,8 +40,8 @@ foreach ($entry in $manifestEntries) {
         )
     }
 
-    if ($titleMatch.Success -and $titleMatch.Groups[1].Value -cne $manifestLabel) {
-        $errors.Add("${fileName}: manifest label and title differ ('$manifestLabel' / '$($titleMatch.Groups[1].Value)')")
+    if ($titleMatch.Success -and $titleMatch.Groups[1].Value -cne $expectedTitle) {
+        $errors.Add("${fileName}: manifest title and page title differ ('$expectedTitle' / '$($titleMatch.Groups[1].Value)')")
     }
 
     if (-not $activeSidebarMatch.Success) {

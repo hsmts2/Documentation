@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">Cost Optimizer for Amazon WorkSpaces ハブアカウント単一構成</title>
+  <desc id="desc">EventBridgeからECS Fargateを日次起動し、WorkSpacesを評価してDynamoDB、S3、CloudWatchへ結果を保存する単一アカウント構成</desc>
+  <defs>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 Z" fill="#54657a"/></marker>
+    <filter id="shadow"><feDropShadow dx="0" dy="3" stdDeviation="4" flood-opacity="0.15"/></filter>
+    <style>
+      .title{font:700 34px 'Yu Gothic UI','Meiryo',sans-serif;fill:#16263a}.sub{font:500 18px 'Yu Gothic UI','Meiryo',sans-serif;fill:#506176}.head{font:700 20px 'Yu Gothic UI','Meiryo',sans-serif;fill:#16263a}.txt{font:500 16px 'Yu Gothic UI','Meiryo',sans-serif;fill:#24364b}.small{font:500 14px 'Yu Gothic UI','Meiryo',sans-serif;fill:#506176}.box{rx:14;filter:url(#shadow);stroke-width:2}.line{fill:none;stroke:#54657a;stroke-width:3;marker-end:url(#arrow)}
+    </style>
+  </defs>
+  <rect width="1600" height="900" fill="#f6f8fb"/>
+  <text x="60" y="60" class="title">Cost Optimizer for Amazon WorkSpaces v2.9.10</text>
+  <text x="60" y="92" class="sub">ハブアカウント単一構成／検証スタック sample-cfn-co-001／東京リージョン</text>
+
+  <rect x="45" y="125" width="1510" height="720" rx="22" fill="#fff" stroke="#d32674" stroke-width="3"/>
+  <text x="75" y="165" class="head">ハブアカウント（単一アカウント）</text>
+  <text x="1270" y="165" class="small">CloudFormationで一括管理</text>
+
+  <rect class="box" x="90" y="220" width="240" height="105" fill="#fff3e8" stroke="#f59d2a"/>
+  <text x="125" y="260" class="head">Amazon EventBridge</text>
+  <text x="125" y="290" class="txt">日次スケジュール</text>
+  <text x="125" y="313" class="small">cron(0 23 * * ? *)</text>
+
+  <rect x="390" y="195" width="600" height="390" rx="20" fill="#f3fbf6" stroke="#2e9d62" stroke-width="3"/>
+  <text x="420" y="235" class="head">新規VPC（CreateNewVPC=Yes）</text>
+  <rect class="box" x="430" y="275" width="220" height="100" fill="#fff8e6" stroke="#e1a42d"/>
+  <text x="475" y="315" class="head">Public Subnet</text>
+  <text x="462" y="348" class="txt">Internet Gateway / NAT</text>
+  <rect class="box" x="430" y="425" width="500" height="110" fill="#e8f3ff" stroke="#2789c7"/>
+  <text x="470" y="462" class="head">Private Subnet 1 / 2</text>
+  <text x="470" y="495" class="txt">Amazon ECS on AWS Fargate</text>
+  <text x="470" y="520" class="small">Cost Optimizerコンテナ／IAMロール／タスク定義</text>
+  <rect class="box" x="700" y="275" width="230" height="100" fill="#eef5ff" stroke="#527dc7"/>
+  <text x="735" y="315" class="head">S3 Gateway Endpoint</text>
+  <text x="752" y="348" class="small">レポート出力経路</text>
+
+  <rect class="box" x="1080" y="205" width="390" height="120" fill="#fff0f6" stroke="#d32674"/>
+  <text x="1120" y="247" class="head">Amazon WorkSpaces / CloudWatch</text>
+  <text x="1120" y="280" class="txt">対象リージョンの利用時間・設定を参照</text>
+  <text x="1120" y="305" class="small">Regions空欄：対応する全リージョン</text>
+
+  <rect class="box" x="1070" y="390" width="250" height="105" fill="#f1edff" stroke="#6f52b5"/>
+  <text x="1135" y="430" class="head">Amazon DynamoDB</text>
+  <text x="1110" y="463" class="txt">利用状況・セッション履歴</text>
+
+  <rect class="box" x="1070" y="550" width="250" height="120" fill="#eef9ef" stroke="#4d9f52"/>
+  <text x="1140" y="590" class="head">Amazon S3</text>
+  <text x="1110" y="620" class="txt">日次・月次CSVレポート</text>
+  <text x="1110" y="646" class="small">CostOptimizerBucket</text>
+
+  <rect class="box" x="1350" y="390" width="155" height="280" fill="#fff2f5" stroke="#d32674"/>
+  <text x="1377" y="430" class="head">CloudWatch</text>
+  <text x="1388" y="470" class="txt">Logs</text>
+  <text x="1388" y="500" class="txt">Metrics</text>
+  <text x="1388" y="530" class="txt">Dashboard</text>
+  <line x1="1375" y1="555" x2="1480" y2="555" stroke="#e0a5bd"/>
+  <text x="1388" y="588" class="small">実行結果</text>
+  <text x="1388" y="613" class="small">対象台数</text>
+  <text x="1388" y="638" class="small">変換・失敗数</text>
+
+  <path class="line" d="M330 272 L430 472"/>
+  <path class="line" d="M930 472 C1010 410,1010 285,1080 270"/>
+  <path class="line" d="M930 480 L1070 442"/>
+  <path class="line" d="M930 500 C1000 540,1010 602,1070 610"/>
+  <path class="line" d="M930 520 C1110 720,1250 720,1350 610"/>
+
+  <rect x="90" y="700" width="900" height="100" rx="16" fill="#fff9e9" stroke="#d6a63a" stroke-width="2"/>
+  <text x="120" y="738" class="head">運用上の要点</text>
+  <text x="120" y="770" class="txt">DryRun=Yesで十分に評価後、CloudFormation変更セットでNoへ変更。通常運用は1日1回。</text>
+  <text x="120" y="794" class="small">成功判定はECS・CloudWatch Logs・S3 CSV・WorkSpaces実設定を突合する。</text>
+
+  <text x="1080" y="795" class="small">説明用再構成図（AWS公式図そのものではありません）</text>
+</svg>

@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PoC 閉域VPC・AD／VDI環境 | Documentation</title>
+  <meta name="description" content="4つの閉域VPC、Direct Connect、Active Directory、Amazon WorkSpacesで構成するPoC環境の全体像と構築手順への入口">
+  <link rel="stylesheet" href="../assets/styles.css?v=20260909-workspaces-poc1">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="../"><img src="../assets/icon.jpg" alt="Documentation icon"><span>Documentation</span></a>
+    <div class="header-actions">
+      <button class="icon-button theme-toggle" type="button" title="テーマを切り替え" aria-label="テーマを切り替え">☀</button>
+      <nav class="nav" aria-label="Global navigation">
+        <a href="../"><span class="nav-icon" aria-hidden="true">⌂</span>Home</a>
+        <a href="https://github.com/hsmts2"><span class="nav-icon" aria-hidden="true">▦</span>Repositories</a>
+        <a href="https://github.com/hsmts2/Documentation"><span class="nav-icon" aria-hidden="true">◆</span>GitHub</a>
+      </nav>
+    </div>
+  </header>
+  <div class="layout layout-wide">
+    <aside id="site-sidebar" class="sidebar" aria-label="Page list">
+      <div class="sidebar-heading">
+        <button class="icon-button sidebar-toggle sidebar-toggle-inline" type="button" aria-controls="site-sidebar" aria-expanded="true" title="ナビゲーションを閉じる" aria-label="ナビゲーションを閉じる">☰</button>
+      </div>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">✎</span>記事</p>
+      <a href="cloudflare-private-site.html">Private GitHubリポジトリをCloudflare Workersで認証付き公開してみた</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">◈</span>Terraform</p>
+      <a href="terraform.html">Terraform 概要</a>
+      <a href="hcp-terraform.html">HCP Terraform（Terraform Cloud）</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">☁︎</span>AWS</p>
+      <a href="cloudformation.html">CloudFormation 運用手順集</a>
+      <a href="aws-cli.html">AWS CLI 特殊対応</a>
+      <a href="aws-cli-reference.html">AWS CLI コマンドリファレンス</a>
+      <a href="eventbridge-scheduler.html">EventBridge Scheduler</a>
+      <a href="amazon-workspaces.html">Amazon WorkSpaces</a>
+      <details class="sidebar-nested-menu" open>
+        <summary>PoC 閉域VPC・AD／VDI環境</summary>
+        <div class="sidebar-subnav">
+          <a class="active" href="workspaces-poc-environment.html">環境概要</a>
+          <a href="workspaces-skill-transfer.html">全体構築・運用順序</a>
+          <a href="workspaces-managed-ad.html">AWS Managed Microsoft AD 構築・管理</a>
+          <a href="workspaces-management-ec2.html">管理用EC2・Active Directory管理</a>
+          <a href="workspaces-ad-connector.html">AD Connector 構築・権限委任</a>
+          <a href="workspaces-provisioning-gpo.html">Amazon WorkSpaces 構築・OU・GPO</a>
+          <a href="workspaces-image-bundle.html">WorkSpaces カスタムイメージ・バンドル</a>
+          <a href="workspaces-patch-manager.html">Systems Manager Patch Manager</a>
+          <a href="workspaces-cost-optimizer.html">Amazon WorkSpaces Cost Optimizer</a>
+          <a href="workspaces-cloudwatch-monitoring.html">CloudWatch・SNS 監視／通知</a>
+        </div>
+      </details>
+      <a href="amazon-ses.html">Amazon SES SMTPリレー</a>
+      <a href="amazon-ses-monitoring.html">Amazon SES 配信監視</a>
+      <a href="amazon-rds-blue-green.html">Amazon RDS Blue/Green Deployments</a>
+      <a href="apache-acm-certificate-update.html">証明書更新（ACMエクスポート）</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">⚙︎</span>OS／ミドルウェア</p>
+      <a href="rhel9.html">Red Hat Enterprise Linux 9</a>
+      <a href="rhel10.html">Red Hat Enterprise Linux 10</a>
+      <a href="amazon-linux-2023.html">Amazon Linux 2023</a>
+      <a href="windows-server-2022.html">Windows Server 2022</a>
+      <a href="windows-server-2025.html">Windows Server 2025</a>
+      <a href="windows-server-2016-upgrade.html">Windows Server 2016 インプレースアップグレード</a>
+      <a href="storage.html">ストレージ管理</a>
+      <a href="apache.html">Apache</a>
+      <a href="apache-self-signed-ssl-termination.html">Apache SSL終端（自己署名証明書）</a>
+      <a href="redis.html">Redis（KVS）</a>
+      <a href="nfs.html">NFS</a>
+      <a href="samba.html">Samba</a>
+      <a href="mariadb.html">MariaDB</a>
+      <a href="postgresql.html">PostgreSQL</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">▤</span>リファレンス</p>
+      <a href="troubleshooting.html">障害切り分けチェックリスト</a>
+      <a href="eol.html">EOL / ライフサイクル一覧表</a>
+    </aside>
+    <main class="content workspaces-skill-transfer-guide">
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="../"><span class="nav-icon" aria-hidden="true">⌂</span>Home</a>
+        <span>トピック</span>
+      </nav>
+      <h1>PoC 閉域VPC・AD／VDI環境</h1>
+      <p class="lead">4つの閉域VPCをDirect Connectでオンプレミスへ接続し、Active DirectoryとAmazon WorkSpacesを分離配置したPoC環境をまとめる<br>ネットワーク、認証、VDI、ファイル共有、パッチ管理およびコスト最適化の構成と個別手順への入口を整理する</p>
+
+      <hr>
+
+      <section aria-labelledby="architecture">
+        <h2 id="architecture">全体ネットワーク構成</h2>
+        <p>オンプレミス拠点とAWS CloudをDirect Connectで接続し、認証・管理系とVDI系の役割をVPCごとに分離する</p>
+        <figure>
+          <img src="../assets/img/workspaces-skill-transfer/workspaces-skill-transfer-architecture.png" alt="4つのVPCとオンプレミス拠点を接続するPoC閉域VPC・AD・VDI環境の構成図" loading="eager">
+          <figcaption>PoC 閉域VPC・AD／VDI環境の全体ネットワーク構成</figcaption>
+        </figure>
+        <p><a href="../assets/img/workspaces-skill-transfer/workspaces-skill-transfer-architecture.pptx">編集可能なPowerPoint構成図をダウンロード</a></p>
+      </section>
+
+      <hr>
+
+      <section aria-labelledby="components">
+        <h2 id="components">環境の役割分担</h2>
+        <table>
+          <thead><tr><th>構成要素</th><th>主な役割</th></tr></thead>
+          <tbody>
+            <tr><td>オンプレミス拠点</td><td>利用者・管理者の接続元、既存ネットワークとの連携</td></tr>
+            <tr><td>Direct Connect</td><td>オンプレミス拠点とAWS Cloud間の閉域接続</td></tr>
+            <tr><td><code>ad-vpc-001</code></td><td>運用・中継用リソースを配置するネットワーク</td></tr>
+            <tr><td><code>ad-vpc-002</code></td><td>AWS Managed Microsoft AD、管理用EC2、FSxおよびCost Optimizerを配置する管理・認証ネットワーク</td></tr>
+            <tr><td><code>ad-vpc-003</code></td><td>AD ConnectorとAmazon WorkSpacesを配置するVDIネットワーク</td></tr>
+            <tr><td><code>ad-vpc-004</code></td><td>追加のAD ConnectorとAmazon WorkSpacesを配置するVDIネットワーク</td></tr>
+          </tbody>
+        </table>
+        <div class="callout callout-info"><strong>ℹ️ 公開用の表記</strong><p>ディレクトリの完全修飾ドメイン名は <code>ad.example.com</code>、環境固有のリソース名は <code>ad-</code> で始まる名称へ一般化している</p></div>
+      </section>
+
+      <hr>
+
+      <section aria-labelledby="guides">
+        <h2 id="guides">構築・運用手順</h2>
+        <p>環境全体の作業順序を確認した後、対象コンポーネントの個別手順へ進む</p>
+        <nav class="skill-transfer-journey" aria-label="PoC環境の構築・運用手順">
+          <ol>
+            <li><a href="workspaces-skill-transfer.html">全体構築・運用順序</a></li>
+            <li><a href="workspaces-managed-ad.html">AWS Managed Microsoft AD 構築・管理</a></li>
+            <li><a href="workspaces-management-ec2.html">管理用EC2・Active Directory管理</a></li>
+            <li><a href="workspaces-ad-connector.html">AD Connector 構築・権限委任</a></li>
+            <li><a href="workspaces-provisioning-gpo.html">Amazon WorkSpaces 構築・OU・GPO</a></li>
+            <li><a href="workspaces-image-bundle.html">WorkSpaces カスタムイメージ・バンドル</a></li>
+            <li><a href="workspaces-patch-manager.html">Systems Manager Patch Manager</a></li>
+            <li><a href="workspaces-cost-optimizer.html">Amazon WorkSpaces Cost Optimizer</a></li>
+            <li><a href="workspaces-cloudwatch-monitoring.html">CloudWatch・SNS 監視／通知</a></li>
+          </ol>
+        </nav>
+      </section>
+    </main>
+  </div>
+  <script src="../assets/app.js?v=20260909-workspaces-poc1"></script>
+</body>
+</html>
