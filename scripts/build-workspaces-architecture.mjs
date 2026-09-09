@@ -26,7 +26,7 @@ const { finalizePresentation } = await import(
 
 const root = path.resolve(TMP_DIR, "..", "..");
 const outDir = path.join(root, "assets", "img", "workspaces-skill-transfer");
-const finalPptx = path.join(outDir, "workspaces-skill-transfer-architecture.pptx");
+const validatedPptx = path.join(TMP_DIR, "validated.pptx");
 const finalPng = path.join(outDir, "workspaces-skill-transfer-architecture.png");
 const candidatePath = path.join(TMP_DIR, "candidate.pptx");
 const previewPath = path.join(TMP_DIR, "preview.png");
@@ -160,12 +160,12 @@ await fs.writeFile(previewPath, new Uint8Array(await preview.arrayBuffer()));
 const layout = await slide.export({ format: "layout" });
 await fs.writeFile(path.join(TMP_DIR, "workspaces-skill-transfer-architecture.layout.json"), await layout.text());
 
-await fs.rm(finalPptx, { force: true });
+await fs.rm(validatedPptx, { force: true });
 await fs.rm(receiptPath, { force: true });
 const result = await finalizePresentation({
   workspaceDir: root,
   candidatePath,
-  finalPath: finalPptx,
+  finalPath: validatedPptx,
   pythonExecutable: RUNTIME_PYTHON,
   integrityValidatorPath: path.join(SKILL_DIR, "container_tools", "inspect_presentation_package_integrity.py"),
   layoutValidatorPath: path.join(SKILL_DIR, "container_tools", "inspect_presentation_layout_geometry.py"),
@@ -177,4 +177,4 @@ const result = await finalizePresentation({
   receiptPath,
 });
 await fs.copyFile(previewPath, finalPng);
-console.log(JSON.stringify({ finalPptx, finalPng, validation: result }, null, 2));
+console.log(JSON.stringify({ finalPng, validation: result }, null, 2));

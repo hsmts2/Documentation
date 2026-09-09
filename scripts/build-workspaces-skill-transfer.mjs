@@ -213,7 +213,8 @@ const sanitizeMarkdown = (input) => {
   value = value
     .replaceAll("本番環境と今回の設定値", "今回の設定値")
     .replaceAll("本番環境と今回の確認値", "今回の確認値")
-    .replaceAll("VPC別の本番環境設定値", "VPC別の設定値");
+    .replaceAll("VPC別の本番環境設定値", "VPC別の設定値")
+    .replaceAll("本番環境値、今回の設定値およびテンプレート既定値", "今回の設定値とテンプレート既定値");
   value = removeProductionValueColumns(value);
   value = value.replace(/^## 参考資料[\s\S]*$/m, "");
   value = value.replace(/。(?=(?:\*\*|<br\s*\/?>|\s*$))/gm, "");
@@ -247,6 +248,35 @@ const isAwsConsoleScreenshot = async (imagePath) => {
 };
 
 const copyPublishedImage = async (sourceImage, destination, awsConsole, metadata) => {
+  const sourceSvg = sourceImage.replace(/\.(?:png|jpe?g)$/i, ".svg");
+  if (!awsConsole && sourceSvg !== sourceImage && fs.existsSync(sourceSvg)) {
+    let svg = fs.readFileSync(sourceSvg, "utf8");
+    const sourceDirectoryDomain = process.env.SOURCE_DIRECTORY_DOMAIN;
+    const sourceEnvironmentPrefix = process.env.SOURCE_ENVIRONMENT_PREFIX;
+    const publicEnvironmentPrefix = process.env.PUBLIC_ENVIRONMENT_PREFIX || "ad";
+    const publicDirectoryDomain = process.env.PUBLIC_DIRECTORY_DOMAIN || "ad.example.com";
+    if (sourceDirectoryDomain) svg = svg.replaceAll(sourceDirectoryDomain, publicDirectoryDomain);
+    if (sourceEnvironmentPrefix) svg = svg.replaceAll(sourceEnvironmentPrefix, publicEnvironmentPrefix);
+
+    // 図内に埋め込まれたGPMC画面だけは、ベクター文字列置換の対象外となるため、
+    // 元の文字列を含む行全体を背景色で消してから公開用の値を描画する。
+    if (path.basename(sourceSvg).includes("GPMCで確認するManaged AD初期構成とWorkSpaces追加項目")) {
+      svg = svg.replace("</svg>", `
+  <g font-family="Yu Gothic, Meiryo, Arial, sans-serif" fill="#232F3E">
+    <rect x="104" y="279" width="230" height="31" fill="#FFFFFF"/>
+    <text x="110" y="301" font-size="12">フォレスト: ${publicDirectoryDomain}</text>
+    <rect x="154" y="311" width="210" height="38" fill="#FFFFFF"/>
+    <text x="171" y="340" font-size="13">${publicDirectoryDomain}</text>
+    <rect x="142" y="310" width="222" height="39" fill="none" stroke="#FF9900" stroke-width="3"/>
+    <rect x="176" y="444" width="99" height="30" fill="#FFFFFF"/>
+    <text x="199" y="466" font-size="14">${publicEnvironmentPrefix}</text>
+    <rect x="154" y="443" width="121" height="32" fill="none" stroke="#147EBA" stroke-width="3"/>
+  </g>
+</svg>`);
+    }
+    await sharp(Buffer.from(svg), { density: 192 }).png().toFile(destination);
+    return;
+  }
   if (!awsConsole || !metadata.width || !metadata.height) {
     fs.copyFileSync(sourceImage, destination);
     return;
@@ -431,7 +461,22 @@ for (const page of pageSpecs) {
       <a href="workspaces-cost-optimizer.html"><strong>7. コスト最適化</strong><span>デプロイ・監視・設定変更</span></a>
       <a href="workspaces-cloudwatch-monitoring.html"><strong>8. 監視・通知</strong><span>CloudWatch・SNS・動作確認</span></a>
     </nav>
-    <figure class="architecture-figure"><figcaption>全体構成: 4つのVPCとオンプレミス拠点をDirect Connectで接続し、Managed AD、WorkSpaces、ファイル共有および管理機能を分離する</figcaption><img src="../assets/img/workspaces-skill-transfer/workspaces-skill-transfer-architecture.png" alt="4つのVPCとオンプレミス拠点を接続するAmazon WorkSpaces全体ネットワーク構成図" loading="eager"></figure>\n${body}`;
+    <figure class="architecture-figure"><figcaption>全体構成: 4つのVPCとオンプレミス拠点をDirect Connectで接続し、Managed AD、WorkSpaces、ファイル共有および管理機能を分離する</figcaption><img src="../assets/img/workspaces-skill-transfer/workspaces-skill-transfer-architecture.png" alt="4つのVPCとオンプレミス拠点を接続するAmazon WorkSpaces全体ネットワーク構成図" loading="eager"></figure>
+    <h2 id="environment-components">環境構成</h2>
+    <p>オンプレミス拠点とAWS CloudをDirect Connectで接続し、認証・管理系とVDI系の役割を4つのVPCへ分離する</p>
+    <table>
+      <thead><tr><th>構成要素</th><th>主な役割</th></tr></thead>
+      <tbody>
+        <tr><td>オンプレミス拠点</td><td>利用者・管理者の接続元、既存ネットワークとの連携</td></tr>
+        <tr><td>Direct Connect</td><td>オンプレミス拠点とAWS Cloud間の閉域接続</td></tr>
+        <tr><td><code>ad-vpc-001</code></td><td>運用・中継用リソースを配置するネットワーク</td></tr>
+        <tr><td><code>ad-vpc-002</code></td><td>AWS Managed Microsoft AD、管理用EC2、FSxおよびCost Optimizerを配置する管理・認証ネットワーク</td></tr>
+        <tr><td><code>ad-vpc-003</code></td><td>AD ConnectorとAmazon WorkSpacesを配置するVDIネットワーク</td></tr>
+        <tr><td><code>ad-vpc-004</code></td><td>追加のAD ConnectorとAmazon WorkSpacesを配置するVDIネットワーク</td></tr>
+      </tbody>
+    </table>
+    <p>掲載内容では、ディレクトリの完全修飾ドメイン名を<code>ad.example.com</code>、環境固有のリソース名を<code>ad-</code>で始まる名称へ一般化している</p>
+    <hr>\n${body}`;
   }
   fs.writeFileSync(path.join(tutorialRoot, page.file), shell(page, body), "utf8");
 }

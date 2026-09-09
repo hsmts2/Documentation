@@ -38,7 +38,6 @@
       <details class="sidebar-nested-menu" open>
         <summary>PoC 閉域VPC・AD／VDI環境</summary>
         <div class="sidebar-subnav">
-          <a href="workspaces-poc-environment.html">環境概要</a>
           <a class="active" href="workspaces-skill-transfer.html">全体構築・運用順序</a>
           <a href="workspaces-managed-ad.html">AWS Managed Microsoft AD 構築・管理</a>
           <a href="workspaces-management-ec2.html">管理用EC2・Active Directory管理</a>
@@ -88,6 +87,21 @@
       <a href="workspaces-cloudwatch-monitoring.html"><strong>8. 監視・通知</strong><span>CloudWatch・SNS・動作確認</span></a>
     </nav>
     <figure class="architecture-figure"><figcaption>全体構成: 4つのVPCとオンプレミス拠点をDirect Connectで接続し、Managed AD、WorkSpaces、ファイル共有および管理機能を分離する</figcaption><img src="../assets/img/workspaces-skill-transfer/workspaces-skill-transfer-architecture.png" alt="4つのVPCとオンプレミス拠点を接続するAmazon WorkSpaces全体ネットワーク構成図" loading="eager"></figure>
+    <h2 id="environment-components">環境構成</h2>
+    <p>オンプレミス拠点とAWS CloudをDirect Connectで接続し、認証・管理系とVDI系の役割を4つのVPCへ分離する</p>
+    <table>
+      <thead><tr><th>構成要素</th><th>主な役割</th></tr></thead>
+      <tbody>
+        <tr><td>オンプレミス拠点</td><td>利用者・管理者の接続元、既存ネットワークとの連携</td></tr>
+        <tr><td>Direct Connect</td><td>オンプレミス拠点とAWS Cloud間の閉域接続</td></tr>
+        <tr><td><code>ad-vpc-001</code></td><td>運用・中継用リソースを配置するネットワーク</td></tr>
+        <tr><td><code>ad-vpc-002</code></td><td>AWS Managed Microsoft AD、管理用EC2、FSxおよびCost Optimizerを配置する管理・認証ネットワーク</td></tr>
+        <tr><td><code>ad-vpc-003</code></td><td>AD ConnectorとAmazon WorkSpacesを配置するVDIネットワーク</td></tr>
+        <tr><td><code>ad-vpc-004</code></td><td>追加のAD ConnectorとAmazon WorkSpacesを配置するVDIネットワーク</td></tr>
+      </tbody>
+    </table>
+    <p>掲載内容では、ディレクトリの完全修飾ドメイン名を<code>ad.example.com</code>、環境固有のリソース名を<code>ad-</code>で始まる名称へ一般化している</p>
+    <hr>
 <h2 id="aws基盤-amazon-workspaces-構築-運用作業順序">AWS基盤・Amazon WorkSpaces 構築・運用作業順序</h2>
 <h3 id="1-この文書の目的">1. この文書の目的</h3>
 <p>本書は、AWS Managed Microsoft ADの作成からAmazon WorkSpacesの利用開始、カスタムイメージ／バンドル作成および別AWSアカウントへの共有・展開までを、依存関係に沿って実施するための全体索引です。各画面の操作はリンク先の個別手順書を使用し、この文書では「何を先に終わらせるか」と「次へ進める条件」を確認する</p>

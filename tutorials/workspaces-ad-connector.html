@@ -38,7 +38,6 @@
       <details class="sidebar-nested-menu" open>
         <summary>PoC 閉域VPC・AD／VDI環境</summary>
         <div class="sidebar-subnav">
-          <a href="workspaces-poc-environment.html">環境概要</a>
           <a href="workspaces-skill-transfer.html">全体構築・運用順序</a>
           <a href="workspaces-managed-ad.html">AWS Managed Microsoft AD 構築・管理</a>
           <a href="workspaces-management-ec2.html">管理用EC2・Active Directory管理</a>
@@ -784,8 +783,8 @@ Get-ADPrincipalGroupMembership 'ADConnectorService' |
 <p>本番環境での確認コマンドを次に示します。<code>192.168.225.110</code>は構築前に現行のDirectory Serviceコンソールで再確認し、実際のDNS IPが異なる場合はコマンドを置き換える</p>
 <div class="code" data-prompt="$"><div class="code-header"><span>powershell</span><button class="copy" type="button">Copy</button></div><pre><code>$dnsServers = @('192.168.225.68', '192.168.225.110')
 foreach ($dnsServer in $dnsServers) {
-    Resolve-DnsName -Type SRV '_ldap._tcp.ad.example.com' -Server $dnsServer
-    Resolve-DnsName -Type SRV '_kerberos._tcp.ad.example.com' -Server $dnsServer
+    Resolve-DnsName -Type SRV '_ldap._tcp.ad.datumidea.jp' -Server $dnsServer
+    Resolve-DnsName -Type SRV '_kerberos._tcp.ad.datumidea.jp' -Server $dnsServer
     Test-NetConnection -ComputerName $dnsServer -Port 53
     Test-NetConnection -ComputerName $dnsServer -Port 88
     Test-NetConnection -ComputerName $dnsServer -Port 389

@@ -51,39 +51,195 @@ const xmlEscape = (value) => value
   .replaceAll('"', "&quot;");
 
 const replacementFor = (value) => {
-  const normalized = value.toLowerCase();
-  if (normalized.includes("computers") && normalized.includes("workspaces")) {
-    return `${publicDomain}/${publicPrefix}/Computers/WorkSpaces`;
-  }
-  if (normalized.includes("computers")) return `${publicPrefix}/Computers`;
-  if (normalized.includes("example")) return publicDomain;
-  return publicPrefix;
+  return value
+    .replace(/p{1,2}-?pm(?:\.?example[-.]com)/gi, publicDomain)
+    .replace(/p{1,2}-?pm/gi, (matched) => {
+    if (matched === matched.toUpperCase()) return publicPrefix.toUpperCase();
+    return publicPrefix;
+  });
 };
 
 const manualReplacementsFor = (file) => {
   const directoryName = path.basename(path.dirname(file));
   const fileName = path.basename(file);
-  if (directoryName === "workspaces-managed-ad" && fileName.includes("ディレクトリのエディションとドメイン名の入力")) {
+  if (directoryName === "workspaces-managed-ad" && (
+    fileName.includes("ディレクトリのエディションとドメイン名の入力")
+    || fileName.includes("adminパスワードと確認用パスワードの入力")
+  )) {
     return [
       {
-        left: 558,
-        top: 629,
-        width: 142,
+        left: 554,
+        top: 625,
+        width: 565,
+        height: 27,
+        text: publicDomain,
+        background: "#ffffff",
+        foreground: "#202124",
+        fontSize: 13,
+        textX: 8,
+      },
+      {
+        left: 554,
+        top: 724,
+        width: 565,
+        height: 27,
+        text: publicPrefix,
+        background: "#ffffff",
+        foreground: "#202124",
+        fontSize: 13,
+        textX: 8,
+      },
+    ];
+  }
+  if (directoryName === "workspaces-managed-ad" && fileName.includes("vpcと異なるazに属する2つのサブネットの選択")) {
+    return [
+      {
+        left: 554,
+        top: 397,
+        width: 470,
+        height: 26,
+        text: `${publicPrefix}-pri-sub-002-002a | subnet-0cf65584601809d04 (192.168.225.64/27, ap-northeast-1a)`,
+        background: "#ffffff",
+        foreground: "#202124",
+        fontSize: 12,
+        textX: 8,
+      },
+      {
+        left: 554,
+        top: 437,
+        width: 470,
+        height: 26,
+        text: `${publicPrefix}-pri-sub-002-002c | subnet-0c0d54499d87784f8 (192.168.225.96/27, ap-northeast-1c)`,
+        background: "#ffffff",
+        foreground: "#202124",
+        fontSize: 12,
+        textX: 8,
+      },
+    ];
+  }
+  if (directoryName === "workspaces-managed-ad" && fileName.includes("ユーザーとグループの管理機能の有効化確認")) {
+    return [
+      {
+        left: 632,
+        top: 211,
+        width: 350,
+        height: 27,
+        text: publicDomain,
+        background: "#656a73",
+        foreground: "#182333",
+        fontSize: 13,
+        textX: 3,
+      },
+      {
+        left: 632,
+        top: 271,
+        width: 350,
+        height: 27,
+        text: publicPrefix,
+        background: "#656a73",
+        foreground: "#182333",
+        fontSize: 13,
+        textX: 3,
+      },
+    ];
+  }
+  if (directoryName === "workspaces-managed-ad" && fileName.includes("ユーザー詳細とグループメンバーシップの確認")) {
+    return [
+      {
+        left: 757,
+        top: 258,
+        width: 390,
+        height: 19,
+        text: `CN=sampleadmin,OU=Users,OU=${publicPrefix},DC=${publicPrefix},DC=example,DC`,
+        background: "#ffffff",
+        foreground: "#202124",
+        fontSize: 12,
+        textX: 3,
+      },
+      {
+        left: 733,
+        top: 277,
+        width: 90,
+        height: 18,
+        text: "=com",
+        background: "#ffffff",
+        foreground: "#202124",
+        fontSize: 12,
+        textX: 3,
+      },
+    ];
+  }
+  if (directoryName === "workspaces-provisioning-gpo" && fileName.startsWith("037-")) {
+    return [
+      {
+        left: 39,
+        top: 98,
+        width: 177,
+        height: 27,
+        text: `フォレスト: ${publicDomain}`,
+        background: "#ffffff",
+        foreground: "#202124",
+        fontSize: 12,
+        textX: 5,
+      },
+      {
+        left: 82,
+        top: 137,
+        width: 128,
         height: 22,
         text: publicDomain,
         background: "#ffffff",
         foreground: "#202124",
-        fontSize: 10,
+        fontSize: 13,
+        textX: 6,
+      },
+    ];
+  }
+  if (directoryName === "workspaces-provisioning-gpo" && fileName.startsWith("032-")) {
+    return [
+      {
+        left: 550,
+        top: 153,
+        width: 790,
+        height: 24,
+        text: publicDomain,
+        background: "#e7e7e7",
+        foreground: "#202124",
+        fontSize: 13,
+        textX: 8,
       },
       {
-        left: 558,
-        top: 728,
-        width: 54,
-        height: 22,
+        left: 344,
+        top: 227,
+        width: 246,
+        height: 21,
         text: publicPrefix,
         background: "#ffffff",
         foreground: "#202124",
-        fontSize: 10,
+        fontSize: 13,
+        textX: 8,
+      },
+      {
+        left: 760,
+        top: 227,
+        width: 246,
+        height: 21,
+        text: `${publicDomain}/${publicPrefix}`,
+        background: "#ffffff",
+        foreground: "#202124",
+        fontSize: 12,
+        textX: 5,
+      },
+      {
+        left: 760,
+        top: 249,
+        width: 246,
+        height: 21,
+        text: `${publicDomain}/${publicPrefix}/Computers/WorkSpaces`,
+        background: "#ffffff",
+        foreground: "#202124",
+        fontSize: 12,
+        textX: 5,
       },
     ];
   }
@@ -103,13 +259,23 @@ const manualReplacementsFor = (file) => {
 };
 
 const backgroundAt = async (image, match, metadata) => {
-  const left = Math.max(0, Math.floor(match.left));
-  const top = Math.max(0, Math.floor(match.top));
-  const width = Math.max(1, Math.min(metadata.width - left, Math.ceil(match.width)));
-  const sampleTop = top > 3 ? top - 3 : Math.min(metadata.height - 1, top + match.height + 1);
-  const sampleHeight = Math.max(1, Math.min(2, metadata.height - sampleTop));
-  const stats = await image.clone().extract({ left, top: sampleTop, width, height: sampleHeight }).stats();
-  return stats.channels.slice(0, 3).map((channel) => Math.round(channel.mean));
+  const paddingX = Math.max(8, Math.round(match.height));
+  const paddingY = Math.max(3, Math.round(match.height * 0.35));
+  const left = Math.max(0, Math.floor(match.left - paddingX));
+  const top = Math.max(0, Math.floor(match.top - paddingY));
+  const width = Math.max(1, Math.min(metadata.width - left, Math.ceil(match.width + paddingX * 2)));
+  const height = Math.max(1, Math.min(metadata.height - top, Math.ceil(match.height + paddingY * 2)));
+  const { data, info } = await image.clone().extract({ left, top, width, height }).removeAlpha().raw().toBuffer({ resolveWithObject: true });
+  const counts = new Map();
+  for (let offset = 0; offset < data.length; offset += info.channels) {
+    const red = Math.round(data[offset] / 4) * 4;
+    const green = Math.round(data[offset + 1] / 4) * 4;
+    const blue = Math.round(data[offset + 2] / 4) * 4;
+    const key = `${red},${green},${blue}`;
+    counts.set(key, (counts.get(key) || 0) + 1);
+  }
+  const dominant = [...counts.entries()].sort((a, b) => b[1] - a[1])[0][0];
+  return dominant.split(",").map(Number);
 };
 
 const processFile = async (worker, file) => {
@@ -143,7 +309,7 @@ const processFile = async (worker, file) => {
     const [red, green, blue] = await backgroundAt(image, match, metadata);
     const foreground = (red * 299 + green * 587 + blue * 114) / 1000 < 145 ? "#ffffff" : "#202124";
     const background = `rgb(${red},${green},${blue})`;
-    const fontSize = Math.max(8, Math.min(16, Math.round(match.height * 0.48)));
+    const fontSize = Math.max(10, Math.min(16, Math.round(match.height * 0.9)));
     const replacementWidth = Math.ceil(replacement.length * fontSize * 0.58 + padding * 2);
     const width = Math.min(metadata.width - left, Math.max(8, Math.round(match.width + padding * 2), replacementWidth));
     const height = Math.min(metadata.height - top, Math.max(8, Math.round(match.height + padding * 2)));
@@ -156,12 +322,15 @@ const processFile = async (worker, file) => {
   }
 
   for (const replacement of manualReplacements) {
+    const text = replacement.lines
+      ? replacement.lines.map((line, index) => `<tspan x="${replacement.textX || 3}" y="${13 + index * 18}">${xmlEscape(line)}</tspan>`).join("")
+      : xmlEscape(replacement.text);
     const svg = Buffer.from(`<svg width="${replacement.width}" height="${replacement.height}" xmlns="http://www.w3.org/2000/svg">
       <rect width="100%" height="100%" fill="${replacement.background}"/>
-      <text x="3" y="50%" dominant-baseline="middle" fill="${replacement.foreground}" font-family="Segoe UI, Arial, sans-serif" font-size="${replacement.fontSize}">${xmlEscape(replacement.text)}</text>
+      <text x="${replacement.textX || 3}" y="50%" dominant-baseline="middle" fill="${replacement.foreground}" font-family="Segoe UI, Arial, sans-serif" font-size="${replacement.fontSize}">${text}</text>
     </svg>`);
     composites.push({ input: svg, left: replacement.left, top: replacement.top });
-    report.push({ file, from: "manual override", to: replacement.text, ...replacement });
+    report.push({ file, from: "manual override", to: replacement.text || replacement.lines.join(" / "), ...replacement });
   }
 
   const temporary = `${file}.generalized.png`;

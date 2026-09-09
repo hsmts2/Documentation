@@ -34,7 +34,6 @@ $groups = @(
             [pscustomobject]@{
                 Label = 'PoC 閉域VPC・AD／VDI環境'
                 Children = @(
-                    [pscustomobject]@{ File = 'workspaces-poc-environment.html'; Label = '環境概要'; Title = 'PoC 閉域VPC・AD／VDI環境' }
                     [pscustomobject]@{ File = 'workspaces-skill-transfer.html'; Label = '全体構築・運用順序'; Title = 'Amazon WorkSpaces 技術移管' }
                     [pscustomobject]@{ File = 'workspaces-managed-ad.html'; Label = 'AWS Managed Microsoft AD 構築・管理' }
                     [pscustomobject]@{ File = 'workspaces-management-ec2.html'; Label = '管理用EC2・Active Directory管理' }
