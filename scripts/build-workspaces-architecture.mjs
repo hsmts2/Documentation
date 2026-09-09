@@ -99,7 +99,7 @@ for (const element of [...slide.elements.items]) {
 for (const shape of slide.shapes.items) {
   if (!shape.text || typeof shape.text.replace !== "function") continue;
   for (const [from, to] of [
-    ["全環境図_NW構成物理情報", "PoC 閉域VPC・AD／VDI環境 — 全体ネットワーク構成"],
+    ["全環境図_NW構成物理情報", "マルチVPC・閉域VDI基盤案件 — 全体ネットワーク構成"],
     ["Corporate data center", "オンプレミス拠点"],
     ["managementInstance", "管理用EC2"],
   ]) shape.text.replace(from, to);

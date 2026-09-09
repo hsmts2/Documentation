@@ -26,18 +26,8 @@
       </div>
       <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">✎</span>記事</p>
       <a href="cloudflare-private-site.html">Private GitHubリポジトリをCloudflare Workersで認証付き公開してみた</a>
-      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">◈</span>Terraform</p>
-      <a href="terraform.html">Terraform 概要</a>
-      <a href="hcp-terraform.html">HCP Terraform（Terraform Cloud）</a>
-      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">☁︎</span>AWS</p>
-      <a href="cloudformation.html">CloudFormation 運用手順集</a>
-      <a href="aws-cli.html">AWS CLI 特殊対応</a>
-      <a href="aws-cli-reference.html">AWS CLI コマンドリファレンス</a>
-      <a href="eventbridge-scheduler.html">EventBridge Scheduler</a>
-      <a href="aws-directory-service.html">AWS Directory Service 運用手順</a>
-      <a href="amazon-workspaces.html">Amazon WorkSpaces</a>
       <details class="sidebar-nested-menu" open>
-        <summary>PoC 閉域VPC・AD／VDI環境</summary>
+        <summary>マルチVPC・閉域VDI基盤案件（9ページ）</summary>
         <div class="sidebar-subnav">
           <a href="workspaces-skill-transfer.html">全体構築・運用順序</a>
           <a href="workspaces-managed-ad.html">AWS Managed Microsoft AD 構築・管理</a>
@@ -50,6 +40,16 @@
           <a href="workspaces-cloudwatch-monitoring.html">CloudWatch・SNS 監視／通知</a>
         </div>
       </details>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">◈</span>Terraform</p>
+      <a href="terraform.html">Terraform 概要</a>
+      <a href="hcp-terraform.html">HCP Terraform（Terraform Cloud）</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">☁︎</span>AWS</p>
+      <a href="cloudformation.html">CloudFormation 運用手順集</a>
+      <a href="aws-cli.html">AWS CLI 特殊対応</a>
+      <a href="aws-cli-reference.html">AWS CLI コマンドリファレンス</a>
+      <a href="eventbridge-scheduler.html">EventBridge Scheduler</a>
+      <a href="aws-directory-service.html">AWS Directory Service 運用手順</a>
+      <a href="amazon-workspaces.html">Amazon WorkSpaces</a>
       <a href="amazon-ses.html">Amazon SES SMTPリレー</a>
       <a href="amazon-ses-monitoring.html">Amazon SES 配信監視</a>
       <a href="amazon-rds-blue-green.html">Amazon RDS Blue/Green Deployments</a>
@@ -75,28 +75,38 @@
       <a href="eol.html">EOL / ライフサイクル一覧表</a>
     </aside>
     <main class="content workspaces-skill-transfer-guide">
-      <nav class="breadcrumb" aria-label="Breadcrumb"><a href="../"><span class="nav-icon" aria-hidden="true">⌂</span>Home</a><span>技術移管</span></nav>
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="../"><span class="nav-icon" aria-hidden="true">⌂</span>Home</a>
+        <span>トピック</span>
+      </nav>
       <h1>Amazon WorkSpaces 構築・OU・GPO</h1>
-      <p class="lead">AD ConnectorをWorkSpacesへ登録し、パイロットWorkSpaceを作成する<br>ターゲットOU、権限委任、WSP管理テンプレート、GPOの作成・適用確認まで整理する</p>
+      <div class="page-summary"><strong>⚡ このページの要約</strong><p class="lead">AD ConnectorをWorkSpacesへ登録し、パイロットWorkSpaceを作成する<br>ターゲットOU、権限委任、WSP管理テンプレート、GPOの作成・適用確認まで整理する</p></div>
+      <nav class="section-links" aria-label="主要セクション">
+        <a href="#aws-managed-microsoft-ad-workspaces-ou-gpo構成概要">AWS Managed Microsoft AD・WorkSpaces OU／GPO構成概要</a>
+        <a href="#amazon-workspaces作成-バンドル設定手順">Amazon WorkSpaces作成・バンドル設定手順</a>
+        <a href="#amazon-workspaces用ou作成-権限委任-ターゲットou設定手順">Amazon WorkSpaces用OU作成・権限委任・ターゲットOU設定手順</a>
+        <a href="#amazon-workspaces用gpo作成-適用-運用手順">Amazon WorkSpaces用GPO作成・適用・運用手順</a>
+        <a href="#related-pages">関連ページ</a>
+      </nav>
 <h2 id="aws-managed-microsoft-ad-workspaces-ou-gpo構成概要">AWS Managed Microsoft AD・WorkSpaces OU／GPO構成概要</h2>
 <p><strong>目次</strong></p>
 <!-- Confluenceでは、この位置に目次マクロを配置する -->
 
 <h3 id="概要">概要</h3>
-<p>AWS Managed Microsoft ADを作成した直後のOU／GPOと、本作業で追加したAmazon WorkSpaces用OU／GPOを整理します。AWSが管理する領域は変更せず、お客様管理OUである<code>ad</code>配下に<code>WorkSpaces</code> OUを作成し、AD Connectorの権限委任、ターゲットOUおよびDCV用GPOの適用先を同じOUへ揃える</p>
+<p>AWS Managed Microsoft ADを作成した直後のOU／GPOと、本作業で追加したAmazon WorkSpaces用OU／GPOを整理します。AWSが管理する領域は変更せず、お客様管理OUである<code class="inline-code">ad</code>配下に<code class="inline-code">WorkSpaces</code> OUを作成し、AD Connectorの権限委任、ターゲットOUおよびDCV用GPOの適用先を同じOUへ揃える</p>
 <h4 id="本手順書で確認すること">本手順書で確認すること</h4>
 <ul>
 <li>AWS Managed Microsoft ADが自動作成する管理領域とGPO</li>
-<li>お客様が管理できる<code>ad</code>、<code>Computers</code>および<code>Users</code> OUの役割</li>
-<li>今回追加した<code>WorkSpaces</code> OU、委任先グループおよびGPOの関係</li>
+<li>お客様が管理できる<code class="inline-code">ad</code>、<code class="inline-code">Computers</code>および<code class="inline-code">Users</code> OUの役割</li>
+<li>今回追加した<code class="inline-code">WorkSpaces</code> OU、委任先グループおよびGPOの関係</li>
 <li>新規WorkSpaceへ反映されるOU／GPOと、既存WorkSpaceへの影響</li>
 </ul>
 <h4 id="完了条件">完了条件</h4>
 <ul>
 <li>✔ AWS管理領域とお客様管理領域を区別できる</li>
-<li>✔ WorkSpacesのコンピューター格納先が<code>ad\Computers\WorkSpaces</code>である</li>
-<li>✔ ターゲットOUと<code>Connectors</code>グループへの委任先が同じOUである</li>
-<li>✔ <code>Amazon WorkSpaces DCV Policy</code>がWorkSpaces OUへ直接リンクされている</li>
+<li>✔ WorkSpacesのコンピューター格納先が<code class="inline-code">ad\Computers\WorkSpaces</code>である</li>
+<li>✔ ターゲットOUと<code class="inline-code">Connectors</code>グループへの委任先が同じOUである</li>
+<li>✔ <code class="inline-code">Amazon WorkSpaces DCV Policy</code>がWorkSpaces OUへ直接リンクされている</li>
 </ul>
 <h3 id="今回の設定値">今回の設定値</h3>
 <table>
@@ -108,31 +118,31 @@
 </thead>
 <tbody><tr>
 <td>ディレクトリDNS名</td>
-<td><code>ad.example.com</code></td>
+<td><code class="inline-code">ad.example.com</code></td>
 </tr>
 <tr>
 <td>お客様管理OU</td>
-<td><code>ad</code></td>
+<td><code class="inline-code">ad</code></td>
 </tr>
 <tr>
 <td>WorkSpacesコンピューター格納先</td>
-<td><code>ad\Computers\WorkSpaces</code></td>
+<td><code class="inline-code">ad\Computers\WorkSpaces</code></td>
 </tr>
 <tr>
 <td>ターゲットOU</td>
-<td><code>OU=WorkSpaces,OU=Computers,OU=ad,DC=ad,DC=example,DC=com</code></td>
+<td><code class="inline-code">OU=WorkSpaces,OU=Computers,OU=ad,DC=ad,DC=example,DC=com</code></td>
 </tr>
 <tr>
 <td>委任先グループ</td>
-<td><code>Connectors</code></td>
+<td><code class="inline-code">Connectors</code></td>
 </tr>
 <tr>
 <td>継続利用するGPO</td>
-<td><code>Amazon WorkSpaces DCV Policy</code></td>
+<td><code class="inline-code">Amazon WorkSpaces DCV Policy</code></td>
 </tr>
 <tr>
 <td>GPOの直接リンク先</td>
-<td><code>ad\Computers\WorkSpaces</code></td>
+<td><code class="inline-code">ad\Computers\WorkSpaces</code></td>
 </tr>
 <tr>
 <td>リンク設定</td>
@@ -140,22 +150,22 @@
 </tr>
 <tr>
 <td>DCV設定</td>
-<td><code>Configure clipboard redirection</code>＝有効／<code>Copy and Paste</code></td>
+<td><code class="inline-code">Configure clipboard redirection</code>＝有効／<code class="inline-code">Copy and Paste</code></td>
 </tr>
 </tbody></table>
 <h3 id="gpmcで確認するmanaged-ad初期構成とworkspaces追加項目">GPMCで確認するManaged AD初期構成とWorkSpaces追加項目</h3>
-<p>AWS Managed Microsoft ADを作成すると、ドメインルートに<code>AWS Delegated Groups</code>、<code>AWS Reserved</code>およびNetBIOS名と同名のOU（本環境では<code>ad</code>）が作成されます。<code>ad</code>配下には、お客様が管理する<code>Computers</code> OUと<code>Users</code> OUが作成され、初期<code>Admin</code>ユーザーは<code>ad\Users</code>に配置される</p>
-<p>ドメイン直下には、<code>Builtin</code>、組み込みの<code>Computers</code>コンテナー、<code>Domain Controllers</code>などWindows Active Directory標準のコンテナーも表示されます。ドメイン直下の<code>Computers</code>コンテナーと、お客様管理領域の<code>ad\Computers</code> OUは別の場所</p>
-<p>同時に、<code>Default Domain Policy</code>、<code>ServerAdmins</code>、<code>AWS Reserved Policy:User</code>、<code>AWS Managed Active Directory Policy</code>および時刻同期用GPOなどが作成・リンクされます。AWSが作成・管理するOUやGPOは、お客様が変更、削除またはリンク解除する対象にしない</p>
+<p>AWS Managed Microsoft ADを作成すると、ドメインルートに<code class="inline-code">AWS Delegated Groups</code>、<code class="inline-code">AWS Reserved</code>およびNetBIOS名と同名のOU（本環境では<code class="inline-code">ad</code>）が作成されます。<code class="inline-code">ad</code>配下には、お客様が管理する<code class="inline-code">Computers</code> OUと<code class="inline-code">Users</code> OUが作成され、初期<code class="inline-code">Admin</code>ユーザーは<code class="inline-code">ad\Users</code>に配置される</p>
+<p>ドメイン直下には、<code class="inline-code">Builtin</code>、組み込みの<code class="inline-code">Computers</code>コンテナー、<code class="inline-code">Domain Controllers</code>などWindows Active Directory標準のコンテナーも表示されます。ドメイン直下の<code class="inline-code">Computers</code>コンテナーと、お客様管理領域の<code class="inline-code">ad\Computers</code> OUは別の場所</p>
+<p>同時に、<code class="inline-code">Default Domain Policy</code>、<code class="inline-code">ServerAdmins</code>、<code class="inline-code">AWS Reserved Policy:User</code>、<code class="inline-code">AWS Managed Active Directory Policy</code>および時刻同期用GPOなどが作成・リンクされます。AWSが作成・管理するOUやGPOは、お客様が変更、削除またはリンク解除する対象にしない</p>
 <p>出典：<a href="https://docs.aws.amazon.com/ja_jp/directoryservice/latest/admin-guide/ms_ad_getting_started_what_gets_created.html">AWS公式：AWS Managed Microsoft ADで作成される内容</a></p>
-<p>次の図では、GPMCの実画面を基に、①ルートドメイン、②お客様管理OUの<code>ad</code>、③<code>ad</code>配下の<code>Computers</code>と<code>Users</code>、④AWSが作成するGPOの役割と管理範囲を示します。画面内の<code>WorkSpaces</code> OUと<code>Amazon WorkSpaces DCV Policy</code>は今回追加した項目であり、ディレクトリ作成直後の既定項目ではありません。したがって、この図は「初期構成だけ」を表すものではなく、初期項目と今回の追加項目を同じ管理ツリー上で区別するための図</p>
+<p>次の図では、GPMCの実画面を基に、①ルートドメイン、②お客様管理OUの<code class="inline-code">ad</code>、③<code class="inline-code">ad</code>配下の<code class="inline-code">Computers</code>と<code class="inline-code">Users</code>、④AWSが作成するGPOの役割と管理範囲を示します。画面内の<code class="inline-code">WorkSpaces</code> OUと<code class="inline-code">Amazon WorkSpaces DCV Policy</code>は今回追加した項目であり、ディレクトリ作成直後の既定項目ではありません。したがって、この図は「初期構成だけ」を表すものではなく、初期項目と今回の追加項目を同じ管理ツリー上で区別するための図</p>
 <figure class="screenshot-wide"><figcaption>GPMCで確認するManaged AD初期構成とWorkSpaces追加項目</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/001-gpmcで確認するmanaged-ad初期構成とworkspaces追加項目.png" alt="GPMCで確認するManaged AD初期構成とWorkSpaces追加項目" width="3840" height="2160" loading="lazy"></div></figure>
 
 
 
 <h3 id="今回追加したworkspaces用構成">今回追加したWorkSpaces用構成</h3>
-<p><code>ad\Computers</code>配下へ<code>WorkSpaces</code> OUを作成し、AD Connectorが使用する<code>Connectors</code>グループへ、同OU内のコンピューターオブジェクトを作成、削除、読み取りおよび書き込みする権限を委任します。サービスアカウントとグループは<code>ad\Users</code>に配置したまま、権限だけをWorkSpaces OUへ委任する</p>
-<p>Amazon WorkSpacesのターゲットOUを同じOUへ設定し、<code>Amazon WorkSpaces DCV Policy</code>を直接リンクします。既定GPOの継承は維持され、その上にWorkSpaces固有設定が適用される。Windows WorkSpacesで使用できる管理テンプレートと設定項目は出典：<a href="https://docs.aws.amazon.com/ja_jp/workspaces/latest/adminguide/group_policy.html">AWS公式：WorkSpaces PersonalでWindows WorkSpacesを管理する</a></p>
+<p><code class="inline-code">ad\Computers</code>配下へ<code class="inline-code">WorkSpaces</code> OUを作成し、AD Connectorが使用する<code class="inline-code">Connectors</code>グループへ、同OU内のコンピューターオブジェクトを作成、削除、読み取りおよび書き込みする権限を委任します。サービスアカウントとグループは<code class="inline-code">ad\Users</code>に配置したまま、権限だけをWorkSpaces OUへ委任する</p>
+<p>Amazon WorkSpacesのターゲットOUを同じOUへ設定し、<code class="inline-code">Amazon WorkSpaces DCV Policy</code>を直接リンクします。既定GPOの継承は維持され、その上にWorkSpaces固有設定が適用される。Windows WorkSpacesで使用できる管理テンプレートと設定項目は出典：<a href="https://docs.aws.amazon.com/ja_jp/workspaces/latest/adminguide/group_policy.html">AWS公式：WorkSpaces PersonalでWindows WorkSpacesを管理する</a></p>
 <figure class="screenshot-wide"><figcaption>今回のWorkSpaces用OU・GPO構成</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/002-今回のworkspaces用ou-gpo構成.png" alt="今回のWorkSpaces用OU・GPO構成" width="3840" height="2160" loading="lazy"></div></figure>
 
 
@@ -175,14 +185,14 @@
 
 <h3 id="概要-2">概要</h3>
 <h4 id="本手順書で実施すること">本手順書で実施すること</h4>
-<p>VPC003～VPC006に作成したAD ConnectorをWorkSpaces Personalへ登録し、各VPCのWorkSpaces用プライベートサブネットを2つ指定します。その後、<code>PowerPro with Windows 10 (Server 2022 based)</code>、DCV（旧WSP）、ルート80GB、ユーザー50GBのWindows WorkSpaceをユーザー単位で作成し、<code>AVAILABLE</code>、Active Directory上のOU所属およびクライアント接続を確認する</p>
+<p>VPC003～VPC006に作成したAD ConnectorをWorkSpaces Personalへ登録し、各VPCのWorkSpaces用プライベートサブネットを2つ指定します。その後、<code class="inline-code">PowerPro with Windows 10 (Server 2022 based)</code>、DCV（旧WSP）、ルート80GB、ユーザー50GBのWindows WorkSpaceをユーザー単位で作成し、<code class="inline-code">AVAILABLE</code>、Active Directory上のOU所属およびクライアント接続を確認する</p>
 <p>本書の操作を対象AD Connectorごとに繰り返します。カスタムイメージとカスタムバンドルを使用する場合は、<a href="workspaces-image-bundle.html">Amazon WorkSpacesカスタムイメージ・バンドル作成・共有手順</a>を先に完了する</p>
 <h4 id="完了条件-2">完了条件</h4>
 <ul>
 <li>✔ 対象AD ConnectorがWorkSpaces Personalへ登録されている</li>
 <li>✔ 対象VPCの異なるアベイラビリティーゾーンにある2サブネットを選択している</li>
 <li>✔ Directory ID、ユーザー、バンドル、DCV、実行モード、80GB／50GBおよび暗号化設定が承認済み値と一致している</li>
-<li>✔ WorkSpaceが<code>AVAILABLE</code>となり、対象OUへコンピューターオブジェクトが作成されている</li>
+<li>✔ WorkSpaceが<code class="inline-code">AVAILABLE</code>となり、対象OUへコンピューターオブジェクトが作成されている</li>
 <li>✔ WorkSpacesクライアントからドメインユーザーで接続できる</li>
 </ul>
 <h3 id="今回の設定値-2">今回の設定値</h3>
@@ -199,11 +209,11 @@
 </tr>
 <tr>
 <td>ディレクトリDNS名</td>
-<td><code>ad.example.com</code></td>
+<td><code class="inline-code">ad.example.com</code></td>
 </tr>
 <tr>
 <td>ユーザー</td>
-<td><code>sampleadmin</code></td>
+<td><code class="inline-code">sampleadmin</code></td>
 </tr>
 <tr>
 <td>コンピューティングタイプ</td>
@@ -219,11 +229,11 @@
 </tr>
 <tr>
 <td>バンドル</td>
-<td><code>PowerPro with Windows 10 (Server 2022 based)</code></td>
+<td><code class="inline-code">PowerPro with Windows 10 (Server 2022 based)</code></td>
 </tr>
 <tr>
 <td>バンドルID</td>
-<td><code>wsb-391xpys5j</code></td>
+<td><code class="inline-code">wsb-391xpys5j</code></td>
 </tr>
 <tr>
 <td>ルートボリューム</td>
@@ -247,7 +257,7 @@
 </tr>
 <tr>
 <td>WorkSpaces格納先OU</td>
-<td><code>ad\Computers\WorkSpaces</code></td>
+<td><code class="inline-code">ad\Computers\WorkSpaces</code></td>
 </tr>
 </tbody></table>
 <p>バンドル名とIDは提供時期やリージョンによって変わる可能性があるため、名前の一部や過去のIDだけで選択せず、OS、プロトコル、コンピューティングタイプおよびストレージを含めて確認する</p>
@@ -262,23 +272,23 @@
 </thead>
 <tbody><tr>
 <td>VPC003</td>
-<td><code>192.168.227.0/25</code>（003-003a）</td>
-<td><code>192.168.227.128/25</code>（003-003c）</td>
+<td><code class="inline-code">192.168.227.0/25</code>（003-003a）</td>
+<td><code class="inline-code">192.168.227.128/25</code>（003-003c）</td>
 </tr>
 <tr>
 <td>VPC004</td>
-<td><code>192.168.229.0/25</code>（004-003a）</td>
-<td><code>192.168.229.128/25</code>（004-003c）</td>
+<td><code class="inline-code">192.168.229.0/25</code>（004-003a）</td>
+<td><code class="inline-code">192.168.229.128/25</code>（004-003c）</td>
 </tr>
 <tr>
 <td>VPC005</td>
-<td><code>192.168.231.0/25</code>（005-003a）</td>
-<td><code>192.168.231.128/25</code>（005-003c）</td>
+<td><code class="inline-code">192.168.231.0/25</code>（005-003a）</td>
+<td><code class="inline-code">192.168.231.128/25</code>（005-003c）</td>
 </tr>
 <tr>
 <td>VPC006</td>
-<td><code>192.168.233.0/25</code>（006-003a）</td>
-<td><code>192.168.233.128/25</code>（006-003c）</td>
+<td><code class="inline-code">192.168.233.0/25</code>（006-003a）</td>
+<td><code class="inline-code">192.168.233.128/25</code>（006-003c）</td>
 </tr>
 </tbody></table>
 <p>AD Connector用の002a／002cサブネットと、WorkSpaces用の003a／003cサブネットを取り違えない</p>
@@ -288,16 +298,16 @@
 <li><strong>カスタムイメージ</strong>：参照WorkSpaceのOS、アプリケーションおよび設定を取り込んだイメージ</li>
 <li><strong>カスタムバンドル</strong>：カスタムイメージへコンピューティングタイプとストレージ設定を組み合わせた起動テンプレート</li>
 </ul>
-<p>今回の画面では、<code>PowerPro with Windows 10 (Server 2022 based)</code>を選択しています。表示名に「Windows 10」が含まれますが、括弧内の<code>Server 2022 based</code>を含む正式名称で記録する</p>
+<p>今回の画面では、<code class="inline-code">PowerPro with Windows 10 (Server 2022 based)</code>を選択しています。表示名に「Windows 10」が含まれますが、括弧内の<code class="inline-code">Server 2022 based</code>を含む正式名称で記録する</p>
 <h3 id="前提条件">前提条件</h3>
 <ul>
 <li>✔ 対象リージョンがアジアパシフィック（東京）である</li>
 <li>✔ VPCピアリング、両方向のルート、ネットワークACLおよびDC用SGの許可が設定済みである</li>
 <li>✔ 対象VPCのAD Connectorが「アクティブ」で、ユーザー検索が成功する</li>
 <li>✔ AD Connectorの2つのサブネットから、両方のDNSサーバー／ドメインコントローラーへ到達できる</li>
-<li>✔ <code>ADConnectorService</code>が有効・未ロックで、AD Connectorへ登録したパスワードと一致する</li>
-<li>✔ <code>Connectors</code>へWorkSpaces OU内のコンピューター作成・削除・読み取り・書き込みを委任している</li>
-<li>✔ WorkSpacesのターゲットOUが<code>ad\Computers\WorkSpaces</code>である</li>
+<li>✔ <code class="inline-code">ADConnectorService</code>が有効・未ロックで、AD Connectorへ登録したパスワードと一致する</li>
+<li>✔ <code class="inline-code">Connectors</code>へWorkSpaces OU内のコンピューター作成・削除・読み取り・書き込みを委任している</li>
+<li>✔ WorkSpacesのターゲットOUが<code class="inline-code">ad\Computers\WorkSpaces</code>である</li>
 <li>✔ 利用ユーザーがActive Directoryにあり、同じディレクトリでPersonal WorkSpaceを重複作成しない</li>
 <li>✔ Service Quotasと各サブネットの空きIPアドレスに余裕がある</li>
 <li>✔ 実行モード、暗号化、KMSキー、タグ、セルフサービス権限およびインターネット接続方式が承認済みである</li>
@@ -308,7 +318,7 @@
 <h3 id="ad-connectorの登録">AD Connectorの登録</h3>
 <p>AWS Directory ServiceでAD Connectorを作成しただけではWorkSpacesで使用できません。対象AD ConnectorをWorkSpaces Personalへ登録し、WorkSpacesを起動する2サブネットを指定する</p>
 <h4 id="登録前の確認">登録前の確認</h4>
-<ol>
+<ol class="step-list">
 <li>Amazon WorkSpacesコンソールを開き、「ディレクトリ」を選択</li>
 <li>WorkSpacesタイプが「個人」であることを確認</li>
 <li>対象AD Connectorが登録済み一覧にないことを確認</li>
@@ -320,13 +330,13 @@
 
 
 <h4 id="ディレクトリを登録する">ディレクトリを登録する</h4>
-<ol>
+<ol class="step-list">
 <li>WorkSpacesタイプで「個人」を選択</li>
 <li>WorkSpaceデバイス管理で「AWS Directory Service」を選択</li>
 <li>Directory ID、タイプ、ドメイン、VPCおよび状態を照合して対象AD Connectorを選択</li>
 <li>対象VPCのWorkSpaces用サブネットを異なるアベイラビリティーゾーンから2つ選択</li>
 <li>セルフサービスアクセス許可を承認済み設計に合わせます。有効にすると、利用者が再構築、コンピューティングタイプ、ボリュームおよび実行モードなどを変更でき、料金へ影響する場合がある</li>
-<li>「登録」を選択し、<code>REGISTERING</code>から登録済みへ変わるまで待機</li>
+<li>「登録」を選択し、<code class="inline-code">REGISTERING</code>から登録済みへ変わるまで待機</li>
 <li>登録後のDirectory ID、AD Connector、VPC、ドメインおよび2サブネットを確認</li>
 </ol>
 <p>図2では、赤枠の状態が「登録済み」であることを確認する</p>
@@ -334,19 +344,19 @@
 
 
 
-<p>AWSが作成した<code>&lt;Directory ID&gt;_workspacesMembers</code>形式のセキュリティグループを確認し、既存ルールを根拠なく削除または置換しない</p>
+<p>AWSが作成した<code class="inline-code">&lt;Directory ID&gt;_workspacesMembers</code>形式のセキュリティグループを確認し、既存ルールを根拠なく削除または置換しない</p>
 <h3 id="ターゲットouの確認">ターゲットOUの確認</h3>
-<ol>
+<ol class="step-list">
 <li>WorkSpacesコンソールの「ディレクトリ」で対象AD Connectorを選択</li>
 <li>「ターゲットドメインと組織単位」を開く</li>
 <li><a href="workspaces-provisioning-gpo.html">Amazon WorkSpaces用OU作成・権限委任・ターゲットOU設定手順</a>で設定したDNと一致することを確認</li>
-<li><code>Connectors</code>への委任先OUとも一致することを確認</li>
+<li><code class="inline-code">Connectors</code>への委任先OUとも一致することを確認</li>
 </ol>
 <p>WorkSpaces専用OUやお客様作成GPOは、WorkSpace作成時に自動作成されません。GPOはGPMCで対象OUへリンクする</p>
 <h3 id="workspaceの作成">WorkSpaceの作成</h3>
 <p>出典：<a href="https://docs.aws.amazon.com/ja_jp/workspaces/latest/adminguide/create-workspaces-personal.html">AWS公式：WorkSpaces PersonalのWorkSpaceを作成する</a></p>
 <h4 id="作成を開始する">作成を開始する</h4>
-<ol>
+<ol class="step-list">
 <li>WorkSpacesコンソールで「WorkSpaces」を選択</li>
 <li>「WorkSpacesを起動」から「個人」を選択</li>
 <li>「WorkSpacesの作成」を選択</li>
@@ -357,7 +367,7 @@
 
 
 <h4 id="バンドル-ディレクトリおよびユーザーを指定する">バンドル、ディレクトリおよびユーザーを指定する</h4>
-<ol>
+<ol class="step-list">
 <li>「手動で設定」を選択</li>
 <li>「WorkSpacesバンドルを使用」を選択</li>
 <li>正式名称、Bundle ID、OS、プロトコルおよびコンピューティングタイプを確認して、承認済みバンドルを選択</li>
@@ -383,17 +393,17 @@
 <p>WorkSpace作成後、ボリュームは拡張できますが縮小できません。暗号化なしで作成したWorkSpaceへ後から暗号化を追加すること、暗号化済みWorkSpaceから暗号化を解除することもできません。誤った場合は利用者影響とデータ退避を確認して再作成する</p>
 </div>
 <h4 id="作成を実行する">作成を実行する</h4>
-<ol>
+<ol class="step-list">
 <li>バンドル、Directory ID、ユーザー、実行モード、ストレージ、暗号化、KMSキーおよびタグを最終確認</li>
 <li>「WorkSpacesの作成」を選択</li>
-<li>一覧で状態が「構築中」または<code>PENDING</code>になったことを確認</li>
+<li>一覧で状態が「構築中」または<code class="inline-code">PENDING</code>になったことを確認</li>
 </ol>
 <figure class="screenshot-wide aws-console-identity"><figcaption>WorkSpaces作成中</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/008-workspaces作成中.png" alt="WorkSpaces作成中" width="1716" height="455" loading="lazy"></div></figure>
 
 
 
 <ol start="4">
-<li>状態が「使用可能」または<code>AVAILABLE</code>になるまで待機</li>
+<li>状態が「使用可能」または<code class="inline-code">AVAILABLE</code>になるまで待機</li>
 <li>WorkSpace ID、ユーザー、コンピューター名、バンドル、80GB／50GB、実行モード、DCV、IPアドレスおよび暗号化状態を確認</li>
 </ol>
 <figure class="screenshot-wide aws-console-identity"><figcaption>WorkSpaces利用可能</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/009-workspaces利用可能.png" alt="WorkSpaces利用可能" width="1716" height="455" loading="lazy"></div></figure>
@@ -402,13 +412,13 @@
 
 <h3 id="作成後の確認">作成後の確認</h3>
 <h4 id="active-directory">Active Directory</h4>
-<ol>
-<li>ADUCで<code>ad\Computers\WorkSpaces</code>を開き、新しいコンピューターオブジェクトを確認</li>
+<ol class="step-list">
+<li>ADUCで<code class="inline-code">ad\Computers\WorkSpaces</code>を開き、新しいコンピューターオブジェクトを確認</li>
 <li>コンピューター名がWorkSpacesコンソールの値と一致することを確認</li>
-<li><code>gpresult /scope computer /r</code>を実行し、<code>Amazon WorkSpaces DCV Policy</code>が適用されていることを確認</li>
+<li><code class="inline-code">gpresult /scope computer /r</code>を実行し、<code class="inline-code">Amazon WorkSpaces DCV Policy</code>が適用されていることを確認</li>
 </ol>
 <h4 id="クライアント接続">クライアント接続</h4>
-<ol>
+<ol class="step-list">
 <li>WorkSpacesクライアントをインストール</li>
 <li>対象ディレクトリの登録コードを入力</li>
 <li>Active Directoryのユーザー名とパスワードでサインイン</li>
@@ -422,28 +432,28 @@
 <p>AD Connector、信頼されたドメイン、またはActive Directoryに既に存在するユーザーを使用する場合、ウェルカムメールやパスワードリセットメールは自動送信されません。管理者が登録コード、クライアントの入手先および接続方法を安全な経路で案内し、パスワードリセットはActive Directory管理者が実施する</p>
 <h4 id="パスワードを忘れた場合-が表示されない">「パスワードを忘れた場合」が表示されない</h4>
 <p>AD Connectorまたは信頼されたドメインのユーザーは、WorkSpacesクライアントからパスワードをセルフリセットできません。Active Directory側で本人確認とパスワードリセットを行い、「次回ログオン時にパスワード変更が必要」を有効にした場合のWorkSpaces接続可否も運用手順に従って確認する</p>
-<h4 id="dns-unavailable"><code>DNS unavailable</code></h4>
+<h4 id="dns-unavailable"><code class="inline-code">DNS unavailable</code></h4>
 <p>AD Connectorから指定DNSサーバーのTCP 53とUDP 53へ通信できない場合に発生します。AD Connectorの両サブネットから両DNS IPへのルート、セキュリティグループ、ネットワークACLおよびDNSサーバー側ファイアウォールを確認する</p>
-<h4 id="connectivity-issues-detected"><code>Connectivity issues detected</code></h4>
-<p><code>LDAP unavailable (TCP port 389)</code>または<code>Kerberos/authentication unavailable (TCP port 88)</code>が表示された場合は、AD ConnectorからドメインコントローラーへのTCP／UDP 88（Kerberos）とTCP／UDP 389（LDAP）を確認する。片方のドメインコントローラーだけでなく、両方へ到達できることを確認する</p>
-<h4 id="srv-record"><code>SRV record</code></h4>
-<p>AD Connectorは、指定DNSサーバーから<code>_ldap._tcp.&lt;DNSドメイン名&gt;</code>と<code>_kerberos._tcp.&lt;DNSドメイン名&gt;</code>のSRVレコードを取得する必要があります。次のコマンドで両レコードを確認し、対象ドメインコントローラーが返ることを確認する</p>
-<div class="code" data-prompt="$"><div class="code-header"><span>powershell</span><button class="copy" type="button">Copy</button></div><pre><code>Resolve-DnsName -Type SRV '_ldap._tcp.ad.example.com'
+<h4 id="connectivity-issues-detected"><code class="inline-code">Connectivity issues detected</code></h4>
+<p><code class="inline-code">LDAP unavailable (TCP port 389)</code>または<code class="inline-code">Kerberos/authentication unavailable (TCP port 88)</code>が表示された場合は、AD ConnectorからドメインコントローラーへのTCP／UDP 88（Kerberos）とTCP／UDP 389（LDAP）を確認する。片方のドメインコントローラーだけでなく、両方へ到達できることを確認する</p>
+<h4 id="srv-record"><code class="inline-code">SRV record</code></h4>
+<p>AD Connectorは、指定DNSサーバーから<code class="inline-code">_ldap._tcp.&lt;DNSドメイン名&gt;</code>と<code class="inline-code">_kerberos._tcp.&lt;DNSドメイン名&gt;</code>のSRVレコードを取得する必要があります。次のコマンドで両レコードを確認し、対象ドメインコントローラーが返ることを確認する</p>
+<div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>Resolve-DnsName -Type SRV '_ldap._tcp.ad.example.com'
 Resolve-DnsName -Type SRV '_kerberos._tcp.ad.example.com'</code></pre></div>
 <p>最後の3件はAD Connectorの作成・接続診断でも発生します。WorkSpace作成を繰り返す前に、AD Connector側のネットワークとDNSを解消する</p>
 <h3 id="作成に失敗した場合">作成に失敗した場合</h3>
-<ol>
+<ol class="step-list">
 <li>AD ConnectorとWorkSpacesへのディレクトリ登録が正常か確認</li>
 <li>両サブネットから両DNSサーバー／ドメインコントローラーへ到達できることを確認</li>
 <li>サブネットの空きIP、2つのAZ、往復ルート、SGおよびネットワークACLを確認</li>
-<li><code>ADConnectorService</code>の有効化、ロック、パスワード期限およびAD Connectorに保存した認証情報を確認</li>
-<li><code>Connectors</code>のOU委任とWorkSpacesのターゲットOUが一致することを確認</li>
+<li><code class="inline-code">ADConnectorService</code>の有効化、ロック、パスワード期限およびAD Connectorに保存した認証情報を確認</li>
+<li><code class="inline-code">Connectors</code>のOU委任とWorkSpacesのターゲットOUが一致することを確認</li>
 <li>対象ユーザー、重複WorkSpace、Service QuotasおよびKMSキー権限を確認</li>
 <li>WorkSpacesのエラーメッセージ、CloudTrailおよびAWS Health Dashboardを確認</li>
 </ol>
 <p>AWS公式は、接続したディレクトリでWorkSpaceの起動が繰り返し失敗する場合、AD Connector指定時の両DNSサーバー／ドメインコントローラーへ各ディレクトリサブネットから到達できることを確認するよう案内しています。必要に応じて各サブネットへ検証用EC2を起動し、両DNS IPを使ったドメイン参加で切り分ける</p>
 <h3 id="誤作成時の対応">誤作成時の対応</h3>
-<ol>
+<ol class="step-list">
 <li>対象WorkSpaceのID、ユーザー、Directory IDおよび誤設定内容を照合</li>
 <li>利用者へ登録コードを案内せず、必要なデータがないことを確認</li>
 <li>対象WorkSpaceだけを終了</li>
@@ -459,12 +469,12 @@ Resolve-DnsName -Type SRV '_kerberos._tcp.ad.example.com'</code></pre></div>
 
 <h3 id="概要-3">概要</h3>
 <h4 id="本手順書で実施すること-2">本手順書で実施すること</h4>
-<p>AWS Managed Microsoft ADのお客様管理OU<code>ad\Computers</code>配下に<code>WorkSpaces</code> OUを作成します。AD Connectorの委任用グループ<code>Connectors</code>へ、このOU内のコンピューターオブジェクトを作成、削除、読み取りおよび書き込みする権限を付与し、WorkSpaces PersonalのターゲットOUへ同じOUを設定する</p>
-<p>設定後に新しいWorkSpaceを作成し、コンピューターオブジェクトが<code>ad\Computers\WorkSpaces</code>へ自動配置されたことを確認する</p>
+<p>AWS Managed Microsoft ADのお客様管理OU<code class="inline-code">ad\Computers</code>配下に<code class="inline-code">WorkSpaces</code> OUを作成します。AD Connectorの委任用グループ<code class="inline-code">Connectors</code>へ、このOU内のコンピューターオブジェクトを作成、削除、読み取りおよび書き込みする権限を付与し、WorkSpaces PersonalのターゲットOUへ同じOUを設定する</p>
+<p>設定後に新しいWorkSpaceを作成し、コンピューターオブジェクトが<code class="inline-code">ad\Computers\WorkSpaces</code>へ自動配置されたことを確認する</p>
 <h4 id="完了条件-3">完了条件</h4>
 <ul>
-<li>✔ <code>ad\Computers\WorkSpaces</code> OUが作成され、誤削除防止が有効である</li>
-<li>✔ <code>Connectors</code>へコンピューターオブジェクトの作成、削除、読み取りおよび書き込みだけを委任している</li>
+<li>✔ <code class="inline-code">ad\Computers\WorkSpaces</code> OUが作成され、誤削除防止が有効である</li>
+<li>✔ <code class="inline-code">Connectors</code>へコンピューターオブジェクトの作成、削除、読み取りおよび書き込みだけを委任している</li>
 <li>✔ 詳細ACLで委任先、対象オブジェクトおよび適用先を確認している</li>
 <li>✔ WorkSpacesのターゲットOUが委任先OUと一致している</li>
 <li>✔ 設定後に新規作成したWorkSpaceが対象OUへ自動配置されている</li>
@@ -479,27 +489,27 @@ Resolve-DnsName -Type SRV '_kerberos._tcp.ad.example.com'</code></pre></div>
 </thead>
 <tbody><tr>
 <td>ディレクトリDNS名</td>
-<td><code>ad.example.com</code></td>
+<td><code class="inline-code">ad.example.com</code></td>
 </tr>
 <tr>
 <td>お客様管理OU</td>
-<td><code>ad</code></td>
+<td><code class="inline-code">ad</code></td>
 </tr>
 <tr>
 <td>親OU</td>
-<td><code>ad\Computers</code></td>
+<td><code class="inline-code">ad\Computers</code></td>
 </tr>
 <tr>
 <td>WorkSpaces OU</td>
-<td><code>ad\Computers\WorkSpaces</code></td>
+<td><code class="inline-code">ad\Computers\WorkSpaces</code></td>
 </tr>
 <tr>
 <td>ターゲットOUのDN</td>
-<td><code>OU=WorkSpaces,OU=Computers,OU=ad,DC=ad,DC=example,DC=com</code></td>
+<td><code class="inline-code">OU=WorkSpaces,OU=Computers,OU=ad,DC=ad,DC=example,DC=com</code></td>
 </tr>
 <tr>
 <td>委任先グループ</td>
-<td><code>Connectors</code></td>
+<td><code class="inline-code">Connectors</code></td>
 </tr>
 <tr>
 <td>委任対象</td>
@@ -519,10 +529,10 @@ Resolve-DnsName -Type SRV '_kerberos._tcp.ad.example.com'</code></pre></div>
       ├─ ADConnectorService
       ├─ Connectors
       └─ WorkSpaces利用ユーザー</code></pre></div>
-<p><code>ADConnectorService</code>と<code>Connectors</code>の配置先は<code>ad\Users</code>です。権限を委任する場所は、WorkSpacesのコンピューターオブジェクトを作成する<code>ad\Computers\WorkSpaces</code>です。アカウントの配置先と権限の委任先を混同しない</p>
-<p>ドメイン直下の組み込み<code>Computers</code>コンテナーと、お客様管理領域の<code>ad\Computers</code> OUは別の場所です。ADUCで完全なパスを確認してから操作する</p>
+<p><code class="inline-code">ADConnectorService</code>と<code class="inline-code">Connectors</code>の配置先は<code class="inline-code">ad\Users</code>です。権限を委任する場所は、WorkSpacesのコンピューターオブジェクトを作成する<code class="inline-code">ad\Computers\WorkSpaces</code>です。アカウントの配置先と権限の委任先を混同しない</p>
+<p>ドメイン直下の組み込み<code class="inline-code">Computers</code>コンテナーと、お客様管理領域の<code class="inline-code">ad\Computers</code> OUは別の場所です。ADUCで完全なパスを確認してから操作する</p>
 <div class="callout callout-warning"><p><strong>注意：同じ権限委任を二重に登録しない</strong></p>
-<p><a href="workspaces-ad-connector.html">AD Connector用サービスアカウント作成・権限委任・運用手順</a>で<code>ad\Computers\WorkSpaces</code>への委任を完了済みの場合は、詳細ACLを確認して本書の委任操作を省略します。同じ<code>Connectors</code>、対象オブジェクト、権限および適用先のACEを重複して追加しない</p>
+<p><a href="workspaces-ad-connector.html">AD Connector用サービスアカウント作成・権限委任・運用手順</a>で<code class="inline-code">ad\Computers\WorkSpaces</code>への委任を完了済みの場合は、詳細ACLを確認して本書の委任操作を省略します。同じ<code class="inline-code">Connectors</code>、対象オブジェクト、権限および適用先のACEを重複して追加しない</p>
 </div>
 <h3 id="前提条件-2">前提条件</h3>
 <ul>
@@ -534,10 +544,10 @@ Resolve-DnsName -Type SRV '_kerberos._tcp.ad.example.com'</code></pre></div>
 <li>✔ Directory ID、AD Connector、VPCおよび変更対象OUを作業申請と照合している</li>
 </ul>
 <p>Windows Server 2022ベースの管理端末へADUCとGPMCを導入する場合は、管理者PowerShellで次を実行する</p>
-<div class="code" data-prompt="$"><div class="code-header"><span>powershell</span><button class="copy" type="button">Copy</button></div><pre><code>Install-WindowsFeature RSAT-ADDS,GPMC
+<div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>Install-WindowsFeature RSAT-ADDS,GPMC
 Get-WindowsFeature RSAT-ADDS,GPMC |
     Select-Object DisplayName, InstallState</code></pre></div>
-<p><code>InstallState</code>が<code>Installed</code>であることを確認し、<code>dsa.msc</code>でADUC、<code>gpmc.msc</code>でGPMCを起動します。Windows 10／11ベースの端末では、OSに対応するオプション機能からRSATを導入する</p>
+<p><code class="inline-code">InstallState</code>が<code class="inline-code">Installed</code>であることを確認し、<code class="inline-code">dsa.msc</code>でADUC、<code class="inline-code">gpmc.msc</code>でGPMCを起動します。Windows 10／11ベースの端末では、OSに対応するオプション機能からRSATを導入する</p>
 <h3 id="管理端末と既存workspaceの確認">管理端末と既存WorkSpaceの確認</h3>
 <p>WorkSpacesクライアントで管理用WorkSpaceへ接続し、Windowsデスクトップが表示されることを確認する</p>
 <figure class="screenshot-wide"><figcaption>WorkSpaceへの接続完了</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/010-workspaceへの接続完了.png" alt="WorkSpaceへの接続完了" width="1920" height="1152" loading="lazy"></div></figure>
@@ -549,29 +559,29 @@ Get-WindowsFeature RSAT-ADDS,GPMC |
 
 
 
-<p>PowerShellで確認する場合は次を実行し、<code>PartOfDomain</code>が<code>True</code>、<code>Domain</code>が対象ドメインであることを確認する</p>
-<div class="code" data-prompt="$"><div class="code-header"><span>powershell</span><button class="copy" type="button">Copy</button></div><pre><code>Get-CimInstance Win32_ComputerSystem |
+<p>PowerShellで確認する場合は次を実行し、<code class="inline-code">PartOfDomain</code>が<code class="inline-code">True</code>、<code class="inline-code">Domain</code>が対象ドメインであることを確認する</p>
+<div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>Get-CimInstance Win32_ComputerSystem |
     Select-Object Name, Domain, PartOfDomain</code></pre></div>
 <p>ターゲットOUを変更する前に、作成済みWorkSpaceの現在位置を確認する</p>
-<div class="code" data-prompt="$"><div class="code-header"><span>powershell</span><button class="copy" type="button">Copy</button></div><pre><code>Get-ADComputer -Identity '&lt;WorkSpaceのコンピューター名&gt;' -Properties DistinguishedName |
+<div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>Get-ADComputer -Identity '&lt;WorkSpaceのコンピューター名&gt;' -Properties DistinguishedName |
     Format-List Name, DistinguishedName</code></pre></div>
 <div class="callout callout-warning"><p><strong>注意：ターゲットOU変更は既存WorkSpaceを移動しない</strong></p>
 <p>ターゲットOUの変更は、変更後に新規作成または再構築したWorkSpaceへ反映されます。既存WorkSpaceのコンピューターオブジェクトは自動移動されない</p>
 </div>
 <h3 id="workspaces-ouの作成">WorkSpaces OUの作成</h3>
 <h4 id="ouを新規作成する">OUを新規作成する</h4>
-<ol>
+<ol class="step-list">
 <li>対象ドメインの管理資格情報でADUCを開く</li>
-<li><code>ad.example.com</code>、<code>ad</code>、<code>Computers</code>の順に展開</li>
-<li><code>ad\Computers</code>を右クリックし、「新規作成」から「組織単位」を選択</li>
+<li><code class="inline-code">ad.example.com</code>、<code class="inline-code">ad</code>、<code class="inline-code">Computers</code>の順に展開</li>
+<li><code class="inline-code">ad\Computers</code>を右クリックし、「新規作成」から「組織単位」を選択</li>
 </ol>
-<p>図3では、①<code>ad\Computers</code>、②「新規作成」、③「組織単位」の順に選択する</p>
+<p>図3では、①<code class="inline-code">ad\Computers</code>、②「新規作成」、③「組織単位」の順に選択する</p>
 <figure class="screenshot-wide"><figcaption>WorkSpaces OU作成メニュー</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/012-workspaces-ou作成メニュー.png" alt="WorkSpaces OU作成メニュー" width="1170" height="724" loading="lazy"></div></figure>
 
 
 
 <ol start="4">
-<li>名前へ<code>WorkSpaces</code>を入力</li>
+<li>名前へ<code class="inline-code">WorkSpaces</code>を入力</li>
 <li>「コンテナーを誤って削除されないように保護する」を有効のままに</li>
 <li>「OK」を選択</li>
 </ol>
@@ -581,7 +591,7 @@ Get-WindowsFeature RSAT-ADDS,GPMC |
 
 
 <ol start="7">
-<li>左ツリーと右ペインの両方で、<code>ad\Computers</code>配下に<code>WorkSpaces</code> OUが表示されることを確認</li>
+<li>左ツリーと右ペインの両方で、<code class="inline-code">ad\Computers</code>配下に<code class="inline-code">WorkSpaces</code> OUが表示されることを確認</li>
 </ol>
 <p>図5では、①OUの配置先、②名前と種類を確認する</p>
 <figure class="screenshot-wide"><figcaption>WorkSpaces OU作成完了</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/014-workspaces-ou作成完了.png" alt="WorkSpaces OU作成完了" width="1172" height="725" loading="lazy"></div></figure>
@@ -589,12 +599,12 @@ Get-WindowsFeature RSAT-ADDS,GPMC |
 
 
 <h4 id="ouのdnを確認する">OUのDNを確認する</h4>
-<div class="code" data-prompt="$"><div class="code-header"><span>powershell</span><button class="copy" type="button">Copy</button></div><pre><code>$workSpacesOuDn = 'OU=WorkSpaces,OU=Computers,OU=ad,DC=ad,DC=example,DC=com'
+<div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$workSpacesOuDn = 'OU=WorkSpaces,OU=Computers,OU=ad,DC=ad,DC=example,DC=com'
 
 Get-ADOrganizationalUnit -Identity $workSpacesOuDn -Properties ProtectedFromAccidentalDeletion |
     Select-Object Name, DistinguishedName, ProtectedFromAccidentalDeletion</code></pre></div>
-<p><code>Name</code>が<code>WorkSpaces</code>、<code>DistinguishedName</code>が承認済みDN、<code>ProtectedFromAccidentalDeletion</code>が<code>True</code>であることを確認する</p>
-<h3 id="connectorsへの権限委任"><code>Connectors</code>への権限委任</h3>
+<p><code class="inline-code">Name</code>が<code class="inline-code">WorkSpaces</code>、<code class="inline-code">DistinguishedName</code>が承認済みDN、<code class="inline-code">ProtectedFromAccidentalDeletion</code>が<code class="inline-code">True</code>であることを確認する</p>
+<h3 id="connectorsへの権限委任"><code class="inline-code">Connectors</code>への権限委任</h3>
 <h4 id="委任内容">委任内容</h4>
 <table>
 <thead>
@@ -605,11 +615,11 @@ Get-ADOrganizationalUnit -Identity $workSpacesOuDn -Properties ProtectedFromAcci
 </thead>
 <tbody><tr>
 <td>委任先OU</td>
-<td><code>ad\Computers\WorkSpaces</code></td>
+<td><code class="inline-code">ad\Computers\WorkSpaces</code></td>
 </tr>
 <tr>
 <td>委任対象</td>
-<td><code>Connectors</code></td>
+<td><code class="inline-code">Connectors</code></td>
 </tr>
 <tr>
 <td>タスク</td>
@@ -630,17 +640,17 @@ Get-ADOrganizationalUnit -Identity $workSpacesOuDn -Properties ProtectedFromAcci
 </tbody></table>
 <p>WorkSpaces専用OUにはユーザーを配置しないため、ユーザーオブジェクトの作成・削除・書き込み権限は追加しません。ユーザー検索に必要な既存の読み取り権限は維持し、WorkSpacesコンソールから対象ユーザーを検索できることを別途確認する</p>
 <h4 id="委任ウィザードを実行する">委任ウィザードを実行する</h4>
-<ol>
-<li>ADUCで<code>ad\Computers\WorkSpaces</code>を右クリックし、「制御の委任」を選択</li>
+<ol class="step-list">
+<li>ADUCで<code class="inline-code">ad\Computers\WorkSpaces</code>を右クリックし、「制御の委任」を選択</li>
 </ol>
-<p>図6では、①<code>WorkSpaces</code> OU、②「制御の委任」を選択する</p>
+<p>図6では、①<code class="inline-code">WorkSpaces</code> OU、②「制御の委任」を選択する</p>
 <figure class="screenshot-wide"><figcaption>WorkSpaces OUの制御の委任</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/015-workspaces-ouの制御の委任.png" alt="WorkSpaces OUの制御の委任" width="1170" height="724" loading="lazy"></div></figure>
 
 
 
 <ol start="2">
-<li>ウィザードで「次へ」を選択し、「追加」から<code>Connectors</code>を指定</li>
-<li>「名前の確認」で対象ドメインの<code>Connectors</code>へ解決されたことを確認し、「OK」、「次へ」の順に選択</li>
+<li>ウィザードで「次へ」を選択し、「追加」から<code class="inline-code">Connectors</code>を指定</li>
+<li>「名前の確認」で対象ドメインの<code class="inline-code">Connectors</code>へ解決されたことを確認し、「OK」、「次へ」の順に選択</li>
 </ol>
 <p>図7では、①選択済みグループ、②「次へ」を確認する</p>
 <figure class="screenshot-wide"><figcaption>Connectorsグループの選択</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/016-connectorsグループの選択.png" alt="Connectorsグループの選択" width="581" height="436" loading="lazy"></div></figure>
@@ -677,27 +687,27 @@ Get-ADOrganizationalUnit -Identity $workSpacesOuDn -Properties ProtectedFromAcci
 <p>図9の作成・削除と、図10の読み取り・書き込みを組み合わせて委任します。上部の「プロパティ固有」は表示カテゴリであり、選択しただけでは権限は付与されない</p>
 </div>
 <h4 id="詳細aclを確認する">詳細ACLを確認する</h4>
-<ol>
+<ol class="step-list">
 <li>ADUCの「表示」から「拡張機能」を有効に</li>
-<li><code>WorkSpaces</code> OUの「プロパティ」、「セキュリティ」、「詳細設定」の順に開く</li>
-<li><code>Connectors</code>のアクセス許可エントリを確認</li>
+<li><code class="inline-code">WorkSpaces</code> OUの「プロパティ」、「セキュリティ」、「詳細設定」の順に開く</li>
+<li><code class="inline-code">Connectors</code>のアクセス許可エントリを確認</li>
 <li>OU自体にコンピューターオブジェクトの作成・削除、子コンピューターオブジェクトに読み取り・書き込みがあることを確認</li>
-<li>適用先が<code>WorkSpaces</code> OUまたは子コンピューターオブジェクトへ限定され、フルコントロールや親OU全体への権限がないことを確認</li>
+<li>適用先が<code class="inline-code">WorkSpaces</code> OUまたは子コンピューターオブジェクトへ限定され、フルコントロールや親OU全体への権限がないことを確認</li>
 </ol>
-<p><code>ADConnectorService</code>を直接ACLへ追加せず、<code>Connectors</code>グループ経由で委任する</p>
+<p><code class="inline-code">ADConnectorService</code>を直接ACLへ追加せず、<code class="inline-code">Connectors</code>グループ経由で委任する</p>
 <h3 id="workspacesのターゲットou設定">WorkSpacesのターゲットOU設定</h3>
 <p>WorkSpaces Personalでは、登録済みディレクトリごとにコンピューターアカウントのターゲットOUを1つ指定する</p>
 <p>出典：<a href="https://docs.aws.amazon.com/ja_jp/workspaces/latest/adminguide/manage-workspaces-directory.html">AWS公式：WorkSpacesディレクトリの管理</a></p>
-<ol>
+<ol class="step-list">
 <li>AWSマネジメントコンソールでAmazon WorkSpacesを開き、対象リージョンを確認</li>
 <li>「ディレクトリ」から対象AD Connectorを選択</li>
 <li>Directory ID、ドメイン、VPCおよびサブネットを作業申請と照合</li>
 <li>「ターゲットドメインと組織単位」で「編集」を選択</li>
-<li><code>WorkSpaces</code>を検索し、承認済みDNと一致するOUを選択</li>
+<li><code class="inline-code">WorkSpaces</code>を検索し、承認済みDNと一致するOUを選択</li>
 <li>候補に表示されない場合は、承認済みDNをカスタムOUとして入力</li>
 <li>「保存」を選択</li>
 </ol>
-<p>図11では、①<code>WorkSpaces</code> OU、②OU識別名、③「保存」を確認する</p>
+<p>図11では、①<code class="inline-code">WorkSpaces</code> OU、②OU識別名、③「保存」を確認する</p>
 <figure class="screenshot-wide aws-console-identity"><figcaption>ターゲットOUの編集</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/020-ターゲットouの編集.png" alt="ターゲットOUの編集" width="1715" height="746" loading="lazy"></div></figure>
 
 
@@ -711,21 +721,21 @@ Get-ADOrganizationalUnit -Identity $workSpacesOuDn -Properties ProtectedFromAcci
 
 
 <h3 id="新規workspaceによるou所属確認">新規WorkSpaceによるOU所属確認</h3>
-<ol>
+<ol class="step-list">
 <li><a href="workspaces-provisioning-gpo.html">Amazon WorkSpaces作成・バンドル設定手順</a>に従い、未使用の検証用ドメインユーザーでWorkSpaceを1台新規作成</li>
 <li>作成前にDirectory IDとターゲットOUを再確認</li>
-<li>WorkSpaceが<code>AVAILABLE</code>になるまで待機</li>
-<li>ADUCで<code>ad\Computers\WorkSpaces</code>を開き、新しいコンピューターオブジェクトを確認</li>
+<li>WorkSpaceが<code class="inline-code">AVAILABLE</code>になるまで待機</li>
+<li>ADUCで<code class="inline-code">ad\Computers\WorkSpaces</code>を開き、新しいコンピューターオブジェクトを確認</li>
 <li>PowerShellでもDNを確認</li>
 </ol>
-<div class="code" data-prompt="$"><div class="code-header"><span>powershell</span><button class="copy" type="button">Copy</button></div><pre><code>$workSpacesOu = 'OU=WorkSpaces,OU=Computers,OU=ad,DC=ad,DC=example,DC=com'
+<div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$workSpacesOu = 'OU=WorkSpaces,OU=Computers,OU=ad,DC=ad,DC=example,DC=com'
 
 Get-ADComputer -SearchBase $workSpacesOu -Filter * -Properties DistinguishedName,whenCreated |
     Select-Object Name,DistinguishedName,whenCreated</code></pre></div>
 <p>対象1台だけを確認する場合は次を実行する</p>
-<div class="code" data-prompt="$"><div class="code-header"><span>powershell</span><button class="copy" type="button">Copy</button></div><pre><code>Get-ADComputer -Identity '&lt;WorkSpaceのコンピューター名&gt;' -Properties DistinguishedName,whenCreated |
+<div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>Get-ADComputer -Identity '&lt;WorkSpaceのコンピューター名&gt;' -Properties DistinguishedName,whenCreated |
     Format-List Name,DistinguishedName,whenCreated</code></pre></div>
-<p><code>DistinguishedName</code>が次の形式であることを確認する</p>
+<p><code class="inline-code">DistinguishedName</code>が次の形式であることを確認する</p>
 <div class="code"><div class="code-header"><span>text</span><button class="copy" type="button">Copy</button></div><pre><code>CN=&lt;コンピューター名&gt;,OU=WorkSpaces,OU=Computers,OU=ad,DC=ad,DC=example,DC=com</code></pre></div>
 <p>コンピューターオブジェクトを後から手動移動して成功扱いにしません。新規作成時点から指定OUへ配置されたことを確認する</p>
 <h3 id="切り戻し">切り戻し</h3>
@@ -739,16 +749,16 @@ Get-ADComputer -SearchBase $workSpacesOu -Filter * -Properties DistinguishedName
 
 <h3 id="概要-4">概要</h3>
 <h4 id="本手順書で実施すること-3">本手順書で実施すること</h4>
-<p>DCV（旧WSP）の管理テンプレート<code>wsp.admx</code>／<code>wsp.adml</code>をドメインの中央ストアへ配置し、お客様作成GPOを<code>ad\Computers\WorkSpaces</code> OUへ直接リンクします。<code>Amazon WorkSpaces DCV Policy</code>では、<code>Configure clipboard redirection</code>を「有効／<code>Copy and Paste</code>」に設定する</p>
-<p>併せて、検証用GPO<code>WorkSpaces-Computer-Policy</code>を使用し、GPO本体の作成、OUへのリンク、適用順序の変更、リンク解除とGPO本体削除の違いを確認する。最後に代表WorkSpaceで<code>gpupdate</code>と<code>gpresult</code>を実行する</p>
+<p>DCV（旧WSP）の管理テンプレート<code class="inline-code">wsp.admx</code>／<code class="inline-code">wsp.adml</code>をドメインの中央ストアへ配置し、お客様作成GPOを<code class="inline-code">ad\Computers\WorkSpaces</code> OUへ直接リンクします。<code class="inline-code">Amazon WorkSpaces DCV Policy</code>では、<code class="inline-code">Configure clipboard redirection</code>を「有効／<code class="inline-code">Copy and Paste</code>」に設定する</p>
+<p>併せて、検証用GPO<code class="inline-code">WorkSpaces-Computer-Policy</code>を使用し、GPO本体の作成、OUへのリンク、適用順序の変更、リンク解除とGPO本体削除の違いを確認する。最後に代表WorkSpaceで<code class="inline-code">gpupdate</code>と<code class="inline-code">gpresult</code>を実行する</p>
 <h4 id="完了条件-4">完了条件</h4>
 <ul>
-<li>✔ 中央ストアへ対象版の<code>wsp.admx</code>と<code>wsp.adml</code>を配置している</li>
-<li>✔ <code>Amazon WorkSpaces DCV Policy</code>が<code>ad\Computers\WorkSpaces</code>へ直接リンクされている</li>
-<li>✔ リンクが有効、強制なし、<code>Authenticated Users</code>、WMIフィルターなしである</li>
-<li>✔ 親OU<code>ad</code>に同GPOの直接リンクが残っていない</li>
-<li>✔ <code>Configure clipboard redirection</code>が「有効／<code>Copy and Paste</code>」である</li>
-<li>✔ <code>gpresult</code>で対象WorkSpaceへのGPO適用を確認している</li>
+<li>✔ 中央ストアへ対象版の<code class="inline-code">wsp.admx</code>と<code class="inline-code">wsp.adml</code>を配置している</li>
+<li>✔ <code class="inline-code">Amazon WorkSpaces DCV Policy</code>が<code class="inline-code">ad\Computers\WorkSpaces</code>へ直接リンクされている</li>
+<li>✔ リンクが有効、強制なし、<code class="inline-code">Authenticated Users</code>、WMIフィルターなしである</li>
+<li>✔ 親OU<code class="inline-code">ad</code>に同GPOの直接リンクが残っていない</li>
+<li>✔ <code class="inline-code">Configure clipboard redirection</code>が「有効／<code class="inline-code">Copy and Paste</code>」である</li>
+<li>✔ <code class="inline-code">gpresult</code>で対象WorkSpaceへのGPO適用を確認している</li>
 <li>✔ 検証用GPOだけを削除し、継続利用するGPOを残している</li>
 </ul>
 <h3 id="今回の設定値-4">今回の設定値</h3>
@@ -761,23 +771,23 @@ Get-ADComputer -SearchBase $workSpacesOu -Filter * -Properties DistinguishedName
 </thead>
 <tbody><tr>
 <td>ドメイン</td>
-<td><code>ad.example.com</code></td>
+<td><code class="inline-code">ad.example.com</code></td>
 </tr>
 <tr>
 <td>WorkSpaces OU</td>
-<td><code>ad\Computers\WorkSpaces</code></td>
+<td><code class="inline-code">ad\Computers\WorkSpaces</code></td>
 </tr>
 <tr>
 <td>DCV用GPO</td>
-<td><code>Amazon WorkSpaces DCV Policy</code></td>
+<td><code class="inline-code">Amazon WorkSpaces DCV Policy</code></td>
 </tr>
 <tr>
 <td>GPOの直接リンク先</td>
-<td><code>ad\Computers\WorkSpaces</code></td>
+<td><code class="inline-code">ad\Computers\WorkSpaces</code></td>
 </tr>
 <tr>
 <td>セキュリティフィルター</td>
-<td><code>Authenticated Users</code></td>
+<td><code class="inline-code">Authenticated Users</code></td>
 </tr>
 <tr>
 <td>WMIフィルター</td>
@@ -789,17 +799,17 @@ Get-ADComputer -SearchBase $workSpacesOu -Filter * -Properties DistinguishedName
 </tr>
 <tr>
 <td>DCV設定</td>
-<td><code>Configure clipboard redirection</code>＝有効／<code>Copy and Paste</code></td>
+<td><code class="inline-code">Configure clipboard redirection</code>＝有効／<code class="inline-code">Copy and Paste</code></td>
 </tr>
 <tr>
 <td>操作確認用GPO</td>
-<td><code>WorkSpaces-Computer-Policy</code>（確認後に削除）</td>
+<td><code class="inline-code">WorkSpaces-Computer-Policy</code>（確認後に削除）</td>
 </tr>
 </tbody></table>
 <h3 id="gpoの設計">GPOの設計</h3>
 <ul>
-<li>WorkSpaces固有設定を<code>Default Domain Policy</code>へ追加しない</li>
-<li>お客様管理OU<code>ad</code>配下に、お客様作成GPOをリンクする</li>
+<li>WorkSpaces固有設定を<code class="inline-code">Default Domain Policy</code>へ追加しない</li>
+<li>お客様管理OU<code class="inline-code">ad</code>配下に、お客様作成GPOをリンクする</li>
 <li>GPO本体の既存設定とリンク範囲を確認した後に対象OUへ直接リンクする</li>
 <li>適用だけを止める場合は、GPO本体を残してリンクを無効化または削除する</li>
 <li>GPO本体を削除する場合は、お客様作成GPOだけを対象にし、バックアップと全リンク先を確認する</li>
@@ -814,43 +824,43 @@ Get-ADComputer -SearchBase $workSpacesOu -Filter * -Properties DistinguishedName
 </tr>
 </thead>
 <tbody><tr>
-<td><code>Amazon WorkSpaces DCV Policy</code></td>
+<td><code class="inline-code">Amazon WorkSpaces DCV Policy</code></td>
 <td>お客様が作成・管理するDCV固有設定</td>
 <td>WorkSpaces OUへ直接リンクして継続利用</td>
 </tr>
 <tr>
-<td><code>WorkSpaces-Computer-Policy</code></td>
+<td><code class="inline-code">WorkSpaces-Computer-Policy</code></td>
 <td>GPO管理操作の確認</td>
 <td>リンク・順序変更・削除を確認後に削除</td>
 </tr>
 <tr>
-<td><code>WorkSpaces-User-Policy</code></td>
+<td><code class="inline-code">WorkSpaces-User-Policy</code></td>
 <td>利用者向け設定</td>
 <td>ユーザーOUまたはループバック設計後に別途作成</td>
 </tr>
 </tbody></table>
 <p>Windows WorkSpacesの管理テンプレート、適用できる設定および注意事項は出典：<a href="https://docs.aws.amazon.com/ja_jp/workspaces/latest/adminguide/group_policy.html">AWS公式：WorkSpaces PersonalでWindows WorkSpacesを管理する</a></p>
-<p><code>Amazon WorkSpaces DCV Policy</code>はAWS Managed Microsoft ADの作成時に自動作成されるGPOではありません。本手順でお客様が作成し、管理するGPOです。既に存在する場合は新規作成せず、GPO名、設定、所有者、全リンク先および変更申請を照合してから使用する</p>
+<p><code class="inline-code">Amazon WorkSpaces DCV Policy</code>はAWS Managed Microsoft ADの作成時に自動作成されるGPOではありません。本手順でお客様が作成し、管理するGPOです。既に存在する場合は新規作成せず、GPO名、設定、所有者、全リンク先および変更申請を照合してから使用する</p>
 <h3 id="前提条件-3">前提条件</h3>
-<ul>
+<ul class="check-list">
 <li>✔ <a href="workspaces-provisioning-gpo.html">Amazon WorkSpaces用OU作成・権限委任・ターゲットOU設定手順</a>を完了している</li>
-<li>✔ <code>ad\Computers\WorkSpaces</code> OUと対象WorkSpaceが存在する</li>
+<li>✔ <code class="inline-code">ad\Computers\WorkSpaces</code> OUと対象WorkSpaceが存在する</li>
 <li>✔ ドメイン参加済み管理端末でGPMCを使用できる</li>
-<li>✔ パイロットWorkSpaceの<code>C:\Program Files\Amazon\WSP</code>から、対象版の<code>wsp.admx</code>と<code>wsp.adml</code>を取得している</li>
+<li>✔ パイロットWorkSpaceの<code class="inline-code">C:\Program Files\Amazon\WSP</code>から、対象版の<code class="inline-code">wsp.admx</code>と<code class="inline-code">wsp.adml</code>を取得している</li>
 <li>✔ 変更前のリンク、設定、セキュリティフィルター、WMIフィルターおよび適用順序を確認している</li>
-<li>✔ <code>Amazon WorkSpaces DCV Policy</code>が既存か未作成かを確認し、既存の場合はお客様管理GPOであることを確認している</li>
+<li>✔ <code class="inline-code">Amazon WorkSpaces DCV Policy</code>が既存か未作成かを確認し、既存の場合はお客様管理GPOであることを確認している</li>
 <li>✔ 有効化する設定値がセキュリティ・運用・利用部門で承認されている</li>
 </ul>
 <h3 id="dcv管理テンプレートの中央ストア配置">DCV管理テンプレートの中央ストア配置</h3>
 <p>中央ストアは次のパス</p>
 <div class="code"><div class="code-header"><span>text</span><button class="copy" type="button">Copy</button></div><pre><code>\\ad.example.com\SYSVOL\ad.example.com\Policies\PolicyDefinitions</code></pre></div>
-<p>既に<code>PolicyDefinitions</code>がある場合は、フォルダー全体を作り直したり、ローカルのフォルダー一式で上書きしたりしません。対象ファイルだけを版管理して追加する</p>
-<p>図1では、①<code>Policies</code>配下の<code>PolicyDefinitions</code>を確認する</p>
+<p>既に<code class="inline-code">PolicyDefinitions</code>がある場合は、フォルダー全体を作り直したり、ローカルのフォルダー一式で上書きしたりしません。対象ファイルだけを版管理して追加する</p>
+<p>図1では、①<code class="inline-code">Policies</code>配下の<code class="inline-code">PolicyDefinitions</code>を確認する</p>
 <figure class="screenshot-wide aws-console-identity"><figcaption>PolicyDefinitions中央ストアの存在確認</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/022-policydefinitions中央ストアの存在確認.png" alt="PolicyDefinitions中央ストアの存在確認" width="1920" height="1102" loading="lazy"></div></figure>
 
 
 
-<p>パイロットWorkSpaceから<code>wsp.admx</code>を次へコピーする</p>
+<p>パイロットWorkSpaceから<code class="inline-code">wsp.admx</code>を次へコピーする</p>
 <div class="code"><div class="code-header"><span>text</span><button class="copy" type="button">Copy</button></div><pre><code>コピー元：C:\Program Files\Amazon\WSP\wsp.admx
 コピー先：\\ad.example.com\SYSVOL\ad.example.com\Policies\PolicyDefinitions\wsp.admx</code></pre></div>
 <p>図2では、①コピー元、②コピー先を確認する</p>
@@ -858,15 +868,15 @@ Get-ADComputer -SearchBase $workSpacesOu -Filter * -Properties DistinguishedName
 
 
 
-<p><code>PolicyDefinitions</code>配下に言語フォルダー<code>en-US</code>があることを確認する</p>
+<p><code class="inline-code">PolicyDefinitions</code>配下に言語フォルダー<code class="inline-code">en-US</code>があることを確認する</p>
 <figure class="screenshot-wide aws-console-identity"><figcaption>en-USフォルダーの存在確認</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/024-en-usフォルダーの存在確認.png" alt="en-USフォルダーの存在確認" width="1920" height="1102" loading="lazy"></div></figure>
 
 
 
-<p><code>wsp.adml</code>を次へコピーする</p>
+<p><code class="inline-code">wsp.adml</code>を次へコピーする</p>
 <div class="code"><div class="code-header"><span>text</span><button class="copy" type="button">Copy</button></div><pre><code>コピー元：C:\Program Files\Amazon\WSP\wsp.adml
 コピー先：\\ad.example.com\SYSVOL\ad.example.com\Policies\PolicyDefinitions\en-US\wsp.adml</code></pre></div>
-<p>図4では、①コピー元、②<code>PolicyDefinitions\en-US</code>への配置を確認する</p>
+<p>図4では、①コピー元、②<code class="inline-code">PolicyDefinitions\en-US</code>への配置を確認する</p>
 <figure class="screenshot-wide aws-console-identity"><figcaption>wsp.admlの配置完了</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/025-wsp-admlの配置完了.png" alt="wsp.admlの配置完了" width="1920" height="1102" loading="lazy"></div></figure>
 
 
@@ -875,20 +885,20 @@ Get-ADComputer -SearchBase $workSpacesOu -Filter * -Properties DistinguishedName
 <p>中央ストアは同一ドメインのGPMC利用者が共有します。既存ファイルを削除せず、追加するファイルの取得元、更新日時およびバージョンを確認する</p>
 </div>
 <h3 id="dcv用gpo本体を準備する">DCV用GPO本体を準備する</h3>
-<ol>
-<li>GPMCで対象ドメインの「グループポリシーオブジェクト」を開き、<code>Amazon WorkSpaces DCV Policy</code>の有無を確認</li>
+<ol class="step-list">
+<li>GPMCで対象ドメインの「グループポリシーオブジェクト」を開き、<code class="inline-code">Amazon WorkSpaces DCV Policy</code>の有無を確認</li>
 <li>既に存在する場合は、GPOの「スコープ」と「設定」を開き、全リンク先、セキュリティフィルター、WMIフィルターおよび既存設定を確認する。別用途の同名GPOやAWS管理GPOとして扱われている場合は操作を中止</li>
 <li>存在しない場合は「グループポリシーオブジェクト」を右クリックし、「新規」を選択</li>
-<li>名前へ<code>Amazon WorkSpaces DCV Policy</code>を入力し、「ソース スターターGPO」は「なし」のまま作成</li>
+<li>名前へ<code class="inline-code">Amazon WorkSpaces DCV Policy</code>を入力し、「ソース スターターGPO」は「なし」のまま作成</li>
 <li>作成直後はリンク先がなく、設定が未構成であることを確認する。後続の「DCV用GPOのリンク範囲変更」でWorkSpaces OUだけへリンクし、「DCV設定の反映」で設定</li>
 </ol>
 <div class="callout callout-warning"><p><strong>注意：既存の同名GPOを上書きしない</strong></p>
 <p>同名GPOが存在する場合は、そのGPOを本手順で新規作成しません。既存のリンク先や設定が本書と異なる場合は、影響範囲を確認して変更内容を再承認する</p>
 </div>
 <h3 id="検証用gpo本体の作成">検証用GPO本体の作成</h3>
-<p><code>WorkSpaces-Computer-Policy</code>は、GPO本体の作成、リンク、リンク順序変更、リンク解除および削除という管理操作を確認するための一時GPOです。設定値は追加しないため、ポリシーの機能適用を検証するGPOではありません。承認済みの作業時間内だけ使用し、本書の削除手順まで同じ作業で完了する</p>
-<ol>
-<li><code>gpmc.msc</code>を起動</li>
+<p><code class="inline-code">WorkSpaces-Computer-Policy</code>は、GPO本体の作成、リンク、リンク順序変更、リンク解除および削除という管理操作を確認するための一時GPOです。設定値は追加しないため、ポリシーの機能適用を検証するGPOではありません。承認済みの作業時間内だけ使用し、本書の削除手順まで同じ作業で完了する</p>
+<ol class="step-list">
+<li><code class="inline-code">gpmc.msc</code>を起動</li>
 <li>対象ドメインの「グループポリシーオブジェクト」を右クリックし、「新規」を選択</li>
 </ol>
 <p>図5では、①「グループポリシーオブジェクト」、②「新規」を選択する</p>
@@ -897,7 +907,7 @@ Get-ADComputer -SearchBase $workSpacesOu -Filter * -Properties DistinguishedName
 
 
 <ol start="3">
-<li>GPO名へ<code>WorkSpaces-Computer-Policy</code>を入力</li>
+<li>GPO名へ<code class="inline-code">WorkSpaces-Computer-Policy</code>を入力</li>
 <li>「ソース スターターGPO」は「なし」のまま「OK」を選択</li>
 </ol>
 <p>図6では、①GPO名、②「OK」を確認する</p>
@@ -914,32 +924,32 @@ Get-ADComputer -SearchBase $workSpacesOu -Filter * -Properties DistinguishedName
 
 <p>本体作成時は「このドメインにGPOを作成し、このコンテナーにリンクする」を使用しません。GPOの作成とOUへのリンクを分け、後続手順でリンク先を明示的に選択する</p>
 <h3 id="dcv管理テンプレートの表示確認">DCV管理テンプレートの表示確認</h3>
-<p><code>Amazon WorkSpaces DCV Policy</code>を編集し、次を展開する</p>
+<p><code class="inline-code">Amazon WorkSpaces DCV Policy</code>を編集し、次を展開する</p>
 <div class="code"><div class="code-header"><span>text</span><button class="copy" type="button">Copy</button></div><pre><code>コンピューターの構成
 └─ ポリシー
    └─ 管理用テンプレート
       └─ Amazon
          └─ WSP</code></pre></div>
-<p>AWS資料ではDCV、GPMCのテンプレート名ではWSPと表示される場合があります。図8では、①<code>Amazon &gt; WSP</code>、②設定一覧を確認する</p>
+<p>AWS資料ではDCV、GPMCのテンプレート名ではWSPと表示される場合があります。図8では、①<code class="inline-code">Amazon &gt; WSP</code>、②設定一覧を確認する</p>
 <figure class="screenshot-wide aws-console-identity"><figcaption>DCV管理テンプレートの表示確認</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/029-dcv管理テンプレートの表示確認.png" alt="DCV管理テンプレートの表示確認" width="1920" height="1102" loading="lazy"></div></figure>
 
 
 
 <p>図8の全項目が「未構成」である場合、この画面で確認できるのはテンプレートの読み込みまでです。設定値の反映は後続の図17～19で確認する</p>
 <h3 id="dcv用gpoのリンク範囲変更">DCV用GPOのリンク範囲変更</h3>
-<p>最初に<code>WorkSpaces</code> OUへ対象GPOを直接リンクし、リンクが有効であることを確認する。親OU<code>ad</code>側に同じGPOのリンクが存在する場合だけ、他の子OUへの影響を確認したうえで親OU側のリンクを削除する</p>
+<p>最初に<code class="inline-code">WorkSpaces</code> OUへ対象GPOを直接リンクし、リンクが有効であることを確認する。親OU<code class="inline-code">ad</code>側に同じGPOのリンクが存在する場合だけ、他の子OUへの影響を確認したうえで親OU側のリンクを削除する</p>
 <h4 id="workspaces-ouへ直接リンクする">WorkSpaces OUへ直接リンクする</h4>
-<ol>
-<li>GPMCで<code>ad\Computers\WorkSpaces</code>を右クリック</li>
+<ol class="step-list">
+<li>GPMCで<code class="inline-code">ad\Computers\WorkSpaces</code>を右クリック</li>
 <li>「既存のGPOのリンク」を選択</li>
 </ol>
-<p>図9では、①<code>WorkSpaces</code> OU、②「既存のGPOのリンク」を選択する</p>
+<p>図9では、①<code class="inline-code">WorkSpaces</code> OU、②「既存のGPOのリンク」を選択する</p>
 <figure class="screenshot-wide"><figcaption>WorkSpaces OUの既存GPOリンクメニュー</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/030-workspaces-ouの既存gpoリンクメニュー.png" alt="WorkSpaces OUの既存GPOリンクメニュー" width="1362" height="718" loading="lazy"></div></figure>
 
 
 
 <ol start="3">
-<li><code>Amazon WorkSpaces DCV Policy</code>を選択して「OK」を選択</li>
+<li><code class="inline-code">Amazon WorkSpaces DCV Policy</code>を選択して「OK」を選択</li>
 </ol>
 <p>図10では、①対象ドメイン、②GPO、③「OK」を確認する</p>
 <figure class="screenshot-wide"><figcaption>Amazon WorkSpaces DCV Policyの選択</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/031-amazon-workspaces-dcv-policyの選択.png" alt="Amazon WorkSpaces DCV Policyの選択" width="526" height="470" loading="lazy"></div></figure>
@@ -948,14 +958,14 @@ Get-ADComputer -SearchBase $workSpacesOu -Filter * -Properties DistinguishedName
 
 <ol start="4">
 <li>WorkSpaces OUのリンク一覧で、「リンクの有効化」が「はい」、「強制」が「いいえ」、WMIフィルターが「なし」であることを確認</li>
-<li>セキュリティフィルターは<code>Authenticated Users</code>と</li>
+<li>セキュリティフィルターは<code class="inline-code">Authenticated Users</code>と</li>
 </ol>
 <h4 id="親ouのリンクだけを削除する">親OUのリンクだけを削除する</h4>
-<ol>
+<ol class="step-list">
 <li>WorkSpaces OU側の直接リンクが有効であることを確認</li>
-<li>親OU<code>ad</code>に同じGPOの直接リンクがあるかを確認する。リンクがない場合は削除操作を行わず、「GPO本体のスコープを確認する」へ進む</li>
-<li>親OUにリンクがある場合は、<code>ad</code>配下の子OUとコンピューターを確認し、WorkSpaces OU以外でこのGPOを継承している対象がないこと、または継承を止めても影響がないことを確認する。ほかの子OUや端末がこのGPOを必要としている場合は、親OUのリンクを削除せず、対象別のリンク設計を再検討</li>
-<li>影響がないことを確認できた場合だけ、親OU<code>ad</code>直下に表示される<code>Amazon WorkSpaces DCV Policy</code>のリンクを右クリックし、「削除」を選択</li>
+<li>親OU<code class="inline-code">ad</code>に同じGPOの直接リンクがあるかを確認する。リンクがない場合は削除操作を行わず、「GPO本体のスコープを確認する」へ進む</li>
+<li>親OUにリンクがある場合は、<code class="inline-code">ad</code>配下の子OUとコンピューターを確認し、WorkSpaces OU以外でこのGPOを継承している対象がないこと、または継承を止めても影響がないことを確認する。ほかの子OUや端末がこのGPOを必要としている場合は、親OUのリンクを削除せず、対象別のリンク設計を再検討</li>
+<li>影響がないことを確認できた場合だけ、親OU<code class="inline-code">ad</code>直下に表示される<code class="inline-code">Amazon WorkSpaces DCV Policy</code>のリンクを右クリックし、「削除」を選択</li>
 </ol>
 <p>図11では、①親OU側のGPOリンク、②「削除」を選択する</p>
 <figure class="screenshot-wide"><figcaption>親OU側GPOリンクの削除</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/032-親ou側gpoリンクの削除.png" alt="親OU側GPOリンクの削除" width="1358" height="721" loading="lazy"></div></figure>
@@ -972,20 +982,20 @@ Get-ADComputer -SearchBase $workSpacesOu -Filter * -Properties DistinguishedName
 <ol start="6">
 <li>GPO本体が残り、WorkSpaces OUに同GPOの直接リンクが1件あることを確認</li>
 </ol>
-<p>図13では、①<code>WorkSpaces</code> OU、②直接リンクと有効状態を確認する</p>
+<p>図13では、①<code class="inline-code">WorkSpaces</code> OU、②直接リンクと有効状態を確認する</p>
 <figure class="screenshot-wide"><figcaption>WorkSpaces OUへの直接リンク確認</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/034-workspaces-ouへの直接リンク確認.png" alt="WorkSpaces OUへの直接リンク確認" width="1359" height="725" loading="lazy"></div></figure>
 
 
 
 <p>「リンクの有効化」がチェック済みの場合は押し直しません。押すとリンクが無効になります。リンクの削除とGPO本体の削除は別の操作</p>
 <h4 id="gpo本体のスコープを確認する">GPO本体のスコープを確認する</h4>
-<ol>
-<li>「グループポリシーオブジェクト」配下の<code>Amazon WorkSpaces DCV Policy</code>を選択</li>
+<ol class="step-list">
+<li>「グループポリシーオブジェクト」配下の<code class="inline-code">Amazon WorkSpaces DCV Policy</code>を選択</li>
 <li>「スコープ」を開き、リンク先が次の1件だけであることを確認</li>
 </ol>
 <div class="code"><div class="code-header"><span>text</span><button class="copy" type="button">Copy</button></div><pre><code>ad.example.com/ad/Computers/WorkSpaces</code></pre></div>
 <ol start="3">
-<li>強制なし、リンク有効、<code>Authenticated Users</code>、WMIフィルターなしを確認</li>
+<li>強制なし、リンク有効、<code class="inline-code">Authenticated Users</code>、WMIフィルターなしを確認</li>
 </ol>
 <p>図14では、①GPO本体、②リンク先、③セキュリティフィルター、④WMIフィルターを確認する</p>
 <figure class="screenshot-wide"><figcaption>専用GPOの最終リンク範囲</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/035-専用gpoの最終リンク範囲.png" alt="専用GPOの最終リンク範囲" width="1364" height="724" loading="lazy"></div></figure>
@@ -1002,18 +1012,18 @@ Get-ADComputer -SearchBase $workSpacesOu -Filter * -Properties DistinguishedName
 
 
 
-<p><code>Default Domain Policy</code>へ<code>Amazon\WSP</code>設定を追加していないことも確認する</p>
+<p><code class="inline-code">Default Domain Policy</code>へ<code class="inline-code">Amazon\WSP</code>設定を追加していないことも確認する</p>
 <h3 id="検証用gpoのリンク">検証用GPOのリンク</h3>
-<ol>
-<li><code>WorkSpaces</code> OUを右クリックし、「既存のGPOのリンク」を選択</li>
+<ol class="step-list">
+<li><code class="inline-code">WorkSpaces</code> OUを右クリックし、「既存のGPOのリンク」を選択</li>
 </ol>
-<p>図15では、①<code>WorkSpaces</code> OU、②リンク操作を確認する</p>
+<p>図15では、①<code class="inline-code">WorkSpaces</code> OU、②リンク操作を確認する</p>
 <figure class="screenshot-wide"><figcaption>検証用GPOのリンクメニュー</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/038-検証用gpoのリンクメニュー.png" alt="検証用GPOのリンクメニュー" width="1360" height="722" loading="lazy"></div></figure>
 
 
 
 <ol start="2">
-<li><code>WorkSpaces-Computer-Policy</code>を選択して「OK」を選択</li>
+<li><code class="inline-code">WorkSpaces-Computer-Policy</code>を選択して「OK」を選択</li>
 </ol>
 <p>図16では、①検証用GPO、②「OK」を確認する</p>
 <figure class="screenshot-wide"><figcaption>検証用GPOの選択</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/039-検証用gpoの選択.png" alt="検証用GPOの選択" width="525" height="469" loading="lazy"></div></figure>
@@ -1021,39 +1031,39 @@ Get-ADComputer -SearchBase $workSpacesOu -Filter * -Properties DistinguishedName
 
 
 <h3 id="dcv設定の反映">DCV設定の反映</h3>
-<p><code>Amazon WorkSpaces DCV Policy</code>を編集し、<code>Computer Configuration\Policies\Administrative Templates\Amazon\WSP</code>の<code>Configure clipboard redirection</code>を開く</p>
-<ol>
+<p><code class="inline-code">Amazon WorkSpaces DCV Policy</code>を編集し、<code class="inline-code">Computer Configuration\Policies\Administrative Templates\Amazon\WSP</code>の<code class="inline-code">Configure clipboard redirection</code>を開く</p>
+<ol class="step-list">
 <li>「有効」を選択</li>
-<li>オプションを<code>Copy and Paste</code>に</li>
+<li>オプションを<code class="inline-code">Copy and Paste</code>に</li>
 <li>「適用」、「OK」の順に選択</li>
 </ol>
-<p>図17では、①「有効」、②<code>Copy and Paste</code>、③「適用」、④「OK」を確認する</p>
+<p>図17では、①「有効」、②<code class="inline-code">Copy and Paste</code>、③「適用」、④「OK」を確認する</p>
 <figure class="screenshot-wide"><figcaption>クリップボードリダイレクト設定</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/040-クリップボードリダイレクト設定.png" alt="クリップボードリダイレクト設定" width="685" height="635" loading="lazy"></div></figure>
 
 
 
-<p>設定一覧で、<code>Configure clipboard redirection</code>だけが「有効」であることを確認する</p>
+<p>設定一覧で、<code class="inline-code">Configure clipboard redirection</code>だけが「有効」であることを確認する</p>
 <figure class="screenshot-wide"><figcaption>クリップボードリダイレクト有効化確認</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/041-クリップボードリダイレクト有効化確認.png" alt="クリップボードリダイレクト有効化確認" width="1503" height="904" loading="lazy"></div></figure>
 
 
 
-<p>GPO本体の「設定」で、<code>Configure clipboard redirection</code>が「有効」、<code>Clipboard redirection option</code>が<code>Copy and Paste</code>であることを確認する</p>
+<p>GPO本体の「設定」で、<code class="inline-code">Configure clipboard redirection</code>が「有効」、<code class="inline-code">Clipboard redirection option</code>が<code class="inline-code">Copy and Paste</code>であることを確認する</p>
 <figure class="screenshot-wide"><figcaption>GPO設定タブの最終値確認</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/042-gpo設定タブの最終値確認.png" alt="GPO設定タブの最終値確認" width="1408" height="820" loading="lazy"></div></figure>
 
 
 
-<p><code>Copy and Paste</code>はWindows WorkSpacesの既定動作と同じため、コピー操作の成功だけではGPO適用を証明できません。GPMCの設定値と<code>gpresult</code>の適用GPO名を確認する</p>
+<p><code class="inline-code">Copy and Paste</code>はWindows WorkSpacesの既定動作と同じため、コピー操作の成功だけではGPO適用を証明できません。GPMCの設定値と<code class="inline-code">gpresult</code>の適用GPO名を確認する</p>
 <h3 id="gpoの適用順序変更">GPOの適用順序変更</h3>
 <p>同じOUに複数GPOをリンクした場合は、競合する設定がないことを確認してから順序を変更する</p>
-<ol>
-<li><code>WorkSpaces</code> OUのリンク一覧で、<code>Amazon WorkSpaces DCV Policy</code>が順序1、<code>WorkSpaces-Computer-Policy</code>が順序2であることを確認</li>
+<ol class="step-list">
+<li><code class="inline-code">WorkSpaces</code> OUのリンク一覧で、<code class="inline-code">Amazon WorkSpaces DCV Policy</code>が順序1、<code class="inline-code">WorkSpaces-Computer-Policy</code>が順序2であることを確認</li>
 </ol>
 <figure class="screenshot-wide"><figcaption>GPO適用順序の変更前</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/043-gpo適用順序の変更前.png" alt="GPO適用順序の変更前" width="1596" height="713" loading="lazy"></div></figure>
 
 
 
 <ol start="2">
-<li><code>WorkSpaces-Computer-Policy</code>を選択し、「リンクを上に移動」を選択</li>
+<li><code class="inline-code">WorkSpaces-Computer-Policy</code>を選択し、「リンクを上に移動」を選択</li>
 </ol>
 <p>図21では、①検証用GPO、②「リンクを上に移動」を確認する</p>
 <figure class="screenshot-wide"><figcaption>GPO適用順序の変更操作</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/044-gpo適用順序の変更操作.png" alt="GPO適用順序の変更操作" width="1596" height="712" loading="lazy"></div></figure>
@@ -1061,17 +1071,17 @@ Get-ADComputer -SearchBase $workSpacesOu -Filter * -Properties DistinguishedName
 
 
 <ol start="3">
-<li><code>WorkSpaces-Computer-Policy</code>が順序1、<code>Amazon WorkSpaces DCV Policy</code>が順序2になったことを確認</li>
+<li><code class="inline-code">WorkSpaces-Computer-Policy</code>が順序1、<code class="inline-code">Amazon WorkSpaces DCV Policy</code>が順序2になったことを確認</li>
 </ol>
 <figure class="screenshot-wide"><figcaption>GPO適用順序の変更完了</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/045-gpo適用順序の変更完了.png" alt="GPO適用順序の変更完了" width="1595" height="714" loading="lazy"></div></figure>
 
 
 
-<p>同じコンテナーにリンクされたGPOは、リンク順序1が最も高い優先度です。ただし、実効値はサイト、ドメイン、OU、継承、強制、セキュリティフィルターおよびWMIフィルターの影響を受けるため、代表端末の<code>gpresult</code>で確認する</p>
+<p>同じコンテナーにリンクされたGPOは、リンク順序1が最も高い優先度です。ただし、実効値はサイト、ドメイン、OU、継承、強制、セキュリティフィルターおよびWMIフィルターの影響を受けるため、代表端末の<code class="inline-code">gpresult</code>で確認する</p>
 <h3 id="検証用gpoの削除">検証用GPOの削除</h3>
-<p>本節で削除するのは<code>WorkSpaces-Computer-Policy</code>だけです。AWSが作成・管理するGPOと、継続利用する<code>Amazon WorkSpaces DCV Policy</code>は削除しない</p>
-<ol>
-<li><code>WorkSpaces-Computer-Policy</code>の全リンク先とセキュリティフィルターを確認</li>
+<p>本節で削除するのは<code class="inline-code">WorkSpaces-Computer-Policy</code>だけです。AWSが作成・管理するGPOと、継続利用する<code class="inline-code">Amazon WorkSpaces DCV Policy</code>は削除しない</p>
+<ol class="step-list">
+<li><code class="inline-code">WorkSpaces-Computer-Policy</code>の全リンク先とセキュリティフィルターを確認</li>
 <li>必要な保持期間に従ってGPOをバックアップ</li>
 <li>GPO本体を右クリックして「削除」を選択</li>
 </ol>
@@ -1095,7 +1105,7 @@ Get-ADComputer -SearchBase $workSpacesOu -Filter * -Properties DistinguishedName
 
 
 <ol start="6">
-<li>WorkSpaces OUのリンク一覧に<code>Amazon WorkSpaces DCV Policy</code>だけが残っていることを確認</li>
+<li>WorkSpaces OUのリンク一覧に<code class="inline-code">Amazon WorkSpaces DCV Policy</code>だけが残っていることを確認</li>
 </ol>
 <figure class="screenshot-wide"><figcaption>GPO削除後のリンク確認</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/049-gpo削除後のリンク確認.png" alt="GPO削除後のリンク確認" width="1360" height="711" loading="lazy"></div></figure>
 
@@ -1104,21 +1114,26 @@ Get-ADComputer -SearchBase $workSpacesOu -Filter * -Properties DistinguishedName
 <p>特定OUへの適用だけを止める場合は、GPO本体を削除せずリンクを削除します。GPO本体を誤って削除した場合は追加変更を停止し、バックアップから復元して必要なOUへ再リンクする</p>
 <h3 id="gpo適用結果の確認">GPO適用結果の確認</h3>
 <p>代表WorkSpaceで管理者PowerShellまたはコマンドプロンプトを開く</p>
-<div class="code" data-prompt="$"><div class="code-header"><span>powershell</span><button class="copy" type="button">Copy</button></div><pre><code>gpupdate /force
+<div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>gpupdate /force
 gpresult /scope computer /r</code></pre></div>
-<p><code>gpupdate</code>でコンピューターとユーザーポリシーの更新成功を確認する。図27では、コンピューターのOUが<code>ad\Computers\WorkSpaces</code>で、適用GPOに<code>Amazon WorkSpaces DCV Policy</code>があり、削除した<code>WorkSpaces-Computer-Policy</code>がないことを確認する</p>
+<p><code class="inline-code">gpupdate</code>でコンピューターとユーザーポリシーの更新成功を確認する。図27では、コンピューターのOUが<code class="inline-code">ad\Computers\WorkSpaces</code>で、適用GPOに<code class="inline-code">Amazon WorkSpaces DCV Policy</code>があり、削除した<code class="inline-code">WorkSpaces-Computer-Policy</code>がないことを確認する</p>
 <figure class="screenshot-wide"><figcaption>gpresultによるGPO適用確認</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/050-gpresultによるgpo適用確認.png" alt="gpresultによるGPO適用確認" width="1040" height="893" loading="lazy"></div></figure>
 
 
 
-<p>適用されない場合は、<code>gpresult</code>の拒否理由とイベントビューアーの<code>Microsoft\Windows\GroupPolicy\Operational</code>を確認する。Active DirectoryとSYSVOLのレプリケーション待ち、セキュリティフィルター、WMIフィルター、空のGPOおよびアクセス拒否を切り分ける</p>
-<p>多数のWorkSpacesは、通常のグループポリシー更新で順次反映されます。<code>gpupdate /force</code>は代表端末での即時確認や障害調査に使用し、全台へ手動で繰り返し実行しない</p>
+<p>適用されない場合は、<code class="inline-code">gpresult</code>の拒否理由とイベントビューアーの<code class="inline-code">Microsoft\Windows\GroupPolicy\Operational</code>を確認する。Active DirectoryとSYSVOLのレプリケーション待ち、セキュリティフィルター、WMIフィルター、空のGPOおよびアクセス拒否を切り分ける</p>
+<p>多数のWorkSpacesは、通常のグループポリシー更新で順次反映されます。<code class="inline-code">gpupdate /force</code>は代表端末での即時確認や障害調査に使用し、全台へ手動で繰り返し実行しない</p>
 <h3 id="ユーザーgpoとパスワードポリシー">ユーザーGPOとパスワードポリシー</h3>
-<p>コンピューター設定はWorkSpaceのコンピューターオブジェクトが所属する<code>ad\Computers\WorkSpaces</code>へリンクします。ユーザー設定は利用者のユーザーオブジェクトが所属するOUへリンクします。WorkSpaces利用者だけに限定する場合は、専用ユーザーOU、セキュリティフィルター、または設計済みのループバック処理を使用する</p>
+<p>コンピューター設定はWorkSpaceのコンピューターオブジェクトが所属する<code class="inline-code">ad\Computers\WorkSpaces</code>へリンクします。ユーザー設定は利用者のユーザーオブジェクトが所属するOUへリンクします。WorkSpaces利用者だけに限定する場合は、専用ユーザーOU、セキュリティフィルター、または設計済みのループバック処理を使用する</p>
 <p>WorkSpacesコンピューターOUへリンクするGPOは、ドメインユーザーのパスワード有効期限を変更するためのGPOではありません。ドメインの既定パスワードポリシーと、対象ユーザーへ割り当てたきめ細かなパスワードポリシーを別に管理する</p>
 <h3 id="切り戻し-2">切り戻し</h3>
-<p>設定値だけを戻す場合は、対象設定を「未構成」へ戻し、GPMCの「設定」、<code>gpupdate</code>および<code>gpresult</code>で反映を確認する。適用だけを止める場合は、WorkSpaces OUのリンクを無効化または削除し、GPO本体を保持する</p>
-
+<p>設定値だけを戻す場合は、対象設定を「未構成」へ戻し、GPMCの「設定」、<code class="inline-code">gpupdate</code>および<code class="inline-code">gpresult</code>で反映を確認する。適用だけを止める場合は、WorkSpaces OUのリンクを無効化または削除し、GPO本体を保持する</p>
+      <h2 id="related-pages">関連ページ</h2>
+      <div class="page-link-grid">
+        <a class="page-link-card" href="workspaces-ad-connector.html"><strong>AD Connector 構築・権限委任</strong><span>マルチVPC・閉域VDI基盤案件の関連手順</span></a>
+        <a class="page-link-card" href="workspaces-skill-transfer.html"><strong>全体構築・運用順序</strong><span>マルチVPC・閉域VDI基盤案件の関連手順</span></a>
+        <a class="page-link-card" href="workspaces-image-bundle.html"><strong>WorkSpaces カスタムイメージ・バンドル</strong><span>マルチVPC・閉域VDI基盤案件の関連手順</span></a>
+      </div>
     </main>
   </div>
   <script src="../assets/app.js?v=20260908-skill-transfer1"></script>

@@ -51,8 +51,8 @@ const documents = {
 const pageSpecs = [
   {
     file: "workspaces-skill-transfer.html",
-    title: "Amazon WorkSpaces 技術移管",
-    description: "AWS Managed Microsoft ADからAmazon WorkSpaces、カスタムイメージ、Patch Manager、Cost Optimizerまでを再構築できる技術移管資料",
+    title: "マルチVPC・閉域VDI基盤案件",
+    description: "複数VPCへ分離した閉域VDI基盤の構築順序と、Managed Microsoft AD、AD Connector、Amazon WorkSpacesの運用手順",
     lead: "AWS Managed Microsoft AD、AD Connector、Amazon WorkSpaces、OU・GPO、カスタムイメージ、Systems Manager、Cost Optimizerを依存関係に沿って再構築する<br>実機検証で確認した設定値、工程ゲート、証跡画像および運用上の判断基準をまとめる",
     docs: ["overview"],
     hero: true,
@@ -610,7 +610,10 @@ const shell = (page, body) => `<!DOCTYPE html>
   <div class="layout layout-wide">
 ${sidebarPlaceholder}
     <main class="content workspaces-skill-transfer-guide">
-      <nav class="breadcrumb" aria-label="Breadcrumb"><a href="../"><span class="nav-icon" aria-hidden="true">⌂</span>Home</a><span>技術移管</span></nav>
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="../"><span class="nav-icon" aria-hidden="true">⌂</span>Home</a>
+        <span>トピック</span>
+      </nav>
       <h1>${htmlEscape(page.title)}</h1>
       <p class="lead">${page.lead}</p>
 ${body}
@@ -653,7 +656,7 @@ for (const page of pageSpecs) {
     body = convertSourceLinksToCards(body);
   }
   if (page.hero) {
-    body = `<nav class="skill-transfer-journey" aria-label="技術移管の詳細手順">
+    body = `<nav class="skill-transfer-journey" aria-label="マルチVPC・閉域VDI基盤案件の詳細手順">
       <a href="workspaces-managed-ad.html"><strong>1. Managed AD</strong><span>構成・作成・ユーザー管理</span></a>
       <a href="workspaces-management-ec2.html"><strong>2. 管理用EC2</strong><span>接続・ADUC・GPMC</span></a>
       <a href="workspaces-ad-connector.html"><strong>3. AD Connector</strong><span>権限委任・Peering・作成</span></a>
@@ -690,6 +693,15 @@ const normalize = spawnSync(
 );
 if (normalize.status !== 0) {
   throw new Error(normalize.stderr || normalize.stdout || "Failed to normalize writing style");
+}
+
+const applyTemplate = spawnSync(
+  process.execPath,
+  [path.join(scriptDir, "apply-workspaces-template.mjs")],
+  { cwd: root, encoding: "utf8" },
+);
+if (applyTemplate.status !== 0) {
+  throw new Error(applyTemplate.stderr || applyTemplate.stdout || "Failed to apply WorkSpaces page template");
 }
 
 console.log(JSON.stringify({ pages: pageSpecs.length, totalImages, awsConsoleImages }, null, 2));

@@ -26,18 +26,8 @@
       </div>
       <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">✎</span>記事</p>
       <a href="cloudflare-private-site.html">Private GitHubリポジトリをCloudflare Workersで認証付き公開してみた</a>
-      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">◈</span>Terraform</p>
-      <a href="terraform.html">Terraform 概要</a>
-      <a href="hcp-terraform.html">HCP Terraform（Terraform Cloud）</a>
-      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">☁︎</span>AWS</p>
-      <a href="cloudformation.html">CloudFormation 運用手順集</a>
-      <a href="aws-cli.html">AWS CLI 特殊対応</a>
-      <a href="aws-cli-reference.html">AWS CLI コマンドリファレンス</a>
-      <a href="eventbridge-scheduler.html">EventBridge Scheduler</a>
-      <a href="aws-directory-service.html">AWS Directory Service 運用手順</a>
-      <a href="amazon-workspaces.html">Amazon WorkSpaces</a>
       <details class="sidebar-nested-menu" open>
-        <summary>PoC 閉域VPC・AD／VDI環境</summary>
+        <summary>マルチVPC・閉域VDI基盤案件（9ページ）</summary>
         <div class="sidebar-subnav">
           <a href="workspaces-skill-transfer.html">全体構築・運用順序</a>
           <a href="workspaces-managed-ad.html">AWS Managed Microsoft AD 構築・管理</a>
@@ -50,6 +40,16 @@
           <a href="workspaces-cloudwatch-monitoring.html">CloudWatch・SNS 監視／通知</a>
         </div>
       </details>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">◈</span>Terraform</p>
+      <a href="terraform.html">Terraform 概要</a>
+      <a href="hcp-terraform.html">HCP Terraform（Terraform Cloud）</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">☁︎</span>AWS</p>
+      <a href="cloudformation.html">CloudFormation 運用手順集</a>
+      <a href="aws-cli.html">AWS CLI 特殊対応</a>
+      <a href="aws-cli-reference.html">AWS CLI コマンドリファレンス</a>
+      <a href="eventbridge-scheduler.html">EventBridge Scheduler</a>
+      <a href="aws-directory-service.html">AWS Directory Service 運用手順</a>
+      <a href="amazon-workspaces.html">Amazon WorkSpaces</a>
       <a href="amazon-ses.html">Amazon SES SMTPリレー</a>
       <a href="amazon-ses-monitoring.html">Amazon SES 配信監視</a>
       <a href="amazon-rds-blue-green.html">Amazon RDS Blue/Green Deployments</a>
@@ -75,28 +75,36 @@
       <a href="eol.html">EOL / ライフサイクル一覧表</a>
     </aside>
     <main class="content workspaces-skill-transfer-guide">
-      <nav class="breadcrumb" aria-label="Breadcrumb"><a href="../"><span class="nav-icon" aria-hidden="true">⌂</span>Home</a><span>技術移管</span></nav>
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="../"><span class="nav-icon" aria-hidden="true">⌂</span>Home</a>
+        <span>トピック</span>
+      </nav>
       <h1>AD Connector 構築・権限委任</h1>
-      <p class="lead">AD Connector専用サービスアカウントと最小権限の委任を準備する<br>VPCピアリング、往復ルート、DC用Security GroupおよびAD Connector作成を依存順にまとめる</p>
+      <div class="page-summary"><strong>⚡ このページの要約</strong><p class="lead">AD Connector専用サービスアカウントと最小権限の委任を準備する<br>VPCピアリング、往復ルート、DC用Security GroupおよびAD Connector作成を依存順にまとめる</p></div>
+      <nav class="section-links" aria-label="主要セクション">
+        <a href="#ad-connector用サービスアカウントの作成-権限委任-運用手順">AD Connector用サービスアカウントの作成・権限委任・運用手順</a>
+        <a href="#vpcピアリング-ドメインコントローラーsg変更-ad-connector作成手順">VPCピアリング・ドメインコントローラーSG変更・AD Connector作成手順</a>
+        <a href="#related-pages">関連ページ</a>
+      </nav>
 <h2 id="ad-connector用サービスアカウントの作成-権限委任-運用手順">AD Connector用サービスアカウントの作成・権限委任・運用手順</h2>
 <p><strong>目次</strong></p>
 <!-- Confluenceでは、この位置に目次マクロを配置する -->
 
 <h3 id="概要">概要</h3>
 <h4 id="本手順書で実施すること">本手順書で実施すること</h4>
-<p>AWS Managed Microsoft ADの<code>ad\Users</code>に、委任用セキュリティグループ<code>Connectors</code>とAD Connector専用ユーザー<code>ADConnectorService</code>を作成します。サービスアカウントを<code>Connectors</code>へ追加したうえで、Amazon WorkSpacesのコンピューターオブジェクト作成先<code>ad\Computers\WorkSpaces</code>に、コンピューターオブジェクトの作成、削除、読み取りおよび書き込み権限を委任する</p>
+<p>AWS Managed Microsoft ADの<code class="inline-code">ad\Users</code>に、委任用セキュリティグループ<code class="inline-code">Connectors</code>とAD Connector専用ユーザー<code class="inline-code">ADConnectorService</code>を作成します。サービスアカウントを<code class="inline-code">Connectors</code>へ追加したうえで、Amazon WorkSpacesのコンピューターオブジェクト作成先<code class="inline-code">ad\Computers\WorkSpaces</code>に、コンピューターオブジェクトの作成、削除、読み取りおよび書き込み権限を委任する</p>
 <p>本手順では、サービスアカウントの状態確認、パスワード変更時の更新順序および使用終了時の切り替えも取り扱います。AD Connector本体の作成とAmazon WorkSpacesの作成は、別手順書で実施する</p>
 <h4 id="完了条件">完了条件</h4>
 <p>次の項目をすべて確認できた時点で、本作業を完了とする</p>
 <ul>
-<li>✔ <code>Connectors</code>がグローバル／セキュリティグループとして作成されている</li>
-<li>✔ <code>ADConnectorService</code>が有効かつ未ロックで、初回ログオン時のパスワード変更が無効である</li>
-<li>✔ <code>ADConnectorService</code>が<code>Connectors</code>へ所属し、申請されていない高権限グループへ所属していない</li>
-<li>✔ <code>Connectors</code>の委任先が<code>ad\Computers\WorkSpaces</code>である</li>
+<li>✔ <code class="inline-code">Connectors</code>がグローバル／セキュリティグループとして作成されている</li>
+<li>✔ <code class="inline-code">ADConnectorService</code>が有効かつ未ロックで、初回ログオン時のパスワード変更が無効である</li>
+<li>✔ <code class="inline-code">ADConnectorService</code>が<code class="inline-code">Connectors</code>へ所属し、申請されていない高権限グループへ所属していない</li>
+<li>✔ <code class="inline-code">Connectors</code>の委任先が<code class="inline-code">ad\Computers\WorkSpaces</code>である</li>
 <li>✔ WorkSpacesのコンピューターオブジェクトを指定OUへ作成・削除できる</li>
 </ul>
 <div class="callout callout-warning"><p><strong>注意：アカウントの配置先と権限委任先を分ける</strong></p>
-<p><code>Connectors</code>と<code>ADConnectorService</code>の配置先は<code>ad\Users</code>です。今回の権限委任先は、WorkSpacesのコンピューターオブジェクトが作成される<code>ad\Computers\WorkSpaces</code>です。配置先の<code>ad\Users</code>へ機械的に委任しないでください</p>
+<p><code class="inline-code">Connectors</code>と<code class="inline-code">ADConnectorService</code>の配置先は<code class="inline-code">ad\Users</code>です。今回の権限委任先は、WorkSpacesのコンピューターオブジェクトが作成される<code class="inline-code">ad\Computers\WorkSpaces</code>です。配置先の<code class="inline-code">ad\Users</code>へ機械的に委任しないでください</p>
 </div>
 <h3 id="前提条件">前提条件</h3>
 <ul>
@@ -108,7 +116,7 @@
 <li>✔ パスワードの保管先、更新担当者、更新周期および障害時の連絡先が決定している</li>
 <li>✔ パスワードを手順書、作業チケット、チャット、コマンド履歴および画面キャプチャへ記録しない運用になっている</li>
 </ul>
-<p>ローカルの<code>Administrator</code>で管理端末へサインインしただけでは、Active Directoryを変更できません。ADUCと確認用PowerShellは、対象ドメインの管理資格情報で起動する</p>
+<p>ローカルの<code class="inline-code">Administrator</code>で管理端末へサインインしただけでは、Active Directoryを変更できません。ADUCと確認用PowerShellは、対象ドメインの管理資格情報で起動する</p>
 <h3 id="今回の設定値">今回の設定値</h3>
 <table>
 <thead>
@@ -119,39 +127,39 @@
 </thead>
 <tbody><tr>
 <td>DNSドメイン</td>
-<td><code>ad.example.com</code></td>
+<td><code class="inline-code">ad.example.com</code></td>
 </tr>
 <tr>
 <td>NetBIOS名</td>
-<td><code>ad</code></td>
+<td><code class="inline-code">ad</code></td>
 </tr>
 <tr>
 <td>お客様管理OU</td>
-<td><code>ad</code></td>
+<td><code class="inline-code">ad</code></td>
 </tr>
 <tr>
 <td>ユーザー・グループ配置先</td>
-<td><code>ad\Users</code></td>
+<td><code class="inline-code">ad\Users</code></td>
 </tr>
 <tr>
 <td>コンピューターOU</td>
-<td><code>ad\Computers</code></td>
+<td><code class="inline-code">ad\Computers</code></td>
 </tr>
 <tr>
 <td>WorkSpacesコンピューターOU</td>
-<td><code>ad\Computers\WorkSpaces</code></td>
+<td><code class="inline-code">ad\Computers\WorkSpaces</code></td>
 </tr>
 <tr>
 <td>委任用グループ</td>
-<td><code>Connectors</code></td>
+<td><code class="inline-code">Connectors</code></td>
 </tr>
 <tr>
 <td>サービスアカウント</td>
-<td><code>ADConnectorService</code></td>
+<td><code class="inline-code">ADConnectorService</code></td>
 </tr>
 <tr>
 <td>UPN</td>
-<td><code>ADConnectorService@ad.example.com</code></td>
+<td><code class="inline-code">ADConnectorService@ad.example.com</code></td>
 </tr>
 </tbody></table>
 <p>パスワード自体は表、本文および証跡へ記録しない</p>
@@ -161,8 +169,8 @@
 <ul>
 <li>AD Connectorごとに、通常のADドメインユーザーを1アカウント用意する</li>
 <li>人が通常作業へ使用するユーザーと共用しない</li>
-<li><code>Domain Admins</code>、<code>Enterprise Admins</code>、<code>AWS Delegated Administrators</code>などの高権限グループへ追加しない</li>
-<li><code>Domain Users</code>と、承認済みの<code>Connectors</code>だけに所属させる</li>
+<li><code class="inline-code">Domain Admins</code>、<code class="inline-code">Enterprise Admins</code>、<code class="inline-code">AWS Delegated Administrators</code>などの高権限グループへ追加しない</li>
+<li><code class="inline-code">Domain Users</code>と、承認済みの<code class="inline-code">Connectors</code>だけに所属させる</li>
 <li>「ユーザーは次回ログオン時にパスワード変更が必要」は無効にする</li>
 <li>アカウントを有効、未ロックの状態に保つ</li>
 <li>KerberosおよびLDAPによるネットワーク認証を妨げる設定を行わない</li>
@@ -175,22 +183,22 @@
 <div class="code"><div class="code-header"><span>text</span><button class="copy" type="button">Copy</button></div><pre><code>ad
 └─ Computers
    └─ WorkSpaces</code></pre></div>
-<p>本番では表の<code>ad\Computers\WorkSpaces</code>を使用し、WorkSpacesへディレクトリを登録した後の「ターゲットドメインと組織単位」に同じOUを指定します。作業前に構成資料と照合し、委任先OUとWorkSpaces側の指定OUを一致させる</p>
-<h3 id="connectorsグループを作成する"><code>Connectors</code>グループを作成する</h3>
+<p>本番では表の<code class="inline-code">ad\Computers\WorkSpaces</code>を使用し、WorkSpacesへディレクトリを登録した後の「ターゲットドメインと組織単位」に同じOUを指定します。作業前に構成資料と照合し、委任先OUとWorkSpaces側の指定OUを一致させる</p>
+<h3 id="connectorsグループを作成する"><code class="inline-code">Connectors</code>グループを作成する</h3>
 <h4 id="目的">目的</h4>
 <p>サービスアカウントへ権限を直接付与せず、委任用グループを介して管理できるようにする</p>
 <h4 id="操作手順">操作手順</h4>
-<ol>
+<ol class="step-list">
 <li>ADUCを対象ドメインの管理資格情報で起動</li>
-<li><code>ad.example.com</code>を展開し、<code>ad</code>、<code>Users</code>の順に選択</li>
-<li><code>Users</code>を右クリックし、「新規作成」から「グループ」を選択</li>
+<li><code class="inline-code">ad.example.com</code>を展開し、<code class="inline-code">ad</code>、<code class="inline-code">Users</code>の順に選択</li>
+<li><code class="inline-code">Users</code>を右クリックし、「新規作成」から「グループ」を選択</li>
 </ol>
 <figure class="screenshot-wide"><figcaption>Connectorsグループ作成メニューの選択</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-ad-connector/001-connectorsグループ作成メニューの選択.png" alt="Connectorsグループ作成メニューの選択" width="1329" height="872" loading="lazy"></div></figure>
 
 
 
 <p><strong>画像内の番号</strong></p>
-<p>① <code>ad\Users</code>を右クリックします。②「新規作成」を選択し、③「グループ」を選択する</p>
+<p>① <code class="inline-code">ad\Users</code>を右クリックします。②「新規作成」を選択し、③「グループ」を選択する</p>
 <ol start="4">
 <li>次の値を入力</li>
 </ol>
@@ -203,7 +211,7 @@
 </thead>
 <tbody><tr>
 <td>グループ名</td>
-<td><code>Connectors</code></td>
+<td><code class="inline-code">Connectors</code></td>
 </tr>
 <tr>
 <td>グループのスコープ</td>
@@ -219,20 +227,20 @@
 
 
 <p><strong>画像内の番号</strong></p>
-<p>① グループ名に<code>Connectors</code>を入力します。②「グローバル」を選択し、③「セキュリティ」を選択します。④「OK」を選択する</p>
+<p>① グループ名に<code class="inline-code">Connectors</code>を入力します。②「グローバル」を選択し、③「セキュリティ」を選択します。④「OK」を選択する</p>
 <ol start="5">
 <li>「OK」を選択</li>
-<li><code>Users</code>の一覧に、種類「セキュリティ グループ - グローバル」の<code>Connectors</code>が1件表示されることを確認</li>
+<li><code class="inline-code">Users</code>の一覧に、種類「セキュリティ グループ - グローバル」の<code class="inline-code">Connectors</code>が1件表示されることを確認</li>
 </ol>
 <figure class="screenshot-wide"><figcaption>Connectorsグループの作成完了</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-ad-connector/003-connectorsグループの作成完了.png" alt="Connectorsグループの作成完了" width="1335" height="875" loading="lazy"></div></figure>
 
 
 
 <p><strong>画像内の番号</strong></p>
-<p>① 一覧に<code>Connectors</code>が表示され、同じ行の種類が「セキュリティ グループ - グローバル」であることを確認する</p>
+<p>① 一覧に<code class="inline-code">Connectors</code>が表示され、同じ行の種類が「セキュリティ グループ - グローバル」であることを確認する</p>
 <h4 id="実施後の確認">実施後の確認</h4>
 <ul>
-<li>✔ <code>Connectors</code>が<code>ad\Users</code>へ作成されている</li>
+<li>✔ <code class="inline-code">Connectors</code>が<code class="inline-code">ad\Users</code>へ作成されている</li>
 <li>✔ グループのスコープが「グローバル」、種類が「セキュリティ」である</li>
 </ul>
 <p>既存の同名グループがある場合は新規作成せず、スコープ、種類、用途および既存メンバーを確認する。誤って作成した場合は、メンバー、委任およびAD Connectorから未使用であることを確認してから削除する</p>
@@ -267,15 +275,15 @@
 </tr>
 </tbody></table>
 <h4 id="操作手順-2">操作手順</h4>
-<ol>
-<li><code>ad\Users</code>を選択し、ツールバーの「現在のコンテナーに新しいユーザーを作成」を選択</li>
+<ol class="step-list">
+<li><code class="inline-code">ad\Users</code>を選択し、ツールバーの「現在のコンテナーに新しいユーザーを作成」を選択</li>
 </ol>
 <figure class="screenshot-wide"><figcaption>AD Connector用サービスアカウントの作成開始</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-ad-connector/004-ad-connector用サービスアカウントの作成開始.png" alt="AD Connector用サービスアカウントの作成開始" width="1324" height="725" loading="lazy"></div></figure>
 
 
 
 <p><strong>画像内の番号</strong></p>
-<p>① 左側のツリーで<code>ad\Users</code>を選択します。② ツールバーの「現在のコンテナーに新しいユーザーを作成」を選択する</p>
+<p>① 左側のツリーで<code class="inline-code">ad\Users</code>を選択します。② ツールバーの「現在のコンテナーに新しいユーザーを作成」を選択する</p>
 <ol start="2">
 <li>次の値を入力</li>
 </ol>
@@ -288,27 +296,27 @@
 </thead>
 <tbody><tr>
 <td>姓</td>
-<td><code>ADConnectorService</code></td>
+<td><code class="inline-code">ADConnectorService</code></td>
 </tr>
 <tr>
 <td>名</td>
-<td><code>Service</code></td>
+<td><code class="inline-code">Service</code></td>
 </tr>
 <tr>
 <td>フルネーム</td>
-<td><code>ADConnectorService</code></td>
+<td><code class="inline-code">ADConnectorService</code></td>
 </tr>
 <tr>
 <td>ユーザーログオン名</td>
-<td><code>ADConnectorService</code></td>
+<td><code class="inline-code">ADConnectorService</code></td>
 </tr>
 <tr>
 <td>ユーザーログオン名（Windows 2000より前）</td>
-<td><code>ADConnectorService</code></td>
+<td><code class="inline-code">ADConnectorService</code></td>
 </tr>
 </tbody></table>
 <ol start="3">
-<li>UPNが<code>ADConnectorService@ad.example.com</code>となり、個人ユーザーと誤認しない表示名になっていることを確認</li>
+<li>UPNが<code class="inline-code">ADConnectorService@ad.example.com</code>となり、個人ユーザーと誤認しない表示名になっていることを確認</li>
 </ol>
 <figure class="screenshot-wide"><figcaption>サービスアカウントのユーザー情報入力</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-ad-connector/005-サービスアカウントのユーザー情報入力.png" alt="サービスアカウントのユーザー情報入力" width="507" height="430" loading="lazy"></div></figure>
 
@@ -329,7 +337,7 @@
 <p><strong>画像内の番号</strong></p>
 <p>① 初期パスワードと確認用パスワードを入力します。②「ユーザーは次回ログオン時にパスワード変更が必要」をオフにします。③「パスワードを無期限にする」は、下記の注意に従って承認済みの運用方式を選択します。④「アカウントは無効」がオフであることを確認し、⑤「次へ」を選択する</p>
 <div class="callout callout-warning"><p><strong>注意：パスワード無期限はアカウント単位の例外設定である</strong></p>
-<p>今回の画像では「パスワードを無期限にする」が有効です。これは<code>PasswordNeverExpires</code>によるアカウント単位の例外であり、Fine-Grained Password Policy（PSO）が適用されている根拠ではありません。本番環境では承認済みのパスワード運用を採用し、PSOの適用有無は<code>Get-ADUserResultantPasswordPolicy</code>で確認する</p>
+<p>今回の画像では「パスワードを無期限にする」が有効です。これは<code class="inline-code">PasswordNeverExpires</code>によるアカウント単位の例外であり、Fine-Grained Password Policy（PSO）が適用されている根拠ではありません。本番環境では承認済みのパスワード運用を採用し、PSOの適用有無は<code class="inline-code">Get-ADUserResultantPasswordPolicy</code>で確認する</p>
 </div>
 <ol start="8">
 <li>フルネーム、ユーザーログオン名およびパスワード設定を確認</li>
@@ -347,44 +355,44 @@
 <li>✔ 初回ログオン時のパスワード変更が要求されない</li>
 </ul>
 <p>AD Connector作成前に誤りを発見した場合は、未使用であることを確認してアカウントを無効化し、正しいアカウントを作成します。AD Connector作成後は、先にアカウントを無効化または削除しないでください</p>
-<h3 id="サービスアカウントをconnectorsへ追加する">サービスアカウントを<code>Connectors</code>へ追加する</h3>
+<h3 id="サービスアカウントをconnectorsへ追加する">サービスアカウントを<code class="inline-code">Connectors</code>へ追加する</h3>
 <h4 id="操作手順-3">操作手順</h4>
-<ol>
-<li><p><code>ad\Users</code>で、作成したサービスアカウントのプロパティを開く</p>
+<ol class="step-list">
+<li><p><code class="inline-code">ad\Users</code>で、作成したサービスアカウントのプロパティを開く</p>
 </li>
 <li><p>「所属するグループ」タブを選択</p>
 </li>
-<li><p>既定の<code>Domain Users</code>以外に、意図しない高権限グループが表示されていないことを確認</p>
+<li><p>既定の<code class="inline-code">Domain Users</code>以外に、意図しない高権限グループが表示されていないことを確認</p>
 </li>
 <li><p>「追加」を選択</p>
 </li>
-<li><p>オブジェクト名へ<code>Connectors</code>を入力</p>
+<li><p>オブジェクト名へ<code class="inline-code">Connectors</code>を入力</p>
 </li>
-<li><p>「名前の確認」を選択し、対象ドメインの<code>Connectors</code>へ解決されることを確認</p>
+<li><p>「名前の確認」を選択し、対象ドメインの<code class="inline-code">Connectors</code>へ解決されることを確認</p>
 </li>
 <li><p>「OK」を選択</p>
 </li>
-<li><p>「所属するグループ」に<code>Domain Users</code>と<code>Connectors</code>が表示されることを確認</p>
+<li><p>「所属するグループ」に<code class="inline-code">Domain Users</code>と<code class="inline-code">Connectors</code>が表示されることを確認</p>
 </li>
 <li><p>「適用」、「OK」の順に選択</p>
 </li>
 </ol>
 <h4 id="実施後の確認-3">実施後の確認</h4>
 <ul>
-<li>✔ サービスアカウントが<code>Connectors</code>のメンバーである</li>
-<li>✔ <code>Domain Admins</code>、<code>Enterprise Admins</code>、<code>AWS Delegated Administrators</code>など、申請されていない高権限グループへ所属していない</li>
+<li>✔ サービスアカウントが<code class="inline-code">Connectors</code>のメンバーである</li>
+<li>✔ <code class="inline-code">Domain Admins</code>、<code class="inline-code">Enterprise Admins</code>、<code class="inline-code">AWS Delegated Administrators</code>など、申請されていない高権限グループへ所属していない</li>
 </ul>
 <h3 id="workspaces用コンピューターouを決定または作成する">WorkSpaces用コンピューターOUを決定または作成する</h3>
-<p>この節と次の権限委任は、WorkSpaces側のOU手順を未実施の場合だけ行います。<a href="workspaces-provisioning-gpo.html">Amazon WorkSpaces用OU作成・権限委任・ターゲットOU設定手順</a>で同じOUと<code>Connectors</code>への委任を完了済みの場合は、OUと詳細ACLが本節の要件を満たすことだけを確認し、ウィザードを再実行しない</p>
+<p>この節と次の権限委任は、WorkSpaces側のOU手順を未実施の場合だけ行います。<a href="workspaces-provisioning-gpo.html">Amazon WorkSpaces用OU作成・権限委任・ターゲットOU設定手順</a>で同じOUと<code class="inline-code">Connectors</code>への委任を完了済みの場合は、OUと詳細ACLが本節の要件を満たすことだけを確認し、ウィザードを再実行しない</p>
 <h4 id="操作手順-4">操作手順</h4>
-<ol>
+<ol class="step-list">
 <li>承認済みのOU設計を確認</li>
-<li>専用OUを作成する場合は、<code>ad\Computers</code>を右クリックし、「新規作成」から「組織単位（OU）」を選択</li>
-<li>今回および本番の設定値として<code>WorkSpaces</code>を入力します。本番作業前に表の設計値と一致することを確認</li>
+<li>専用OUを作成する場合は、<code class="inline-code">ad\Computers</code>を右クリックし、「新規作成」から「組織単位（OU）」を選択</li>
+<li>今回および本番の設定値として<code class="inline-code">WorkSpaces</code>を入力します。本番作業前に表の設計値と一致することを確認</li>
 <li>誤削除防止設定を有効にして作成</li>
 <li>OUのプロパティまたはPowerShellで識別名（DN）を確認し、運用台帳へ記録</li>
 </ol>
-<div class="code" data-prompt="$"><div class="code-header"><span>powershell</span><button class="copy" type="button">Copy</button></div><pre><code>Get-ADOrganizationalUnit -Filter * |
+<div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>Get-ADOrganizationalUnit -Filter * |
     Select-Object Name, DistinguishedName</code></pre></div>
 <h4 id="実施後の確認-4">実施後の確認</h4>
 <ul>
@@ -393,12 +401,12 @@
 <li>✔ WorkSpaces側のターゲットOUと同じ識別名（DN）を使用する</li>
 </ul>
 <h3 id="workspaces用コンピューターouへ権限を委任する">WorkSpaces用コンピューターOUへ権限を委任する</h3>
-<p>本環境では<code>ad\Computers\WorkSpaces</code>をコンピューター専用OUとして使用します。OU作成とWorkSpaces側のターゲットOU設定は、<a href="workspaces-provisioning-gpo.html">Amazon WorkSpaces用OU作成・権限委任・ターゲットOU設定手順</a>を参照してください。本手順では、<code>Connectors</code>へ<strong>コンピューターオブジェクト</strong>の作成、削除、読み取りおよび書き込みだけを委任する</p>
-<p>既存ACLに同じ<code>Connectors</code>のアクセス許可エントリがある場合は、対象オブジェクト、権限および適用先を詳細ACLで照合します。要件を満たしていれば委任ウィザードを再実行せず、重複ACEを作成しない</p>
-<p>AWS公式の汎用例ではコンピューターオブジェクトとユーザーオブジェクトの両方を選択する場合がありますが、ユーザーを格納しない本環境のWorkSpaces専用OUへ、ユーザーオブジェクトの作成・削除・書き込み権限は追加しません。ユーザー検索に必要な読み取りは<code>ad\Users</code>側で維持し、AD Connectorが「アクティブ」でWorkSpacesコンソールから対象ユーザーを検索できることで確認する</p>
-<p>権限の範囲を広げないため、委任開始時に<code>ad\Computers\WorkSpaces</code>を選択したことを確認する。AWS Managed Microsoft ADでは、ドメインルート、<code>AWS Reserved</code>および<code>Domain Controllers</code>から開始しない</p>
+<p>本環境では<code class="inline-code">ad\Computers\WorkSpaces</code>をコンピューター専用OUとして使用します。OU作成とWorkSpaces側のターゲットOU設定は、<a href="workspaces-provisioning-gpo.html">Amazon WorkSpaces用OU作成・権限委任・ターゲットOU設定手順</a>を参照してください。本手順では、<code class="inline-code">Connectors</code>へ<strong>コンピューターオブジェクト</strong>の作成、削除、読み取りおよび書き込みだけを委任する</p>
+<p>既存ACLに同じ<code class="inline-code">Connectors</code>のアクセス許可エントリがある場合は、対象オブジェクト、権限および適用先を詳細ACLで照合します。要件を満たしていれば委任ウィザードを再実行せず、重複ACEを作成しない</p>
+<p>AWS公式の汎用例ではコンピューターオブジェクトとユーザーオブジェクトの両方を選択する場合がありますが、ユーザーを格納しない本環境のWorkSpaces専用OUへ、ユーザーオブジェクトの作成・削除・書き込み権限は追加しません。ユーザー検索に必要な読み取りは<code class="inline-code">ad\Users</code>側で維持し、AD Connectorが「アクティブ」でWorkSpacesコンソールから対象ユーザーを検索できることで確認する</p>
+<p>権限の範囲を広げないため、委任開始時に<code class="inline-code">ad\Computers\WorkSpaces</code>を選択したことを確認する。AWS Managed Microsoft ADでは、ドメインルート、<code class="inline-code">AWS Reserved</code>および<code class="inline-code">Domain Controllers</code>から開始しない</p>
 <h4 id="操作手順-5">操作手順</h4>
-<ol>
+<ol class="step-list">
 <li><p>ADUCで、承認済みのWorkSpacesコンピューター格納先OUを選択</p>
 </li>
 <li><p>対象OUを右クリックし、「制御の委任」を選択</p>
@@ -414,24 +422,24 @@
 <p>①「次へ」を選択する</p>
 <ol start="4">
 <li>「選択されたユーザーとグループ」で「追加」を選択</li>
-<li>オブジェクト名へ<code>Connectors</code>を入力し、「名前の確認」を選択</li>
-<li>対象ドメインの<code>Connectors</code>へ解決されたことを確認し、「OK」を選択</li>
+<li>オブジェクト名へ<code class="inline-code">Connectors</code>を入力し、「名前の確認」を選択</li>
+<li>対象ドメインの<code class="inline-code">Connectors</code>へ解決されたことを確認し、「OK」を選択</li>
 </ol>
 <figure class="screenshot-wide"><figcaption>委任対象としてConnectorsグループを選択</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-ad-connector/009-委任対象としてconnectorsグループを選択.png" alt="委任対象としてConnectorsグループを選択" width="546" height="287" loading="lazy"></div></figure>
 
 
 
 <p><strong>画像内の番号</strong></p>
-<p>① 検索場所が対象ドメインであることを確認する。② オブジェクト名に<code>Connectors</code>を入力し、③「名前の確認」を選択します。対象ドメインのグループへ解決されたら、④「OK」を選択する</p>
+<p>① 検索場所が対象ドメインであることを確認する。② オブジェクト名に<code class="inline-code">Connectors</code>を入力し、③「名前の確認」を選択します。対象ドメインのグループへ解決されたら、④「OK」を選択する</p>
 <ol start="7">
-<li>「選択されたユーザーとグループ」に<code>Connectors</code>だけが表示されていることを確認し、「次へ」を選択</li>
+<li>「選択されたユーザーとグループ」に<code class="inline-code">Connectors</code>だけが表示されていることを確認し、「次へ」を選択</li>
 </ol>
 <figure class="screenshot-wide"><figcaption>委任対象グループConnectorsの確認</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-ad-connector/010-委任対象グループconnectorsの確認.png" alt="委任対象グループConnectorsの確認" width="579" height="436" loading="lazy"></div></figure>
 
 
 
 <p><strong>画像内の番号</strong></p>
-<p>①「選択されたユーザーとグループ」に対象ドメインの<code>Connectors</code>だけが表示されていることを確認し、②「次へ」を選択する</p>
+<p>①「選択されたユーザーとグループ」に対象ドメインの<code class="inline-code">Connectors</code>だけが表示されていることを確認し、②「次へ」を選択する</p>
 <ol start="8">
 <li>「委任するタスク」で「委任するカスタムタスクを作成する」を選択し、「次へ」を選択</li>
 </ol>
@@ -477,14 +485,14 @@
 <p>出典：<a href="https://docs.aws.amazon.com/ja_jp/directoryservice/latest/admin-guide/ad_connector_getting_started.html">AWS公式：AD Connectorのサービスアカウントへ権限を委任する</a></p>
 <h4 id="実施後の確認-5">実施後の確認</h4>
 <ul>
-<li>✔ <code>Connectors</code>の委任先が<code>ad\Computers\WorkSpaces</code>と一致している</li>
+<li>✔ <code class="inline-code">Connectors</code>の委任先が<code class="inline-code">ad\Computers\WorkSpaces</code>と一致している</li>
 <li>✔ ドメインルートおよびAWS管理OUへ新しい委任を付与していない</li>
 <li>✔ コンピューターオブジェクトの作成、削除、読み取りおよび書き込みが選択されている</li>
 </ul>
 <h3 id="作成後の確認">作成後の確認</h3>
 <h4 id="adオブジェクトの確認">ADオブジェクトの確認</h4>
-<p>対象ドメインの管理資格情報でPowerShellを起動して実行します。本番でも表の<code>ADConnectorService</code>を使用します。構成変更が承認されている場合だけ、コマンドのアカウント名を変更後の値へ読み替える</p>
-<div class="code" data-prompt="$"><div class="code-header"><span>powershell</span><button class="copy" type="button">Copy</button></div><pre><code>Get-ADUser -Identity 'ADConnectorService' `
+<p>対象ドメインの管理資格情報でPowerShellを起動して実行します。本番でも表の<code class="inline-code">ADConnectorService</code>を使用します。構成変更が承認されている場合だけ、コマンドのアカウント名を変更後の値へ読み替える</p>
+<div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>Get-ADUser -Identity 'ADConnectorService' `
     -Properties Enabled,LockedOut,PasswordExpired,PasswordNeverExpires,PasswordLastSet |
     Select-Object SamAccountName,
                   Enabled,
@@ -497,16 +505,16 @@ Get-ADPrincipalGroupMembership 'ADConnectorService' |
     Select-Object Name, GroupScope, GroupCategory</code></pre></div>
 <p>次を確認する</p>
 <ul>
-<li>✔ <code>Enabled</code>が<code>True</code>である</li>
-<li>✔ <code>LockedOut</code>と<code>PasswordExpired</code>が<code>False</code>である</li>
-<li>✔ <code>Connectors</code>へ所属している</li>
+<li>✔ <code class="inline-code">Enabled</code>が<code class="inline-code">True</code>である</li>
+<li>✔ <code class="inline-code">LockedOut</code>と<code class="inline-code">PasswordExpired</code>が<code class="inline-code">False</code>である</li>
+<li>✔ <code class="inline-code">Connectors</code>へ所属している</li>
 <li>✔ 申請されていない高権限グループへ所属していない</li>
 </ul>
 <p>OUの委任内容は、承認済みのDNへ読み替えて確認する</p>
-<div class="code" data-prompt="$"><div class="code-header"><span>powershell</span><button class="copy" type="button">Copy</button></div><pre><code>dsacls '&lt;WorkSpacesコンピューターOUのDN&gt;'</code></pre></div>
+<div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>dsacls '&lt;WorkSpacesコンピューターOUのDN&gt;'</code></pre></div>
 <h4 id="ad-connectorおよびworkspacesの確認">AD ConnectorおよびWorkSpacesの確認</h4>
 <p>AD Connector作成後に次を確認する</p>
-<ol>
+<ol class="step-list">
 <li>Directory ServiceでAD Connectorのステータスが「アクティブ」であることを確認</li>
 <li>WorkSpacesから対象ディレクトリのADユーザーを検索できることを確認</li>
 <li>検証用WorkSpaceを1台作成できることを確認</li>
@@ -518,10 +526,10 @@ Get-ADPrincipalGroupMembership 'ADConnectorService' |
 <h3 id="パスワード運用">パスワード運用</h3>
 <p>AWS Managed Microsoft ADの既定ドメインポリシーでは、パスワードの最大有効期間は42日です。Fine-Grained Password Policy（FGPP）または承認済みのアカウント例外がない場合、サービスアカウントにも適用される</p>
 <p>期限切れ、ロック、無効化、または「次回ログオン時にパスワード変更」が有効になると、AD Connectorのユーザー検索およびWorkSpacesのドメイン参加が失敗する可能性がある</p>
-<p><code>PasswordNeverExpires=True</code>はアカウント単位の例外であり、PSOの適用を示すものではありません。実効パスワードポリシーは次のコマンドで確認する</p>
-<div class="code" data-prompt="$"><div class="code-header"><span>powershell</span><button class="copy" type="button">Copy</button></div><pre><code>Get-ADUserResultantPasswordPolicy -Identity 'ADConnectorService'</code></pre></div>
+<p><code class="inline-code">PasswordNeverExpires=True</code>はアカウント単位の例外であり、PSOの適用を示すものではありません。実効パスワードポリシーは次のコマンドで確認する</p>
+<div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>Get-ADUserResultantPasswordPolicy -Identity 'ADConnectorService'</code></pre></div>
 <h4 id="定期変更">定期変更</h4>
-<ol>
+<ol class="step-list">
 <li>変更日時、担当者、対象AD Connector、影響確認項目および切り戻し担当者を確定</li>
 <li>AD側でサービスアカウントのパスワードを変更</li>
 <li>直後にDirectory Serviceの対象AD Connectorを開き、サービスアカウント認証情報を同じ新パスワードへ更新</li>
@@ -544,18 +552,18 @@ Get-ADPrincipalGroupMembership 'ADConnectorService' |
 <li>対象OUに、承認済みの委任が残っていること</li>
 </ul>
 <h3 id="無効化-削除-切り戻し">無効化・削除・切り戻し</h3>
-<p>AD Connectorが使用中のサービスアカウントを先に無効化、削除または<code>Connectors</code>から除外しない</p>
+<p>AD Connectorが使用中のサービスアカウントを先に無効化、削除または<code class="inline-code">Connectors</code>から除外しない</p>
 <p>安全に切り替える場合は、次の順序で実施する</p>
-<ol>
-<li>新しい専用サービスアカウントを作成し、<code>Connectors</code>へ追加</li>
+<ol class="step-list">
+<li>新しい専用サービスアカウントを作成し、<code class="inline-code">Connectors</code>へ追加</li>
 <li>AD Connectorの認証情報を新アカウントへ更新</li>
 <li>AD Connectorの「アクティブ」、ユーザー検索および検証用WorkSpace作成を確認</li>
 <li>問題がある場合は、AD Connectorを旧アカウントへ戻す</li>
 <li>正常確認後に旧アカウントを無効化</li>
-<li>定められた観察期間後に、旧アカウントを<code>Connectors</code>から除外して削除</li>
+<li>定められた観察期間後に、旧アカウントを<code class="inline-code">Connectors</code>から除外して削除</li>
 </ol>
-<p>委任設定を削除する場合は、対象OUの詳細なセキュリティ設定で<code>Connectors</code>に対する明示的なアクセス制御エントリだけを削除します。継承された権限や、他のユーザー・グループの権限を変更しない</p>
-<p>既存の<code>ad\Users</code>への委任が適切かは、WorkSpacesのターゲットOUと継承設計を確認して判断します。対象外OUへの不要な明示的委任と確認できた場合に限り、正しいOUへの委任と動作確認が完了してから、<code>Users</code> OU上の<code>Connectors</code>に対する明示的な権限だけを削除する</p>
+<p>委任設定を削除する場合は、対象OUの詳細なセキュリティ設定で<code class="inline-code">Connectors</code>に対する明示的なアクセス制御エントリだけを削除します。継承された権限や、他のユーザー・グループの権限を変更しない</p>
+<p>既存の<code class="inline-code">ad\Users</code>への委任が適切かは、WorkSpacesのターゲットOUと継承設計を確認して判断します。対象外OUへの不要な明示的委任と確認できた場合に限り、正しいOUへの委任と動作確認が完了してから、<code class="inline-code">Users</code> OU上の<code class="inline-code">Connectors</code>に対する明示的な権限だけを削除する</p>
 <hr>
 
 <h2 id="vpcピアリング-ドメインコントローラーsg変更-ad-connector作成手順">VPCピアリング・ドメインコントローラーSG変更・AD Connector作成手順</h2>
@@ -564,8 +572,8 @@ Get-ADPrincipalGroupMembership 'ADConnectorService' |
 
 <h3 id="概要-2">概要</h3>
 <h4 id="本手順書で実施すること-2">本手順書で実施すること</h4>
-<p>AWS Managed Microsoft ADを配置したVPC002（<code>ad-vpc-002</code>／<code>192.168.225.0/24</code>）と、Amazon WorkSpacesおよびAD Connectorを配置するVPC003（<code>ad-vpc-003</code>／<code>192.168.226.0/23</code>）をVPCピアリングで接続します。双方のルートテーブルへ往復経路を設定した後、Managed ADのドメインコントローラー用セキュリティグループへVPC003からの許可ルールを追加する</p>
-<p>続いて、VPC003の異なるアベイラビリティーゾーンにあるサブネット<code>192.168.226.128/28</code>と<code>192.168.226.160/28</code>へSmallのAD Connectorを作成し、<code>ad.example.com</code>のDNS IPアドレス<code>192.168.225.68</code>と<code>192.168.225.126</code>へ接続する</p>
+<p>AWS Managed Microsoft ADを配置したVPC002（<code class="inline-code">ad-vpc-002</code>／<code class="inline-code">192.168.225.0/24</code>）と、Amazon WorkSpacesおよびAD Connectorを配置するVPC003（<code class="inline-code">ad-vpc-003</code>／<code class="inline-code">192.168.226.0/23</code>）をVPCピアリングで接続します。双方のルートテーブルへ往復経路を設定した後、Managed ADのドメインコントローラー用セキュリティグループへVPC003からの許可ルールを追加する</p>
+<p>続いて、VPC003の異なるアベイラビリティーゾーンにあるサブネット<code class="inline-code">192.168.226.128/28</code>と<code class="inline-code">192.168.226.160/28</code>へSmallのAD Connectorを作成し、<code class="inline-code">ad.example.com</code>のDNS IPアドレス<code class="inline-code">192.168.225.68</code>と<code class="inline-code">192.168.225.126</code>へ接続する</p>
 <h4 id="完了条件-2">完了条件</h4>
 <p>次の項目をすべて確認できた時点で、本作業を完了とする</p>
 <ul>
@@ -593,12 +601,12 @@ Get-ADPrincipalGroupMembership 'ADConnectorService' |
 <li>✔ 対象VPC、対象サブネットおよび両VPCの変更対象ルートテーブルを特定している</li>
 <li>✔ DC用SGとDirectory IDの対応をAWS Directory Serviceコンソールで確認している</li>
 <li>✔ AD Connector用の2サブネットが同一VPCかつ異なるアベイラビリティーゾーンにあり、同じネットワークタイプである</li>
-<li>✔ 対象VPCのハードウェアテナンシーが<code>default</code>である</li>
+<li>✔ 対象VPCのハードウェアテナンシーが<code class="inline-code">default</code>である</li>
 <li>✔ 接続先が単一ラベルではなく完全修飾ドメイン名である</li>
 <li>✔ Active Directoryのドメイン機能レベルがWindows Server 2003以上である</li>
 <li>✔ 対象ユーザーのKerberos事前認証が有効である</li>
 <li>✔ 接続先DNSサーバー／ドメインコントローラーのIPアドレスを2つ確認している</li>
-<li>✔ <code>_ldap._tcp.&lt;DNSドメイン名&gt;</code>と<code>_kerberos._tcp.&lt;DNSドメイン名&gt;</code>のSRVレコードを接続先DNSで解決できる</li>
+<li>✔ <code class="inline-code">_ldap._tcp.&lt;DNSドメイン名&gt;</code>と<code class="inline-code">_kerberos._tcp.&lt;DNSドメイン名&gt;</code>のSRVレコードを接続先DNSで解決できる</li>
 <li>✔ <a href="workspaces-ad-connector.html">AD Connector用サービスアカウント作成・権限委任・運用手順</a>を完了している</li>
 </ul>
 <h3 id="今回の設定値-2">今回の設定値</h3>
@@ -611,27 +619,27 @@ Get-ADPrincipalGroupMembership 'ADConnectorService' |
 </thead>
 <tbody><tr>
 <td>接続先DNSドメイン</td>
-<td><code>ad.example.com</code></td>
+<td><code class="inline-code">ad.example.com</code></td>
 </tr>
 <tr>
 <td>NetBIOS名</td>
-<td><code>ad</code></td>
+<td><code class="inline-code">ad</code></td>
 </tr>
 <tr>
 <td>Managed AD配置VPC</td>
-<td><code>ad-vpc-002</code>／<code>192.168.225.0/24</code></td>
+<td><code class="inline-code">ad-vpc-002</code>／<code class="inline-code">192.168.225.0/24</code></td>
 </tr>
 <tr>
 <td>AD Connector配置VPC</td>
-<td><code>ad-vpc-003</code>／<code>192.168.226.0/23</code></td>
+<td><code class="inline-code">ad-vpc-003</code>／<code class="inline-code">192.168.226.0/23</code></td>
 </tr>
 <tr>
 <td>接続先DNS／DC IP</td>
-<td><code>192.168.225.68</code>、<code>192.168.225.126</code></td>
+<td><code class="inline-code">192.168.225.68</code>、<code class="inline-code">192.168.225.126</code></td>
 </tr>
 <tr>
 <td>AD Connector用サブネット</td>
-<td><code>192.168.226.128/28</code>、<code>192.168.226.160/28</code></td>
+<td><code class="inline-code">192.168.226.128/28</code>、<code class="inline-code">192.168.226.160/28</code></td>
 </tr>
 <tr>
 <td>AD Connectorサイズ</td>
@@ -639,7 +647,7 @@ Get-ADPrincipalGroupMembership 'ADConnectorService' |
 </tr>
 <tr>
 <td>サービスアカウント</td>
-<td><code>ADConnectorService</code></td>
+<td><code class="inline-code">ADConnectorService</code></td>
 </tr>
 </tbody></table>
 <p>Directory ID、SG ID、VPC IDおよびサブネットIDは、作業時点のAWSコンソールで確認する。パスワードは本文および画像へ記録しない</p>
@@ -655,27 +663,27 @@ Get-ADPrincipalGroupMembership 'ADConnectorService' |
 </thead>
 <tbody><tr>
 <td>VPC003</td>
-<td><code>192.168.226.0/23</code></td>
-<td><code>192.168.226.128/28</code>、<code>192.168.226.160/28</code></td>
-<td><code>192.168.226.140</code>、<code>192.168.226.170</code></td>
+<td><code class="inline-code">192.168.226.0/23</code></td>
+<td><code class="inline-code">192.168.226.128/28</code>、<code class="inline-code">192.168.226.160/28</code></td>
+<td><code class="inline-code">192.168.226.140</code>、<code class="inline-code">192.168.226.170</code></td>
 </tr>
 <tr>
 <td>VPC004</td>
-<td><code>192.168.228.0/23</code></td>
-<td><code>192.168.228.128/27</code>、<code>192.168.228.160/27</code></td>
-<td><code>192.168.228.152</code>、<code>192.168.228.190</code></td>
+<td><code class="inline-code">192.168.228.0/23</code></td>
+<td><code class="inline-code">192.168.228.128/27</code>、<code class="inline-code">192.168.228.160/27</code></td>
+<td><code class="inline-code">192.168.228.152</code>、<code class="inline-code">192.168.228.190</code></td>
 </tr>
 <tr>
 <td>VPC005</td>
-<td><code>192.168.230.0/23</code></td>
-<td><code>192.168.230.128/27</code>、<code>192.168.230.160/27</code></td>
-<td><code>192.168.230.149</code>、<code>192.168.230.175</code></td>
+<td><code class="inline-code">192.168.230.0/23</code></td>
+<td><code class="inline-code">192.168.230.128/27</code>、<code class="inline-code">192.168.230.160/27</code></td>
+<td><code class="inline-code">192.168.230.149</code>、<code class="inline-code">192.168.230.175</code></td>
 </tr>
 <tr>
 <td>VPC006</td>
-<td><code>192.168.232.0/23</code></td>
-<td><code>192.168.232.128/27</code>、<code>192.168.232.160/27</code></td>
-<td><code>192.168.232.154</code>、<code>192.168.232.176</code></td>
+<td><code class="inline-code">192.168.232.0/23</code></td>
+<td><code class="inline-code">192.168.232.128/27</code>、<code class="inline-code">192.168.232.160/27</code></td>
+<td><code class="inline-code">192.168.232.154</code>、<code class="inline-code">192.168.232.176</code></td>
 </tr>
 </tbody></table>
 <div class="callout callout-warning"><p><strong>注意：AD ConnectorのAWS割当DNS IPを作成画面へ入力しない</strong></p>
@@ -683,21 +691,21 @@ Get-ADPrincipalGroupMembership 'ADConnectorService' |
 </div>
 <h3 id="作業前確認">作業前確認</h3>
 <h4 id="対象sgの識別">対象SGの識別</h4>
-<ol>
+<ol class="step-list">
 <li>AWS Directory Serviceコンソールで対象のAWS Managed Microsoft ADを開く</li>
 <li>「ネットワークとセキュリティ」等から、ドメインコントローラーへ関連付くSGを確認</li>
-<li>VPCコンソールでSGを開き、VPCが<code>ad-vpc-002</code>であることを確認</li>
-<li>SG名が通常「Managed ADのDirectory ID + <code>_controllers</code>」形式であることを確認</li>
+<li>VPCコンソールでSGを開き、VPCが<code class="inline-code">ad-vpc-002</code>であることを確認</li>
+<li>SG名が通常「Managed ADのDirectory ID + <code class="inline-code">_controllers</code>」形式であることを確認</li>
 <li>変更前のインバウンドルールをCSVまたは画面キャプチャで保存</li>
 </ol>
 <div class="callout callout-warning"><p><strong>注意：Managed AD用SGとAD Connector用SGを取り違えない</strong></p>
-<p>AD Connector作成後にも「AD ConnectorのDirectory ID + <code>_controllers</code>」形式の別SGが自動作成されます。名称が似ているため、Directory IDとVPCを照合してから操作する</p>
+<p>AD Connector作成後にも「AD ConnectorのDirectory ID + <code class="inline-code">_controllers</code>」形式の別SGが自動作成されます。名称が似ているため、Directory IDとVPCを照合してから操作する</p>
 </div>
 <h4 id="vpcピアリング接続を作成する">VPCピアリング接続を作成する</h4>
-<p>今回の設定値は、Managed AD側がVPC002（<code>192.168.225.0/24</code>）、AD Connector／WorkSpaces側がVPC003（<code>192.168.226.0/23</code>）です。本番では、画面表示のVPC IDとCIDRを構成資料と照合してから操作する</p>
-<ol>
+<p>今回の設定値は、Managed AD側がVPC002（<code class="inline-code">192.168.225.0/24</code>）、AD Connector／WorkSpaces側がVPC003（<code class="inline-code">192.168.226.0/23</code>）です。本番では、画面表示のVPC IDとCIDRを構成資料と照合してから操作する</p>
+<ol class="step-list">
 <li>VPCコンソールで「ピアリング接続」を開き、「ピアリング接続を作成」を選択</li>
-<li>名前を入力します。今回の名称は<code>002-003-peering</code></li>
+<li>名前を入力します。今回の名称は<code class="inline-code">002-003-peering</code></li>
 <li>リクエスタVPCにManaged AD側のVPC002を選択</li>
 <li>アクセプタVPCにAD Connector側のVPC003を選択</li>
 <li>両VPCのCIDRが重複していないことを再確認し、ピアリング接続を作成</li>
@@ -710,19 +718,19 @@ Get-ADPrincipalGroupMembership 'ADConnectorService' |
 <p>① 接続名、② リクエスタ側のVPCとCIDR、③ アクセプタ側のVPCとCIDRを設定し、④「ピアリング接続を作成」を選択する</p>
 <ol start="6">
 <li>作成したピアリング接続を選択し、「アクション」からリクエストを承諾</li>
-<li>ステータスが<code>アクティブ</code>になったことを確認する。<code>保留中の承諾</code>のままルート設定へ進まない</li>
+<li>ステータスが<code class="inline-code">アクティブ</code>になったことを確認する。<code class="inline-code">保留中の承諾</code>のままルート設定へ進まない</li>
 </ol>
 <h4 id="managed-ad側-vpc002-の戻りルートを追加する">Managed AD側（VPC002）の戻りルートを追加する</h4>
-<ol>
+<ol class="step-list">
 <li>VPCコンソールで「ルートテーブル」を開く</li>
-<li>Managed ADを配置した2つのサブネットそれぞれについて、「サブネットの関連付け」から関連ルートテーブルを確認する。2サブネットが異なるルートテーブルを使用している場合は、両方を変更対象にします。今回の画像は<code>ad-pri-rtb-002</code>を確認したときの画面</li>
+<li>Managed ADを配置した2つのサブネットそれぞれについて、「サブネットの関連付け」から関連ルートテーブルを確認する。2サブネットが異なるルートテーブルを使用している場合は、両方を変更対象にします。今回の画像は<code class="inline-code">ad-pri-rtb-002</code>を確認したときの画面</li>
 <li>対象となるすべてのルートテーブルについて、VPC、関連付くサブネットおよび変更前ルートを確認</li>
 <li>「ルート」－「ルートを編集」－「ルートを追加」を選択</li>
-<li>送信先にAD Connector側VPCのCIDR <code>192.168.226.0/23</code>を入力</li>
+<li>送信先にAD Connector側VPCのCIDR <code class="inline-code">192.168.226.0/23</code>を入力</li>
 <li>ターゲット種別で「ピアリング接続」を選択し、前項で作成したVPCピアリング接続IDを選択</li>
 <li>「プレビュー」を選択し、送信先CIDRとピアリング接続IDを照合</li>
 <li>「変更を保存」を選択</li>
-<li>手順2で特定したすべてのルートテーブルに対して手順4～8を繰り返します。保存後の各ルート一覧で、対象ルートの状態が<code>アクティブ</code>であることを確認</li>
+<li>手順2で特定したすべてのルートテーブルに対して手順4～8を繰り返します。保存後の各ルート一覧で、対象ルートの状態が<code class="inline-code">アクティブ</code>であることを確認</li>
 </ol>
 <figure class="screenshot-wide aws-console-identity"><figcaption>VPC002ルート変更前</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-ad-connector/015-vpc002ルート変更前.png" alt="VPC002ルート変更前" width="1616" height="1297" loading="lazy"></div></figure>
 
@@ -743,15 +751,15 @@ Get-ADPrincipalGroupMembership 'ADConnectorService' |
 <p><strong>画像内の番号</strong></p>
 <p>① 保存予定の送信先CIDRとピアリング接続IDを照合し、②「変更を保存」を選択する</p>
 <h4 id="ad-connector側-vpc003-の往路ルートを追加する">AD Connector側（VPC003）の往路ルートを追加する</h4>
-<ol>
-<li>AD Connector用の2つのサブネットそれぞれについて、「サブネットの関連付け」から関連ルートテーブルを確認する。2サブネットが異なるルートテーブルを使用している場合は、両方を変更対象にします。今回の画像は<code>ad-vpc-003-pri-rtb-002</code>を確認したときの画面</li>
+<ol class="step-list">
+<li>AD Connector用の2つのサブネットそれぞれについて、「サブネットの関連付け」から関連ルートテーブルを確認する。2サブネットが異なるルートテーブルを使用している場合は、両方を変更対象にします。今回の画像は<code class="inline-code">ad-vpc-003-pri-rtb-002</code>を確認したときの画面</li>
 <li>対象となるすべてのルートテーブルについて、VPC、関連付くサブネットおよび変更前ルートを確認</li>
 <li>「ルート」－「ルートを編集」－「ルートを追加」を選択</li>
-<li>送信先にManaged AD側VPCのCIDR <code>192.168.225.0/24</code>を入力</li>
+<li>送信先にManaged AD側VPCのCIDR <code class="inline-code">192.168.225.0/24</code>を入力</li>
 <li>ターゲット種別で「ピアリング接続」を選択し、作成したVPCピアリング接続IDを選択</li>
 <li>「プレビュー」を選択し、送信先CIDRとピアリング接続IDを照合</li>
 <li>「変更を保存」を選択</li>
-<li>手順1で特定したすべてのルートテーブルに対して手順3～7を繰り返します。保存後の各ルート一覧で、対象ルートの状態が<code>アクティブ</code>であることを確認</li>
+<li>手順1で特定したすべてのルートテーブルに対して手順3～7を繰り返します。保存後の各ルート一覧で、対象ルートの状態が<code class="inline-code">アクティブ</code>であることを確認</li>
 </ol>
 <figure class="screenshot-wide aws-console-identity"><figcaption>VPC003ルート変更前</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-ad-connector/018-vpc003ルート変更前.png" alt="VPC003ルート変更前" width="1616" height="1297" loading="lazy"></div></figure>
 
@@ -773,8 +781,8 @@ Get-ADPrincipalGroupMembership 'ADConnectorService' |
 <p>① 保存予定の送信先CIDRとピアリング接続IDを照合し、②「変更を保存」を選択する</p>
 <h4 id="sg変更前に経路と名前解決を確認する">SG変更前に経路と名前解決を確認する</h4>
 <p>次を確認してからDC用SGを変更します。名前解決と疎通確認は、選択する各AD Connectorサブネットと同じルートおよびネットワークACL条件を持つ接続元から、2台の接続先DNS／DC IPの双方へ実施します。Managed AD側VPC内の管理EC2だけでの成功は、VPCピアリング経由の到達性を証明しません。2台は主系／待機系ではなく、どちらも利用可能なDCとして動作するため、双方への到達性が必要です。詳細は<a href="workspaces-managed-ad.html">AWS Managed Microsoft ADの2台ドメインコントローラー構成・役割</a>を参照する</p>
-<ul>
-<li>✔ VPCピアリング接続の状態が<code>アクティブ</code>である</li>
+<ul class="check-list">
+<li>✔ VPCピアリング接続の状態が<code class="inline-code">アクティブ</code>である</li>
 <li>✔ AD Connector側VPCからManaged AD側VPCへの往路が保存済みである</li>
 <li>✔ Managed AD側VPCからAD Connector側VPCへの戻り経路が保存済みである</li>
 <li>✔ 双方のネットワークACLが必要通信を拒否していない</li>
@@ -782,8 +790,8 @@ Get-ADPrincipalGroupMembership 'ADConnectorService' |
 <li>✔ 接続先DNSでADのSRVレコードを取得できる</li>
 </ul>
 <p>AD Connector作成画面ではManaged ADのDNS IPを直接指定するため、VPCピアリングの「DNS解決を有効化」は本接続の必須条件ではありません。別用途でピアリング先のプライベートDNS名を解決する設計がある場合だけ、その要件に従って有効化する</p>
-<p>本番環境での確認コマンドを次に示します。<code>192.168.225.110</code>は構築前に現行のDirectory Serviceコンソールで再確認し、実際のDNS IPが異なる場合はコマンドを置き換える</p>
-<div class="code" data-prompt="$"><div class="code-header"><span>powershell</span><button class="copy" type="button">Copy</button></div><pre><code>$dnsServers = @('192.168.225.68', '192.168.225.110')
+<p>本番環境での確認コマンドを次に示します。<code class="inline-code">192.168.225.110</code>は構築前に現行のDirectory Serviceコンソールで再確認し、実際のDNS IPが異なる場合はコマンドを置き換える</p>
+<div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$dnsServers = @('192.168.225.68', '192.168.225.110')
 foreach ($dnsServer in $dnsServers) {
     Resolve-DnsName -Type SRV '_ldap._tcp.ad.datumidea.jp' -Server $dnsServer
     Resolve-DnsName -Type SRV '_kerberos._tcp.ad.datumidea.jp' -Server $dnsServer
@@ -794,7 +802,7 @@ foreach ($dnsServer in $dnsServers) {
 <p>TCPの確認だけではUDP疎通を証明できないため、ネットワークACL、SGおよびフローログも合わせて確認する</p>
 <h3 id="dc用sgへ接続元vpcを追加する">DC用SGへ接続元VPCを追加する</h3>
 <h4 id="変更前のルールを確認する">変更前のルールを確認する</h4>
-<ol>
+<ol class="step-list">
 <li>VPCコンソールで「セキュリティグループ」を開く</li>
 <li>作業前確認で特定したManaged ADのDC用SGを選択</li>
 <li>「インバウンドルール」を開く</li>
@@ -807,7 +815,7 @@ foreach ($dnsServer in $dnsServers) {
 <p><strong>画像内の番号</strong></p>
 <p>①「インバウンドのルールを編集」を選択する</p>
 <h4 id="ルールを追加する">ルールを追加する</h4>
-<ol>
+<ol class="step-list">
 <li>「インバウンドのルールを編集」を選択</li>
 <li>「ルールを追加」を選択</li>
 <li>顧客環境の承認済み設計に従い、次を入力</li>
@@ -833,11 +841,11 @@ foreach ($dnsServer in $dnsServers) {
 </tr>
 <tr>
 <td>ソース</td>
-<td><code>192.168.226.0/23</code></td>
+<td><code class="inline-code">192.168.226.0/23</code></td>
 </tr>
 <tr>
 <td>説明</td>
-<td><code>ad-vpc-003</code>など、接続元を特定できる名称</td>
+<td><code class="inline-code">ad-vpc-003</code>など、接続元を特定できる名称</td>
 </tr>
 </tbody></table>
 <figure class="screenshot-wide aws-console-identity"><figcaption>DC用SGへの追加内容</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-ad-connector/022-dc用sgへの追加内容.png" alt="DC用SGへの追加内容" width="1622" height="401" loading="lazy"></div></figure>
@@ -847,7 +855,7 @@ foreach ($dnsServer in $dnsServers) {
 <p><strong>画像内の番号</strong></p>
 <p>① プレビューに表示された追加ルールのタイプ、プロトコル、ポート範囲、ソースおよび説明を確認し、②「確認」を選択する</p>
 <ol start="4">
-<li>送信元が対象VPCのCIDRと完全一致し、<code>0.0.0.0/0</code>や別環境のCIDRでないことをダブルチェック</li>
+<li>送信元が対象VPCのCIDRと完全一致し、<code class="inline-code">0.0.0.0/0</code>や別環境のCIDRでないことをダブルチェック</li>
 <li>追加内容のプレビュー画面へ進み、図9の追加行を確認して「確認」を選択</li>
 <li>成功メッセージと、既存件数から1件増えたことを確認</li>
 </ol>
@@ -869,7 +877,7 @@ foreach ($dnsServer in $dnsServers) {
 </ul>
 <h3 id="ad-connectorを作成する">AD Connectorを作成する</h3>
 <h4 id="ディレクトリタイプを選択する">ディレクトリタイプを選択する</h4>
-<ol>
+<ol class="step-list">
 <li>AWS Directory Serviceコンソールを開く</li>
 <li>「ディレクトリ」から「ディレクトリのセットアップ」を選択</li>
 <li>ディレクトリタイプで「AD Connector」を選択し、「次へ」を選択</li>
@@ -881,7 +889,7 @@ foreach ($dnsServer in $dnsServers) {
 <p><strong>画像内の番号</strong></p>
 <p>①「AD Connector」を選択し、②「次へ」を選択する</p>
 <h4 id="サイズを選択する">サイズを選択する</h4>
-<ol>
+<ol class="step-list">
 <li>「ディレクトリサイズ」で「Small」を選択</li>
 <li>説明および画面上の料金を確認</li>
 <li>「次へ」を選択</li>
@@ -894,11 +902,11 @@ foreach ($dnsServer in $dnsServers) {
 <p>①「スモール」を選択し、②「次へ」を選択する</p>
 <p>画面に表示される料金は取得時点の内容です。作業時点の料金は料金ページと見積書で確認する</p>
 <h4 id="vpcと2サブネットを選択する">VPCと2サブネットを選択する</h4>
-<ol>
-<li>対象VPCを選択します。VPC003の場合は<code>ad-vpc-003</code>を選択</li>
+<ol class="step-list">
+<li>対象VPCを選択します。VPC003の場合は<code class="inline-code">ad-vpc-003</code>を選択</li>
 <li>ネットワークタイプで「IPv4のみ」を選択</li>
 <li>「今回の設定値」に記載したAD Connector用サブネットを、異なる2つのアベイラビリティーゾーンから選択</li>
-<li>WorkSpaces用の<code>003-003a/c</code>サブネットと取り違えていないことを確認</li>
+<li>WorkSpaces用の<code class="inline-code">003-003a/c</code>サブネットと取り違えていないことを確認</li>
 <li>「次へ」を選択</li>
 </ol>
 <figure class="screenshot-wide aws-console-identity"><figcaption>AD ConnectorのVPCとサブネット選択</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-ad-connector/026-ad-connectorのvpcとサブネット選択.png" alt="AD ConnectorのVPCとサブネット選択" width="1616" height="1297" loading="lazy"></div></figure>
@@ -918,23 +926,23 @@ foreach ($dnsServer in $dnsServers) {
 </thead>
 <tbody><tr>
 <td>ディレクトリのDNS名</td>
-<td><code>ad.example.com</code></td>
+<td><code class="inline-code">ad.example.com</code></td>
 </tr>
 <tr>
 <td>ディレクトリのNetBIOS名</td>
-<td><code>ad</code></td>
+<td><code class="inline-code">ad</code></td>
 </tr>
 <tr>
 <td>DNS IPアドレス1</td>
-<td><code>192.168.225.68</code></td>
+<td><code class="inline-code">192.168.225.68</code></td>
 </tr>
 <tr>
 <td>DNS IPアドレス2</td>
-<td><code>192.168.225.126</code></td>
+<td><code class="inline-code">192.168.225.126</code></td>
 </tr>
 <tr>
 <td>サービスアカウントのユーザー名</td>
-<td><code>ADConnectorService</code></td>
+<td><code class="inline-code">ADConnectorService</code></td>
 </tr>
 <tr>
 <td>サービスアカウントのパスワード</td>
@@ -948,10 +956,10 @@ foreach ($dnsServer in $dnsServers) {
 <p><strong>画像内の番号</strong></p>
 <p>① ディレクトリのDNS名、② NetBIOS名、③と④ 接続先DNS／DC IPを入力します。⑤ サービスアカウントのユーザー名、⑥ パスワード、⑦ 確認用パスワードを入力し、⑧「次へ」を選択する</p>
 <div class="callout callout-info"><p><strong>情報：AD Connectorごとに専用アカウントを分ける</strong></p>
-<p>今回および現時点の本番設計では<code>ADConnectorService</code>を使用します。4つのAD Connectorで障害範囲とパスワード更新を分離する設計へ変更する場合は、20文字以内で<code>ADConnectorService03</code>～<code>ADConnectorService06</code>のようにAD Connectorごとに1アカウントを用意し、命名規則とローテーション運用を承認してから表を更新する</p>
+<p>今回および現時点の本番設計では<code class="inline-code">ADConnectorService</code>を使用します。4つのAD Connectorで障害範囲とパスワード更新を分離する設計へ変更する場合は、20文字以内で<code class="inline-code">ADConnectorService03</code>～<code class="inline-code">ADConnectorService06</code>のようにAD Connectorごとに1アカウントを用意し、命名規則とローテーション運用を承認してから表を更新する</p>
 </div>
 <h4 id="設定内容を確認して作成する">設定内容を確認して作成する</h4>
-<ol>
+<ol class="step-list">
 <li>ディレクトリタイプ、サイズ、VPC、サブネット、DNSドメイン、NetBIOS名およびDNS IPを確認</li>
 <li>サービスアカウント名が個人ユーザーや管理者アカウントでないことを確認</li>
 <li>パスワードが画面や証跡に表示されていないことを確認</li>
@@ -964,7 +972,7 @@ foreach ($dnsServer in $dnsServers) {
 <p><strong>画像内の番号</strong></p>
 <p>① 画面内の設定値を確認し、問題がなければ「ディレクトリの作成」を選択する</p>
 <h4 id="作成状態を確認する">作成状態を確認する</h4>
-<ol>
+<ol class="step-list">
 <li>一覧に対象AD Connectorが表示され、ステータスが「作成中」であることを確認</li>
 </ol>
 <figure class="screenshot-wide aws-console-identity"><figcaption>AD Connector作成中</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-ad-connector/029-ad-connector作成中.png" alt="AD Connector作成中" width="1717" height="352" loading="lazy"></div></figure>
@@ -996,11 +1004,11 @@ foreach ($dnsServer in $dnsServers) {
 <li>「ネットワークとセキュリティ」まで画面を展開し、VPC、2サブネットおよびAD Connector DNS IP（AWS割当）を確認</li>
 </ol>
 <h3 id="自動作成されたsgを確認する">自動作成されたSGを確認する</h3>
-<ol>
+<ol class="step-list">
 <li>AD Connectorの詳細から関連SGを確認</li>
 <li>VPCコンソールでSGを開く</li>
 <li>SGがAD Connectorを配置したVPCに作成されていることを確認</li>
-<li>SG名が「AD ConnectorのDirectory ID + <code>_controllers</code>」形式であることを確認</li>
+<li>SG名が「AD ConnectorのDirectory ID + <code class="inline-code">_controllers</code>」形式であることを確認</li>
 <li>Managed AD側のDC用SGとは別物であることを、Directory ID、VPC IDおよびSG IDで確認</li>
 <li>AWSが自動作成したルールを、根拠なく削除または置換しないでください</li>
 </ol>
@@ -1019,25 +1027,25 @@ foreach ($dnsServer in $dnsServers) {
 <li>✔ サービスアカウントが専用アカウントであり、申請されていない高権限グループへ所属していない</li>
 <li>✔ DC用SGに承認済みの接続元CIDRがあり、AD Connector用SGと区別できる</li>
 </ul>
-<p>本環境でWorkSpacesを使用する場合、ドメインコントローラーの<code>DisableVLVSupportLDAP</code>属性が既定値<code>0</code>であることも要件となります。変更実績がある場合は、ドメイン管理担当へ確認する</p>
+<p>本環境でWorkSpacesを使用する場合、ドメインコントローラーの<code class="inline-code">DisableVLVSupportLDAP</code>属性が既定値<code class="inline-code">0</code>であることも要件となります。変更実績がある場合は、ドメイン管理担当へ確認する</p>
 <h3 id="障害時の確認順序">障害時の確認順序</h3>
-<ol>
+<ol class="step-list">
 <li>接続先DNS IPを、AD Connector自身のIPと取り違えていないか</li>
 <li>VPCピアリングがアクティブか</li>
 <li>両VPCのルートテーブルに往復経路があるか</li>
 <li>DC用SGに正しい接続元CIDRがあるか</li>
 <li>ネットワークACLでDNS、Kerberos、LDAPおよび戻り通信が拒否されていないか</li>
-<li><code>_ldap._tcp</code>と<code>_kerberos._tcp</code>のSRVレコードを2台のDNSから取得できるか</li>
+<li><code class="inline-code">_ldap._tcp</code>と<code class="inline-code">_kerberos._tcp</code>のSRVレコードを2台のDNSから取得できるか</li>
 <li>サービスアカウントが有効、未ロック、期限内か</li>
 <li>「次回ログオン時にパスワード変更」が無効か</li>
-<li><code>Connectors</code>グループ所属と対象OUへの委任が残っているか</li>
+<li><code class="inline-code">Connectors</code>グループ所属と対象OUへの委任が残っているか</li>
 <li>WorkSpaces利用時の読み取り・書き込み権限があるか</li>
 </ol>
 <h3 id="パスワード変更時の注意">パスワード変更時の注意</h3>
 <p>サービスアカウントのパスワードが期限切れ、ロック、無効、またはAD Connector登録値と不一致になると、ユーザー検索やドメイン参加が失敗する可能性がある</p>
-<p><code>PasswordNeverExpires=True</code>はアカウント単位の例外であり、PSOが適用されている根拠ではありません。実効パスワードポリシーは<code>Get-ADUserResultantPasswordPolicy</code>で確認する</p>
+<p><code class="inline-code">PasswordNeverExpires=True</code>はアカウント単位の例外であり、PSOが適用されている根拠ではありません。実効パスワードポリシーは<code class="inline-code">Get-ADUserResultantPasswordPolicy</code>で確認する</p>
 <p>パスワードを変更する場合は、次の順序で実施する</p>
-<ol>
+<ol class="step-list">
 <li>変更前に、サービスアカウントとAD Connectorの対応表を確認</li>
 <li>1アカウントを複数AD Connectorで共有している場合は、影響する全コネクタを同一作業で更新する計画と切り戻し手順を用意</li>
 <li>Active Directory側で専用サービスアカウントのパスワードを変更</li>
@@ -1057,7 +1065,7 @@ foreach ($dnsServer in $dnsServers) {
 <p>AD Connector作成前に中止する場合は、今回追加した送信元CIDRのルールだけを削除します。既存のAWS管理ルールや他VPC用ルールを変更しないでください。削除前後のルール件数と対象CIDRを記録する</p>
 <p>AD ConnectorまたはWorkSpacesが利用中の場合は、先にSGルールを削除しないでください。利用状況、依存リソースおよび通信影響を確認してから変更する</p>
 <h4 id="ad-connectorの削除">AD Connectorの削除</h4>
-<ol>
+<ol class="step-list">
 <li>対象AD Connectorを使用するWorkSpacesがないことを確認</li>
 <li>WorkSpacesからディレクトリ登録を解除</li>
 <li>Directory Serviceの「アプリケーション管理」で、WorkSpacesを含むすべての関連サービスが解除済みであり、他の依存関係がないことを確認</li>
@@ -1067,7 +1075,12 @@ foreach ($dnsServer in $dnsServers) {
 <li>サービスアカウントが他のAD ConnectorやAWS連携で共有されていないことを確認</li>
 <li>サービスアカウントは直ちに削除せず、観察期間後に無効化・削除</li>
 </ol>
-
+      <h2 id="related-pages">関連ページ</h2>
+      <div class="page-link-grid">
+        <a class="page-link-card" href="workspaces-management-ec2.html"><strong>管理用EC2・Active Directory管理</strong><span>マルチVPC・閉域VDI基盤案件の関連手順</span></a>
+        <a class="page-link-card" href="workspaces-skill-transfer.html"><strong>全体構築・運用順序</strong><span>マルチVPC・閉域VDI基盤案件の関連手順</span></a>
+        <a class="page-link-card" href="workspaces-provisioning-gpo.html"><strong>Amazon WorkSpaces 構築・OU・GPO</strong><span>マルチVPC・閉域VDI基盤案件の関連手順</span></a>
+      </div>
     </main>
   </div>
   <script src="../assets/app.js?v=20260908-skill-transfer1"></script>

@@ -26,18 +26,8 @@
       </div>
       <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">✎</span>記事</p>
       <a href="cloudflare-private-site.html">Private GitHubリポジトリをCloudflare Workersで認証付き公開してみた</a>
-      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">◈</span>Terraform</p>
-      <a href="terraform.html">Terraform 概要</a>
-      <a href="hcp-terraform.html">HCP Terraform（Terraform Cloud）</a>
-      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">☁︎</span>AWS</p>
-      <a href="cloudformation.html">CloudFormation 運用手順集</a>
-      <a href="aws-cli.html">AWS CLI 特殊対応</a>
-      <a href="aws-cli-reference.html">AWS CLI コマンドリファレンス</a>
-      <a href="eventbridge-scheduler.html">EventBridge Scheduler</a>
-      <a href="aws-directory-service.html">AWS Directory Service 運用手順</a>
-      <a href="amazon-workspaces.html">Amazon WorkSpaces</a>
       <details class="sidebar-nested-menu" open>
-        <summary>PoC 閉域VPC・AD／VDI環境</summary>
+        <summary>マルチVPC・閉域VDI基盤案件（9ページ）</summary>
         <div class="sidebar-subnav">
           <a href="workspaces-skill-transfer.html">全体構築・運用順序</a>
           <a href="workspaces-managed-ad.html">AWS Managed Microsoft AD 構築・管理</a>
@@ -50,6 +40,16 @@
           <a href="workspaces-cloudwatch-monitoring.html">CloudWatch・SNS 監視／通知</a>
         </div>
       </details>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">◈</span>Terraform</p>
+      <a href="terraform.html">Terraform 概要</a>
+      <a href="hcp-terraform.html">HCP Terraform（Terraform Cloud）</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">☁︎</span>AWS</p>
+      <a href="cloudformation.html">CloudFormation 運用手順集</a>
+      <a href="aws-cli.html">AWS CLI 特殊対応</a>
+      <a href="aws-cli-reference.html">AWS CLI コマンドリファレンス</a>
+      <a href="eventbridge-scheduler.html">EventBridge Scheduler</a>
+      <a href="aws-directory-service.html">AWS Directory Service 運用手順</a>
+      <a href="amazon-workspaces.html">Amazon WorkSpaces</a>
       <a href="amazon-ses.html">Amazon SES SMTPリレー</a>
       <a href="amazon-ses-monitoring.html">Amazon SES 配信監視</a>
       <a href="amazon-rds-blue-green.html">Amazon RDS Blue/Green Deployments</a>
@@ -75,9 +75,23 @@
       <a href="eol.html">EOL / ライフサイクル一覧表</a>
     </aside>
     <main class="content workspaces-skill-transfer-guide">
-      <nav class="breadcrumb" aria-label="Breadcrumb"><a href="../"><span class="nav-icon" aria-hidden="true">⌂</span>Home</a><span>技術移管</span></nav>
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="../"><span class="nav-icon" aria-hidden="true">⌂</span>Home</a>
+        <span>トピック</span>
+      </nav>
       <h1>Amazon WorkSpaces Cost Optimizer</h1>
-      <p class="lead">Amazon WorkSpaces Cost Optimizer v2.9.10をCloudFormationでデプロイし、課金モードの評価と変更結果を確認する<br>DryRun、料金しきい値、実行時刻、ECSタスク、CloudWatch Logs、S3レポートおよびダッシュボードの確認方法を整理する</p>
+      <div class="page-summary"><strong>⚡ このページの要約</strong><p class="lead">Amazon WorkSpaces Cost Optimizer v2.9.10をCloudFormationでデプロイし、課金モードの評価と変更結果を確認する<br>DryRun、料金しきい値、実行時刻、ECSタスク、CloudWatch Logs、S3レポートおよびダッシュボードの確認方法を整理する</p></div>
+      <nav class="section-links" aria-label="主要セクション">
+        <a href="#amazon-workspaces-cost-optimizer-デプロイ-運用手順">Amazon WorkSpaces Cost Optimizer デプロイ・運用手順</a>
+        <a href="#cloudformationデプロイ手順-v2-9-10">CloudFormationデプロイ手順（v2.9.10）</a>
+        <a href="#レポート-監視手順">レポート・監視手順</a>
+        <a href="#参考-説明用サンプル5台の見方と使用範囲">参考：説明用サンプル5台の見方と使用範囲</a>
+        <a href="#設定変更-実行結果確認手順">設定変更・実行結果確認手順</a>
+        <a href="#参考-実行時刻変更の検証記録と本番変更方針">参考 実行時刻変更の検証記録と本番変更方針</a>
+        <a href="#参考-お客様環境-v2-8-1-と本手順書-v2-9-10-の差分">参考：お客様環境 v2.8.1 と本手順書 v2.9.10 の差分</a>
+        <a href="#付録-作成リソース一覧-v2-9-10">付録：作成リソース一覧（v2.9.10）</a>
+        <a href="#related-pages">関連ページ</a>
+      </nav>
 <h2 id="amazon-workspaces-cost-optimizer-デプロイ-運用手順">Amazon WorkSpaces Cost Optimizer デプロイ・運用手順</h2>
 <p><strong>目次</strong></p>
 <!-- Confluenceでは、この位置に目次マクロを配置する -->
@@ -85,13 +99,13 @@
 <h3 id="概要">概要</h3>
 <p>東京リージョンの単一アカウントへCost Optimizer for Amazon WorkSpaces v2.9.10を新規VPC構成でデプロイし、Dry Runレポート、料金しきい値、Dry Run解除および実行結果を管理するための総合案内</p>
 <h4 id="本手順書で実施すること">本手順書で実施すること</h4>
-<ul>
+<ul class="check-list">
 <li>ソリューション構成と重要事項を確認してCloudFormationでデプロイする</li>
 <li>ECS、CloudWatch Logs、S3 CSVおよびCloudWatchダッシュボードを確認する</li>
 <li>CloudFormationによる設定変更からWorkSpaces実設定の成功判定までを実施する</li>
 </ul>
 <h4 id="完了条件">完了条件</h4>
-<ul>
+<ul class="check-list">
 <li>✔ 各作業を対応する個別手順書で実施できること</li>
 <li>✔ 設定更新の完了と日次処理・課金モード変更の完了が分離されていること</li>
 </ul>
@@ -119,7 +133,7 @@
 <div class="callout callout-info"><p><strong>参考：AWS公式資料</strong><br>出典：<a href="https://docs.aws.amazon.com/solutions/latest/cost-optimizer-for-workspaces/">AWS公式実装ガイド</a>を仕様の正として使用する</p>
 </div>
 <h3 id="章構成">章構成</h3>
-<ol>
+<ol class="step-list">
 <li><a href="workspaces-cost-optimizer.html">CloudFormationデプロイ手順</a></li>
 <li><a href="workspaces-cost-optimizer.html">レポート・監視手順</a></li>
 <li><a href="workspaces-cost-optimizer.html">設定変更・実行結果確認手順</a></li>
@@ -138,23 +152,23 @@
 </thead>
 <tbody><tr>
 <td>CloudFormation</td>
-<td><code>UPDATE_COMPLETE</code></td>
+<td><code class="inline-code">UPDATE_COMPLETE</code></td>
 </tr>
 <tr>
 <td>ソリューション</td>
-<td><code>v2.9.10</code></td>
+<td><code class="inline-code">v2.9.10</code></td>
 </tr>
 <tr>
 <td>DryRun</td>
-<td><code>No</code></td>
+<td><code class="inline-code">No</code></td>
 </tr>
 <tr>
 <td>未使用WorkSpaceの終了</td>
-<td><code>No</code></td>
+<td><code class="inline-code">No</code></td>
 </tr>
 <tr>
 <td>設定済みCron</td>
-<td><code>cron(0 23 * * ? *)</code>（08:00 JST）</td>
+<td><code class="inline-code">cron(0 23 * * ? *)</code>（08:00 JST）</td>
 </tr>
 <tr>
 <td>EventBridgeルール</td>
@@ -175,8 +189,8 @@
 <ul>
 <li>料金しきい値とDryRunはCloudFormation変更セットで変更する</li>
 <li>CloudFormation配下のECSタスク定義、IAM、S3、EventBridge等を個別編集しない</li>
-<li><code>DryRun=No</code> へ変更する前に、複数月分のDryRunレポート、お客様承認、除外対象、切り戻し方法を確認する</li>
-<li>自動変更から除外するWorkSpaceには、公式仕様に従って <code>Skip_Convert</code> タグを使用する</li>
+<li><code class="inline-code">DryRun=No</code> へ変更する前に、複数月分のDryRunレポート、お客様承認、除外対象、切り戻し方法を確認する</li>
+<li>自動変更から除外するWorkSpaceには、公式仕様に従って <code class="inline-code">Skip_Convert</code> タグを使用する</li>
 <li>成功可否はダッシュボードだけで判断せず、ECS、CloudWatch Logs、S3 CSV、WorkSpaces実設定を突合する</li>
 </ul>
 <hr>
@@ -186,7 +200,7 @@
 <!-- Confluenceでは、この位置に目次マクロを配置する -->
 
 <h3 id="概要-2">概要</h3>
-<p>東京リージョンへCost Optimizer for Amazon WorkSpaces v2.9.10を、単一アカウント・新規VPC・Dry Run有効の安全設定でデプロイします。スタック<code>sample-cfn-co-001</code>と41リソースの作成完了までを確認する</p>
+<p>東京リージョンへCost Optimizer for Amazon WorkSpaces v2.9.10を、単一アカウント・新規VPC・Dry Run有効の安全設定でデプロイします。スタック<code class="inline-code">sample-cfn-co-001</code>と41リソースの作成完了までを確認する</p>
 <h4 id="本手順書で実施すること-2">本手順書で実施すること</h4>
 <ul>
 <li>固定バージョンの公式テンプレートを指定する</li>
@@ -194,10 +208,10 @@
 <li>CloudFormationの作成完了と出力値を確認する</li>
 </ul>
 <h4 id="完了条件-2">完了条件</h4>
-<ul>
-<li>✔ CloudFormationスタックが<code>CREATE_COMPLETE</code>であること</li>
-<li>✔ <code>SolutionVersion=v2.9.10</code>、<code>DryRun=Yes</code>および対象の料金しきい値を確認できること</li>
-<li>✔ 取得済み証跡の構成では41リソースが<code>CREATE_COMPLETE</code>であること</li>
+<ul class="check-list">
+<li>✔ CloudFormationスタックが<code class="inline-code">CREATE_COMPLETE</code>であること</li>
+<li>✔ <code class="inline-code">SolutionVersion=v2.9.10</code>、<code class="inline-code">DryRun=Yes</code>および対象の料金しきい値を確認できること</li>
+<li>✔ 取得済み証跡の構成では41リソースが<code class="inline-code">CREATE_COMPLETE</code>であること</li>
 </ul>
 <h4 id="設定値-2">設定値</h4>
 <table>
@@ -209,7 +223,7 @@
 </thead>
 <tbody><tr>
 <td>スタック名</td>
-<td><code>sample-cfn-co-001</code></td>
+<td><code class="inline-code">sample-cfn-co-001</code></td>
 </tr>
 <tr>
 <td>ソリューションバージョン</td>
@@ -221,13 +235,13 @@
 </tr>
 <tr>
 <td>Dry Run</td>
-<td><code>Yes</code>（初期構築時）</td>
+<td><code class="inline-code">Yes</code>（初期構築時）</td>
 </tr>
 </tbody></table>
 <div class="callout callout-warning"><p><strong>参考：AWS公式資料</strong><br>出典：<a href="https://docs.aws.amazon.com/solutions/latest/cost-optimizer-for-workspaces/launch-the-stack-hub-template.html">AWS公式：ハブスタックの起動</a>のパラメータと注意事項を作業前に確認する</p>
 </div>
 <h3 id="ソリューション構成と重要事項">ソリューション構成と重要事項</h3>
-<p>Cost Optimizer for Amazon WorkSpacesは、WorkSpaces本体の組み込み機能ではなく、AWS Solutions Libraryから提供されるCloudFormationテンプレートで構築するソリューションです。WorkSpacesの利用時間と料金しきい値を比較し、時間課金の<code>AUTO_STOP</code>と月額課金の<code>ALWAYS_ON</code>のどちらが適しているかを日次で判定する</p>
+<p>Cost Optimizer for Amazon WorkSpacesは、WorkSpaces本体の組み込み機能ではなく、AWS Solutions Libraryから提供されるCloudFormationテンプレートで構築するソリューションです。WorkSpacesの利用時間と料金しきい値を比較し、時間課金の<code class="inline-code">AUTO_STOP</code>と月額課金の<code class="inline-code">ALWAYS_ON</code>のどちらが適しているかを日次で判定する</p>
 <figure class="screenshot-wide"><figcaption>構成図_ハブアカウント単一構成_v2.9.10</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/001-構成図-ハブアカウント単一構成-v2-9-10.svg" alt="構成図_ハブアカウント単一構成_v2.9.10" width="1600" height="900" loading="lazy"></div></figure>
 
 <p><em>構成図_ハブアカウント単一構成_v2.9.10</em></p>
@@ -271,50 +285,50 @@
 </thead>
 <tbody><tr>
 <td>Dry Run</td>
-<td>初期構築時は<code>Yes</code></td>
+<td>初期構築時は<code class="inline-code">Yes</code></td>
 <td>判定結果をレポートへ出力しますが、課金モードは変更しない</td>
 </tr>
 <tr>
 <td>未使用WorkSpace終了</td>
-<td><code>No</code></td>
+<td><code class="inline-code">No</code></td>
 <td>未使用WorkSpaceを自動終了しない</td>
 </tr>
 <tr>
 <td>除外タグ</td>
-<td><code>Skip_Convert</code></td>
+<td><code class="inline-code">Skip_Convert</code></td>
 <td>指定したWorkSpaceを課金モード変更と終了の対象外にする</td>
 </tr>
 <tr>
 <td>監視対象リージョン</td>
-<td><code>Regions</code>は空欄</td>
+<td><code class="inline-code">Regions</code>は空欄</td>
 <td>同一アカウント内の対応リージョンを走査するため、必要に応じて対象を限定する</td>
 </tr>
 <tr>
 <td>VPC</td>
-<td><code>CreateNewVPC=Yes</code></td>
+<td><code class="inline-code">CreateNewVPC=Yes</code></td>
 <td>NAT GatewayとElastic IPが作成され、継続料金が発生する</td>
 </tr>
 </tbody></table>
 <div class="callout callout-warning"><p><strong>警告：日次処理を重複実行しない</strong><br>本ソリューションは1日1回の利用時間計算を前提としています。EventBridgeスケジュールの直接変更や同一UTC日内のECSタスク複数実行は、請求対象時間と課金モード判定を不正確にする可能性があります。CloudFormationを構成管理の正とし、配下のリソースを個別編集しない</p>
 </div>
-<p>CloudFormationスタックを削除しても、S3バケット、DynamoDBテーブル、ECS実行ログおよびVPC Flow Logsの一部は<code>DeletionPolicy: Retain</code>により残ります。削除時はデータ保持と残存料金を個別に確認する</p>
+<p>CloudFormationスタックを削除しても、S3バケット、DynamoDBテーブル、ECS実行ログおよびVPC Flow Logsの一部は<code class="inline-code">DeletionPolicy: Retain</code>により残ります。削除時はデータ保持と残存料金を個別に確認する</p>
 <p>バージョン差分と作成リソースの詳細は、<a href="workspaces-cost-optimizer.html">v2.8.1とv2.9.10の差分</a>および<a href="workspaces-cost-optimizer.html">作成リソース一覧</a>を参照する</p>
 <h3 id="前提と事前確認">前提と事前確認</h3>
 <p>本手順は、Cost Optimizer for Amazon WorkSpacesを東京リージョンへ単一アカウント構成でデプロイする例</p>
-<ol>
+<ol class="step-list">
 <li>AWSマネジメントコンソール右上が「アジアパシフィック（東京）」であることを確認</li>
 <li>CloudFormation、IAM、ECS、VPC、S3、DynamoDB、CloudWatch、EventBridge、WorkSpacesに必要な権限があることを確認</li>
 <li>新規VPC用CIDRが既存ネットワークと重複しないことを確認</li>
-<li>初回は必ず <code>DryRun=Yes</code>、<code>TerminateUnusedWorkspaces=No</code> と</li>
-<li>本手順書と同じ構成を再現する場合は、バージョンを固定したv2.9.10公式配布テンプレートを使用します。<code>latest</code> は将来別バージョンへ更新されるため、常用しない</li>
+<li>初回は必ず <code class="inline-code">DryRun=Yes</code>、<code class="inline-code">TerminateUnusedWorkspaces=No</code> と</li>
+<li>本手順書と同じ構成を再現する場合は、バージョンを固定したv2.9.10公式配布テンプレートを使用します。<code class="inline-code">latest</code> は将来別バージョンへ更新されるため、常用しない</li>
 </ol>
 <h3 id="テンプレートを指定する">テンプレートを指定する</h3>
-<ol>
+<ol class="step-list">
 <li>CloudFormationで「スタックの作成」を選択</li>
 <li>「既存のテンプレートを選択」および「Amazon S3 URL」を選択</li>
 <li>次のv2.9.10公式配布テンプレートURLを入力し、「次へ」を選択</li>
 </ol>
-<p><code>https://solutions-reference.s3.amazonaws.com/cost-optimizer-for-amazon-workspaces/v2.9.10/cost-optimizer-for-amazon-workspaces.template</code></p>
+<p><code class="inline-code">https://solutions-reference.s3.amazonaws.com/cost-optimizer-for-amazon-workspaces/v2.9.10/cost-optimizer-for-amazon-workspaces.template</code></p>
 <figure class="screenshot-wide aws-console-identity"><figcaption>図1_CloudFormation_公式テンプレートURL指定</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/002-図1-cloudformation-公式テンプレートurl指定.png" alt="図1_CloudFormation_公式テンプレートURL指定" width="1713" height="1304" loading="lazy"></div></figure>
 
 
@@ -323,7 +337,7 @@
 <ul>
 <li>① 固定バージョンの公式テンプレートURLを入力する</li>
 </ul>
-<div class="callout callout-warning"><p><strong>注意：固定バージョンのテンプレートURLを使用する</strong><br>図1は2026年9月8日に取得した証跡であり、当時v2.9.10を指していた<code>latest</code> URLが表示されています。再構築時は、画像内の<code>latest</code>を上記の<code>v2.9.10</code>に置き換えて入力してください。別バージョンへ更新する場合は、そのバージョンのリリースノートと変更セットを事前に確認する</p>
+<div class="callout callout-warning"><p><strong>注意：固定バージョンのテンプレートURLを使用する</strong><br>図1は2026年9月8日に取得した証跡であり、当時v2.9.10を指していた<code class="inline-code">latest</code> URLが表示されています。再構築時は、画像内の<code class="inline-code">latest</code>を上記の<code class="inline-code">v2.9.10</code>に置き換えて入力してください。別バージョンへ更新する場合は、そのバージョンのリリースノートと変更セットを事前に確認する</p>
 </div>
 <p>テンプレートを事前に承認・保管する運用では、「テンプレートファイルのアップロード」を使用しても使用できる</p>
 <figure class="screenshot-wide aws-console-identity"><figcaption>参考図1_CloudFormation_テンプレートファイル直接アップロード</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/003-参考図1-cloudformation-テンプレートファイル直接アップロード.png" alt="参考図1_CloudFormation_テンプレートファイル直接アップロード" width="1713" height="1304" loading="lazy"></div></figure>
@@ -331,7 +345,7 @@
 
 
 <p><strong>画像内の番号</strong></p>
-<ul>
+<ul class="check-list">
 <li>① 選択した承認済みテンプレートファイルの名前を確認する</li>
 </ul>
 <h3 id="スタック名とネットワークを設定する">スタック名とネットワークを設定する</h3>
@@ -346,41 +360,41 @@
 </thead>
 <tbody><tr>
 <td>Stack name</td>
-<td><code>sample-cfn-co-001</code></td>
+<td><code class="inline-code">sample-cfn-co-001</code></td>
 <td>今回のスタック名</td>
 </tr>
 <tr>
 <td>Create New VPC</td>
-<td><code>Yes</code></td>
+<td><code class="inline-code">Yes</code></td>
 <td>専用VPCを新規作成</td>
 </tr>
 <tr>
 <td>VpcCIDR</td>
-<td><code>10.250.0.0/24</code></td>
+<td><code class="inline-code">10.250.0.0/24</code></td>
 <td>専用VPC</td>
 </tr>
 <tr>
 <td>PublicSubnetCIDR</td>
-<td><code>10.250.0.0/28</code></td>
+<td><code class="inline-code">10.250.0.0/28</code></td>
 <td>NAT Gateway用パブリックサブネット</td>
 </tr>
 <tr>
 <td>PrivateSubnet1CIDR</td>
-<td><code>10.250.0.32/28</code></td>
+<td><code class="inline-code">10.250.0.32/28</code></td>
 <td>ECSタスク用プライベートサブネット1</td>
 </tr>
 <tr>
 <td>PrivateSubnet2CIDR</td>
-<td><code>10.250.0.48/28</code></td>
+<td><code class="inline-code">10.250.0.48/28</code></td>
 <td>ECSタスク用プライベートサブネット2</td>
 </tr>
 <tr>
 <td>EgressCIDR</td>
-<td><code>0.0.0.0/0</code></td>
+<td><code class="inline-code">0.0.0.0/0</code></td>
 <td>ECSタスクの送信先。組織基準に合わせて制限を検討する</td>
 </tr>
 </tbody></table>
-<p><code>Create New VPC=Yes</code> のため、Existing VPC SettingsのサブネットIDとセキュリティグループIDは空欄にする</p>
+<p><code class="inline-code">Create New VPC=Yes</code> のため、Existing VPC SettingsのサブネットIDとセキュリティグループIDは空欄にする</p>
 <figure class="screenshot-wide aws-console-identity"><figcaption>図2_CloudFormation_スタック名・VPC・DryRun設定</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/004-図2-cloudformation-スタック名-vpc-dryrun設定.png" alt="図2_CloudFormation_スタック名・VPC・DryRun設定" width="1713" height="1304" loading="lazy"></div></figure>
 
 
@@ -388,12 +402,12 @@
 <p><strong>画像内の番号</strong></p>
 <ul>
 <li>① スタック名を入力する</li>
-<li>② 新規VPCを作成するため<code>CreateNewVPC=Yes</code>を選択する</li>
+<li>② 新規VPCを作成するため<code class="inline-code">CreateNewVPC=Yes</code>を選択する</li>
 <li>③ VPCおよびサブネットのCIDRを入力する</li>
-<li>④ 初期構築では<code>DryRun=Yes</code>、<code>TestEndOfMonth=No</code>を選択する</li>
+<li>④ 初期構築では<code class="inline-code">DryRun=Yes</code>、<code class="inline-code">TestEndOfMonth=No</code>を選択する</li>
 </ul>
 <h3 id="安全設定と料金しきい値を設定する">安全設定と料金しきい値を設定する</h3>
-<table>
+<table class="parameter-table">
 <thead>
 <tr>
 <th>分類</th>
@@ -404,17 +418,17 @@
 <tbody><tr>
 <td>Testing</td>
 <td>DryRun</td>
-<td align="right"><code>Yes</code></td>
+<td align="right"><code class="inline-code">Yes</code></td>
 </tr>
 <tr>
 <td>Testing</td>
 <td>TestEndOfMonth</td>
-<td align="right"><code>No</code></td>
+<td align="right"><code class="inline-code">No</code></td>
 </tr>
 <tr>
 <td>Logging</td>
 <td>LogLevel</td>
-<td align="right"><code>INFO</code></td>
+<td align="right"><code class="inline-code">INFO</code></td>
 </tr>
 <tr>
 <td>Pricing</td>
@@ -464,7 +478,7 @@
 <tr>
 <td>Container</td>
 <td>Auto-update Container Image</td>
-<td align="right"><code>Yes</code></td>
+<td align="right"><code class="inline-code">Yes</code></td>
 </tr>
 <tr>
 <td>Regions</td>
@@ -474,7 +488,7 @@
 <tr>
 <td>Termination</td>
 <td>Terminate unused workspaces</td>
-<td align="right"><code>No</code>（選択肢：<code>No</code>／<code>Dry Run</code>／<code>Yes</code>）</td>
+<td align="right"><code class="inline-code">No</code>（選択肢：<code class="inline-code">No</code>／<code class="inline-code">Dry Run</code>／<code class="inline-code">Yes</code>）</td>
 </tr>
 <tr>
 <td>Termination</td>
@@ -494,25 +508,25 @@
 </tbody></table>
 <div class="callout callout-warning"><p><strong>注意：料金しきい値は今回の明示設定値</strong><br>83、217、83、80等は取得時点のAWS実装ガイド掲載値を明示設定した値であり、v2.9.10配布テンプレート自体の既定値と同義ではありません。料金改定や地域差を確認し、変更管理のうえで値を決定する</p>
 </div>
-<p><code>Regions</code> を空欄にすると、アカウント内の対応リージョンをすべて走査します。組織で未有効化のリージョンに対するエラーを抑え、処理範囲を明確にする場合は、WorkSpacesを運用するリージョンだけをカンマ区切りで指定する</p>
-<p><code>TerminateUnusedWorkspaces</code> は、<code>No</code>で終了機能を無効化し、<code>Dry Run</code>で終了候補だけをレポートし、<code>Yes</code>で終了を許可します。実際に終了するには、全体の<code>DryRun=No</code>も必要です。スタンバイWorkSpaceは対象外です。<code>TerminateUnusedWorkspaces=Yes</code>と<code>TestEndOfMonth=Yes</code>を同時に設定しないでください</p>
+<p><code class="inline-code">Regions</code> を空欄にすると、アカウント内の対応リージョンをすべて走査します。組織で未有効化のリージョンに対するエラーを抑え、処理範囲を明確にする場合は、WorkSpacesを運用するリージョンだけをカンマ区切りで指定する</p>
+<p><code class="inline-code">TerminateUnusedWorkspaces</code> は、<code class="inline-code">No</code>で終了機能を無効化し、<code class="inline-code">Dry Run</code>で終了候補だけをレポートし、<code class="inline-code">Yes</code>で終了を許可します。実際に終了するには、全体の<code class="inline-code">DryRun=No</code>も必要です。スタンバイWorkSpaceは対象外です。<code class="inline-code">TerminateUnusedWorkspaces=Yes</code>と<code class="inline-code">TestEndOfMonth=Yes</code>を同時に設定しないでください</p>
 <figure class="screenshot-wide aws-console-identity"><figcaption>図3_CloudFormation_料金・運用パラメータ設定</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/005-図3-cloudformation-料金-運用パラメータ設定.png" alt="図3_CloudFormation_料金・運用パラメータ設定" width="1713" height="1304" loading="lazy"></div></figure>
 
 
 
 <p><strong>画像内の番号</strong></p>
-<ul>
+<ul class="check-list">
 <li>① バンドル種別ごとの料金しきい値を入力する</li>
 <li>② コンテナイメージの自動更新設定を確認する</li>
 <li>③ 監視対象リージョンを入力します。空欄時の対象範囲も確認する</li>
 <li>④ 未使用WorkSpace終了設定とマルチアカウント設定を確認する</li>
 </ul>
 <h3 id="スタックオプションを設定する">スタックオプションを設定する</h3>
-<ol>
+<ol class="step-list">
 <li>CloudFormationサービスロールは、組織方針で指定された場合のみ選択</li>
 <li>「プロビジョニング失敗時の動作」は <strong>すべてのリソースをロールバック</strong> と</li>
 <li>ロールバック中に新規作成されたリソースは、通常の削除ポリシーに従う設定を維持</li>
-<li><code>AWS::IAM::Role</code> 等の作成を確認し、「AWS CloudFormationによってIAMリソースがカスタム名で作成される場合があることを承認します」を選択</li>
+<li><code class="inline-code">AWS::IAM::Role</code> 等の作成を確認し、「AWS CloudFormationによってIAMリソースがカスタム名で作成される場合があることを承認します」を選択</li>
 </ol>
 <figure class="screenshot-wide aws-console-identity"><figcaption>図4_CloudFormation_スタックオプション・IAM承認</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/006-図4-cloudformation-スタックオプション-iam承認.png" alt="図4_CloudFormation_スタックオプション・IAM承認" width="1713" height="1304" loading="lazy"></div></figure>
 
@@ -526,16 +540,16 @@
 <li>④ 「次へ」を選択する</li>
 </ul>
 <h3 id="内容を確認して作成する">内容を確認して作成する</h3>
-<ol>
+<ol class="step-list">
 <li>スタック名、28個のパラメータ、IAM承認を確認</li>
-<li><code>DryRun=Yes</code>、<code>TerminateUnusedWorkspaces=No</code>、<code>TestEndOfMonth=No</code> を再確認</li>
+<li><code class="inline-code">DryRun=Yes</code>、<code class="inline-code">TerminateUnusedWorkspaces=No</code>、<code class="inline-code">TestEndOfMonth=No</code> を再確認</li>
 </ol>
 <figure class="screenshot-wide aws-console-identity"><figcaption>図5_CloudFormation_作成前パラメータ確認</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/007-図5-cloudformation-作成前パラメータ確認.png" alt="図5_CloudFormation_作成前パラメータ確認" width="1713" height="1304" loading="lazy"></div></figure>
 
 
 
 <p><strong>画像内の番号</strong></p>
-<ul>
+<ul class="check-list">
 <li>① 作成対象のスタック名を確認する</li>
 <li>② 28個のCloudFormationパラメータが今回の設定値と一致していることを確認する</li>
 </ul>
@@ -548,15 +562,15 @@
 
 
 <p><strong>画像内の番号</strong></p>
-<ul>
-<li>① スタックの状態が<code>CREATE_IN_PROGRESS</code>であることを確認する</li>
+<ul class="check-list">
+<li>① スタックの状態が<code class="inline-code">CREATE_IN_PROGRESS</code>であることを確認する</li>
 <li>② イベントの進行状況に失敗やロールバックがないことを確認する</li>
 </ul>
 <h3 id="デプロイ結果を確認する">デプロイ結果を確認する</h3>
-<ol>
-<li>スタックが <code>CREATE_COMPLETE</code> であることを確認</li>
-<li>「リソース」タブで、本構成では41件が <code>CREATE_COMPLETE</code> であることを確認</li>
-<li>「出力」タブで <code>SolutionVersion=v2.9.10</code>、<code>DryRun=Yes</code>、<code>BucketName</code>、料金しきい値を確認</li>
+<ol class="step-list">
+<li>スタックが <code class="inline-code">CREATE_COMPLETE</code> であることを確認</li>
+<li>「リソース」タブで、本構成では41件が <code class="inline-code">CREATE_COMPLETE</code> であることを確認</li>
+<li>「出力」タブで <code class="inline-code">SolutionVersion=v2.9.10</code>、<code class="inline-code">DryRun=Yes</code>、<code class="inline-code">BucketName</code>、料金しきい値を確認</li>
 <li>作成直後はダッシュボードが空でも異常とは限らない。初回ECSタスク実行後にS3、ログ、メトリクスを確認</li>
 </ol>
 <figure class="screenshot-wide"><figcaption>図7_CloudFormation_作成リソース_CREATE_COMPLETE</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/009-図7-cloudformation-作成リソース-create-complete.png" alt="図7_CloudFormation_作成リソース_CREATE_COMPLETE" width="1713" height="1304" loading="lazy"></div></figure>
@@ -564,25 +578,25 @@
 
 
 <p><strong>画像内の番号</strong></p>
-<ul>
-<li>① S3、CloudWatch Logs、LambdaおよびIAM関連リソースが<code>CREATE_COMPLETE</code>であることを確認する</li>
-<li>② EventBridge、ECSおよびVPC関連リソースが<code>CREATE_COMPLETE</code>であることを確認する</li>
-<li>③ DynamoDBテーブルとCloudWatchダッシュボードが<code>CREATE_COMPLETE</code>であることを確認する</li>
+<ul class="check-list">
+<li>① S3、CloudWatch Logs、LambdaおよびIAM関連リソースが<code class="inline-code">CREATE_COMPLETE</code>であることを確認する</li>
+<li>② EventBridge、ECSおよびVPC関連リソースが<code class="inline-code">CREATE_COMPLETE</code>であることを確認する</li>
+<li>③ DynamoDBテーブルとCloudWatchダッシュボードが<code class="inline-code">CREATE_COMPLETE</code>であることを確認する</li>
 </ul>
 <figure class="screenshot-wide aws-console-identity"><figcaption>図8_CloudFormation_出力_SolutionVersion-v2.9.10</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/010-図8-cloudformation-出力-solutionversion-v2-9-10.png" alt="図8_CloudFormation_出力_SolutionVersion-v2.9.10" width="1713" height="1304" loading="lazy"></div></figure>
 
 
 
 <p><strong>画像内の番号</strong></p>
-<ul>
-<li>① 出力値の<code>DryRun=Yes</code>を確認する</li>
+<ul class="check-list">
+<li>① 出力値の<code class="inline-code">DryRun=Yes</code>を確認する</li>
 <li>② 料金しきい値、ログレベルおよびSolution IDを確認する</li>
-<li>③ <code>SolutionVersion=v2.9.10</code>と<code>StandardLimit=85</code>を確認する</li>
+<li>③ <code class="inline-code">SolutionVersion=v2.9.10</code>と<code class="inline-code">StandardLimit=85</code>を確認する</li>
 </ul>
 <h3 id="作成後の注意">作成後の注意</h3>
 <ul>
-<li><code>CreateNewVPC=Yes</code> ではNAT GatewayとElastic IPが作成され、継続料金が発生する</li>
-<li>スタック削除後も、削除ポリシー <code>Retain</code> のS3、DynamoDB、CloudWatch Logsが残る</li>
+<li><code class="inline-code">CreateNewVPC=Yes</code> ではNAT GatewayとElastic IPが作成され、継続料金が発生する</li>
+<li>スタック削除後も、削除ポリシー <code class="inline-code">Retain</code> のS3、DynamoDB、CloudWatch Logsが残る</li>
 <li>DryRun解除はデプロイ直後に実施せず、レポートを十分な期間確認してから行う</li>
 <li>詳細は<a href="workspaces-cost-optimizer.html">作成リソース一覧</a>を参照する</li>
 </ul>
@@ -595,13 +609,13 @@
 <h3 id="概要-3">概要</h3>
 <p>Cost Optimizerの日次処理について、ECSタスク、CloudWatch Logs、S3 CSVおよびCloudWatchダッシュボードを順に確認する。取得済み証跡はDry Run有効時の1台分であり、課金モードの実変更証跡ではない</p>
 <h4 id="本手順書で実施すること-3">本手順書で実施すること</h4>
-<ul>
+<ul class="check-list">
 <li>ECSタスクの停止理由と終了コードを確認する</li>
 <li>S3の日次CSVとCloudWatch Logsの処理内容を確認する</li>
 <li>ダッシュボードを補助情報として確認する</li>
 </ul>
 <h4 id="完了条件-3">完了条件</h4>
-<ul>
+<ul class="check-list">
 <li>✔ 対象実行のECSタスクが正常終了していること</li>
 <li>✔ 対象日のS3 CSVが生成され、内容を開けること</li>
 <li>✔ 対象リージョンのログに未解決のエラーがなく、実行パラメータを確認できること</li>
@@ -616,7 +630,7 @@
 </thead>
 <tbody><tr>
 <td>確認対象スタック</td>
-<td><code>sample-cfn-co-001</code></td>
+<td><code class="inline-code">sample-cfn-co-001</code></td>
 </tr>
 <tr>
 <td>取得済みレポート</td>
@@ -642,27 +656,27 @@
 <tbody><tr>
 <td>Amazon ECS</td>
 <td>起動したタスク、停止理由、終了コード</td>
-<td>クラスター <code>cost-optimizer-cluster</code></td>
+<td>クラスター <code class="inline-code">cost-optimizer-cluster</code></td>
 </tr>
 <tr>
 <td>CloudWatch Logs</td>
 <td>読み込んだパラメータ、走査リージョン、処理結果、例外</td>
-<td><code>/ecs/wco-task/sample-cfn-co-001</code></td>
+<td><code class="inline-code">/ecs/wco-task/sample-cfn-co-001</code></td>
 </tr>
 <tr>
 <td>Amazon S3</td>
 <td>リージョン／ディレクトリ別CSV、集約CSV</td>
-<td><code>sample-cfn-co-001-costoptimizerbucket-yirana73nt26</code></td>
+<td><code class="inline-code">sample-cfn-co-001-costoptimizerbucket-yirana73nt26</code></td>
 </tr>
 <tr>
 <td>CloudWatch dashboard</td>
 <td>台数、課金形態、変換、終了、失敗、処理時間</td>
-<td><code>sample-cfn-co-001-Dashboard-b3cb8f30-ab0e-11f1-b7e4-0e752dcc785b</code></td>
+<td><code class="inline-code">sample-cfn-co-001-Dashboard-b3cb8f30-ab0e-11f1-b7e4-0e752dcc785b</code></td>
 </tr>
 </tbody></table>
 <h3 id="ecsタスクを確認する">ECSタスクを確認する</h3>
-<ol>
-<li>ECSで <code>cost-optimizer-cluster</code> を開く</li>
+<ol class="step-list">
+<li>ECSで <code class="inline-code">cost-optimizer-cluster</code> を開く</li>
 <li>「タスク」で対象時刻のタスクを選択</li>
 <li>タスクが停止済みであること、停止理由、コンテナ終了コードを確認</li>
 </ol>
@@ -671,14 +685,14 @@
 
 
 <p><strong>画像内の番号</strong></p>
-<ul>
+<ul class="check-list">
 <li>① 対象日時のECSタスクと停止状態を確認する</li>
 <li>② 使用したタスク定義のリビジョンと実行情報を確認する</li>
 </ul>
 <h3 id="cloudwatchダッシュボードを確認する">CloudWatchダッシュボードを確認する</h3>
-<ol>
+<ol class="step-list">
 <li>CloudWatchの「ダッシュボード」を開く</li>
-<li><code>sample-cfn-co-001-Dashboard-b3cb8f30-ab0e-11f1-b7e4-0e752dcc785b</code> を選択</li>
+<li><code class="inline-code">sample-cfn-co-001-Dashboard-b3cb8f30-ab0e-11f1-b7e4-0e752dcc785b</code> を選択</li>
 <li>対象期間を実行時刻が含まれる範囲に</li>
 <li>総WorkSpaces数、Hourly／Monthly、DryRun／実変換、終了、失敗・スキップ、ECS処理時間を確認</li>
 </ol>
@@ -688,26 +702,26 @@
 
 
 <p><strong>画像内の番号</strong></p>
-<ul>
+<ul class="check-list">
 <li>① 監視対象総数と課金モード構成を確認する</li>
 <li>② 課金モード構成の時系列を確認する</li>
 <li>③ 課金モード変換および終了実績を確認する</li>
 <li>④ ECSタスクの処理時間を確認する</li>
 </ul>
 <h3 id="s3レポートを確認する">S3レポートを確認する</h3>
-<ol>
-<li>CloudFormationスタックの「出力」で <code>BucketName</code> を確認</li>
-<li>バケットを開き、<code>YYYY/MM/DD/</code> の順に対象日を開く</li>
-<li>当日の処理で新規作成された集約版とリージョン／ディレクトリ別CSVを確認する。今回<code>DryRun=Yes</code>の実行で確認した名称は、<code>aggregated_dry-run_daily.csv</code> と <code>＜リージョン＞_＜アカウント＞_＜ディレクトリ＞_dry-run_daily.csv</code> </li>
+<ol class="step-list">
+<li>CloudFormationスタックの「出力」で <code class="inline-code">BucketName</code> を確認</li>
+<li>バケットを開き、<code class="inline-code">YYYY/MM/DD/</code> の順に対象日を開く</li>
+<li>当日の処理で新規作成された集約版とリージョン／ディレクトリ別CSVを確認する。今回<code class="inline-code">DryRun=Yes</code>の実行で確認した名称は、<code class="inline-code">aggregated_dry-run_daily.csv</code> と <code class="inline-code">＜リージョン＞_＜アカウント＞_＜ディレクトリ＞_dry-run_daily.csv</code> </li>
 <li>CSVをダウンロードし、文字化けや列ずれがなく開けることを確認</li>
 </ol>
-<p>取得済み証跡では<code>2026/09/08/</code>に、09:01 JST（00:01 UTC）付近で2種類のCSVが保存されました。運用確認では固定日付を使用せず、対象実行日と実際のECS終了時刻に対応するプレフィックスを確認する</p>
+<p>取得済み証跡では<code class="inline-code">2026/09/08/</code>に、09:01 JST（00:01 UTC）付近で2種類のCSVが保存されました。運用確認では固定日付を使用せず、対象実行日と実際のECS終了時刻に対応するプレフィックスを確認する</p>
 <figure class="screenshot-wide aws-console-identity"><figcaption>図3_S3_レポート・アクセスログ用バケット確認</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/013-図3-s3-レポート-アクセスログ用バケット確認.png" alt="図3_S3_レポート・アクセスログ用バケット確認" width="1552" height="560" loading="lazy"></div></figure>
 
 
 
 <p><strong>画像内の番号</strong></p>
-<ul>
+<ul class="check-list">
 <li>① レポート用バケットとS3アクセスログ用バケットを区別して確認する</li>
 </ul>
 <figure class="screenshot-wide aws-console-identity"><figcaption>図4_S3_DryRun日次CSV出力確認</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/014-図4-s3-dryrun日次csv出力確認.png" alt="図4_S3_DryRun日次CSV出力確認" width="1552" height="506" loading="lazy"></div></figure>
@@ -715,7 +729,7 @@
 
 
 <p><strong>画像内の番号</strong></p>
-<ul>
+<ul class="check-list">
 <li>① 集約版とリージョン・アカウント・ディレクトリ別のDry Run日次CSVを確認する</li>
 </ul>
 <figure class="screenshot-wide aws-console-identity"><figcaption>図5_S3_20260908日次CSV出力確認</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/015-図5-s3-20260908日次csv出力確認.png" alt="図5_S3_20260908日次CSV出力確認" width="1889" height="1333" loading="lazy"></div></figure>
@@ -723,12 +737,12 @@
 
 
 <p><strong>画像内の番号</strong></p>
-<ul>
+<ul class="check-list">
 <li>① 対象日付のS3プレフィックスを確認する</li>
 <li>② 対象実行で作成された2種類のCSVと更新時刻を確認する</li>
 </ul>
-<div class="callout callout-warning"><p><strong>注意：掲載証跡はDry Run有効時の結果</strong><br>図4・図5および実測CSVは <code>DryRun=Yes</code> 時の1台分の結果である。<code>DryRun=No</code> へ変更した後の実変更結果ではありません
-<code>DryRun=No</code> の実運用確認では、名称を決め打ちせず、対象日の実行時刻以降に作成されたCSVのファイル名と内容を確認する</p>
+<div class="callout callout-warning"><p><strong>注意：掲載証跡はDry Run有効時の結果</strong><br>図4・図5および実測CSVは <code class="inline-code">DryRun=Yes</code> 時の1台分の結果である。<code class="inline-code">DryRun=No</code> へ変更した後の実変更結果ではありません
+<code class="inline-code">DryRun=No</code> の実運用確認では、名称を決め打ちせず、対象日の実行時刻以降に作成されたCSVのファイル名と内容を確認する</p>
 </div>
 <h3 id="csvの主な列を確認する">CSVの主な列を確認する</h3>
 <table>
@@ -739,50 +753,50 @@
 </tr>
 </thead>
 <tbody><tr>
-<td><code>WorkspaceID</code></td>
+<td><code class="inline-code">WorkspaceID</code></td>
 <td>対象WorkSpace ID</td>
 </tr>
 <tr>
-<td><code>Billable Hours</code></td>
+<td><code class="inline-code">Billable Hours</code></td>
 <td>当月の請求対象時間</td>
 </tr>
 <tr>
-<td><code>Usage Threshold</code></td>
+<td><code class="inline-code">Usage Threshold</code></td>
 <td>対象バンドルに適用したしきい値</td>
 </tr>
 <tr>
-<td><code>Change Reported</code></td>
+<td><code class="inline-code">Change Reported</code></td>
 <td>判定または変更内容。DryRun時は実変更を意味しない</td>
 </tr>
 <tr>
-<td><code>Initial Mode</code></td>
+<td><code class="inline-code">Initial Mode</code></td>
 <td>実行前の課金モード</td>
 </tr>
 <tr>
-<td><code>New Mode</code></td>
+<td><code class="inline-code">New Mode</code></td>
 <td>判定後の課金モード</td>
 </tr>
 <tr>
-<td><code>WorkspaceTerminated</code></td>
+<td><code class="inline-code">WorkspaceTerminated</code></td>
 <td>終了判定の結果</td>
 </tr>
 <tr>
-<td><code>Tags</code></td>
+<td><code class="inline-code">Tags</code></td>
 <td>除外タグ等の確認</td>
 </tr>
 <tr>
-<td><code>ReportDate</code></td>
+<td><code class="inline-code">ReportDate</code></td>
 <td>レポート対象日</td>
 </tr>
 </tbody></table>
-<p><code>DryRun=No</code> の実行後はCSVだけで完了判定せず、WorkSpacesコンソールの課金モードも突合する。CSVに <code>Failed to change mode</code> 等がある場合は、同時刻のCloudWatch Logsを確認する</p>
+<p><code class="inline-code">DryRun=No</code> の実行後はCSVだけで完了判定せず、WorkSpacesコンソールの課金モードも突合する。CSVに <code class="inline-code">Failed to change mode</code> 等がある場合は、同時刻のCloudWatch Logsを確認する</p>
 <h3 id="ダッシュボードの台数-変換結果を確認する">ダッシュボードの台数・変換結果を確認する</h3>
 <figure class="screenshot-wide aws-console-identity"><figcaption>図6_CloudWatchダッシュボード_監視対象1台</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/016-図6-cloudwatchダッシュボード-監視対象1台.png" alt="図6_CloudWatchダッシュボード_監視対象1台" width="1517" height="853" loading="lazy"></div></figure>
 
 
 
 <p><strong>画像内の番号</strong></p>
-<ul>
+<ul class="check-list">
 <li>① 監視対象総数と現在の課金モード構成を確認する</li>
 <li>② 課金モード構成の時系列を確認する</li>
 <li>③ 課金モード変換および終了実績を確認する</li>
@@ -792,17 +806,17 @@
 
 
 <p><strong>画像内の番号</strong></p>
-<ul>
+<ul class="check-list">
 <li>① 課金モード変換件数を確認する</li>
 <li>② 終了したWorkSpace数を確認する</li>
 <li>③ Dry Runおよび実際の終了件数の時系列を確認する</li>
 </ul>
 <h3 id="cloudwatch-logsを確認する">CloudWatch Logsを確認する</h3>
-<ol>
-<li>CloudWatchの「ロググループ」で <code>/ecs/wco-task/sample-cfn-co-001</code> を開く</li>
+<ol class="step-list">
+<li>CloudWatchの「ロググループ」で <code class="inline-code">/ecs/wco-task/sample-cfn-co-001</code> を開く</li>
 <li>実行時刻に対応するログストリームを開く</li>
-<li><code>DryRun</code>、料金しきい値、<code>Regions</code>、<code>TerminateUnusedWorkspaces</code> 等が意図した値か確認</li>
-<li><code>ERROR</code>、<code>Exception</code>、<code>Traceback</code>、<code>AccessDenied</code>、<code>UnrecognizedClientException</code>、<code>Failed to change mode</code> を検索</li>
+<li><code class="inline-code">DryRun</code>、料金しきい値、<code class="inline-code">Regions</code>、<code class="inline-code">TerminateUnusedWorkspaces</code> 等が意図した値か確認</li>
+<li><code class="inline-code">ERROR</code>、<code class="inline-code">Exception</code>、<code class="inline-code">Traceback</code>、<code class="inline-code">AccessDenied</code>、<code class="inline-code">UnrecognizedClientException</code>、<code class="inline-code">Failed to change mode</code> を検索</li>
 <li>対象リージョンの走査、WorkSpaces件数、CSV出力、完了ログを確認</li>
 </ol>
 <p>ロググループの保持期間は365日</p>
@@ -811,7 +825,7 @@
 
 
 <p><strong>画像内の番号</strong></p>
-<ul>
+<ul class="check-list">
 <li>① ロググループの保持期間が12か月であることを確認する</li>
 <li>② 対象実行時刻のログストリームを選択する</li>
 </ul>
@@ -820,18 +834,18 @@
 
 
 <p><strong>画像内の番号</strong></p>
-<ul>
-<li>① ログ上の<code>DryRun=Yes</code>を確認する</li>
+<ul class="check-list">
+<li>① ログ上の<code class="inline-code">DryRun=Yes</code>を確認する</li>
 </ul>
-<p>取得済み証跡では<code>Regions</code>が空欄で、アカウントで未有効化のリージョンに<code>UnrecognizedClientException</code>が記録されましたが、東京リージョンの処理とCSV出力は完了しました。運用範囲が決まっている場合は、CloudFormationパラメータ<code>Regions</code>に必要なリージョンのみを指定します。<code>Failed to change mode</code>がある場合はWorkSpace IDで同じログを検索し、状態や例外を確認する。次回の日次実行で再試行されるため、その結果も確認する</p>
+<p>取得済み証跡では<code class="inline-code">Regions</code>が空欄で、アカウントで未有効化のリージョンに<code class="inline-code">UnrecognizedClientException</code>が記録されましたが、東京リージョンの処理とCSV出力は完了しました。運用範囲が決まっている場合は、CloudFormationパラメータ<code class="inline-code">Regions</code>に必要なリージョンのみを指定します。<code class="inline-code">Failed to change mode</code>がある場合はWorkSpace IDで同じログを検索し、状態や例外を確認する。次回の日次実行で再試行されるため、その結果も確認する</p>
 <h3 id="説明用5台サンプル">説明用5台サンプル</h3>
-<p>実測が1台であるため、説明用に架空の5台を記載したCSV・Excel・画像を同フォルダの<code>説明用サンプル</code>に保存しています。これはCloudWatchまたはお客様環境の実測値ではない</p>
+<p>実測が1台であるため、説明用に架空の5台を記載したCSV・Excel・画像を同フォルダの<code class="inline-code">説明用サンプル</code>に保存しています。これはCloudWatchまたはお客様環境の実測値ではない</p>
 <ul>
-<li><code>説明用サンプル_集約_dry-run_daily_5台.csv</code></li>
-<li><code>説明用サンプル_リージョン別_dry-run_daily_5台.csv</code></li>
-<li><code>説明用サンプル_5台_WorkSpacesCostOptimizer.xlsx</code></li>
-<li><code>参考図1_説明用サンプル_WorkSpacesCostOptimizer_5台.png</code></li>
-<li><code>参考図2_料金パラメータ比較_v2.8.1-v2.9.10.png</code></li>
+<li><code class="inline-code">説明用サンプル_集約_dry-run_daily_5台.csv</code></li>
+<li><code class="inline-code">説明用サンプル_リージョン別_dry-run_daily_5台.csv</code></li>
+<li><code class="inline-code">説明用サンプル_5台_WorkSpacesCostOptimizer.xlsx</code></li>
+<li><code class="inline-code">参考図1_説明用サンプル_WorkSpacesCostOptimizer_5台.png</code></li>
+<li><code class="inline-code">参考図2_料金パラメータ比較_v2.8.1-v2.9.10.png</code></li>
 </ul>
 <p>詳細は <a href="workspaces-cost-optimizer.html">説明用サンプル5台の見方</a> を参照する</p>
 <hr>
@@ -843,12 +857,12 @@
 <h3 id="概要-4">概要</h3>
 <p>Cost Optimizerが出力するCSVの列と複数台表示を説明するため、架空のWorkSpaces 5台を収録したCSV、ExcelおよびPNGの用途を整理します。実測1台の証跡とは分離して扱う</p>
 <h4 id="本手順書で実施すること-4">本手順書で実施すること</h4>
-<ul>
+<ul class="check-list">
 <li>架空データと実測証跡を区別する</li>
 <li>CSV列、料金しきい値および課金モード判定の読み方を確認する</li>
 </ul>
 <h4 id="完了条件-4">完了条件</h4>
-<ul>
+<ul class="check-list">
 <li>✔ 説明用資料が架空データであることを明示していること</li>
 <li>✔ 説明用資料をAWS実環境の成功証跡や削減実績として扱わないこと</li>
 </ul>
@@ -887,27 +901,27 @@
 </tr>
 </thead>
 <tbody><tr>
-<td><code>説明用サンプル_リージョン別_dry-run_daily_5台.csv</code></td>
+<td><code class="inline-code">説明用サンプル_リージョン別_dry-run_daily_5台.csv</code></td>
 <td>1リージョン分を想定した5台の架空明細</td>
 <td>リージョン別日次CSVの列構成を説明する</td>
 </tr>
 <tr>
-<td><code>説明用サンプル_集約_dry-run_daily_5台.csv</code></td>
+<td><code class="inline-code">説明用サンプル_集約_dry-run_daily_5台.csv</code></td>
 <td>5台の架空集約明細</td>
 <td>集約日次CSVの列構成を説明する</td>
 </tr>
 <tr>
-<td><code>説明用サンプル_5台_WorkSpacesCostOptimizer.xlsx</code></td>
+<td><code class="inline-code">説明用サンプル_5台_WorkSpacesCostOptimizer.xlsx</code></td>
 <td>上記サンプルを読みやすく整理したExcel</td>
 <td>件数、使用時間、料金しきい値、明細の関係を説明する</td>
 </tr>
 <tr>
-<td><code>参考図1_説明用サンプル_WorkSpacesCostOptimizer_5台.png</code></td>
+<td><code class="inline-code">参考図1_説明用サンプル_WorkSpacesCostOptimizer_5台.png</code></td>
 <td>Excelの「概要」相当の説明画像</td>
 <td>手順書へ掲載する5台サンプルの概要図</td>
 </tr>
 <tr>
-<td><code>参考図2_料金パラメータ比較_v2.8.1-v2.9.10.png</code></td>
+<td><code class="inline-code">参考図2_料金パラメータ比較_v2.8.1-v2.9.10.png</code></td>
 <td>料金しきい値の比較画像</td>
 <td>お客様環境確認値と本手順書採用値の違いを説明する</td>
 </tr>
@@ -923,29 +937,29 @@
 </tr>
 </thead>
 <tbody><tr>
-<td><code>実測_リージョン別_dry-run_daily_1台.csv</code></td>
+<td><code class="inline-code">実測_リージョン別_dry-run_daily_1台.csv</code></td>
 <td>今回S3から取得した1台分のリージョン別日次レポート</td>
 <td>実際にレポートが生成・保存されたことを確認する</td>
 </tr>
 <tr>
-<td><code>実測_集約_dry-run_daily_1台.csv</code></td>
+<td><code class="inline-code">実測_集約_dry-run_daily_1台.csv</code></td>
 <td>今回S3から取得した1台分の集約日次レポート</td>
 <td>実際の集約ファイル形式を確認する</td>
 </tr>
 <tr>
-<td><code>図2_CloudWatch_ダッシュボード_実績1台.png</code></td>
+<td><code class="inline-code">図2_CloudWatch_ダッシュボード_実績1台.png</code></td>
 <td>今回取得したCloudWatchダッシュボード</td>
 <td>実行後にメトリクスが表示される場所を説明する</td>
 </tr>
 <tr>
-<td><code>図4_S3_DryRun日次CSV出力確認.png</code></td>
+<td><code class="inline-code">図4_S3_DryRun日次CSV出力確認.png</code></td>
 <td>今回取得したS3画面</td>
 <td>レポートの格納先とファイル生成を確認する</td>
 </tr>
 </tbody></table>
 <p>実測1台の資料は実行証跡に使用できますが、1台だけの結果から複数バンドルの傾向、料金削減効果または全環境の動作を判断することはできない</p>
 <h3 id="excelブックの見方">Excelブックの見方</h3>
-<p><code>説明用サンプル_5台_WorkSpacesCostOptimizer.xlsx</code> は、次の3シートで構成されている</p>
+<p><code class="inline-code">説明用サンプル_5台_WorkSpacesCostOptimizer.xlsx</code> は、次の3シートで構成されている</p>
 <h4 id="概要-シート">「概要」シート</h4>
 <p>5台のサンプル全体を確認するシート</p>
 <ul>
@@ -957,7 +971,7 @@
 <p>台数、合計時間、変更報告数は「サンプル明細」を参照する数式で計算されています。グラフはVALUE、STANDARD、PERFORMANCE、POWER、POWERPROの5種類を説明するためのもので、実環境のバンドル構成比を表すものではない</p>
 <h4 id="料金パラメータ比較-シート">「料金パラメータ比較」シート</h4>
 <p>お客様環境で確認したv2.8.1の料金しきい値と、本手順書でv2.9.10へ設定した値を比較するシート</p>
-<p>比較列は「手順書設定値」と表示しています。これは、2026年9月8日時点のAWS実装ガイドに掲載され、本手順書で採用した設定値です。v2.9.10配布テンプレート内の既定値とは同義ではありません。両者の差分は、<code>参考_v2.8.1-v2.9.10差分.md</code> を正として確認してください</p>
+<p>比較列は「手順書設定値」と表示しています。これは、2026年9月8日時点のAWS実装ガイドに掲載され、本手順書で採用した設定値です。v2.9.10配布テンプレート内の既定値とは同義ではありません。両者の差分は、<code class="inline-code">参考_v2.8.1-v2.9.10差分.md</code> を正として確認してください</p>
 <p>このシートは料金しきい値の違いを説明するために使用します。実際の料金変更判断では、利用リージョンのAmazon WorkSpaces料金、お客様環境の使用状況、Dry Runレポートを別途確認する</p>
 <h4 id="サンプル明細-シート">「サンプル明細」シート</h4>
 <p>5台分のCSV列を横並びで確認するシートです。主な列は次のとおり</p>
@@ -969,27 +983,27 @@
 </tr>
 </thead>
 <tbody><tr>
-<td><code>WorkspaceID</code></td>
-<td>対象WorkSpace。サンプルでは <code>ws-sample001</code> から <code>ws-sample005</code> の架空ID</td>
+<td><code class="inline-code">WorkspaceID</code></td>
+<td>対象WorkSpace。サンプルでは <code class="inline-code">ws-sample001</code> から <code class="inline-code">ws-sample005</code> の架空ID</td>
 </tr>
 <tr>
-<td><code>Billable Hours</code></td>
+<td><code class="inline-code">Billable Hours</code></td>
 <td>当月の課金対象時間としてレポートされた値</td>
 </tr>
 <tr>
-<td><code>Usage Threshold</code></td>
+<td><code class="inline-code">Usage Threshold</code></td>
 <td>バンドル種別に対応する料金しきい値</td>
 </tr>
 <tr>
-<td><code>Change Reported</code></td>
+<td><code class="inline-code">Change Reported</code></td>
 <td>課金モード変更の判定結果</td>
 </tr>
 <tr>
-<td><code>Initial Mode</code>／<code>New Mode</code></td>
+<td><code class="inline-code">Initial Mode</code>／<code class="inline-code">New Mode</code></td>
 <td>判定前後の課金モード</td>
 </tr>
 <tr>
-<td><code>WorkspaceTerminated</code></td>
+<td><code class="inline-code">WorkspaceTerminated</code></td>
 <td>未使用WorkSpace終了機能による終了結果</td>
 </tr>
 <tr>
@@ -997,24 +1011,24 @@
 <td>遅延、CPU、メモリ、ディスク、UDPパケット損失率などの説明用値</td>
 </tr>
 <tr>
-<td><code>WorkspaceType</code></td>
+<td><code class="inline-code">WorkspaceType</code></td>
 <td>PRIMARY／STANDBYの識別</td>
 </tr>
 <tr>
-<td><code>ReportDate</code></td>
+<td><code class="inline-code">ReportDate</code></td>
 <td>レポート日付</td>
 </tr>
 </tbody></table>
-<p>サンプル5台はすべて <code>Change Reported=No Change</code>、<code>Initial Mode=AUTO_STOP</code>、<code>New Mode=AUTO_STOP</code> としています。これは列の読み方を説明するための設定であり、課金モード変更が実際に成功したことを示すものではない</p>
+<p>サンプル5台はすべて <code class="inline-code">Change Reported=No Change</code>、<code class="inline-code">Initial Mode=AUTO_STOP</code>、<code class="inline-code">New Mode=AUTO_STOP</code> としています。これは列の読み方を説明するための設定であり、課金モード変更が実際に成功したことを示すものではない</p>
 <h3 id="実行結果を確認する際の注意">実行結果を確認する際の注意</h3>
 <p>CloudWatchダッシュボードは、分析対象数、変更結果、コンテナ実行状況などを把握するための可視化画面です。作成直後やメトリクス送信前は空欄となる場合がある</p>
 <p>処理成功の確認では、次の3点を併せて確認する</p>
-<ol>
+<ol class="step-list">
 <li>ECSタスクが起動し、異常終了していないこと</li>
 <li>CloudWatch Logsの対象実行ログにエラーがないこと</li>
 <li>ソリューションが作成したS3バケットへ対象日のCSVレポートが保存されていること</li>
 </ol>
-<p>CSVが作成されていても、各WorkSpaceの課金モードが変更されたとは限らない。<code>Change Reported</code>、<code>Initial Mode</code>、<code>New Mode</code>、および必要に応じてECSログを確認してください。変更失敗またはスキップがある場合は、日次レポートの結果とECSログの例外内容を照合する</p>
+<p>CSVが作成されていても、各WorkSpaceの課金モードが変更されたとは限らない。<code class="inline-code">Change Reported</code>、<code class="inline-code">Initial Mode</code>、<code class="inline-code">New Mode</code>、および必要に応じてECSログを確認してください。変更失敗またはスキップがある場合は、日次レポートの結果とECSログの例外内容を照合する</p>
 <hr>
 
 <h2 id="設定変更-実行結果確認手順">設定変更・実行結果確認手順</h2>
@@ -1022,19 +1036,19 @@
 <!-- Confluenceでは、この位置に目次マクロを配置する -->
 
 <h3 id="概要-5">概要</h3>
-<p>CloudFormationスタック<code>sample-cfn-co-001</code>の変更セットを使用し、<code>DryRun</code>を<code>Yes</code>から<code>No</code>へ変更します。変更対象と置換有無を確認して実行した後、CloudFormation、ECS、CloudWatch Logs、S3 CSVおよびWorkSpaces実行モードの順に確認し、設定更新と日次処理の成功可否を判定します。取得済み証跡ではCloudFormation更新まで完了しており、Dry Run解除後の初回日次処理と課金モード変更結果は未確認</p>
+<p>CloudFormationスタック<code class="inline-code">sample-cfn-co-001</code>の変更セットを使用し、<code class="inline-code">DryRun</code>を<code class="inline-code">Yes</code>から<code class="inline-code">No</code>へ変更します。変更対象と置換有無を確認して実行した後、CloudFormation、ECS、CloudWatch Logs、S3 CSVおよびWorkSpaces実行モードの順に確認し、設定更新と日次処理の成功可否を判定します。取得済み証跡ではCloudFormation更新まで完了しており、Dry Run解除後の初回日次処理と課金モード変更結果は未確認</p>
 <h4 id="本手順書で実施すること-5">本手順書で実施すること</h4>
-<ul>
-<li><code>sample-cfn-co-001</code>の変更前パラメータが<code>DryRun=Yes</code>であることを確認する</li>
-<li>現在のテンプレートから変更セットを作成し、<code>DryRun=No</code>へ変更する</li>
+<ul class="check-list">
+<li><code class="inline-code">sample-cfn-co-001</code>の変更前パラメータが<code class="inline-code">DryRun=Yes</code>であることを確認する</li>
+<li>現在のテンプレートから変更セットを作成し、<code class="inline-code">DryRun=No</code>へ変更する</li>
 <li>変更対象2リソースの差分と置換有無を確認して変更セットを実行する</li>
-<li><code>UPDATE_COMPLETE</code>と変更後の<code>DryRun=No</code>を確認する</li>
+<li><code class="inline-code">UPDATE_COMPLETE</code>と変更後の<code class="inline-code">DryRun=No</code>を確認する</li>
 <li>次回日次実行のECSタスク、処理ログおよびS3 CSVを確認する</li>
 <li>CSVで変更が報告されたWorkSpaceの実行モードを突合する</li>
 </ul>
 <h4 id="完了条件-5">完了条件</h4>
-<ul>
-<li>✔ CloudFormationスタックが<code>UPDATE_COMPLETE</code>であること</li>
+<ul class="check-list">
+<li>✔ CloudFormationスタックが<code class="inline-code">UPDATE_COMPLETE</code>であること</li>
 <li>✔ 変更後パラメータとEventBridgeターゲットを確認できること</li>
 <li>✔ ECSタスクの終了コードが0で、対象リージョンに未解決の処理エラーがないこと</li>
 <li>✔ 対象日のS3 CSVが生成され、変更が報告された場合はWorkSpaces実行モードと一致すること</li>
@@ -1049,11 +1063,11 @@
 </thead>
 <tbody><tr>
 <td>Dry Run</td>
-<td><code>Yes</code>から<code>No</code>へ更新済み（取得済み証跡）</td>
+<td><code class="inline-code">Yes</code>から<code class="inline-code">No</code>へ更新済み（取得済み証跡）</td>
 </tr>
 <tr>
 <td>未使用WorkSpace終了</td>
-<td><code>No</code></td>
+<td><code class="inline-code">No</code></td>
 </tr>
 <tr>
 <td>Dry Run解除後の実処理</td>
@@ -1064,36 +1078,36 @@
 </div>
 <h3 id="変更方針">変更方針</h3>
 <div class="callout callout-warning"><p><strong>注意：同一バージョンのパラメータ変更とバージョン更新を分ける</strong><br>v2.9.10の料金しきい値やDry Runだけを変更する場合は、現在のテンプレートを使用して変更セットを作成します。ソリューションのバージョンを更新する場合は、更新先バージョンの公式テンプレートを指定し、リリースノート、リソースの置換・削除、IAM差分および引き継ぐパラメータを確認する
-料金しきい値とDryRunは、CloudFormationスタック<code>sample-cfn-co-001</code>のパラメータとして管理します。設定変更は <strong>CloudFormation変更セット</strong> を使用し、事前に差分を確認してから実行する</p>
+料金しきい値とDryRunは、CloudFormationスタック<code class="inline-code">sample-cfn-co-001</code>のパラメータとして管理します。設定変更は <strong>CloudFormation変更セット</strong> を使用し、事前に差分を確認してから実行する</p>
 </div>
 <p>ECSタスク定義、EventBridge、IAM、S3等を直接編集するとCloudFormationの管理状態と実リソースに差分が生じるため、通常運用では行わない</p>
 <h3 id="dryrun解除の実施条件">DryRun解除の実施条件</h3>
-<p><code>DryRun=No</code> にすると、以後の日次実行で判定条件を満たしたWorkSpaceの課金モード変更が実行されます。スタック更新直後に即時実行されるわけではない</p>
+<p><code class="inline-code">DryRun=No</code> にすると、以後の日次実行で判定条件を満たしたWorkSpaceの課金モード変更が実行されます。スタック更新直後に即時実行されるわけではない</p>
 <p>本番環境では次を満たしてから解除する</p>
-<ul>
+<ul class="check-list">
 <li>DryRunの日次・月次レポートを十分な期間（推奨は数か月）確認済み</li>
 <li>料金しきい値と対象リージョンがお客様承認済み</li>
-<li>自動変更対象から除外するWorkSpaceに <code>Skip_Convert</code> タグを設定済み</li>
-<li><code>TerminateUnusedWorkspaces=No</code> を確認済みです。終了機能を利用する場合は別途承認する</li>
+<li>自動変更対象から除外するWorkSpaceに <code class="inline-code">Skip_Convert</code> タグを設定済み</li>
+<li><code class="inline-code">TerminateUnusedWorkspaces=No</code> を確認済みです。終了機能を利用する場合は別途承認する</li>
 <li>次回自動実行時刻と、同一UTC日内に実行済みでないことを確認済み</li>
 <li>切り戻し手順と変更承認を確認済み</li>
 </ul>
 <h3 id="変更前の値を確認する">変更前の値を確認する</h3>
-<ol>
+<ol class="step-list">
 <li>CloudFormationで東京リージョンを選択</li>
-<li>スタック<code>sample-cfn-co-001</code>を開く</li>
-<li>「パラメータ」または「出力」で、変更前が <code>DryRun=Yes</code> であることを確認</li>
+<li>スタック<code class="inline-code">sample-cfn-co-001</code>を開く</li>
+<li>「パラメータ」または「出力」で、変更前が <code class="inline-code">DryRun=Yes</code> であることを確認</li>
 </ol>
 <figure class="screenshot-wide aws-console-identity"><figcaption>図1_CloudFormation_変更前パラメータ_DryRun-Yes</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/020-図1-cloudformation-変更前パラメータ-dryrun-yes.png" alt="図1_CloudFormation_変更前パラメータ_DryRun-Yes" width="1918" height="1609" loading="lazy"></div></figure>
 
 
 
 <p><strong>画像内の番号</strong></p>
-<ul>
-<li>① 変更前のCloudFormationパラメータが<code>DryRun=Yes</code>であることを確認する</li>
+<ul class="check-list">
+<li>① 変更前のCloudFormationパラメータが<code class="inline-code">DryRun=Yes</code>であることを確認する</li>
 </ul>
 <h3 id="変更セットを作成する">変更セットを作成する</h3>
-<ol>
+<ol class="step-list">
 <li>「スタックアクション」から「現在のスタックの変更セットを作成」を選択</li>
 <li>テンプレートは「現在のテンプレートを使用」を選択し、「次へ」を選択</li>
 </ol>
@@ -1108,8 +1122,8 @@
 <li>③ 「次へ」を選択する</li>
 </ul>
 <ol start="3">
-<li><code>Launch in Dry Run Mode</code> を <code>No</code> に変更</li>
-<li><code>Terminate unused workspaces=No</code>、<code>TestEndOfMonth=No</code> および他のパラメータが意図せず変わっていないことを確認</li>
+<li><code class="inline-code">Launch in Dry Run Mode</code> を <code class="inline-code">No</code> に変更</li>
+<li><code class="inline-code">Terminate unused workspaces=No</code>、<code class="inline-code">TestEndOfMonth=No</code> および他のパラメータが意図せず変わっていないことを確認</li>
 </ol>
 <figure class="screenshot-wide aws-console-identity"><figcaption>図3_CloudFormation_パラメータ_DryRun-No入力</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/022-図3-cloudformation-パラメータ-dryrun-no入力.png" alt="図3_CloudFormation_パラメータ_DryRun-No入力" width="1889" height="1333" loading="lazy"></div></figure>
 
@@ -1117,8 +1131,8 @@
 
 <p><strong>画像内の番号</strong></p>
 <ul>
-<li>① <code>Launch in Dry Run Mode</code>を<code>No</code>へ変更する</li>
-<li>② <code>Simulate End of Month Cleanup=No</code>を維持する</li>
+<li>① <code class="inline-code">Launch in Dry Run Mode</code>を<code class="inline-code">No</code>へ変更する</li>
+<li>② <code class="inline-code">Simulate End of Month Cleanup=No</code>を維持する</li>
 </ul>
 <ol start="5">
 <li>「プロビジョニング失敗時の動作」は「すべてのリソースをロールバック」と</li>
@@ -1129,16 +1143,16 @@
 
 
 <p><strong>画像内の番号</strong></p>
-<ul>
+<ul class="check-list">
 <li>① CloudFormationサービスロールの指定を確認する</li>
 <li>② プロビジョニング失敗時にすべてのリソースをロールバックする設定を選択する</li>
 <li>③ 検証オプションに意図しない変更がないことを確認する</li>
 </ul>
 <h3 id="差分を確認して実行する">差分を確認して実行する</h3>
-<ol>
+<ol class="step-list">
 <li>変更セット名、説明、変更理由、承認者を記録</li>
 <li>変更セットを作成</li>
-<li>差分で <code>CostOptimizerTaskDefinition</code> の置換と <code>ScheduleRule</code> の更新を確認</li>
+<li>差分で <code class="inline-code">CostOptimizerTaskDefinition</code> の置換と <code class="inline-code">ScheduleRule</code> の更新を確認</li>
 <li>意図しない削除・置換がないことを確認</li>
 </ol>
 <figure class="screenshot-wide aws-console-identity"><figcaption>図5_CloudFormation_変更セット差分_2リソース</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/024-図5-cloudformation-変更セット差分-2リソース.png" alt="図5_CloudFormation_変更セット差分_2リソース" width="1889" height="1333" loading="lazy"></div></figure>
@@ -1146,10 +1160,10 @@
 
 
 <p><strong>画像内の番号</strong></p>
-<ul>
-<li>① <code>CostOptimizerTaskDefinition</code>が<code>Modify</code>、置換が<code>True</code>、ポリシーアクションが<code>ReplaceAndDelete</code>であることを確認する</li>
-<li>② <code>ScheduleRule</code>が<code>Modify</code>、置換が<code>False</code>であることを確認する</li>
-<li>③ 変更セットが<code>CREATE_COMPLETE</code>、実行ステータスが<code>AVAILABLE</code>であることを確認する</li>
+<ul class="check-list">
+<li>① <code class="inline-code">CostOptimizerTaskDefinition</code>が<code class="inline-code">Modify</code>、置換が<code class="inline-code">True</code>、ポリシーアクションが<code class="inline-code">ReplaceAndDelete</code>であることを確認する</li>
+<li>② <code class="inline-code">ScheduleRule</code>が<code class="inline-code">Modify</code>、置換が<code class="inline-code">False</code>であることを確認する</li>
+<li>③ 変更セットが<code class="inline-code">CREATE_COMPLETE</code>、実行ステータスが<code class="inline-code">AVAILABLE</code>であることを確認する</li>
 </ul>
 <ol start="5">
 <li>変更セットを実行し、ロールバック設定を最終確認</li>
@@ -1159,15 +1173,15 @@
 
 
 <p><strong>画像内の番号</strong></p>
-<ul>
+<ul class="check-list">
 <li>① 実行時のロールバック動作を確認する</li>
 <li>② 「変更セットを実行」を選択する</li>
 </ul>
 <h3 id="更新結果を確認する">更新結果を確認する</h3>
-<ol>
-<li>CloudFormationが <code>UPDATE_COMPLETE</code> になるまで待機</li>
+<ol class="step-list">
+<li>CloudFormationが <code class="inline-code">UPDATE_COMPLETE</code> になるまで待機</li>
 <li>失敗イベントがないことを確認</li>
-<li>「パラメータ」または「出力」で <code>DryRun=No</code> を確認</li>
+<li>「パラメータ」または「出力」で <code class="inline-code">DryRun=No</code> を確認</li>
 <li>ECSタスク定義に新しいリビジョンが作成され、EventBridgeターゲットがそのリビジョンを参照していることを確認</li>
 </ol>
 <figure class="screenshot-wide aws-console-identity"><figcaption>図7_CloudFormation_更新完了_UPDATE_COMPLETE</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/026-図7-cloudformation-更新完了-update-complete.png" alt="図7_CloudFormation_更新完了_UPDATE_COMPLETE" width="1889" height="1333" loading="lazy"></div></figure>
@@ -1175,8 +1189,8 @@
 
 
 <p><strong>画像内の番号</strong></p>
-<ul>
-<li>① スタックの状態が<code>UPDATE_COMPLETE</code>であることを確認する</li>
+<ul class="check-list">
+<li>① スタックの状態が<code class="inline-code">UPDATE_COMPLETE</code>であることを確認する</li>
 <li>② 作成日時と最終更新日時を確認する</li>
 </ul>
 <figure class="screenshot-wide aws-console-identity"><figcaption>図8_CloudFormation_変更後パラメータ_DryRun-No</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/027-図8-cloudformation-変更後パラメータ-dryrun-no.png" alt="図8_CloudFormation_変更後パラメータ_DryRun-No" width="1889" height="1333" loading="lazy"></div></figure>
@@ -1184,14 +1198,14 @@
 
 
 <p><strong>画像内の番号</strong></p>
-<ul>
-<li>① 変更後のCloudFormationパラメータが<code>DryRun=No</code>であることを確認する</li>
+<ul class="check-list">
+<li>① 変更後のCloudFormationパラメータが<code class="inline-code">DryRun=No</code>であることを確認する</li>
 </ul>
-<p>取得済み証跡ではECSタスク定義がリビジョン3から4へ更新され、EventBridgeターゲットは<code>wco-task:4</code>を参照した</p>
-<div class="callout callout-error"><p><strong>注意：タスク定義置換時はロールバックを有効にする</strong><br>「プロビジョニング失敗時の動作」でロールバックを無効にした変更セットは、タスク定義の置換を含むため <code>Replacement type updates not supported on stack with disable-rollback.</code> で失敗した。スタックをロールバックし、ロールバック有効の変更セットを作り直して成功した。置換を含む更新ではロールバックを有効にする</p>
+<p>取得済み証跡ではECSタスク定義がリビジョン3から4へ更新され、EventBridgeターゲットは<code class="inline-code">wco-task:4</code>を参照した</p>
+<div class="callout callout-error"><p><strong>注意：タスク定義置換時はロールバックを有効にする</strong><br>「プロビジョニング失敗時の動作」でロールバックを無効にした変更セットは、タスク定義の置換を含むため <code class="inline-code">Replacement type updates not supported on stack with disable-rollback.</code> で失敗した。スタックをロールバックし、ロールバック有効の変更セットを作り直して成功した。置換を含む更新ではロールバックを有効にする</p>
 </div>
 <h3 id="設定変更後の成功可否を確認する">設定変更後の成功可否を確認する</h3>
-<p>CloudFormationの<code>UPDATE_COMPLETE</code>は設定更新の成功を示しますが、日次処理や課金モード変更の完了を示すものではありません。次の5段階を順に確認する</p>
+<p>CloudFormationの<code class="inline-code">UPDATE_COMPLETE</code>は設定更新の成功を示しますが、日次処理や課金モード変更の完了を示すものではありません。次の5段階を順に確認する</p>
 <table>
 <thead>
 <tr>
@@ -1202,12 +1216,12 @@
 </thead>
 <tbody><tr>
 <td>1. 設定更新</td>
-<td>CloudFormationが<code>UPDATE_COMPLETE</code></td>
+<td>CloudFormationが<code class="inline-code">UPDATE_COMPLETE</code></td>
 <td>パラメータと関連リソースの更新に成功した</td>
 </tr>
 <tr>
 <td>2. タスク実行</td>
-<td>ECSタスクが<code>STOPPED</code>、コンテナ終了コードが0</td>
+<td>ECSタスクが<code class="inline-code">STOPPED</code>、コンテナ終了コードが0</td>
 <td>日次コンテナ処理が終了した</td>
 </tr>
 <tr>
@@ -1222,69 +1236,69 @@
 </tr>
 <tr>
 <td>5. 実リソース</td>
-<td>CSVの<code>New Mode</code>とWorkSpaces実行モードが一致</td>
+<td>CSVの<code class="inline-code">New Mode</code>とWorkSpaces実行モードが一致</td>
 <td>実際の課金モード変更結果</td>
 </tr>
 </tbody></table>
 <h4 id="ecsタスクを確認する-2">ECSタスクを確認する</h4>
-<ol>
-<li>ECSで<code>cost-optimizer-cluster</code>を開く</li>
+<ol class="step-list">
+<li>ECSで<code class="inline-code">cost-optimizer-cluster</code>を開く</li>
 <li>対象のスケジュール実行時刻に対応するタスクを開く</li>
-<li>タスクが<code>STOPPED</code>であること、停止理由および<code>stopCode</code>を確認</li>
+<li>タスクが<code class="inline-code">STOPPED</code>であること、停止理由および<code class="inline-code">stopCode</code>を確認</li>
 <li>コンテナの終了コードが0であることを確認</li>
 </ol>
 <p>終了コード0でも、一部リージョンやWorkSpaceの処理に失敗している可能性があるため、CloudWatch Logsまで確認する。取得済みのタスク一覧は、<a href="workspaces-cost-optimizer.html">レポート・監視手順</a>の「ECSタスクを確認する」を参照する</p>
 <h4 id="cloudwatch-logsを確認する-2">CloudWatch Logsを確認する</h4>
-<ol>
-<li>ロググループ<code>/ecs/wco-task/sample-cfn-co-001</code>を開く</li>
+<ol class="step-list">
+<li>ロググループ<code class="inline-code">/ecs/wco-task/sample-cfn-co-001</code>を開く</li>
 <li>対象実行のログストリームを開く</li>
-<li><code>DryRun</code>、料金しきい値、<code>Regions</code>、<code>TerminateUnusedWorkspaces</code>および<code>TestEndOfMonth</code>が変更後の値であることを確認</li>
-<li><code>ERROR</code>、<code>Exception</code>、<code>Traceback</code>、<code>AccessDenied</code>および<code>Failed to change mode</code>を検索</li>
+<li><code class="inline-code">DryRun</code>、料金しきい値、<code class="inline-code">Regions</code>、<code class="inline-code">TerminateUnusedWorkspaces</code>および<code class="inline-code">TestEndOfMonth</code>が変更後の値であることを確認</li>
+<li><code class="inline-code">ERROR</code>、<code class="inline-code">Exception</code>、<code class="inline-code">Traceback</code>、<code class="inline-code">AccessDenied</code>および<code class="inline-code">Failed to change mode</code>を検索</li>
 <li>対象リージョンの走査、対象台数、レポート出力および処理完了を確認</li>
 </ol>
-<p><code>Failed to change mode</code>がある場合は、該当WorkSpace IDでログを絞り込み、WorkSpaceの状態と例外を確認する。次回の日次実行で再試行された結果まで確認してください。取得済みログは、<a href="workspaces-cost-optimizer.html">レポート・監視手順</a>の「CloudWatch Logsを確認する」を参照する</p>
+<p><code class="inline-code">Failed to change mode</code>がある場合は、該当WorkSpace IDでログを絞り込み、WorkSpaceの状態と例外を確認する。次回の日次実行で再試行された結果まで確認してください。取得済みログは、<a href="workspaces-cost-optimizer.html">レポート・監視手順</a>の「CloudWatch Logsを確認する」を参照する</p>
 <h4 id="s3-csvを確認する">S3 CSVを確認する</h4>
-<ol>
+<ol class="step-list">
 <li>レポート用S3バケットを開く</li>
-<li><code>YYYY/MM/DD/</code>配下に対象日の日次CSVが生成されていることを確認</li>
+<li><code class="inline-code">YYYY/MM/DD/</code>配下に対象日の日次CSVが生成されていることを確認</li>
 <li>集約CSVとリージョン・ディレクトリ別CSVを開く</li>
-<li><code>WorkspaceID</code>、<code>Billable Hours</code>、<code>Usage Threshold</code>、<code>Change Reported</code>、<code>Initial Mode</code>、<code>New Mode</code>、<code>WorkspaceTerminated</code>および<code>ReportDate</code>を確認</li>
+<li><code class="inline-code">WorkspaceID</code>、<code class="inline-code">Billable Hours</code>、<code class="inline-code">Usage Threshold</code>、<code class="inline-code">Change Reported</code>、<code class="inline-code">Initial Mode</code>、<code class="inline-code">New Mode</code>、<code class="inline-code">WorkspaceTerminated</code>および<code class="inline-code">ReportDate</code>を確認</li>
 <li>対象WorkSpace数とログに記録された処理件数が一致することを確認</li>
 </ol>
-<p><code>DryRun=Yes</code>のCSVは実行した場合の判定結果であり、実変更の証跡ではありません。<code>DryRun=No</code>のCSVで変更が報告された場合は、WorkSpacesコンソールまで確認する。取得済みの日次CSVは、<a href="workspaces-cost-optimizer.html">レポート・監視手順</a>の「S3レポートを確認する」を参照する</p>
+<p><code class="inline-code">DryRun=Yes</code>のCSVは実行した場合の判定結果であり、実変更の証跡ではありません。<code class="inline-code">DryRun=No</code>のCSVで変更が報告された場合は、WorkSpacesコンソールまで確認する。取得済みの日次CSVは、<a href="workspaces-cost-optimizer.html">レポート・監視手順</a>の「S3レポートを確認する」を参照する</p>
 <h4 id="workspacesの実行モードを確認する">WorkSpacesの実行モードを確認する</h4>
-<ol>
-<li>WorkSpacesコンソールで、CSVの<code>WorkspaceID</code>を検索</li>
+<ol class="step-list">
+<li>WorkSpacesコンソールで、CSVの<code class="inline-code">WorkspaceID</code>を検索</li>
 <li>対象WorkSpaceの実行モードを確認</li>
-<li>CSVの<code>New Mode</code>と一致することを確認</li>
-<li><code>Initial Mode</code>、<code>New Mode</code>、確認日時および確認者を記録</li>
+<li>CSVの<code class="inline-code">New Mode</code>と一致することを確認</li>
+<li><code class="inline-code">Initial Mode</code>、<code class="inline-code">New Mode</code>、確認日時および確認者を記録</li>
 </ol>
 <p>更新対象が0件でも、利用時間と料金しきい値の判定結果として正常な場合があります。CSVで変更対象が0件であることと、ログに未解決のエラーがないことを確認して判定する</p>
 <h4 id="cloudwatchダッシュボードを補助確認する">CloudWatchダッシュボードを補助確認する</h4>
 <p>監視対象総数、時間課金・月額課金の台数、課金モード変換件数、終了件数、失敗・スキップ件数およびECSタスク処理時間を確認する。ダッシュボードは全体傾向を確認する補助資料であり、単独では成功判定に使用しない</p>
 <h3 id="ドリフト確認の補足">ドリフト確認の補足</h3>
-<p>取得済みのCloudFormationドリフト検出では、<code>CostOptimizerTaskDefinition</code>が<code>MODIFIED</code>でした。差分は、単一アカウント構成でテンプレートに空文字として定義された<code>SpokeAccountDynamoDBTable</code>環境変数が、ECS側では未設定となっている内容</p>
+<p>取得済みのCloudFormationドリフト検出では、<code class="inline-code">CostOptimizerTaskDefinition</code>が<code class="inline-code">MODIFIED</code>でした。差分は、単一アカウント構成でテンプレートに空文字として定義された<code class="inline-code">SpokeAccountDynamoDBTable</code>環境変数が、ECS側では未設定となっている内容</p>
 <figure class="screenshot-wide aws-console-identity"><figcaption>参考図1_CloudFormationドリフト_空環境変数差分</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/028-参考図1-cloudformationドリフト-空環境変数差分.png" alt="参考図1_CloudFormationドリフト_空環境変数差分" width="1517" height="770" loading="lazy"></div></figure>
 
 
 
 <p><strong>画像内の番号</strong></p>
-<ul>
-<li>① ECSタスク定義のドリフト状態が<code>MODIFIED</code>であることを確認する</li>
-<li>② <code>SpokeAccountDynamoDBTable</code>環境変数が期待値では空文字、現在値では未設定となっている差分を確認する</li>
+<ul class="check-list">
+<li>① ECSタスク定義のドリフト状態が<code class="inline-code">MODIFIED</code>であることを確認する</li>
+<li>② <code class="inline-code">SpokeAccountDynamoDBTable</code>環境変数が期待値では空文字、現在値では未設定となっている差分を確認する</li>
 </ul>
 <p>これは取得済み証跡の範囲では実行時刻変更によるドリフトではありません。ただし、EventBridgeルールなどCloudFormation管理下のリソースを直接変更した場合は、現在の状態を改めてドリフト検出してください</p>
 <h3 id="料金しきい値を変更する場合">料金しきい値を変更する場合</h3>
 <p>手順3～6と同様に、変更する料金パラメータだけを新しい値へ変更します。それ以外は既存値を維持する</p>
-<ol>
+<ol class="step-list">
 <li>AWSの最新料金とWorkSpacesの利用実績から、損益分岐となる時間を算出</li>
 <li>変更前後の値、根拠、対象リージョン、承認者を記録</li>
 <li>変更セットで差分を確認</li>
-<li><code>UPDATE_COMPLETE</code> と出力値を確認</li>
+<li><code class="inline-code">UPDATE_COMPLETE</code> と出力値を確認</li>
 <li>次回実行のログとCSVに新しいしきい値が記録されることを確認</li>
 </ol>
 <h3 id="切り戻し">切り戻し</h3>
-<p>設定を戻す場合も、直前の値を入力した新しい変更セットを作成し、差分確認後に実行します。緊急時に<code>DryRun=Yes</code>へ戻しても、すでに実行済みの課金モード変更は自動的には元へ戻りません。終了済みWorkSpaceも復元されません。課金モードはWorkSpacesコンソールで個別に確認し、必要な変更は承認後に実施する</p>
+<p>設定を戻す場合も、直前の値を入力した新しい変更セットを作成し、差分確認後に実行します。緊急時に<code class="inline-code">DryRun=Yes</code>へ戻しても、すでに実行済みの課金モード変更は自動的には元へ戻りません。終了済みWorkSpaceも復元されません。課金モードはWorkSpacesコンソールで個別に確認し、必要な変更は承認後に実施する</p>
 <h3 id="取得済み証跡の判定">取得済み証跡の判定</h3>
 <table>
 <thead>
@@ -1297,12 +1311,12 @@
 <tbody><tr>
 <td>v2.9.10デプロイ</td>
 <td>完了</td>
-<td>41リソースが<code>CREATE_COMPLETE</code>、出力が<code>SolutionVersion=v2.9.10</code></td>
+<td>41リソースが<code class="inline-code">CREATE_COMPLETE</code>、出力が<code class="inline-code">SolutionVersion=v2.9.10</code></td>
 </tr>
 <tr>
 <td>Dry Run解除</td>
 <td>完了</td>
-<td>CloudFormationが<code>UPDATE_COMPLETE</code>、パラメータが<code>DryRun=No</code></td>
+<td>CloudFormationが<code class="inline-code">UPDATE_COMPLETE</code>、パラメータが<code class="inline-code">DryRun=No</code></td>
 </tr>
 <tr>
 <td>変更前のDry Run処理</td>
@@ -1329,13 +1343,13 @@
 <h3 id="概要-6">概要</h3>
 <p>取得済み証跡に残るEventBridge実行時刻の一時変更を、検証記録として整理します。AWS公式はスケジュール変更と1日複数回実行を避けるよう案内しているため、本番標準手順ではなく例外時の判断材料として扱う</p>
 <h4 id="本手順書で実施すること-6">本手順書で実施すること</h4>
-<ul>
+<ul class="check-list">
 <li>取得済みの09:00、06:00および08:00 JSTの変更記録を確認する</li>
 <li>本番で変更が不可欠な場合の承認、テンプレート変更および変更セット手順を示する</li>
 <li>再有効化後の初回実行を未確認として分離する</li>
 </ul>
 <h4 id="完了条件-6">完了条件</h4>
-<ul>
+<ul class="check-list">
 <li>✔ UTCとJSTの変換、Cron式および次回トリガーを作業直前に確認すること</li>
 <li>✔ 同一UTC日内の重複実行を発生させないこと</li>
 <li>✔ AWS Support確認とお客様承認なしに本番時刻を変更しないこと</li>
@@ -1350,7 +1364,7 @@
 </thead>
 <tbody><tr>
 <td>日次実行時刻</td>
-<td>08:00 JST／<code>cron(0 23 * * ? *)</code>へ復元</td>
+<td>08:00 JST／<code class="inline-code">cron(0 23 * * ? *)</code>へ復元</td>
 </tr>
 <tr>
 <td>EventBridgeルール</td>
@@ -1365,7 +1379,7 @@
 <li>出典：<a href="https://docs.aws.amazon.com/solutions/latest/cost-optimizer-for-workspaces/features-and-benefits.html">Features and benefits</a></li>
 </ul>
 <p>本章のEventBridge直接編集は、画面および動作を確認するために今回一時的に実施した記録。本番環境の標準手順として実施しない</p>
-<p>本番環境で例外的な時刻変更が不可欠な場合は、まずAWS Supportへ仕様影響を確認し、お客様のリスク承認を取得します。承認後はCloudFormationテンプレート内の<code>ScheduleExpression</code>を修正し、CloudFormation変更セットを使用して反映します。これにより、テンプレートと実リソースの差分（ドリフト）を防止する</p>
+<p>本番環境で例外的な時刻変更が不可欠な場合は、まずAWS Supportへ仕様影響を確認し、お客様のリスク承認を取得します。承認後はCloudFormationテンプレート内の<code class="inline-code">ScheduleExpression</code>を修正し、CloudFormation変更セットを使用して反映します。これにより、テンプレートと実リソースの差分（ドリフト）を防止する</p>
 <h3 id="検証した時刻と最終状態">検証した時刻と最終状態</h3>
 <p>EventBridgeのCron式はUTCで指定する</p>
 <table>
@@ -1384,7 +1398,7 @@
 <td>検証開始時の設定</td>
 <td align="right">毎日09:00</td>
 <td align="right">毎日00:00</td>
-<td><code>cron(0 0 * * ? *)</code></td>
+<td><code class="inline-code">cron(0 0 * * ? *)</code></td>
 <td>変更前の状態を確認</td>
 </tr>
 <tr>
@@ -1392,7 +1406,7 @@
 <td>お客様環境の設定値</td>
 <td align="right">毎日06:00</td>
 <td align="right">毎日21:00</td>
-<td><code>cron(0 21 * * ? *)</code></td>
+<td><code class="inline-code">cron(0 21 * * ? *)</code></td>
 <td>入力・更新・反映を確認</td>
 </tr>
 <tr>
@@ -1400,7 +1414,7 @@
 <td>今回の復元先</td>
 <td align="right">毎日08:00</td>
 <td align="right">毎日23:00</td>
-<td><code>cron(0 23 * * ? *)</code></td>
+<td><code class="inline-code">cron(0 23 * * ? *)</code></td>
 <td>入力・更新・反映を確認</td>
 </tr>
 <tr>
@@ -1408,43 +1422,43 @@
 <td>二重実行回避</td>
 <td align="right">-</td>
 <td align="right">-</td>
-<td><code>cron(0 23 * * ? *)</code>を保持</td>
+<td><code class="inline-code">cron(0 23 * * ? *)</code>を保持</td>
 <td>ルールを一時的に無効化</td>
 </tr>
 </tbody></table>
-<p>2026年9月8日時点の最終状態は、Cron式が<code>cron(0 23 * * ? *)</code>、EventBridgeルールが「無効」、CloudFormationパラメータが<code>DryRun=No</code>です。Cron式は今回の復元先へ戻っていますが、ルールを再有効化するまでスケジュール実行は開始されない</p>
+<p>2026年9月8日時点の最終状態は、Cron式が<code class="inline-code">cron(0 23 * * ? *)</code>、EventBridgeルールが「無効」、CloudFormationパラメータが<code class="inline-code">DryRun=No</code>です。Cron式は今回の復元先へ戻っていますが、ルールを再有効化するまでスケジュール実行は開始されない</p>
 <h3 id="取得済みの直接編集記録">取得済みの直接編集記録</h3>
 <h4 id="検証開始時の確認">検証開始時の確認</h4>
-<p>検証開始時は<code>cron(0 0 * * ? *)</code>であり、00:00 UTC、すなわち09:00 JSTの設定でした。これは今回の復元先である08:00 JSTとは異なる</p>
+<p>検証開始時は<code class="inline-code">cron(0 0 * * ? *)</code>であり、00:00 UTC、すなわち09:00 JSTの設定でした。これは今回の復元先である08:00 JSTとは異なる</p>
 <figure class="screenshot-wide aws-console-identity"><figcaption>参考図1_EventBridge_検証開始時09時_設定確認</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/029-参考図1-eventbridge-検証開始時09時-設定確認.png" alt="参考図1_EventBridge_検証開始時09時_設定確認" width="1889" height="1333" loading="lazy"></div></figure>
 
 
 
 <p><strong>画像内の番号</strong></p>
-<ul>
+<ul class="check-list">
 <li>① 取得時点のCron式と次回トリガーを確認する</li>
 <li>② 変更操作を開始する「編集」を確認する</li>
 </ul>
 <h4 id="お客様環境の06-00-jstを検証">お客様環境の06:00 JSTを検証</h4>
-<p>「特定の時刻」を選択し、時間へ<code>21</code>を入力します。画面上のCron式が<code>0 21 * * ? *</code>、次回トリガーが21:00 UTCであることを確認して「次へ」を選択する</p>
+<p>「特定の時刻」を選択し、時間へ<code class="inline-code">21</code>を入力します。画面上のCron式が<code class="inline-code">0 21 * * ? *</code>、次回トリガーが21:00 UTCであることを確認して「次へ」を選択する</p>
 <figure class="screenshot-wide aws-console-identity"><figcaption>図1_EventBridge_お客様時刻06時_UTC21時入力</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/030-図1-eventbridge-お客様時刻06時-utc21時入力.png" alt="図1_EventBridge_お客様時刻06時_UTC21時入力" width="1889" height="1333" loading="lazy"></div></figure>
 
 
 
 <p><strong>画像内の番号</strong></p>
-<ul>
+<ul class="check-list">
 <li>① 「特定の時刻」を選択する</li>
-<li>② 06:00 JSTに対応する時間<code>21</code>を含むCron式を確認する</li>
+<li>② 06:00 JSTに対応する時間<code class="inline-code">21</code>を含むCron式を確認する</li>
 <li>③ タイムゾーンがUTCで、次回トリガーが21:00 UTCであることを確認する</li>
 <li>④ 「次へ」を選択する</li>
 </ul>
-<p>ターゲットがECSタスク、クラスターが<code>cost-optimizer-cluster</code>、タスク定義が<code>wco-task</code>、リビジョンが<code>4</code>であることを確認する。時刻以外の設定は変更しない</p>
+<p>ターゲットがECSタスク、クラスターが<code class="inline-code">cost-optimizer-cluster</code>、タスク定義が<code class="inline-code">wco-task</code>、リビジョンが<code class="inline-code">4</code>であることを確認する。時刻以外の設定は変更しない</p>
 <figure class="screenshot-wide aws-console-identity"><figcaption>図2_EventBridge_ターゲット_ECSタスク定義4確認</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/031-図2-eventbridge-ターゲット-ecsタスク定義4確認.png" alt="図2_EventBridge_ターゲット_ECSタスク定義4確認" width="1889" height="1333" loading="lazy"></div></figure>
 
 
 
 <p><strong>画像内の番号</strong></p>
-<ul>
+<ul class="check-list">
 <li>① ターゲット種別、ECSクラスター、タスク定義のリビジョンおよびタスク数を確認する</li>
 </ul>
 <p>確認画面でCron式とターゲットを再確認する</p>
@@ -1453,31 +1467,31 @@
 
 
 <p><strong>画像内の番号</strong></p>
-<ul>
+<ul class="check-list">
 <li>① 06:00 JSTに対応するCron式と次回トリガーを再確認する</li>
 <li>② ECSターゲットの設定を再確認する</li>
 </ul>
 <p>確認後、画面下部までスクロールし、「ルールの更新」を選択する</p>
-<p>更新成功メッセージ、<code>0 21 * * ? *</code>および21:00 UTCの次回トリガー一覧を確認した</p>
+<p>更新成功メッセージ、<code class="inline-code">0 21 * * ? *</code>および21:00 UTCの次回トリガー一覧を確認した</p>
 <figure class="screenshot-wide aws-console-identity"><figcaption>図4_EventBridge_お客様時刻06時_反映確認</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/033-図4-eventbridge-お客様時刻06時-反映確認.png" alt="図4_EventBridge_お客様時刻06時_反映確認" width="1889" height="1333" loading="lazy"></div></figure>
 
 
 
 <p><strong>画像内の番号</strong></p>
-<ul>
+<ul class="check-list">
 <li>① ルール更新の成功メッセージを確認する</li>
 <li>② 06:00 JSTに対応するCron式と次回トリガーが反映されたことを確認する</li>
 </ul>
 <h4 id="今回の復元先である08-00-jstへ戻す">今回の復元先である08:00 JSTへ戻す</h4>
-<p>時間を<code>23</code>へ変更し、Cron式が<code>0 23 * * ? *</code>、次回トリガーが23:00 UTCであることを確認する</p>
+<p>時間を<code class="inline-code">23</code>へ変更し、Cron式が<code class="inline-code">0 23 * * ? *</code>、次回トリガーが23:00 UTCであることを確認する</p>
 <figure class="screenshot-wide aws-console-identity"><figcaption>図5_EventBridge_復元先08時_UTC23時入力</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/034-図5-eventbridge-復元先08時-utc23時入力.png" alt="図5_EventBridge_復元先08時_UTC23時入力" width="1889" height="1333" loading="lazy"></div></figure>
 
 
 
 <p><strong>画像内の番号</strong></p>
-<ul>
+<ul class="check-list">
 <li>① 「特定の時刻」を選択する</li>
-<li>② 08:00 JSTに対応する時間<code>23</code>を含むCron式を確認する</li>
+<li>② 08:00 JSTに対応する時間<code class="inline-code">23</code>を含むCron式を確認する</li>
 <li>③ タイムゾーンがUTCで、次回トリガーが23:00 UTCであることを確認する</li>
 <li>④ 「次へ」を選択する</li>
 </ul>
@@ -1487,38 +1501,38 @@
 
 
 <p><strong>画像内の番号</strong></p>
-<ul>
+<ul class="check-list">
 <li>① 08:00 JSTに対応するCron式と次回トリガーを再確認する</li>
 <li>② ECSターゲットの設定を再確認する</li>
 </ul>
 <p>確認後、画面下部までスクロールし、「ルールの更新」を選択する</p>
-<p>更新成功メッセージ、<code>0 23 * * ? *</code>および23:00 UTCの次回トリガー一覧を確認した</p>
+<p>更新成功メッセージ、<code class="inline-code">0 23 * * ? *</code>および23:00 UTCの次回トリガー一覧を確認した</p>
 <figure class="screenshot-wide aws-console-identity"><figcaption>図7_EventBridge_復元先08時_最終反映確認</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/036-図7-eventbridge-復元先08時-最終反映確認.png" alt="図7_EventBridge_復元先08時_最終反映確認" width="1889" height="1333" loading="lazy"></div></figure>
 
 
 
 <p><strong>画像内の番号</strong></p>
-<ul>
+<ul class="check-list">
 <li>① ルール更新の成功メッセージを確認する</li>
 <li>② 08:00 JSTに対応するCron式と次回トリガーが反映されたことを確認する</li>
 </ul>
 <h4 id="utc同日内の二重実行を回避">UTC同日内の二重実行を回避</h4>
-<p>検証当日は実行時刻を複数回変更したため、同一UTC日内に複数回起動しないようEventBridgeルールを一時的に無効化しました。無効化後もCron式は<code>0 23 * * ? *</code>のまま保持されている</p>
+<p>検証当日は実行時刻を複数回変更したため、同一UTC日内に複数回起動しないようEventBridgeルールを一時的に無効化しました。無効化後もCron式は<code class="inline-code">0 23 * * ? *</code>のまま保持されている</p>
 <figure class="screenshot-wide aws-console-identity"><figcaption>図8_EventBridge_二重実行回避_ルール無効化</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/037-図8-eventbridge-二重実行回避-ルール無効化.png" alt="図8_EventBridge_二重実行回避_ルール無効化" width="1918" height="1540" loading="lazy"></div></figure>
 
 
 
 <p><strong>画像内の番号</strong></p>
-<ul>
+<ul class="check-list">
 <li>① ルールの状態が無効であることを確認する</li>
 <li>② 無効化後も08:00 JSTに対応するCron式が保持されていることを確認する</li>
 </ul>
 <h3 id="再有効化と初回実行確認">再有効化と初回実行確認</h3>
 <p>EventBridgeルールは、前回実行と次回実行が同一UTC日にならない時刻に再有効化します。再有効化後は、次回トリガーのUTCとJSTを換算し、想定した日付・時刻であることを確認してください</p>
-<ol>
+<ol class="step-list">
 <li>Amazon EventBridgeの「スケジュールされたルール（レガシー）」を開く</li>
-<li><code>sample-cfn-co-001-ScheduleRule-</code>で始まる対象ルールを選択</li>
-<li>Cron式が<code>0 23 * * ? *</code>であることを確認</li>
+<li><code class="inline-code">sample-cfn-co-001-ScheduleRule-</code>で始まる対象ルールを選択</li>
+<li>Cron式が<code class="inline-code">0 23 * * ? *</code>であることを確認</li>
 <li>「有効化」を選択</li>
 <li>ステータスが「有効」になったことを確認</li>
 <li>次回トリガーのUTCとJSTを換算し、想定した日付・時刻であることを確認</li>
@@ -1527,25 +1541,25 @@
 </ol>
 <h3 id="例外的カスタマイズとして変更する場合">例外的カスタマイズとして変更する場合</h3>
 <p>AWS Supportの確認とお客様承認を得て本番時刻を例外的に変更する場合は、EventBridgeルールを直接編集せず、次の手順で変更する</p>
-<ol>
+<ol class="step-list">
 <li>AWS Supportの回答、変更理由、想定影響およびお客様承認を記録</li>
 <li>対象スタックと使用中のCloudFormationテンプレートのバージョンを確認</li>
-<li>テンプレート内の<code>ScheduleExpression</code>だけを目的のCron式へ変更</li>
+<li>テンプレート内の<code class="inline-code">ScheduleExpression</code>だけを目的のCron式へ変更</li>
 <li>対象スタックの更新画面で変更後テンプレートを指定し、変更セットを作成</li>
 <li>変更セットを確認し、EventBridgeルールの予定した変更以外に、削除、置換または意図しない変更がないことを確認</li>
 <li>作業承認後に変更セットを実行</li>
-<li>スタックが<code>UPDATE_COMPLETE</code>になったことを確認</li>
+<li>スタックが<code class="inline-code">UPDATE_COMPLETE</code>になったことを確認</li>
 <li>EventBridgeルールのCron式、有効状態および次回トリガーを確認</li>
 <li>初回実行後、ECSタスク、CloudWatch Logs、S3レポートおよびCloudWatchダッシュボードを確認</li>
 </ol>
-<p>時刻を元に戻す場合も、<code>ScheduleExpression</code>を戻したテンプレートから変更セットを作成し、同じ確認手順で反映する</p>
+<p>時刻を元に戻す場合も、<code class="inline-code">ScheduleExpression</code>を戻したテンプレートから変更セットを作成し、同じ確認手順で反映する</p>
 <h3 id="運用上の注意">運用上の注意</h3>
 <ul>
 <li>Cost Optimizerは1日1回の実行を前提とする</li>
 <li>同一UTC日内にスケジュール実行と手動実行を重複させない</li>
 <li>時刻変更の動作確認を目的としてECSタスクを手動実行しない</li>
 <li>時刻を前後させる場合は、変更前後の次回トリガーを比較し、同一UTC日内に2回実行されない切替日時を選定する</li>
-<li><code>DryRun=No</code>では実際の課金モード変更が発生し得るため、再有効化前に対象WorkSpaces、料金閾値および除外タグを確認する</li>
+<li><code class="inline-code">DryRun=No</code>では実際の課金モード変更が発生し得るため、再有効化前に対象WorkSpaces、料金閾値および除外タグを確認する</li>
 </ul>
 <hr>
 
@@ -1556,12 +1570,12 @@
 <h3 id="概要-7">概要</h3>
 <p>お客様環境で確認されたv2.8.1と、今回の手順・証跡で使用したv2.9.10について、テンプレート、料金しきい値、コンテナイメージおよび更新時の相違点を整理する</p>
 <h4 id="本手順書で実施すること-7">本手順書で実施すること</h4>
-<ul>
+<ul class="check-list">
 <li>バージョン固有の差分と環境固有の設定値を分けて比較する</li>
 <li>更新時に引き継ぐ値と再確認する値を明確にする</li>
 </ul>
 <h4 id="完了条件-7">完了条件</h4>
-<ul>
+<ul class="check-list">
 <li>✔ v2.8.1とv2.9.10の差分根拠を公式CHANGELOGまたは固定版テンプレートで確認できること</li>
 <li>✔ 今回の設定値とテンプレート既定値を混同していないこと</li>
 </ul>
@@ -1621,7 +1635,7 @@
 <td>検証スタックで実際に作成されたリソース数</td>
 <td align="right">―</td>
 <td align="right">41</td>
-<td>単一アカウント、<code>CreateNewVPC=Yes</code> の検証結果</td>
+<td>単一アカウント、<code class="inline-code">CreateNewVPC=Yes</code> の検証結果</td>
 </tr>
 </tbody></table>
 <p>主な機能差分は、v2.9.0で追加された <strong>GeneralPurpose.4xlarge</strong> および <strong>GeneralPurpose.8xlarge</strong> のWorkSpacesバンドル対応です。v2.9.1では旧データとの互換性に関する不具合が修正され、v2.9.2からv2.9.10までは主として依存ライブラリ、コンテナベースイメージおよび脆弱性への対応が継続されている</p>
@@ -1647,17 +1661,17 @@
 </tr>
 <tr>
 <td>v2.9.1</td>
-<td>v2.7.xからv2.9.0へ更新した際、既存DynamoDBレコードに <code>workspace_type</code> がないことで発生する <code>KeyError</code> を修正</td>
+<td>v2.7.xからv2.9.0へ更新した際、既存DynamoDBレコードに <code class="inline-code">workspace_type</code> がないことで発生する <code class="inline-code">KeyError</code> を修正</td>
 <td>旧データを保持して更新する場合の互換性修正として記載する。v2.8.1固有の不具合とは断定しない</td>
 </tr>
 <tr>
 <td>v2.9.2～v2.9.7</td>
-<td>OpenSSL、urllib3、<code>aws-cdk-lib</code>、Pythonベースイメージ、idna、fast-uri、js-yaml、pytestなどを更新</td>
+<td>OpenSSL、urllib3、<code class="inline-code">aws-cdk-lib</code>、Pythonベースイメージ、idna、fast-uri、js-yaml、pytestなどを更新</td>
 <td>主として保守・セキュリティ更新</td>
 </tr>
 <tr>
 <td>v2.9.8</td>
-<td><code>aws-cdk-lib</code> と推移的依存関係を更新し、非推奨の <code>addDependency</code> を <code>addResourceDependency</code> へ変更</td>
+<td><code class="inline-code">aws-cdk-lib</code> と推移的依存関係を更新し、非推奨の <code class="inline-code">addDependency</code> を <code class="inline-code">addResourceDependency</code> へ変更</td>
 <td>構築コードの保守性・セキュリティ改善</td>
 </tr>
 <tr>
@@ -1667,14 +1681,14 @@
 </tr>
 <tr>
 <td>v2.9.10</td>
-<td><code>aws-cdk-lib</code> を2.265.0へ更新し、brace-expansionに関する脆弱性へ対応</td>
+<td><code class="inline-code">aws-cdk-lib</code> を2.265.0へ更新し、brace-expansionに関する脆弱性へ対応</td>
 <td>本手順書で確認したリリース</td>
 </tr>
 </tbody></table>
 <h3 id="cloudformationパラメータの差分">CloudFormationパラメータの差分</h3>
 <h4 id="v2-9-0で追加されたパラメータ">v2.9.0で追加されたパラメータ</h4>
 <p>v2.8.1の26パラメータに対し、v2.9.10では次の2パラメータが追加され、合計28パラメータになっている</p>
-<table>
+<table class="parameter-table">
 <thead>
 <tr>
 <th>追加パラメータ</th>
@@ -1683,24 +1697,24 @@
 </tr>
 </thead>
 <tbody><tr>
-<td><code>GeneralPurpose4xlargeLimit</code></td>
+<td><code class="inline-code">GeneralPurpose4xlargeLimit</code></td>
 <td align="right">121時間</td>
-<td>GeneralPurpose.4xlargeを <code>ALWAYS_ON</code> へ切り替える月間使用時間の判定値</td>
+<td>GeneralPurpose.4xlargeを <code class="inline-code">ALWAYS_ON</code> へ切り替える月間使用時間の判定値</td>
 </tr>
 <tr>
-<td><code>GeneralPurpose8xlargeLimit</code></td>
+<td><code class="inline-code">GeneralPurpose8xlargeLimit</code></td>
 <td align="right">125時間</td>
-<td>GeneralPurpose.8xlargeを <code>ALWAYS_ON</code> へ切り替える月間使用時間の判定値</td>
+<td>GeneralPurpose.8xlargeを <code class="inline-code">ALWAYS_ON</code> へ切り替える月間使用時間の判定値</td>
 </tr>
 </tbody></table>
-<p>既存26パラメータは、v2.8.1とv2.9.10の公式配布テンプレートを比較した範囲で、<code>Parameters</code> に定義された既定値に変更はない</p>
+<p>既存26パラメータは、v2.8.1とv2.9.10の公式配布テンプレートを比較した範囲で、<code class="inline-code">Parameters</code> に定義された既定値に変更はない</p>
 <h4 id="テンプレート内の既定値と現行ガイド掲載値">テンプレート内の既定値と現行ガイド掲載値</h4>
 <p>料金しきい値には、次の2種類の値があるため注意してください</p>
-<ul>
-<li><strong>配布テンプレート既定値</strong>：CloudFormationテンプレートの <code>Parameters</code> に埋め込まれた値</li>
+<ul class="check-list">
+<li><strong>配布テンプレート既定値</strong>：CloudFormationテンプレートの <code class="inline-code">Parameters</code> に埋め込まれた値</li>
 <li><strong>現行AWS実装ガイド掲載値</strong>：確認日時点でAWS実装ガイドのパラメータ表に掲載されている値。本手順書の設定例として使用</li>
 </ul>
-<table>
+<table class="parameter-table">
 <thead>
 <tr>
 <th>料金パラメータ</th>
@@ -1710,55 +1724,55 @@
 </tr>
 </thead>
 <tbody><tr>
-<td><code>ValueLimit</code></td>
+<td><code class="inline-code">ValueLimit</code></td>
 <td align="right">81</td>
 <td align="right">81</td>
 <td align="right">81</td>
 </tr>
 <tr>
-<td><code>StandardLimit</code></td>
+<td><code class="inline-code">StandardLimit</code></td>
 <td align="right">85</td>
 <td align="right">85</td>
 <td align="right">85</td>
 </tr>
 <tr>
-<td><code>PerformanceLimit</code></td>
+<td><code class="inline-code">PerformanceLimit</code></td>
 <td align="right">80</td>
 <td align="right">80</td>
 <td align="right">83</td>
 </tr>
 <tr>
-<td><code>GraphicsG4dnLimit</code></td>
+<td><code class="inline-code">GraphicsG4dnLimit</code></td>
 <td align="right">334</td>
 <td align="right">334</td>
 <td align="right">217</td>
 </tr>
 <tr>
-<td><code>GraphicsProG4dnLimit</code></td>
+<td><code class="inline-code">GraphicsProG4dnLimit</code></td>
 <td align="right">80</td>
 <td align="right">80</td>
 <td align="right">80</td>
 </tr>
 <tr>
-<td><code>PowerLimit</code></td>
+<td><code class="inline-code">PowerLimit</code></td>
 <td align="right">92</td>
 <td align="right">92</td>
 <td align="right">83</td>
 </tr>
 <tr>
-<td><code>PowerProLimit</code></td>
+<td><code class="inline-code">PowerProLimit</code></td>
 <td align="right">78</td>
 <td align="right">78</td>
 <td align="right">80</td>
 </tr>
 <tr>
-<td><code>GeneralPurpose4xlargeLimit</code></td>
+<td><code class="inline-code">GeneralPurpose4xlargeLimit</code></td>
 <td align="right">―</td>
 <td align="right">121</td>
 <td align="right">121</td>
 </tr>
 <tr>
-<td><code>GeneralPurpose8xlargeLimit</code></td>
+<td><code class="inline-code">GeneralPurpose8xlargeLimit</code></td>
 <td align="right">―</td>
 <td align="right">125</td>
 <td align="right">125</td>
@@ -1775,8 +1789,8 @@
 <li>更新された主な内容：ECSタスク定義、コンテナイメージ、料金しきい値の環境変数、IAM定義、依存ライブラリ、CloudWatchダッシュボードのソリューションタグ</li>
 </ul>
 <h4 id="今回41件となった理由">今回41件となった理由</h4>
-<p>今回のスタック <code>sample-cfn-co-001</code> は、ハブテンプレートのみを使用した単一アカウント構成で、<code>CreateNewVPC=Yes</code> として作成しました。<code>OrganizationID</code> と <code>ManagementAccountId</code> を空欄にしたため、マルチアカウント条件に依存する次の7件は作成されない</p>
-<ol>
+<p>今回のスタック <code class="inline-code">sample-cfn-co-001</code> は、ハブテンプレートのみを使用した単一アカウント構成で、<code class="inline-code">CreateNewVPC=Yes</code> として作成しました。<code class="inline-code">OrganizationID</code> と <code class="inline-code">ManagementAccountId</code> を空欄にしたため、マルチアカウント条件に依存する次の7件は作成されない</p>
+<ol class="step-list">
 <li>スポークアカウント登録用DynamoDBテーブル</li>
 <li>DynamoDB Gateway Endpoint</li>
 <li>ECSタスク用DynamoDBアクセス権限</li>
@@ -1787,40 +1801,40 @@
 </ol>
 <p>このため、実際の作成数は <strong>48件－7件＝41件</strong> です。41件はv2.9.10全構成で固定される件数ではありません。既存VPC利用、マルチアカウント構成、テンプレート更新などにより作成数は変わるため、各環境ではCloudFormationスタックの「リソース」タブを正として確認する</p>
 <h3 id="コンテナイメージ自動更新の注意">コンテナイメージ自動更新の注意</h3>
-<p><code>Auto-update Container Image</code>（テンプレート上の <code>UseStableTagging</code>）を <code>Yes</code> にすると、次のマイナーバージョンへ移行するまで、同一マイナーバージョンのstableタグが使用される</p>
+<p><code class="inline-code">Auto-update Container Image</code>（テンプレート上の <code class="inline-code">UseStableTagging</code>）を <code class="inline-code">Yes</code> にすると、次のマイナーバージョンへ移行するまで、同一マイナーバージョンのstableタグが使用される</p>
 <table>
 <thead>
 <tr>
 <th>バージョン</th>
 <th>固定リリースタグ</th>
-<th><code>Auto-update Container Image=Yes</code> のタグ</th>
+<th><code class="inline-code">Auto-update Container Image=Yes</code> のタグ</th>
 </tr>
 </thead>
 <tbody><tr>
 <td>v2.8.1</td>
-<td><code>v2.8.1</code></td>
-<td><code>v2.8_stable</code></td>
+<td><code class="inline-code">v2.8.1</code></td>
+<td><code class="inline-code">v2.8_stable</code></td>
 </tr>
 <tr>
 <td>v2.9.10</td>
-<td><code>v2.9.10</code></td>
-<td><code>v2.9_stable</code></td>
+<td><code class="inline-code">v2.9.10</code></td>
+<td><code class="inline-code">v2.9_stable</code></td>
 </tr>
 </tbody></table>
-<p>stableタグは、同一マイナーバージョン内のセキュリティ修正版へ更新される場合があります。そのため、CloudFormation出力の <code>SolutionVersion=v2.9.10</code> だけでは、実行時のコンテナイメージを完全には特定できない</p>
+<p>stableタグは、同一マイナーバージョン内のセキュリティ修正版へ更新される場合があります。そのため、CloudFormation出力の <code class="inline-code">SolutionVersion=v2.9.10</code> だけでは、実行時のコンテナイメージを完全には特定できない</p>
 <p>運用証跡として、次の情報を併せて保存してください</p>
-<ol>
-<li>CloudFormationスタック出力の <code>SolutionVersion</code></li>
+<ol class="step-list">
+<li>CloudFormationスタック出力の <code class="inline-code">SolutionVersion</code></li>
 <li>ECSタスク定義のコンテナイメージURI</li>
 <li>厳密な再現性が必要な場合は、実行タスクのイメージダイジェスト</li>
 </ol>
-<p>固定リリースイメージのみを使用する場合は <code>Auto-update Container Image=No</code> とします。ただし、同一マイナーバージョン内のセキュリティ更新を自動取得しなくなるため、更新管理方法を別途定める必要がある</p>
+<p>固定リリースイメージのみを使用する場合は <code class="inline-code">Auto-update Container Image=No</code> とします。ただし、同一マイナーバージョン内のセキュリティ更新を自動取得しなくなるため、更新管理方法を別途定める必要がある</p>
 <h3 id="更新時の確認事項">更新時の確認事項</h3>
-<ol>
+<ol class="step-list">
 <li>更新先バージョンを固定したAWS公式テンプレートを使用してCloudFormation変更セットを作成</li>
 <li>置換・削除対象、ECSタスク定義の新しいリビジョン、IAM変更を確認</li>
-<li>料金しきい値、<code>DryRun</code>、対象リージョンなど、引き継ぐ値と変更する値を区別</li>
-<li>更新後に <code>SolutionVersion</code>、ECSタスク定義のイメージ、EventBridgeターゲットを確認</li>
+<li>料金しきい値、<code class="inline-code">DryRun</code>、対象リージョンなど、引き継ぐ値と変更する値を区別</li>
+<li>更新後に <code class="inline-code">SolutionVersion</code>、ECSタスク定義のイメージ、EventBridgeターゲットを確認</li>
 <li>次回の日次スケジュール実行後に、ECSタスク、CloudWatch Logs、S3レポートを確認する。手動実行は、AWS Supportとお客様が例外実行の影響を確認・承認した場合に限る</li>
 </ol>
 <hr>
@@ -1832,13 +1846,13 @@
 <h3 id="概要-8">概要</h3>
 <p>v2.9.10のハブテンプレートを新規VPC・単一アカウント構成でデプロイした際に、取得済みCloudFormation証跡で確認した41リソースの役割を一覧化します。条件により作成されないリソースも分離する</p>
 <h4 id="本手順書で実施すること-8">本手順書で実施すること</h4>
-<ul>
+<ul class="check-list">
 <li>論理ID、AWSリソースタイプおよび役割を確認する</li>
 <li>Retain指定によりスタック削除後も残るリソースを確認する</li>
 <li>環境条件によって作成件数が変わることを確認する</li>
 </ul>
 <h4 id="完了条件-8">完了条件</h4>
-<ul>
+<ul class="check-list">
 <li>✔ 取得済み証跡の41件と分類別合計が一致していること</li>
 <li>✔ 実環境ではCloudFormationのリソース一覧を正として再確認する旨が明記されていること</li>
 </ul>
@@ -1866,12 +1880,12 @@
 <div class="callout callout-info"><p><strong>参考：AWS公式資料</strong><br>出典：<a href="https://solutions-reference.s3.amazonaws.com/cost-optimizer-for-amazon-workspaces/v2.9.10/cost-optimizer-for-amazon-workspaces.template">AWS公式v2.9.10テンプレート</a>とCloudFormation証跡を照合する</p>
 </div>
 <h3 id="本付録の対象">本付録の対象</h3>
-<p>本付録は、Cost Optimizer for Amazon WorkSpaces v2.9.10を、今回のスタック<code>sample-cfn-co-001</code>として次の条件でデプロイした際に作成されたAWSリソースを整理したもの</p>
+<p>本付録は、Cost Optimizer for Amazon WorkSpaces v2.9.10を、今回のスタック<code class="inline-code">sample-cfn-co-001</code>として次の条件でデプロイした際に作成されたAWSリソースを整理したもの</p>
 <ul>
 <li>デプロイ方式：ハブテンプレートのみを使用した単一アカウント構成</li>
-<li>VPC設定：<code>CreateNewVPC=Yes</code></li>
-<li>デプロイ先：アジアパシフィック（東京）リージョン（<code>ap-northeast-1</code>）</li>
-<li>作成結果：CloudFormationスタックの「リソース」タブで41件すべてが <code>CREATE_COMPLETE</code></li>
+<li>VPC設定：<code class="inline-code">CreateNewVPC=Yes</code></li>
+<li>デプロイ先：アジアパシフィック（東京）リージョン（<code class="inline-code">ap-northeast-1</code>）</li>
+<li>作成結果：CloudFormationスタックの「リソース」タブで41件すべてが <code class="inline-code">CREATE_COMPLETE</code></li>
 </ul>
 <p>本一覧の論理IDとAWSリソースタイプは、今回取得したCloudFormation証跡およびAWS公式v2.9.10 CloudFormationテンプレートを照合して確認しています。物理IDにはスタック名や自動生成サフィックスが含まれるため、実環境ではCloudFormationスタックの「リソース」タブを正とする</p>
 <h3 id="カテゴリ別概要">カテゴリ別概要</h3>
@@ -1931,30 +1945,30 @@
 </thead>
 <tbody><tr>
 <td align="right">1</td>
-<td><code>CostOptimizerBucket</code></td>
-<td><code>AWS::S3::Bucket</code></td>
+<td><code class="inline-code">CostOptimizerBucket</code></td>
+<td><code class="inline-code">AWS::S3::Bucket</code></td>
 <td>ディレクトリ別および集約版の日次・月次CSVレポートを保存する。サーバー側暗号化、365日後のオブジェクト削除、S3サーバーアクセスログ出力が設定される</td>
 </tr>
 <tr>
 <td align="right">2</td>
-<td><code>S3BucketPolicy</code></td>
-<td><code>AWS::S3::BucketPolicy</code></td>
-<td><code>CostOptimizerBucket</code> への非HTTPS通信を拒否する</td>
+<td><code class="inline-code">S3BucketPolicy</code></td>
+<td><code class="inline-code">AWS::S3::BucketPolicy</code></td>
+<td><code class="inline-code">CostOptimizerBucket</code> への非HTTPS通信を拒否する</td>
 </tr>
 <tr>
 <td align="right">3</td>
-<td><code>LogsBucket</code></td>
-<td><code>AWS::S3::Bucket</code></td>
-<td><code>CostOptimizerBucket</code> のS3サーバーアクセスログを保存する。ECSコンテナの実行ログを保存するバケットではない</td>
+<td><code class="inline-code">LogsBucket</code></td>
+<td><code class="inline-code">AWS::S3::Bucket</code></td>
+<td><code class="inline-code">CostOptimizerBucket</code> のS3サーバーアクセスログを保存する。ECSコンテナの実行ログを保存するバケットではない</td>
 </tr>
 <tr>
 <td align="right">4</td>
-<td><code>UsageReportBucketResourcesAccessLoggingBucketPolicyE13961AA</code></td>
-<td><code>AWS::S3::BucketPolicy</code></td>
-<td>S3ログ配信サービスによる <code>LogsBucket</code> への書き込みを許可し、同バケットへの非HTTPS通信を拒否する</td>
+<td><code class="inline-code">UsageReportBucketResourcesAccessLoggingBucketPolicyE13961AA</code></td>
+<td><code class="inline-code">AWS::S3::BucketPolicy</code></td>
+<td>S3ログ配信サービスによる <code class="inline-code">LogsBucket</code> への書き込みを許可し、同バケットへの非HTTPS通信を拒否する</td>
 </tr>
 </tbody></table>
-<div class="callout callout-info"><p><strong>情報：CSVレポートの格納先</strong><br>CSVレポートの格納先は、CloudFormationスタックの「リソース」で論理ID<code>CostOptimizerBucket</code>を検索して確認する。今回の物理バケット名は<code>sample-cfn-co-001-costoptimizerbucket-yirana73nt26</code></p>
+<div class="callout callout-info"><p><strong>情報：CSVレポートの格納先</strong><br>CSVレポートの格納先は、CloudFormationスタックの「リソース」で論理ID<code class="inline-code">CostOptimizerBucket</code>を検索して確認する。今回の物理バケット名は<code class="inline-code">sample-cfn-co-001-costoptimizerbucket-yirana73nt26</code></p>
 </div>
 <h3 id="dynamodbリソース">DynamoDBリソース</h3>
 <table>
@@ -1968,20 +1982,20 @@
 </thead>
 <tbody><tr>
 <td align="right">5</td>
-<td><code>UsageTable28300137</code></td>
-<td><code>AWS::DynamoDB::Table</code></td>
-<td><code>WorkspaceId</code> をパーティションキー、<code>Region</code> をソートキーとして、WorkSpaceごとの利用状況を保持する</td>
+<td><code class="inline-code">UsageTable28300137</code></td>
+<td><code class="inline-code">AWS::DynamoDB::Table</code></td>
+<td><code class="inline-code">WorkspaceId</code> をパーティションキー、<code class="inline-code">Region</code> をソートキーとして、WorkSpaceごとの利用状況を保持する</td>
 </tr>
 <tr>
 <td align="right">6</td>
-<td><code>UserSessionTableCD18DD22</code></td>
-<td><code>AWS::DynamoDB::Table</code></td>
-<td><code>WorkspaceId</code> をパーティションキー、<code>SessionTime</code> をソートキーとして、WorkSpaceのセッション履歴を保持する</td>
+<td><code class="inline-code">UserSessionTableCD18DD22</code></td>
+<td><code class="inline-code">AWS::DynamoDB::Table</code></td>
+<td><code class="inline-code">WorkspaceId</code> をパーティションキー、<code class="inline-code">SessionTime</code> をソートキーとして、WorkSpaceのセッション履歴を保持する</td>
 </tr>
 </tbody></table>
 <p>両テーブルはオンデマンドキャパシティーモード、保管時暗号化、ポイントインタイムリカバリ有効で作成される</p>
 <h3 id="vpc-通信-vpc-flow-logsリソース">VPC・通信・VPC Flow Logsリソース</h3>
-<p>次の22件は、<code>CreateNewVPC=Yes</code> の場合に作成されます。既存VPCを使用する場合は、作成されるリソース数が異なる</p>
+<p>次の22件は、<code class="inline-code">CreateNewVPC=Yes</code> の場合に作成されます。既存VPCを使用する場合は、作成されるリソース数が異なる</p>
 <table>
 <thead>
 <tr>
@@ -1993,138 +2007,138 @@
 </thead>
 <tbody><tr>
 <td align="right">7</td>
-<td><code>VPC</code></td>
-<td><code>AWS::EC2::VPC</code></td>
+<td><code class="inline-code">VPC</code></td>
+<td><code class="inline-code">AWS::EC2::VPC</code></td>
 <td>Cost OptimizerのFargateタスクを配置する専用VPC。DNSサポートとDNSホスト名が有効化される</td>
 </tr>
 <tr>
 <td align="right">8</td>
-<td><code>InternetGateway</code></td>
-<td><code>AWS::EC2::InternetGateway</code></td>
+<td><code class="inline-code">InternetGateway</code></td>
+<td><code class="inline-code">AWS::EC2::InternetGateway</code></td>
 <td>パブリックサブネットからインターネットへ接続するためのゲートウェイ</td>
 </tr>
 <tr>
 <td align="right">9</td>
-<td><code>InternetGatewayAttachment</code></td>
-<td><code>AWS::EC2::VPCGatewayAttachment</code></td>
-<td><code>InternetGateway</code> を専用VPCへ関連付ける</td>
+<td><code class="inline-code">InternetGatewayAttachment</code></td>
+<td><code class="inline-code">AWS::EC2::VPCGatewayAttachment</code></td>
+<td><code class="inline-code">InternetGateway</code> を専用VPCへ関連付ける</td>
 </tr>
 <tr>
 <td align="right">10</td>
-<td><code>Subnet1</code></td>
-<td><code>AWS::EC2::Subnet</code></td>
+<td><code class="inline-code">Subnet1</code></td>
+<td><code class="inline-code">AWS::EC2::Subnet</code></td>
 <td>NAT Gatewayを配置するパブリックサブネット</td>
 </tr>
 <tr>
 <td align="right">11</td>
-<td><code>PrivateSubnet1</code></td>
-<td><code>AWS::EC2::Subnet</code></td>
+<td><code class="inline-code">PrivateSubnet1</code></td>
+<td><code class="inline-code">AWS::EC2::Subnet</code></td>
 <td>Fargateタスクを配置する第1プライベートサブネット</td>
 </tr>
 <tr>
 <td align="right">12</td>
-<td><code>PrivateSubnet2</code></td>
-<td><code>AWS::EC2::Subnet</code></td>
+<td><code class="inline-code">PrivateSubnet2</code></td>
+<td><code class="inline-code">AWS::EC2::Subnet</code></td>
 <td>Fargateタスクを配置する第2プライベートサブネット。第1サブネットとは別のアベイラビリティーゾーンに作成される</td>
 </tr>
 <tr>
 <td align="right">13</td>
-<td><code>IntraVPCSecurityGroup</code></td>
-<td><code>AWS::EC2::SecurityGroup</code></td>
+<td><code class="inline-code">IntraVPCSecurityGroup</code></td>
+<td><code class="inline-code">AWS::EC2::SecurityGroup</code></td>
 <td>Fargateタスクへ付与するセキュリティグループ</td>
 </tr>
 <tr>
 <td align="right">14</td>
-<td><code>SecurityGroupEgress</code></td>
-<td><code>AWS::EC2::SecurityGroupEgress</code></td>
-<td>CloudFormationパラメータ <code>EgressCIDR</code> に対するFargateタスクのアウトバウンド通信を許可する</td>
+<td><code class="inline-code">SecurityGroupEgress</code></td>
+<td><code class="inline-code">AWS::EC2::SecurityGroupEgress</code></td>
+<td>CloudFormationパラメータ <code class="inline-code">EgressCIDR</code> に対するFargateタスクのアウトバウンド通信を許可する</td>
 </tr>
 <tr>
 <td align="right">15</td>
-<td><code>PublicRouteTable</code></td>
-<td><code>AWS::EC2::RouteTable</code></td>
+<td><code class="inline-code">PublicRouteTable</code></td>
+<td><code class="inline-code">AWS::EC2::RouteTable</code></td>
 <td>パブリックサブネット用のルートテーブル</td>
 </tr>
 <tr>
 <td align="right">16</td>
-<td><code>MainRoutePrivateTable</code></td>
-<td><code>AWS::EC2::RouteTable</code></td>
+<td><code class="inline-code">MainRoutePrivateTable</code></td>
+<td><code class="inline-code">AWS::EC2::RouteTable</code></td>
 <td>2つのプライベートサブネットで共用するルートテーブル</td>
 </tr>
 <tr>
 <td align="right">17</td>
-<td><code>PublicRouteToInternet</code></td>
-<td><code>AWS::EC2::Route</code></td>
-<td>パブリックルートテーブルにInternet Gateway向けのデフォルトルート <code>0.0.0.0/0</code> を設定する</td>
+<td><code class="inline-code">PublicRouteToInternet</code></td>
+<td><code class="inline-code">AWS::EC2::Route</code></td>
+<td>パブリックルートテーブルにInternet Gateway向けのデフォルトルート <code class="inline-code">0.0.0.0/0</code> を設定する</td>
 </tr>
 <tr>
 <td align="right">18</td>
-<td><code>PrivateRouteToInternet</code></td>
-<td><code>AWS::EC2::Route</code></td>
-<td>プライベートルートテーブルにNAT Gateway向けのデフォルトルート <code>0.0.0.0/0</code> を設定する</td>
+<td><code class="inline-code">PrivateRouteToInternet</code></td>
+<td><code class="inline-code">AWS::EC2::Route</code></td>
+<td>プライベートルートテーブルにNAT Gateway向けのデフォルトルート <code class="inline-code">0.0.0.0/0</code> を設定する</td>
 </tr>
 <tr>
 <td align="right">19</td>
-<td><code>PublicSubnetRouteTableAssociation</code></td>
-<td><code>AWS::EC2::SubnetRouteTableAssociation</code></td>
-<td><code>Subnet1</code> と <code>PublicRouteTable</code> を関連付ける</td>
+<td><code class="inline-code">PublicSubnetRouteTableAssociation</code></td>
+<td><code class="inline-code">AWS::EC2::SubnetRouteTableAssociation</code></td>
+<td><code class="inline-code">Subnet1</code> と <code class="inline-code">PublicRouteTable</code> を関連付ける</td>
 </tr>
 <tr>
 <td align="right">20</td>
-<td><code>PrivateSubnet1RouteTableAssociation</code></td>
-<td><code>AWS::EC2::SubnetRouteTableAssociation</code></td>
-<td><code>PrivateSubnet1</code> と <code>MainRoutePrivateTable</code> を関連付ける</td>
+<td><code class="inline-code">PrivateSubnet1RouteTableAssociation</code></td>
+<td><code class="inline-code">AWS::EC2::SubnetRouteTableAssociation</code></td>
+<td><code class="inline-code">PrivateSubnet1</code> と <code class="inline-code">MainRoutePrivateTable</code> を関連付ける</td>
 </tr>
 <tr>
 <td align="right">21</td>
-<td><code>PrivateSubnet2RouteTableAssociation</code></td>
-<td><code>AWS::EC2::SubnetRouteTableAssociation</code></td>
-<td><code>PrivateSubnet2</code> と <code>MainRoutePrivateTable</code> を関連付ける</td>
+<td><code class="inline-code">PrivateSubnet2RouteTableAssociation</code></td>
+<td><code class="inline-code">AWS::EC2::SubnetRouteTableAssociation</code></td>
+<td><code class="inline-code">PrivateSubnet2</code> と <code class="inline-code">MainRoutePrivateTable</code> を関連付ける</td>
 </tr>
 <tr>
 <td align="right">22</td>
-<td><code>CostOptimizerVpcNatGatewayEIP022C0087</code></td>
-<td><code>AWS::EC2::EIP</code></td>
+<td><code class="inline-code">CostOptimizerVpcNatGatewayEIP022C0087</code></td>
+<td><code class="inline-code">AWS::EC2::EIP</code></td>
 <td>NAT Gatewayへ割り当てる固定パブリックIPv4アドレス</td>
 </tr>
 <tr>
 <td align="right">23</td>
-<td><code>NatGateway</code></td>
-<td><code>AWS::EC2::NatGateway</code></td>
+<td><code class="inline-code">NatGateway</code></td>
+<td><code class="inline-code">AWS::EC2::NatGateway</code></td>
 <td>プライベートサブネット上のFargateタスクからAWS APIや外部エンドポイントへの送信経路を提供する</td>
 </tr>
 <tr>
 <td align="right">24</td>
-<td><code>S3GatewayEndpoint</code></td>
-<td><code>AWS::EC2::VPCEndpoint</code></td>
+<td><code class="inline-code">S3GatewayEndpoint</code></td>
+<td><code class="inline-code">AWS::EC2::VPCEndpoint</code></td>
 <td>プライベートサブネットからレポート用S3バケットへ、S3 Gateway Endpoint経由で接続する</td>
 </tr>
 <tr>
 <td align="right">25</td>
-<td><code>FlowLogGroup</code></td>
-<td><code>AWS::Logs::LogGroup</code></td>
+<td><code class="inline-code">FlowLogGroup</code></td>
+<td><code class="inline-code">AWS::Logs::LogGroup</code></td>
 <td>VPC Flow Logsを保存する。v2.9.10テンプレートでは保持期間731日</td>
 </tr>
 <tr>
 <td align="right">26</td>
-<td><code>FlowLogRole</code></td>
-<td><code>AWS::IAM::Role</code></td>
+<td><code class="inline-code">FlowLogRole</code></td>
+<td><code class="inline-code">AWS::IAM::Role</code></td>
 <td>VPC Flow LogsサービスがCloudWatch Logsへログを記録する際に引き受けるIAMロール</td>
 </tr>
 <tr>
 <td align="right">27</td>
-<td><code>FlowLogsPolicy</code></td>
-<td><code>AWS::IAM::Policy</code></td>
-<td>ログストリームの作成、ログイベントの書き込み、ロググループ／ストリームの参照を <code>FlowLogRole</code> へ許可する</td>
+<td><code class="inline-code">FlowLogsPolicy</code></td>
+<td><code class="inline-code">AWS::IAM::Policy</code></td>
+<td>ログストリームの作成、ログイベントの書き込み、ロググループ／ストリームの参照を <code class="inline-code">FlowLogRole</code> へ許可する</td>
 </tr>
 <tr>
 <td align="right">28</td>
-<td><code>FlowLog</code></td>
-<td><code>AWS::EC2::FlowLog</code></td>
-<td>専用VPCの許可・拒否を含む全通信を <code>FlowLogGroup</code> へ出力する</td>
+<td><code class="inline-code">FlowLog</code></td>
+<td><code class="inline-code">AWS::EC2::FlowLog</code></td>
+<td>専用VPCの許可・拒否を含む全通信を <code class="inline-code">FlowLogGroup</code> へ出力する</td>
 </tr>
 </tbody></table>
-<div class="callout callout-warning"><p><strong>注意：新規VPCではNAT Gateway料金が発生する</strong><br><code>CreateNewVPC=Yes</code>ではNAT GatewayとElastic IPが作成されます。NAT GatewayはFargateタスクの実行有無にかかわらず時間単位の料金が発生するため、今回の環境を長期間残す場合は費用を確認してください</p>
+<div class="callout callout-warning"><p><strong>注意：新規VPCではNAT Gateway料金が発生する</strong><br><code class="inline-code">CreateNewVPC=Yes</code>ではNAT GatewayとElastic IPが作成されます。NAT GatewayはFargateタスクの実行有無にかかわらず時間単位の料金が発生するため、今回の環境を長期間残す場合は費用を確認してください</p>
 </div>
 <h3 id="デプロイ補助リソース">デプロイ補助リソース</h3>
 <table>
@@ -2138,30 +2152,30 @@
 </thead>
 <tbody><tr>
 <td align="right">29</td>
-<td><code>SolutionHelperRole</code></td>
-<td><code>AWS::IAM::Role</code></td>
+<td><code class="inline-code">SolutionHelperRole</code></td>
+<td><code class="inline-code">AWS::IAM::Role</code></td>
 <td>Solution Helper Lambdaが引き受ける実行ロール</td>
 </tr>
 <tr>
 <td align="right">30</td>
-<td><code>SolutionHelperPolicy</code></td>
-<td><code>AWS::IAM::Policy</code></td>
-<td>Lambdaログ出力、X-Rayトレース送信、対象CloudFormationスタックの参照等を <code>SolutionHelperRole</code> へ許可する</td>
+<td><code class="inline-code">SolutionHelperPolicy</code></td>
+<td><code class="inline-code">AWS::IAM::Policy</code></td>
+<td>Lambdaログ出力、X-Rayトレース送信、対象CloudFormationスタックの参照等を <code class="inline-code">SolutionHelperRole</code> へ許可する</td>
 </tr>
 <tr>
 <td align="right">31</td>
-<td><code>SolutionHelperFunction</code></td>
-<td><code>AWS::Lambda::Function</code></td>
+<td><code class="inline-code">SolutionHelperFunction</code></td>
+<td><code class="inline-code">AWS::Lambda::Function</code></td>
 <td>初期設定、リソースの更新および削除時にソリューション固有UUIDを管理する補助Lambda関数</td>
 </tr>
 <tr>
 <td align="right">32</td>
-<td><code>UUIDGenerator</code></td>
-<td><code>Custom::UUIDGenerator</code></td>
-<td><code>SolutionHelperFunction</code> を呼び出し、ソリューション固有UUIDを取得するCloudFormationカスタムリソース</td>
+<td><code class="inline-code">UUIDGenerator</code></td>
+<td><code class="inline-code">Custom::UUIDGenerator</code></td>
+<td><code class="inline-code">SolutionHelperFunction</code> を呼び出し、ソリューション固有UUIDを取得するCloudFormationカスタムリソース</td>
 </tr>
 </tbody></table>
-<p><code>SolutionHelperFunction</code> は日次のWorkSpaces集計処理を行うLambdaではありません。日次処理本体は、Fargateで起動する <code>CostOptimizerTaskDefinition</code> のコンテナが実行する</p>
+<p><code class="inline-code">SolutionHelperFunction</code> は日次のWorkSpaces集計処理を行うLambdaではありません。日次処理本体は、Fargateで起動する <code class="inline-code">CostOptimizerTaskDefinition</code> のコンテナが実行する</p>
 <h3 id="ecs-実行権限-スケジュールリソース">ECS・実行権限・スケジュールリソース</h3>
 <table>
 <thead>
@@ -2174,55 +2188,55 @@
 </thead>
 <tbody><tr>
 <td align="right">33</td>
-<td><code>CostOptimizerCluster</code></td>
-<td><code>AWS::ECS::Cluster</code></td>
-<td>日次処理をFargateで実行するECSクラスター。クラスター名は <code>cost-optimizer-cluster</code></td>
+<td><code class="inline-code">CostOptimizerCluster</code></td>
+<td><code class="inline-code">AWS::ECS::Cluster</code></td>
+<td>日次処理をFargateで実行するECSクラスター。クラスター名は <code class="inline-code">cost-optimizer-cluster</code></td>
 </tr>
 <tr>
 <td align="right">34</td>
-<td><code>CostOptimizerTaskDefinition</code></td>
-<td><code>AWS::ECS::TaskDefinition</code></td>
+<td><code class="inline-code">CostOptimizerTaskDefinition</code></td>
+<td><code class="inline-code">AWS::ECS::TaskDefinition</code></td>
 <td>コンテナイメージ、CPU・メモリ、DryRun、対象リージョン、料金しきい値、S3・DynamoDB名、ログ出力先等を定義する</td>
 </tr>
 <tr>
 <td align="right">35</td>
-<td><code>CostOptimizerAdminRole</code></td>
-<td><code>AWS::IAM::Role</code></td>
-<td>ECSタスクロール兼タスク実行ロール。今回の物理名は<code>Workspaces-Cost-Optimizer-ap-northeast-1</code></td>
+<td><code class="inline-code">CostOptimizerAdminRole</code></td>
+<td><code class="inline-code">AWS::IAM::Role</code></td>
+<td>ECSタスクロール兼タスク実行ロール。今回の物理名は<code class="inline-code">Workspaces-Cost-Optimizer-ap-northeast-1</code></td>
 </tr>
 <tr>
 <td align="right">36</td>
-<td><code>CostOptimizerAdminPolicy</code></td>
-<td><code>AWS::IAM::Policy</code></td>
+<td><code class="inline-code">CostOptimizerAdminPolicy</code></td>
+<td><code class="inline-code">AWS::IAM::Policy</code></td>
 <td>WorkSpacesの参照・課金モード変更・終了、CloudWatchメトリクス参照／送信、S3レポート入出力、DynamoDB入出力等を許可する</td>
 </tr>
 <tr>
 <td align="right">37</td>
-<td><code>CostOptimizerLogs</code></td>
-<td><code>AWS::Logs::LogGroup</code></td>
-<td>ECSコンテナの実行ログを保存する。今回のロググループ名は<code>/ecs/wco-task/sample-cfn-co-001</code>、保持期間は365日</td>
+<td><code class="inline-code">CostOptimizerLogs</code></td>
+<td><code class="inline-code">AWS::Logs::LogGroup</code></td>
+<td>ECSコンテナの実行ログを保存する。今回のロググループ名は<code class="inline-code">/ecs/wco-task/sample-cfn-co-001</code>、保持期間は365日</td>
 </tr>
 <tr>
 <td align="right">38</td>
-<td><code>InvokeECSTaskRole</code></td>
-<td><code>AWS::IAM::Role</code></td>
+<td><code class="inline-code">InvokeECSTaskRole</code></td>
+<td><code class="inline-code">AWS::IAM::Role</code></td>
 <td>EventBridgeがECSタスクを起動する際に引き受けるIAMロール</td>
 </tr>
 <tr>
 <td align="right">39</td>
-<td><code>InvokeECSTaskPolicy</code></td>
-<td><code>AWS::IAM::Policy</code></td>
-<td><code>InvokeECSTaskRole</code> に <code>ecs:RunTask</code> と <code>iam:PassRole</code> を許可する</td>
+<td><code class="inline-code">InvokeECSTaskPolicy</code></td>
+<td><code class="inline-code">AWS::IAM::Policy</code></td>
+<td><code class="inline-code">InvokeECSTaskRole</code> に <code class="inline-code">ecs:RunTask</code> と <code class="inline-code">iam:PassRole</code> を許可する</td>
 </tr>
 <tr>
 <td align="right">40</td>
-<td><code>ScheduleRule</code></td>
-<td><code>AWS::Events::Rule</code></td>
-<td>Fargateタスクを定期起動する。公式v2.9.10テンプレートの新規作成時の既定値は <code>cron(0 23 * * ? *)</code>（23:00 UTC／翌08:00 JST）</td>
+<td><code class="inline-code">ScheduleRule</code></td>
+<td><code class="inline-code">AWS::Events::Rule</code></td>
+<td>Fargateタスクを定期起動する。公式v2.9.10テンプレートの新規作成時の既定値は <code class="inline-code">cron(0 23 * * ? *)</code>（23:00 UTC／翌08:00 JST）</td>
 </tr>
 </tbody></table>
 <p>CloudFormationでDryRunや料金しきい値を変更すると、設定値を環境変数として保持するECSタスク定義の新しいリビジョンが作成されます。現在使用中のリビジョンは、EventBridgeルールのターゲットおよびECSタスク定義の画面で確認する</p>
-<p><code>DryRun=Yes</code>の場合でも、<code>CostOptimizerAdminPolicy</code>はIAM上<code>workspaces:ModifyWorkspaceProperties</code>と<code>workspaces:TerminateWorkspaces</code>を許可します。Dry RunはIAMポリシーで変更操作を禁止する仕組みではなく、コンテナへ渡される動作パラメータ</p>
+<p><code class="inline-code">DryRun=Yes</code>の場合でも、<code class="inline-code">CostOptimizerAdminPolicy</code>はIAM上<code class="inline-code">workspaces:ModifyWorkspaceProperties</code>と<code class="inline-code">workspaces:TerminateWorkspaces</code>を許可します。Dry RunはIAMポリシーで変更操作を禁止する仕組みではなく、コンテナへ渡される動作パラメータ</p>
 <div class="callout callout-warning"><p><strong>警告：ECSタスクを1日複数回実行しない</strong><br>AWS公式は、EventBridgeルールのスケジュールを変更したり、ECSタスクを同一日に複数回実行したりしないよう案内しています。複数回実行すると、Billable Hoursと課金モード変換が不正確になる</p>
 </div>
 <h3 id="cloudwatchダッシュボード">CloudWatchダッシュボード</h3>
@@ -2237,14 +2251,14 @@
 </thead>
 <tbody><tr>
 <td align="right">41</td>
-<td><code>WorkspacesDashboardResourcesWorkspacesCostOptimizerDashboard0F703011</code></td>
-<td><code>AWS::CloudWatch::Dashboard</code></td>
-<td><code>WorkspacesCostOptimizer</code> 名前空間のカスタムメトリクスを使い、監視対象WorkSpaces数、課金形態、DryRun／実変更、終了、変換失敗・スキップ、ECS処理時間を表示する</td>
+<td><code class="inline-code">WorkspacesDashboardResourcesWorkspacesCostOptimizerDashboard0F703011</code></td>
+<td><code class="inline-code">AWS::CloudWatch::Dashboard</code></td>
+<td><code class="inline-code">WorkspacesCostOptimizer</code> 名前空間のカスタムメトリクスを使い、監視対象WorkSpaces数、課金形態、DryRun／実変更、終了、変換失敗・スキップ、ECS処理時間を表示する</td>
 </tr>
 </tbody></table>
-<p>ダッシュボードは作成直後やECSタスクがメトリクスを送信していない期間には空欄となる場合があります。処理成功の判定はダッシュボードだけで行わず、ECSタスクの終了コード、<code>CostOptimizerLogs</code> および <code>CostOptimizerBucket</code> のCSVレポートも併せて確認する</p>
+<p>ダッシュボードは作成直後やECSタスクがメトリクスを送信していない期間には空欄となる場合があります。処理成功の判定はダッシュボードだけで行わず、ECSタスクの終了コード、<code class="inline-code">CostOptimizerLogs</code> および <code class="inline-code">CostOptimizerBucket</code> のCSVレポートも併せて確認する</p>
 <h3 id="公式テンプレートが48件-検証スタックが41件となる理由">公式テンプレートが48件、検証スタックが41件となる理由</h3>
-<p>AWS公式v2.9.10のハブテンプレートには、条件付きリソースを含めて48件の<code>Resources</code>定義があります。今回の環境では<code>OrganizationID</code>と<code>ManagementAccountId</code>を空欄とした単一アカウント構成であるため、<code>MultiAccountDeploymentCondition</code>が成立せず、次の7件は作成されない</p>
+<p>AWS公式v2.9.10のハブテンプレートには、条件付きリソースを含めて48件の<code class="inline-code">Resources</code>定義があります。今回の環境では<code class="inline-code">OrganizationID</code>と<code class="inline-code">ManagementAccountId</code>を空欄とした単一アカウント構成であるため、<code class="inline-code">MultiAccountDeploymentCondition</code>が成立せず、次の7件は作成されない</p>
 <table>
 <thead>
 <tr>
@@ -2254,45 +2268,45 @@
 </tr>
 </thead>
 <tbody><tr>
-<td><code>SpokeAccountTable</code></td>
-<td><code>AWS::DynamoDB::Table</code></td>
+<td><code class="inline-code">SpokeAccountTable</code></td>
+<td><code class="inline-code">AWS::DynamoDB::Table</code></td>
 <td>スポークアカウントIDと引き受けるIAMロール名を登録する</td>
 </tr>
 <tr>
-<td><code>DynamoDBGatewayEndpoint</code></td>
-<td><code>AWS::EC2::VPCEndpoint</code></td>
+<td><code class="inline-code">DynamoDBGatewayEndpoint</code></td>
+<td><code class="inline-code">AWS::EC2::VPCEndpoint</code></td>
 <td>Fargateからスポークアカウント登録用DynamoDBテーブルへ接続する</td>
 </tr>
 <tr>
-<td><code>CostOptimizerDynamoDBPolicy</code></td>
-<td><code>AWS::IAM::Policy</code></td>
-<td>ECSタスクによる <code>SpokeAccountTable</code> の読み取りを許可する</td>
+<td><code class="inline-code">CostOptimizerDynamoDBPolicy</code></td>
+<td><code class="inline-code">AWS::IAM::Policy</code></td>
+<td>ECSタスクによる <code class="inline-code">SpokeAccountTable</code> の読み取りを許可する</td>
 </tr>
 <tr>
-<td><code>RegisterSpokeAccountsFunctionLambdaRole</code></td>
-<td><code>AWS::IAM::Role</code></td>
+<td><code class="inline-code">RegisterSpokeAccountsFunctionLambdaRole</code></td>
+<td><code class="inline-code">AWS::IAM::Role</code></td>
 <td>スポークアカウント登録Lambdaの実行ロール</td>
 </tr>
 <tr>
-<td><code>RegisterSpokeAccountsFunctionLambdaPolicy</code></td>
-<td><code>AWS::IAM::Policy</code></td>
+<td><code class="inline-code">RegisterSpokeAccountsFunctionLambdaPolicy</code></td>
+<td><code class="inline-code">AWS::IAM::Policy</code></td>
 <td>スポークアカウント登録Lambdaに必要な権限を付与する</td>
 </tr>
 <tr>
-<td><code>RegisterSpokeAccountsFunction</code></td>
-<td><code>AWS::Lambda::Function</code></td>
+<td><code class="inline-code">RegisterSpokeAccountsFunction</code></td>
+<td><code class="inline-code">AWS::Lambda::Function</code></td>
 <td>スポークアカウントをハブ側テーブルへ登録する</td>
 </tr>
 <tr>
-<td><code>RegisterSpokeAccountsFunctionResourcePolicy</code></td>
-<td><code>AWS::Lambda::Permission</code></td>
+<td><code class="inline-code">RegisterSpokeAccountsFunctionResourcePolicy</code></td>
+<td><code class="inline-code">AWS::Lambda::Permission</code></td>
 <td>スポーク側から登録Lambdaを呼び出す権限を定義する</td>
 </tr>
 </tbody></table>
 <p>このため、構成ごとの作成数は次のように説明する</p>
-<p>v2.9.10のハブテンプレートには、条件付きリソースを含めて最大48件が定義されています。本手順の<code>CreateNewVPC=Yes</code>・単一アカウント構成では、マルチアカウント関連の7件を除く41件が作成されます。既存VPCを使用する場合やマルチアカウント構成にする場合は、作成件数が異なる</p>
+<p>v2.9.10のハブテンプレートには、条件付きリソースを含めて最大48件が定義されています。本手順の<code class="inline-code">CreateNewVPC=Yes</code>・単一アカウント構成では、マルチアカウント関連の7件を除く41件が作成されます。既存VPCを使用する場合やマルチアカウント構成にする場合は、作成件数が異なる</p>
 <h3 id="スタック削除時にも保持されるリソース">スタック削除時にも保持されるリソース</h3>
-<p>次の6件には、v2.9.10テンプレートで <code>DeletionPolicy: Retain</code> および <code>UpdateReplacePolicy: Retain</code> が設定されています。CloudFormationスタックを削除しても自動削除されず、データと料金が残る可能性がある</p>
+<p>次の6件には、v2.9.10テンプレートで <code class="inline-code">DeletionPolicy: Retain</code> および <code class="inline-code">UpdateReplacePolicy: Retain</code> が設定されています。CloudFormationスタックを削除しても自動削除されず、データと料金が残る可能性がある</p>
 <table>
 <thead>
 <tr>
@@ -2302,38 +2316,43 @@
 </tr>
 </thead>
 <tbody><tr>
-<td><code>CostOptimizerBucket</code></td>
+<td><code class="inline-code">CostOptimizerBucket</code></td>
 <td>日次・月次CSVレポート</td>
 <td>必要なレポートを退避し、保持要否を判断する</td>
 </tr>
 <tr>
-<td><code>LogsBucket</code></td>
+<td><code class="inline-code">LogsBucket</code></td>
 <td>S3サーバーアクセスログ</td>
 <td>監査上の保存期間を確認する</td>
 </tr>
 <tr>
-<td><code>UsageTable28300137</code></td>
+<td><code class="inline-code">UsageTable28300137</code></td>
 <td>WorkSpace利用状況</td>
 <td>バックアップと再利用要否を確認する</td>
 </tr>
 <tr>
-<td><code>UserSessionTableCD18DD22</code></td>
+<td><code class="inline-code">UserSessionTableCD18DD22</code></td>
 <td>セッション履歴</td>
 <td>バックアップと再利用要否を確認する</td>
 </tr>
 <tr>
-<td><code>CostOptimizerLogs</code></td>
+<td><code class="inline-code">CostOptimizerLogs</code></td>
 <td>ECS実行ログ</td>
 <td>障害調査・監査上の保存期間を確認する</td>
 </tr>
 <tr>
-<td><code>FlowLogGroup</code></td>
+<td><code class="inline-code">FlowLogGroup</code></td>
 <td>VPC Flow Logs</td>
 <td>ネットワーク監査上の保存期間を確認する</td>
 </tr>
 </tbody></table>
-<p><code>Retain</code> は、スタック削除時にCloudFormationの管理対象から外して物理リソースを残す指定です。不要になったリソースを削除する場合は、対象、バックアップ要否、依存関係および残存料金を確認してから個別に削除する</p>
-
+<p><code class="inline-code">Retain</code> は、スタック削除時にCloudFormationの管理対象から外して物理リソースを残す指定です。不要になったリソースを削除する場合は、対象、バックアップ要否、依存関係および残存料金を確認してから個別に削除する</p>
+      <h2 id="related-pages">関連ページ</h2>
+      <div class="page-link-grid">
+        <a class="page-link-card" href="workspaces-patch-manager.html"><strong>Systems Manager Patch Manager</strong><span>マルチVPC・閉域VDI基盤案件の関連手順</span></a>
+        <a class="page-link-card" href="workspaces-skill-transfer.html"><strong>全体構築・運用順序</strong><span>マルチVPC・閉域VDI基盤案件の関連手順</span></a>
+        <a class="page-link-card" href="workspaces-cloudwatch-monitoring.html"><strong>CloudWatch・SNS 監視／通知</strong><span>マルチVPC・閉域VDI基盤案件の関連手順</span></a>
+      </div>
     </main>
   </div>
   <script src="../assets/app.js?v=20260908-skill-transfer1"></script>

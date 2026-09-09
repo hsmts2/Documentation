@@ -26,18 +26,8 @@
       </div>
       <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">✎</span>記事</p>
       <a href="cloudflare-private-site.html">Private GitHubリポジトリをCloudflare Workersで認証付き公開してみた</a>
-      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">◈</span>Terraform</p>
-      <a href="terraform.html">Terraform 概要</a>
-      <a href="hcp-terraform.html">HCP Terraform（Terraform Cloud）</a>
-      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">☁︎</span>AWS</p>
-      <a href="cloudformation.html">CloudFormation 運用手順集</a>
-      <a href="aws-cli.html">AWS CLI 特殊対応</a>
-      <a href="aws-cli-reference.html">AWS CLI コマンドリファレンス</a>
-      <a href="eventbridge-scheduler.html">EventBridge Scheduler</a>
-      <a href="aws-directory-service.html">AWS Directory Service 運用手順</a>
-      <a href="amazon-workspaces.html">Amazon WorkSpaces</a>
       <details class="sidebar-nested-menu" open>
-        <summary>PoC 閉域VPC・AD／VDI環境</summary>
+        <summary>マルチVPC・閉域VDI基盤案件（9ページ）</summary>
         <div class="sidebar-subnav">
           <a href="workspaces-skill-transfer.html">全体構築・運用順序</a>
           <a href="workspaces-managed-ad.html">AWS Managed Microsoft AD 構築・管理</a>
@@ -50,6 +40,16 @@
           <a href="workspaces-cloudwatch-monitoring.html">CloudWatch・SNS 監視／通知</a>
         </div>
       </details>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">◈</span>Terraform</p>
+      <a href="terraform.html">Terraform 概要</a>
+      <a href="hcp-terraform.html">HCP Terraform（Terraform Cloud）</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">☁︎</span>AWS</p>
+      <a href="cloudformation.html">CloudFormation 運用手順集</a>
+      <a href="aws-cli.html">AWS CLI 特殊対応</a>
+      <a href="aws-cli-reference.html">AWS CLI コマンドリファレンス</a>
+      <a href="eventbridge-scheduler.html">EventBridge Scheduler</a>
+      <a href="aws-directory-service.html">AWS Directory Service 運用手順</a>
+      <a href="amazon-workspaces.html">Amazon WorkSpaces</a>
       <a href="amazon-ses.html">Amazon SES SMTPリレー</a>
       <a href="amazon-ses-monitoring.html">Amazon SES 配信監視</a>
       <a href="amazon-rds-blue-green.html">Amazon RDS Blue/Green Deployments</a>
@@ -75,16 +75,23 @@
       <a href="eol.html">EOL / ライフサイクル一覧表</a>
     </aside>
     <main class="content workspaces-skill-transfer-guide">
-      <nav class="breadcrumb" aria-label="Breadcrumb"><a href="../"><span class="nav-icon" aria-hidden="true">⌂</span>Home</a><span>技術移管</span></nav>
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="../"><span class="nav-icon" aria-hidden="true">⌂</span>Home</a>
+        <span>トピック</span>
+      </nav>
       <h1>Systems Manager Patch Manager</h1>
-      <p class="lead">Windows ServerをSystems Managerのマネージドノードとして登録する<br>Maintenance Window、Patch Group、Scan・Install、S3ログおよび適用後確認まで実機証跡で整理する</p>
+      <div class="page-summary"><strong>⚡ このページの要約</strong><p class="lead">Windows ServerをSystems Managerのマネージドノードとして登録する<br>Maintenance Window、Patch Group、Scan・Install、S3ログおよび適用後確認まで実機証跡で整理する</p></div>
+      <nav class="section-links" aria-label="主要セクション">
+        <a href="#ssm環境設定-patch-manager運用手順-windows-server-2022">SSM環境設定・Patch Manager運用手順（Windows Server 2022）</a>
+        <a href="#related-pages">関連ページ</a>
+      </nav>
 <h2 id="ssm環境設定-patch-manager運用手順-windows-server-2022">SSM環境設定・Patch Manager運用手順（Windows Server 2022）</h2>
 <p><strong>目次</strong></p>
 <!-- Confluenceでは、この位置に目次マクロを配置する -->
 
 <h3 id="概要">概要</h3>
-<p>アジアパシフィック（東京）リージョンで、Windows Server 2022のEC2インスタンス<code>Sample-mng-001</code>をSystems Managerのマネージドノードとして管理します。<code>AWS-DefaultPatchBaseline</code>、Patch Group<code>sample-window</code>、メンテナンスウィンドウ<code>Sample-MW-WindowsUpdate</code>および<code>AWS-RunPatchBaseline</code>を使用し、Windowsパッチの検出・適用・実行結果確認までを行う</p>
-<div class="callout callout-warning"><p><strong>注意：Scan単独テストと実パッチ適用は未完了</strong><br>2026年9月7日から8日に取得した画面で、設定登録と<code>Install</code>コマンドの正常終了は確認済みです。ただし、初回実行は意図した<code>Scan</code>ではなく<code>Install/NoReboot</code>であり、後続の<code>Install/RebootIfNeeded</code>実行でも新規適用対象は0件でした。これらをScan単独テストまたは実パッチ適用の完了証跡として扱わない</p>
+<p>アジアパシフィック（東京）リージョンで、Windows Server 2022のEC2インスタンス<code class="inline-code">Sample-mng-001</code>をSystems Managerのマネージドノードとして管理します。<code class="inline-code">AWS-DefaultPatchBaseline</code>、Patch Group<code class="inline-code">sample-window</code>、メンテナンスウィンドウ<code class="inline-code">Sample-MW-WindowsUpdate</code>および<code class="inline-code">AWS-RunPatchBaseline</code>を使用し、Windowsパッチの検出・適用・実行結果確認までを行う</p>
+<div class="callout callout-warning"><p><strong>注意：Scan単独テストと実パッチ適用は未完了</strong><br>2026年9月7日から8日に取得した画面で、設定登録と<code class="inline-code">Install</code>コマンドの正常終了は確認済みです。ただし、初回実行は意図した<code class="inline-code">Scan</code>ではなく<code class="inline-code">Install/NoReboot</code>であり、後続の<code class="inline-code">Install/RebootIfNeeded</code>実行でも新規適用対象は0件でした。これらをScan単独テストまたは実パッチ適用の完了証跡として扱わない</p>
 </div>
 <h4 id="本手順書で実施すること">本手順書で実施すること</h4>
 <ul>
@@ -92,18 +99,18 @@
 <li>Windows Server 2022のEC2を起動し、SSM Agentとマネージドノードの状態を確認する</li>
 <li>Windows用パッチベースラインとPatch Groupの関係を確認する</li>
 <li>メンテナンスウィンドウ、ターゲットおよびRun Commandタスクを登録する</li>
-<li><code>AWS-RunPatchBaseline</code>の<code>Scan</code>と<code>Install</code>を実行し、Run Command、Compliance、S3およびWindowsの表示を照合する</li>
+<li><code class="inline-code">AWS-RunPatchBaseline</code>の<code class="inline-code">Scan</code>と<code class="inline-code">Install</code>を実行し、Run Command、Compliance、S3およびWindowsの表示を照合する</li>
 </ul>
 <h4 id="完了条件">完了条件</h4>
-<ul>
-<li>✔ 対象EC2がFleet Managerで<code>Online</code>となり、SSM Agentが<code>Running</code>である</li>
+<ul class="check-list">
+<li>✔ 対象EC2がFleet Managerで<code class="inline-code">Online</code>となり、SSM Agentが<code class="inline-code">Running</code>である</li>
 <li>✔ 使用するパッチベースラインとPatch Groupの関連付けを確認できる</li>
 <li>✔ メンテナンスウィンドウの対象が承認済みノードに限定されている</li>
-<li>✔ <code>Scan/NoReboot</code>が正常終了し、パッチコンプライアンスを確認できる</li>
-<li>✔ 変更承認後の<code>Install</code>が正常終了し、適用KB、再起動および業務影響を確認できる</li>
+<li>✔ <code class="inline-code">Scan/NoReboot</code>が正常終了し、パッチコンプライアンスを確認できる</li>
+<li>✔ 変更承認後の<code class="inline-code">Install</code>が正常終了し、適用KB、再起動および業務影響を確認できる</li>
 <li>✔ Run Commandの出力が指定したS3プレフィックスに保存されている</li>
 </ul>
-<p>現時点では、<code>Scan/NoReboot</code>の単独確認と、実際に不足パッチがある状態での<code>Install</code>・再起動・復旧確認が残っているため、本手順書の全完了条件は未達成</p>
+<p>現時点では、<code class="inline-code">Scan/NoReboot</code>の単独確認と、実際に不足パッチがある状態での<code class="inline-code">Install</code>・再起動・復旧確認が残っているため、本手順書の全完了条件は未達成</p>
 <h3 id="今回の設定値">今回の設定値</h3>
 <table>
 <thead>
@@ -114,51 +121,51 @@
 </thead>
 <tbody><tr>
 <td>リージョン</td>
-<td>アジアパシフィック（東京）<code>ap-northeast-1</code></td>
+<td>アジアパシフィック（東京）<code class="inline-code">ap-northeast-1</code></td>
 </tr>
 <tr>
 <td>EC2インスタンス</td>
-<td><code>Sample-mng-001</code></td>
+<td><code class="inline-code">Sample-mng-001</code></td>
 </tr>
 <tr>
 <td>AMI</td>
-<td><code>ami-0e951cd6c484ba795</code>／<code>Windows_Server-2022-Japanese-Full-Base-2026.08.12</code></td>
+<td><code class="inline-code">ami-0e951cd6c484ba795</code>／<code class="inline-code">Windows_Server-2022-Japanese-Full-Base-2026.08.12</code></td>
 </tr>
 <tr>
 <td>EC2用IAMロール</td>
-<td><code>Sample_EC2Role</code></td>
+<td><code class="inline-code">Sample_EC2Role</code></td>
 </tr>
 <tr>
 <td>IAMポリシー</td>
-<td><code>AmazonSSMManagedInstanceCore</code></td>
+<td><code class="inline-code">AmazonSSMManagedInstanceCore</code></td>
 </tr>
 <tr>
 <td>S3出力先</td>
-<td><code>sample-mw-bucket/patchmanager/</code></td>
+<td><code class="inline-code">sample-mw-bucket/patchmanager/</code></td>
 </tr>
 <tr>
 <td>パッチベースライン</td>
-<td>実行出力上は<code>AWS-DefaultPatchBaseline</code>／<code>pb-04ba050f612fba3a6</code>。Patch Groupとの直接照会は未実施</td>
+<td>実行出力上は<code class="inline-code">AWS-DefaultPatchBaseline</code>／<code class="inline-code">pb-04ba050f612fba3a6</code>。Patch Groupとの直接照会は未実施</td>
 </tr>
 <tr>
 <td>Patch Group</td>
-<td><code>sample-window</code></td>
+<td><code class="inline-code">sample-window</code></td>
 </tr>
 <tr>
 <td>メンテナンスウィンドウ</td>
-<td><code>Sample-MW-WindowsUpdate</code></td>
+<td><code class="inline-code">Sample-MW-WindowsUpdate</code></td>
 </tr>
 <tr>
 <td>ターゲット</td>
-<td><code>PatchingTarget</code>／<code>Patch Group=sample-window</code></td>
+<td><code class="inline-code">PatchingTarget</code>／<code class="inline-code">Patch Group=sample-window</code></td>
 </tr>
 <tr>
 <td>Run Commandタスク</td>
-<td><code>Sample-TASK-WindowsUpdate</code></td>
+<td><code class="inline-code">Sample-TASK-WindowsUpdate</code></td>
 </tr>
 <tr>
 <td>スケジュール</td>
-<td><code>cron(0 17 ? * THU#4 *)</code>／<code>UTC</code></td>
+<td><code class="inline-code">cron(0 17 ? * THU#4 *)</code>／<code class="inline-code">UTC</code></td>
 </tr>
 <tr>
 <td>Duration／Cutoff</td>
@@ -166,14 +173,14 @@
 </tr>
 <tr>
 <td>初回テスト</td>
-<td>手順上は<code>Scan/NoReboot</code>。実行証跡は未取得</td>
+<td>手順上は<code class="inline-code">Scan/NoReboot</code>。実行証跡は未取得</td>
 </tr>
 <tr>
 <td>確認済みの実行</td>
-<td><code>Install/RebootIfNeeded</code>が<code>Success</code>。新規適用対象0件</td>
+<td><code class="inline-code">Install/RebootIfNeeded</code>が<code class="inline-code">Success</code>。新規適用対象0件</td>
 </tr>
 </tbody></table>
-<p>今回の設定値ではIAMポリシーを<code>AmazonSSMManagedInstanceCore</code>だけと記載していますが、このポリシーだけでは任意のS3バケットへの<code>PutObject</code>権限を説明できません。<code>sample-mw-bucket/patchmanager/</code>への出力成功を最小権限構成の証跡として使用する前に、EC2インスタンスプロファイルの管理ポリシー／インラインポリシー、S3バケットポリシーおよびKMSキーの権限を確認し、実際の許可元を本表へ反映する</p>
+<p>今回の設定値ではIAMポリシーを<code class="inline-code">AmazonSSMManagedInstanceCore</code>だけと記載していますが、このポリシーだけでは任意のS3バケットへの<code class="inline-code">PutObject</code>権限を説明できません。<code class="inline-code">sample-mw-bucket/patchmanager/</code>への出力成功を最小権限構成の証跡として使用する前に、EC2インスタンスプロファイルの管理ポリシー／インラインポリシー、S3バケットポリシーおよびKMSキーの権限を確認し、実際の許可元を本表へ反映する</p>
 <h3 id="全体構成と各機能の役割">全体構成と各機能の役割</h3>
 <figure class="screenshot-wide"><figcaption>Systems ManagerによるWindowsパッチ管理の全体像</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-patch-manager/001-systems-managerによるwindowsパッチ管理の全体像.png" alt="Systems ManagerによるWindowsパッチ管理の全体像" width="1672" height="941" loading="lazy"></div></figure>
 
@@ -211,7 +218,7 @@
 </tr>
 <tr>
 <td>Run Commandタスク</td>
-<td><code>AWS-RunPatchBaseline</code>を実行してScanまたはInstallを行う</td>
+<td><code class="inline-code">AWS-RunPatchBaseline</code>を実行してScanまたはInstallを行う</td>
 </tr>
 <tr>
 <td>S3</td>
@@ -230,33 +237,33 @@
 <h3 id="ec2用iamロールを作成する">EC2用IAMロールを作成する</h3>
 <h4 id="目的">目的</h4>
 <p>EC2上のSSM AgentをSystems Managerへ登録し、Run CommandおよびPatch Managerを使用できるようにする</p>
-<p>AWSでは、組織の運用方式に適合する場合はDefault Host Management Configurationの利用を推奨しています。本手順では、本番環境の既存設計を再現する場合にも使用できるよう、EC2インスタンスプロファイルを個別に割り当てる構成を扱います。個別ロールを作成する場合は、信頼されたエンティティのユースケースに「EC2」を選び、基本ポリシーとして<code>AmazonSSMManagedInstanceCore</code>を付与します。旧ユースケース<code>EC2 Role for AWS Systems Manager</code>は新規構築で選択しない</p>
+<p>AWSでは、組織の運用方式に適合する場合はDefault Host Management Configurationの利用を推奨しています。本手順では、本番環境の既存設計を再現する場合にも使用できるよう、EC2インスタンスプロファイルを個別に割り当てる構成を扱います。個別ロールを作成する場合は、信頼されたエンティティのユースケースに「EC2」を選び、基本ポリシーとして<code class="inline-code">AmazonSSMManagedInstanceCore</code>を付与します。旧ユースケース<code class="inline-code">EC2 Role for AWS Systems Manager</code>は新規構築で選択しない</p>
 <p>出典：<a href="https://docs.aws.amazon.com/systems-manager/latest/userguide/setup-instance-permissions.html">Configure instance permissions required for Systems Manager</a></p>
 <h4 id="操作">操作</h4>
-<ol>
+<ol class="step-list">
 <li>IAMコンソールで「ロール」－「ロールを作成」を選択</li>
 <li>「信頼されたエンティティタイプ」で「AWSのサービス」を選択</li>
 <li>ユースケースで「EC2」を選択</li>
-<li>AWS管理ポリシー<code>AmazonSSMManagedInstanceCore</code>を選択</li>
+<li>AWS管理ポリシー<code class="inline-code">AmazonSSMManagedInstanceCore</code>を選択</li>
 <li>S3出力、CloudWatch Logs、KMSなどを使用する場合だけ、必要な操作と対象リソースに限定した用途別ポリシーを追加</li>
-<li>ロール名を入力し、信頼ポリシーのサービスプリンシパルが<code>ec2.amazonaws.com</code>であることを確認</li>
+<li>ロール名を入力し、信頼ポリシーのサービスプリンシパルが<code class="inline-code">ec2.amazonaws.com</code>であることを確認</li>
 <li>設定内容を確認してロールを作成</li>
 </ol>
 <p>本番環境の既存ロールに付与された4ポリシーは、後述の比較表へ調査結果として記録します。これは新規ロールの作成手順ではなく、4ポリシーを新規ロールへ一括付与して再現するものでもない</p>
 <figure class="screenshot-wide aws-console-identity"><figcaption>AmazonSSMManagedInstanceCoreを選択</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-patch-manager/002-amazonssmmanagedinstancecoreを選択.png" alt="AmazonSSMManagedInstanceCoreを選択" width="1717" height="666" loading="lazy"></div></figure>
 
-<p>画像では、① <code>AmazonSSMManagedInstanceCore</code>を選択し、② 本手順では許可の境界を設定しないため「許可の境界なしでロールを作成」、③「次へ」の順に操作する</p>
+<p>画像では、① <code class="inline-code">AmazonSSMManagedInstanceCore</code>を選択し、② 本手順では許可の境界を設定しないため「許可の境界なしでロールを作成」、③「次へ」の順に操作する</p>
 <figure class="screenshot-wide aws-console-identity"><figcaption>IAMロールの設定内容を確認</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-patch-manager/003-iamロールの設定内容を確認.png" alt="IAMロールの設定内容を確認" width="1718" height="1304" loading="lazy"></div></figure>
 
-<p>画像では、① ロール名、② 信頼ポリシーの<code>ec2.amazonaws.com</code>、③ 許可ポリシーの<code>AmazonSSMManagedInstanceCore</code>、④ 管理用タグを確認し、⑤「ロールを作成」を選択する</p>
+<p>画像では、① ロール名、② 信頼ポリシーの<code class="inline-code">ec2.amazonaws.com</code>、③ 許可ポリシーの<code class="inline-code">AmazonSSMManagedInstanceCore</code>、④ 管理用タグを確認し、⑤「ロールを作成」を選択する</p>
 <h4 id="実施後の確認">実施後の確認</h4>
 <ul>
 <li>✔ EC2を信頼するIAMロールが作成されている</li>
 <li>✔ EC2起動画面のIAMインスタンスプロフィールで作成したロールを選択できる</li>
-<li>✔ 今回の検証では<code>Sample_EC2Role</code>へ<code>AmazonSSMManagedInstanceCore</code>が付与されている</li>
+<li>✔ 今回の検証では<code class="inline-code">Sample_EC2Role</code>へ<code class="inline-code">AmazonSSMManagedInstanceCore</code>が付与されている</li>
 </ul>
 <h4 id="本番環境で確認された4ポリシー">本番環境で確認された4ポリシー</h4>
-<p>次の4ポリシーは既存ロールの調査結果を示すものであり、新しいワークロード用EC2インスタンスロールへ付与する推奨セットではありません。特に<code>AmazonSSMFullAccess</code>はSSM Agentの基本通信には不要なため、インスタンスロールへ自動的に追加しない</p>
+<p>次の4ポリシーは既存ロールの調査結果を示すものであり、新しいワークロード用EC2インスタンスロールへ付与する推奨セットではありません。特に<code class="inline-code">AmazonSSMFullAccess</code>はSSM Agentの基本通信には不要なため、インスタンスロールへ自動的に追加しない</p>
 <table>
 <thead>
 <tr>
@@ -265,28 +272,28 @@
 </tr>
 </thead>
 <tbody><tr>
-<td><code>AmazonEC2RoleforSSM</code></td>
-<td>旧来のSSM用サービスロールポリシー。AWS公式では廃止予定とされ、<code>AmazonSSMManagedInstanceCore</code>への移行が案内されている</td>
+<td><code class="inline-code">AmazonEC2RoleforSSM</code></td>
+<td>旧来のSSM用サービスロールポリシー。AWS公式では廃止予定とされ、<code class="inline-code">AmazonSSMManagedInstanceCore</code>への移行が案内されている</td>
 </tr>
 <tr>
-<td><code>AmazonSSMFullAccess</code></td>
+<td><code class="inline-code">AmazonSSMFullAccess</code></td>
 <td>Systems Manager全体への広い操作権限。お客様既存構成として記録する</td>
 </tr>
 <tr>
-<td><code>AmazonSSMManagedInstanceCore</code></td>
+<td><code class="inline-code">AmazonSSMManagedInstanceCore</code></td>
 <td>EC2をSystems Managerのマネージドノードとして動作させる基本権限</td>
 </tr>
 <tr>
-<td><code>CloudWatchAgentAdminPolicy</code></td>
+<td><code class="inline-code">CloudWatchAgentAdminPolicy</code></td>
 <td>CloudWatch Agentの管理、メトリクス／ログ送信、関連Parameter Store操作に使用</td>
 </tr>
 </tbody></table>
-<p>本書では差分確認のため上記4ポリシーを記録します。既存ロールを変更する場合は、利用中の機能と実際のAPIアクセスを確認し、<code>AmazonSSMManagedInstanceCore</code>と用途別の限定権限へ段階的に移行する</p>
+<p>本書では差分確認のため上記4ポリシーを記録します。既存ロールを変更する場合は、利用中の機能と実際のAPIアクセスを確認し、<code class="inline-code">AmazonSSMManagedInstanceCore</code>と用途別の限定権限へ段階的に移行する</p>
 <h5 id="弊社標準と最小権限の違い">弊社標準と最小権限の違い</h5>
-<p>弊社標準として指定された正式名称は、AWS管理ポリシー<code>AmazonSSMFullAccess</code>です。一方、AWS公式のEC2インスタンスプロファイル手順は<code>AmazonSSMManagedInstanceCore</code>を基本としています。<code>AmazonSSMFullAccess</code>は<code>ssm:*</code>などの広い操作権限を持ち、SSM Agentの基本通信だけを目的とするEC2ロールには必須ではありません。最小権限構成では<code>AmazonSSMManagedInstanceCore</code>を基本とし、S3、KMS、Directory Service、CloudWatch Logsなどの権限を利用機能と対象リソースに限定して追加する</p>
+<p>弊社標準として指定された正式名称は、AWS管理ポリシー<code class="inline-code">AmazonSSMFullAccess</code>です。一方、AWS公式のEC2インスタンスプロファイル手順は<code class="inline-code">AmazonSSMManagedInstanceCore</code>を基本としています。<code class="inline-code">AmazonSSMFullAccess</code>は<code class="inline-code">ssm:*</code>などの広い操作権限を持ち、SSM Agentの基本通信だけを目的とするEC2ロールには必須ではありません。最小権限構成では<code class="inline-code">AmazonSSMManagedInstanceCore</code>を基本とし、S3、KMS、Directory Service、CloudWatch Logsなどの権限を利用機能と対象リソースに限定して追加する</p>
 <h5 id="本番環境のs3出力権限">本番環境のS3出力権限</h5>
-<p><code>AmazonSSMFullAccess</code>にはS3への書き込み権限は含まれません。一方、本番環境で付与されている旧ポリシー<code>AmazonEC2RoleforSSM</code>には、全リソースを対象とする<code>s3:PutObject</code>、<code>s3:GetObject</code>、<code>s3:GetBucketLocation</code>等が含まれます。既存の<code>patchmanager/</code>出力も確認できるため、本番環境の再現ではS3権限を追加作成せず、既存ロールの付与状況と実際の書き込み成功を確認する</p>
-<p>最小権限化する場合は、<code>AmazonSSMManagedInstanceCore</code>を基本とし、<code>arn:aws:s3:::skyarch-pid-2849-logs/patchmanager/*</code>への必要な書き込み権限等へ限定したカスタムポリシーを用意します。切り替えテストが完了するまで<code>AmazonEC2RoleforSSM</code>を先に外しない</p>
+<p><code class="inline-code">AmazonSSMFullAccess</code>にはS3への書き込み権限は含まれません。一方、本番環境で付与されている旧ポリシー<code class="inline-code">AmazonEC2RoleforSSM</code>には、全リソースを対象とする<code class="inline-code">s3:PutObject</code>、<code class="inline-code">s3:GetObject</code>、<code class="inline-code">s3:GetBucketLocation</code>等が含まれます。既存の<code class="inline-code">patchmanager/</code>出力も確認できるため、本番環境の再現ではS3権限を追加作成せず、既存ロールの付与状況と実際の書き込み成功を確認する</p>
+<p>最小権限化する場合は、<code class="inline-code">AmazonSSMManagedInstanceCore</code>を基本とし、<code class="inline-code">arn:aws:s3:::skyarch-pid-2849-logs/patchmanager/*</code>への必要な書き込み権限等へ限定したカスタムポリシーを用意します。切り替えテストが完了するまで<code class="inline-code">AmazonEC2RoleforSSM</code>を先に外しない</p>
 <h5 id="s3出力だけに限定するポリシー例">S3出力だけに限定するポリシー例</h5>
 <p>次は同一アカウントの既存バケットへRun Command出力を書き込む用途に限定した例です。実際の暗号化方式、アクセス境界、SCPおよびバケットポリシーを確認してから適用する</p>
 <div class="code"><div class="code-header"><span>json</span><button class="copy" type="button">Copy</button></div><pre><code>{
@@ -309,24 +316,24 @@
     }
   ]
 }</code></pre></div>
-<p>SSE-KMSを使用する場合は対象KMSキーの必要権限を追加します。別アカウントのバケットへ出力する場合は、バケット側許可と必要に応じて<code>s3:PutObjectAcl</code>も検討する</p>
+<p>SSE-KMSを使用する場合は対象KMSキーの必要権限を追加します。別アカウントのバケットへ出力する場合は、バケット側許可と必要に応じて<code class="inline-code">s3:PutObjectAcl</code>も検討する</p>
 <h3 id="既存のログ保存用s3バケットを使用する">既存のログ保存用S3バケットを使用する</h3>
 <h4 id="必要性">必要性</h4>
-<p>本番環境では、既存バケット<code>skyarch-pid-2849-logs</code>の<code>patchmanager/</code>プレフィックスへRun Commandの実行ログを保存します。したがって、<strong>新しいS3バケットは作成せず、既存バケットとプレフィックスを出力先として指定する</strong></p>
+<p>本番環境では、既存バケット<code class="inline-code">skyarch-pid-2849-logs</code>の<code class="inline-code">patchmanager/</code>プレフィックスへRun Commandの実行ログを保存します。したがって、<strong>新しいS3バケットは作成せず、既存バケットとプレフィックスを出力先として指定する</strong></p>
 <p>実行成功判定では、対象のMaintenance Window実行時刻、コマンドID、ノードIDおよびS3へ保存された出力オブジェクトを突き合わせる</p>
 <div class="callout callout-warning"><p><strong>注意：S3書き込み権限の確認</strong><br>CloudTrail用の既存バケットポリシーが設定されていても、それだけではPatch Manager／Run Commandの書き込み権限を満たしません。S3出力を有効にする場合は、対象ノードへ割り当てたEC2インスタンスプロファイルが、指定プレフィックスへ出力を書き込めることを確認する</p>
 </div>
 <h4 id="操作-2">操作</h4>
-<ol>
-<li>S3コンソールで既存バケット<code>skyarch-pid-2849-logs</code>を開く</li>
-<li><code>patchmanager/</code>プレフィックスが存在し、過去の実行ログが保存されていることを確認</li>
+<ol class="step-list">
+<li>S3コンソールで既存バケット<code class="inline-code">skyarch-pid-2849-logs</code>を開く</li>
+<li><code class="inline-code">patchmanager/</code>プレフィックスが存在し、過去の実行ログが保存されていることを確認</li>
 <li>「パブリックアクセスをすべてブロック」、サーバー側暗号化、ライフサイクルルールおよび保存期間を確認</li>
-<li>対象EC2のインスタンスプロファイルに<code>AmazonEC2RoleforSSM</code>が付与されていることを確認する。本番環境をそのまま再現する場合、追加のS3ポリシーは作成しない</li>
+<li>対象EC2のインスタンスプロファイルに<code class="inline-code">AmazonEC2RoleforSSM</code>が付与されていることを確認する。本番環境をそのまま再現する場合、追加のS3ポリシーは作成しない</li>
 <li>Run Commandタスクの出力オプションで「S3への書き込みの有効化」を選択</li>
-<li>S3バケット名へ<code>skyarch-pid-2849-logs</code>、キープレフィックスへ<code>patchmanager</code>を入力</li>
+<li>S3バケット名へ<code class="inline-code">skyarch-pid-2849-logs</code>、キープレフィックスへ<code class="inline-code">patchmanager</code>を入力</li>
 <li>テスト実行後、対象実行に対応する出力オブジェクトが作成されたことを確認</li>
 </ol>
-<p>検証環境の入力値は、後述する<a href="%E6%B3%A8%E9%87%88%E6%B8%88%E3%81%BF/%E5%9B%B315_Run%20Command%E3%82%BF%E3%82%B9%E3%82%AF_S3%E5%87%BA%E5%8A%9B%E3%83%BBScan%E3%83%BBNoReboot%E8%A8%AD%E5%AE%9A.png">Run Commandタスクのパラメータ画面</a>で確認できます。画像内のバケット名は検証用の<code>sample-mw-bucket</code>であり、本番環境では上記の既存バケットへ読み替える</p>
+<p>検証環境の入力値は、後述する<a href="%E6%B3%A8%E9%87%88%E6%B8%88%E3%81%BF/%E5%9B%B315_Run%20Command%E3%82%BF%E3%82%B9%E3%82%AF_S3%E5%87%BA%E5%8A%9B%E3%83%BBScan%E3%83%BBNoReboot%E8%A8%AD%E5%AE%9A.png">Run Commandタスクのパラメータ画面</a>で確認できます。画像内のバケット名は検証用の<code class="inline-code">sample-mw-bucket</code>であり、本番環境では上記の既存バケットへ読み替える</p>
 <h4 id="実施後の確認-2">実施後の確認</h4>
 <ul>
 <li>✔ パブリックアクセスがブロックされたログ用バケットが存在する</li>
@@ -334,50 +341,50 @@
 <li>✔ 実行後、コマンドIDおよびノードIDに対応する標準出力／標準エラーが保存される</li>
 </ul>
 <h4 id="今回の確認結果">今回の確認結果</h4>
-<p>2026年9月8日01:00 JSTのInstall実行について、<code>sample-mw-bucket/patchmanager/</code>へ出力が保存されたことを確認しました。S3出力内のコマンドID<code>9c048d9e-720c-47bc-ab41-b7d5fdc43045</code>、ノードID<code>i-05914a8b6088a3a42</code>、<code>OperationType=Install</code>および実行時刻をRun Command画面と突き合わせます。初回確認時にオブジェクトが見えない場合も、Run Command本体の成否とは分け、更新後の一覧、指定バケット／プレフィックス、コマンドID配下を再確認する</p>
+<p>2026年9月8日01:00 JSTのInstall実行について、<code class="inline-code">sample-mw-bucket/patchmanager/</code>へ出力が保存されたことを確認しました。S3出力内のコマンドID<code class="inline-code">9c048d9e-720c-47bc-ab41-b7d5fdc43045</code>、ノードID<code class="inline-code">i-05914a8b6088a3a42</code>、<code class="inline-code">OperationType=Install</code>および実行時刻をRun Command画面と突き合わせます。初回確認時にオブジェクトが見えない場合も、Run Command本体の成否とは分け、更新後の一覧、指定バケット／プレフィックス、コマンドID配下を再確認する</p>
 <p>Run CommandタスクのS3出力は、操作ユーザーではなく、対象マネージドノードへ割り当てたインスタンスプロファイルの権限で書き込まれます。出典：<a href="https://docs.aws.amazon.com/systems-manager/latest/userguide/sysman-maintenance-assign-tasks.html">Assign tasks to a maintenance window using the console</a></p>
 <h3 id="sns通知を設定する-任意">SNS通知を設定する（任意）</h3>
 <p>SNSはMaintenance Windowsの必須要素ではありません。今回の設定画面では「SNS通知の有効化」が未選択であるため、本手順の必須作業には含めない</p>
 <p>実行失敗、タイムアウトまたは完了をメール等で通知する要件がある場合のみ、次の設定を追加する</p>
-<ol>
+<ol class="step-list">
 <li>StandardタイプのSNSトピックを作成します。FIFOトピックは使用しない</li>
 <li>メール等のサブスクリプションを作成し、受信者が購読確認を行う</li>
 <li>Systems ManagerがSNSへ通知するためのIAMロールを作成</li>
-<li>Maintenance Windowsのサービスロールへ、上記SNSロールに限定した<code>iam:PassRole</code>を付与</li>
+<li>Maintenance Windowsのサービスロールへ、上記SNSロールに限定した<code class="inline-code">iam:PassRole</code>を付与</li>
 <li>Run CommandタスクでSNS通知、通知対象イベントおよびCommand／Invocation単位を設定</li>
 </ol>
 <p>出典：<a href="https://docs.aws.amazon.com/systems-manager/latest/userguide/monitoring-sns-notifications.html">Monitoring Systems Manager status changes using Amazon SNS notifications</a></p>
 <h3 id="検証用windows-ec2を作成する">検証用Windows EC2を作成する</h3>
 <h4 id="今回の設定値-2">今回の設定値</h4>
 <ul>
-<li>インスタンス名：<code>Sample-mng-001</code></li>
-<li>AMI：<code>ami-0e951cd6c484ba795</code></li>
-<li>AMI名：<code>Windows_Server-2022-Japanese-Full-Base-2026.08.12</code></li>
-<li>インスタンスタイプ：<code>r6i.large</code></li>
+<li>インスタンス名：<code class="inline-code">Sample-mng-001</code></li>
+<li>AMI：<code class="inline-code">ami-0e951cd6c484ba795</code></li>
+<li>AMI名：<code class="inline-code">Windows_Server-2022-Japanese-Full-Base-2026.08.12</code></li>
+<li>インスタンスタイプ：<code class="inline-code">r6i.large</code></li>
 <li>パブリックIPv4アドレス：無効</li>
-<li>IAMインスタンスプロフィール：<code>Sample_EC2Role</code></li>
+<li>IAMインスタンスプロフィール：<code class="inline-code">Sample_EC2Role</code></li>
 <li>セキュリティグループ：SSM利用だけを目的とする場合、受信ポートは不要</li>
 </ul>
 <h4 id="windows-server-2022日本語amiを検索する">Windows Server 2022日本語AMIを検索する</h4>
-<ol>
+<ol class="step-list">
 <li>EC2コンソールの「インスタンスを起動」で、「その他のAMIを閲覧する」を選択</li>
 <li>右上のリージョンが「アジアパシフィック（東京）」であることを確認</li>
-<li>「コミュニティAMI」を開き、検索欄へ<code>Windows_Server-2022-Japanese-Full-Base</code>を入力</li>
+<li>「コミュニティAMI」を開き、検索欄へ<code class="inline-code">Windows_Server-2022-Japanese-Full-Base</code>を入力</li>
 <li>「検証済みプロバイダー」で絞り込む</li>
-<li>対象行で、AMI名、AMI ID、<code>OwnerAlias: amazon</code>、プラットフォーム<code>windows</code>、アーキテクチャ<code>x86_64</code>およびルートデバイスタイプ<code>ebs</code>を確認</li>
+<li>対象行で、AMI名、AMI ID、<code class="inline-code">OwnerAlias: amazon</code>、プラットフォーム<code class="inline-code">windows</code>、アーキテクチャ<code class="inline-code">x86_64</code>およびルートデバイスタイプ<code class="inline-code">ebs</code>を確認</li>
 <li>既存環境を再現する場合は、設計書に記載された日付付きAMI名とAMI IDが一致する行を選択します。新規構築で最新AMIを採用する場合は、動作確認と変更承認を経てから選択</li>
 </ol>
 <p>出典：<a href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/finding-an-ami.html">Find an AMI that meets the requirements for your EC2 instance</a></p>
 <figure class="screenshot-wide aws-console-identity"><figcaption>Windows Server 2022日本語AMIの検索</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-patch-manager/004-windows-server-2022日本語amiの検索.png" alt="Windows Server 2022日本語AMIの検索" width="1718" height="1304" loading="lazy"></div></figure>
 
-<p>画像では、① 日本語版Windows Server 2022 Full BaseのAMI名で検索し、②「コミュニティAMI」、③「検証済みプロバイダー」で絞り込み、④ 対象行のAMI名、AMI ID、説明、<code>OwnerAlias: amazon</code>および各属性を確認して、⑤ 対象行の「選択」を押します。画面上部の「選択したAMI」は検索前の選択値であり、対象AMIとして扱わない</p>
+<p>画像では、① 日本語版Windows Server 2022 Full BaseのAMI名で検索し、②「コミュニティAMI」、③「検証済みプロバイダー」で絞り込み、④ 対象行のAMI名、AMI ID、説明、<code class="inline-code">OwnerAlias: amazon</code>および各属性を確認して、⑤ 対象行の「選択」を押します。画面上部の「選択したAMI」は検索前の選択値であり、対象AMIとして扱わない</p>
 <h5 id="最新版をコマンドで確認する方法">最新版をコマンドで確認する方法</h5>
 <p>最新のAmazon提供AMIを参照する場合は、Systems Managerのパブリックパラメータを利用できます。次のコマンドは東京リージョンにおける最新のWindows Server 2022日本語Full Base AMI IDを返します。日付を固定した既存環境の再現には使用せず、返されたAMI名と検証済み所有者を別途確認する</p>
-<div class="code" data-prompt="$"><div class="code-header"><span>powershell</span><button class="copy" type="button">Copy</button></div><pre><code>aws ssm get-parameter --name &quot;/aws/service/ami-windows-latest/Windows_Server-2022-Japanese-Full-Base&quot; --region ap-northeast-1 --query &quot;Parameter.Value&quot; --output text</code></pre></div>
+<div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>aws ssm get-parameter --name &quot;/aws/service/ami-windows-latest/Windows_Server-2022-Japanese-Full-Base&quot; --region ap-northeast-1 --query &quot;Parameter.Value&quot; --output text</code></pre></div>
 <p>出典：<a href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/finding-an-ami-parameter-store.html">Find the latest AMIs using Systems Manager parameters</a></p>
 <p>AMI IDはリージョンごとに異なり、同じ製品でもリリースごとに更新されます。したがって、手順書には検索文字列だけでなく、検証で使用したAMI名とAMI IDの両方を記録する</p>
 <h4 id="操作-3">操作</h4>
-<ol>
+<ol class="step-list">
 <li>EC2コンソールで「インスタンスを起動」を選択</li>
 <li>名前、AMI、インスタンスタイプ、キーペア、VPC、サブネットおよびセキュリティグループを指定</li>
 <li>「高度な詳細」で作成したIAMインスタンスプロフィールを選択</li>
@@ -389,25 +396,25 @@
 <p>画像では、① インスタンス名、② Windows Server 2022のAMI名とAMI ID、③ VPC、④ サブネット、⑤ パブリックIP自動割り当て、⑥ セキュリティグループを設定し、⑦「インスタンスを起動」を選択する</p>
 <figure class="screenshot-wide aws-console-identity"><figcaption>IAMインスタンスプロフィールを設定</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-patch-manager/006-iamインスタンスプロフィールを設定.png" alt="IAMインスタンスプロフィールを設定" width="1718" height="1304" loading="lazy"></div></figure>
 
-<p>画像では、① IAMインスタンスプロフィールで<code>Sample_EC2Role</code>を選択し、②「インスタンスを起動」を選択する</p>
+<p>画像では、① IAMインスタンスプロフィールで<code class="inline-code">Sample_EC2Role</code>を選択し、②「インスタンスを起動」を選択する</p>
 <h4 id="注意事項">注意事項</h4>
 <ul>
 <li>AMI IDはリージョン固有であり、AMIが表示されない場合は別AMIへ無断で置き換えない</li>
 <li>RDPを使う場合はTCP/3389の接続元を承認済み管理元へ限定する</li>
-<li><code>Patch Group</code>タグは、使用するパッチベースラインとPatch Group値を確定してから付与する</li>
+<li><code class="inline-code">Patch Group</code>タグは、使用するパッチベースラインとPatch Group値を確定してから付与する</li>
 </ul>
 <h3 id="ssm-agentとマネージドノードを確認する">SSM Agentとマネージドノードを確認する</h3>
 <p>Amazon提供のWindows Server AMIには通常SSM Agentがプレインストールされているため、先にサービス状態とバージョンを確認し、未導入の場合だけインストールする</p>
 <h4 id="windows上で確認する">Windows上で確認する</h4>
 <p>管理者権限のPowerShellで次を実行する</p>
-<div class="code" data-prompt="$"><div class="code-header"><span>powershell</span><button class="copy" type="button">Copy</button></div><pre><code>Get-Service AmazonSSMAgent
+<div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>Get-Service AmazonSSMAgent
 Get-CimInstance Win32_Service -Filter &quot;Name='AmazonSSMAgent'&quot; |
     Select-Object Name, State, StartMode, PathName
 &amp; 'C:\Program Files\Amazon\SSM\amazon-ssm-agent.exe' -version</code></pre></div>
 <p>次の結果を確認する</p>
 <ul>
-<li>✔ サービス状態が<code>Running</code>である</li>
-<li>✔ 開始モードが<code>Auto</code>である</li>
+<li>✔ サービス状態が<code class="inline-code">Running</code>である</li>
+<li>✔ 開始モードが<code class="inline-code">Auto</code>である</li>
 <li>✔ SSM Agentのバージョンが表示される</li>
 </ul>
 <p>未導入でSystems Managerから接続できない場合は、次のいずれかの経路でWindowsへ管理者接続してインストールする</p>
@@ -419,13 +426,13 @@ Get-CimInstance Win32_Service -Filter &quot;Name='AmazonSSMAgent'&quot; |
 </ul>
 <p>SSM Agentがない状態ではFleet Manager、Session Manager、Run Commandからインストールできない</p>
 <h4 id="ssm-agentが未導入の場合">SSM Agentが未導入の場合</h4>
-<p>Amazon提供のWindows Server 2022 AMIには、通常SSM Agentがプレインストールされています。<code>Get-Service AmazonSSMAgent</code>でサービスが見つからない場合だけ、次の手順を実施します。SSM Agentが未導入または停止している状態では、Session Manager、Fleet ManagerおよびRun Commandをインストール経路として使用できないため、RDP、踏み台、EC2 Serial Console、User Dataなど、Systems Manager以外の承認済み管理経路を使用する</p>
-<ol>
+<p>Amazon提供のWindows Server 2022 AMIには、通常SSM Agentがプレインストールされています。<code class="inline-code">Get-Service AmazonSSMAgent</code>でサービスが見つからない場合だけ、次の手順を実施します。SSM Agentが未導入または停止している状態では、Session Manager、Fleet ManagerおよびRun Commandをインストール経路として使用できないため、RDP、踏み台、EC2 Serial Console、User Dataなど、Systems Manager以外の承認済み管理経路を使用する</p>
+<ol class="step-list">
 <li>Windows Serverへ管理者権限で接続</li>
 <li>Windows PowerShell 3.0以降が利用できることを確認</li>
 <li>管理者権限のPowerShellで、東京リージョンの64-bit版インストーラーをダウンロードしてサイレントインストール</li>
 </ol>
-<div class="code" data-prompt="$"><div class="code-header"><span>powershell</span><button class="copy" type="button">Copy</button></div><pre><code>[System.Net.ServicePointManager]::SecurityProtocol = 'TLS12'
+<div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>[System.Net.ServicePointManager]::SecurityProtocol = 'TLS12'
 $installerPath = Join-Path $env:TEMP 'AmazonSSMAgentSetup.exe'
 Invoke-WebRequest `
     -Uri 'https://amazon-ssm-ap-northeast-1.s3.ap-northeast-1.amazonaws.com/latest/windows_amd64/AmazonSSMAgentSetup.exe' `
@@ -436,18 +443,18 @@ Remove-Item -LiteralPath $installerPath -Force</code></pre></div>
 <ol start="4">
 <li>サービス状態、開始方式およびバージョンを確認</li>
 </ol>
-<div class="code" data-prompt="$"><div class="code-header"><span>powershell</span><button class="copy" type="button">Copy</button></div><pre><code>Get-Service AmazonSSMAgent
+<div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>Get-Service AmazonSSMAgent
 Get-CimInstance Win32_Service -Filter &quot;Name='AmazonSSMAgent'&quot; |
     Select-Object Name, State, StartMode, PathName
 &amp; 'C:\Program Files\Amazon\SSM\amazon-ssm-agent.exe' -version</code></pre></div>
 <ol start="5">
 <li>EC2へSystems Manager用IAMロールが割り当てられ、HTTPS（TCP/443）で必要なSystems Managerエンドポイントへ到達できることを確認</li>
-<li>数分後にFleet Managerで対象ノードが<code>Online</code>となることを確認</li>
+<li>数分後にFleet Managerで対象ノードが<code class="inline-code">Online</code>となることを確認</li>
 </ol>
-<p><code>Running</code>にならない場合は、<code>C:\ProgramData\Amazon\SSM\Logs\amazon-ssm-agent.log</code>、IAMインスタンスプロフィール、DNS、プロキシおよびTCP/443の通信経路を確認する</p>
+<p><code class="inline-code">Running</code>にならない場合は、<code class="inline-code">C:\ProgramData\Amazon\SSM\Logs\amazon-ssm-agent.log</code>、IAMインスタンスプロフィール、DNS、プロキシおよびTCP/443の通信経路を確認する</p>
 <p>出典：<a href="https://docs.aws.amazon.com/systems-manager/latest/userguide/manually-install-ssm-agent-windows.html">Manually installing and uninstalling SSM Agent on EC2 instances for Windows Server</a></p>
 <h4 id="fleet-managerで確認する">Fleet Managerで確認する</h4>
-<ol>
+<ol class="step-list">
 <li>Systems Managerの「フリートマネージャー」を開く</li>
 <li>対象EC2のノード状態が「実行中」、Ping statusが「オンライン」であることを確認</li>
 <li>OS、AMI、SSM Agentバージョン、IAMロールを記録</li>
@@ -458,33 +465,33 @@ Get-CimInstance Win32_Service -Filter &quot;Name='AmazonSSMAgent'&quot; |
 <figure class="screenshot-wide aws-console-identity"><figcaption>EC2接続画面でSSM AgentとIAMロールを確認</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-patch-manager/008-ec2接続画面でssm-agentとiamロールを確認.png" alt="EC2接続画面でSSM AgentとIAMロールを確認" width="1718" height="1248" loading="lazy"></div></figure>
 
 <p>画像では、① インスタンス状態とステータスチェック、② 接続方法のFleet Manager、③ Pingステータス、④ Session Managerの接続状態、⑤ SSM Agentバージョン、⑥ IAMロールを確認する</p>
-<p>今回の検証では、<code>Sample-mng-001</code>がOnlineで、SSM Agentバージョン<code>3.3.4851.0</code>であることを確認した</p>
+<p>今回の検証では、<code class="inline-code">Sample-mng-001</code>がOnlineで、SSM Agentバージョン<code class="inline-code">3.3.4851.0</code>であることを確認した</p>
 <hr>
 <h3 id="windows用パッチベースラインを決定する">Windows用パッチベースラインを決定する</h3>
-<ol>
+<ol class="step-list">
 <li>Systems Manager－「パッチマネージャー」－「パッチベースライン」を開く</li>
 <li>Windows Server用のAWS定義済みパッチベースラインについて、製品、分類、重要度、承認ルールが要件を満たすか確認</li>
 <li>AWS定義済みベースラインで要件を満たす場合は、そのベースラインを使用</li>
 <li>承認日数、分類、重要度、拒否パッチなどを変更する必要がある場合だけ、Windows Server用カスタムパッチベースラインを作成</li>
 <li>使用するベースラインID、ベースライン名、承認ルールおよび変更承認を記録</li>
 </ol>
-<p>今回はAWS定義済みパッチベースラインの一覧まで確認しましたが、使用するWindowsベースラインと<code>sample-window</code>の関連付けを直接示す照会結果は取得していません。この確認が終わるまで、関連付けを完了扱いにしない</p>
+<p>今回はAWS定義済みパッチベースラインの一覧まで確認しましたが、使用するWindowsベースラインと<code class="inline-code">sample-window</code>の関連付けを直接示す照会結果は取得していません。この確認が終わるまで、関連付けを完了扱いにしない</p>
 <h4 id="windows用カスタムパッチベースラインを作成する場合">Windows用カスタムパッチベースラインを作成する場合</h4>
-<p>今回確認した<code>AWS-DefaultPatchBaseline</code>で要件を満たす場合、カスタムパッチベースラインの作成は不要です。承認待機日数、対象分類、重要度、Microsoft製アプリケーション、個別の承認／拒否KBなどを変更する場合だけ、次の手順で作成する</p>
-<ol>
+<p>今回確認した<code class="inline-code">AWS-DefaultPatchBaseline</code>で要件を満たす場合、カスタムパッチベースラインの作成は不要です。承認待機日数、対象分類、重要度、Microsoft製アプリケーション、個別の承認／拒否KBなどを変更する場合だけ、次の手順で作成する</p>
+<ol class="step-list">
 <li><p>Systems Managerコンソールで「パッチマネージャー」－「パッチベースライン」を開く</p>
 </li>
 <li><p>「パッチベースラインを作成する」を選択</p>
 </li>
-<li><p>名前と説明を入力し、オペレーティングシステムに<code>Windows</code>を選択</p>
+<li><p>名前と説明を入力し、オペレーティングシステムに<code class="inline-code">Windows</code>を選択</p>
 </li>
-<li><p>「利用可能なセキュリティ更新プログラムのコンプライアンスステータス」を選択します。承認待機中のセキュリティ更新も非準拠として可視化する場合は<code>Non-Compliant</code>を選択</p>
+<li><p>「利用可能なセキュリティ更新プログラムのコンプライアンスステータス」を選択します。承認待機中のセキュリティ更新も非準拠として可視化する場合は<code class="inline-code">Non-Compliant</code>を選択</p>
 </li>
 <li><p>「オペレーティングシステムの承認ルール」で、製品、分類、重要度および自動承認条件を設定します</p>
 <ul>
-<li>デフォルトベースライン相当の例：製品<code>All</code>、分類<code>CriticalUpdates</code>および<code>SecurityUpdates</code>、重要度<code>Critical</code>および<code>Important</code>、リリースまたは更新から7日後に自動承認</li>
-<li>Windows Server 2022だけへ限定する場合：製品で対応する<code>WindowsServer2022</code>を選択</li>
-<li>即時承認を避ける場合：自動承認日数を<code>0</code>にせず、変更管理で定めた検証期間を設定</li>
+<li>デフォルトベースライン相当の例：製品<code class="inline-code">All</code>、分類<code class="inline-code">CriticalUpdates</code>および<code class="inline-code">SecurityUpdates</code>、重要度<code class="inline-code">Critical</code>および<code class="inline-code">Important</code>、リリースまたは更新から7日後に自動承認</li>
+<li>Windows Server 2022だけへ限定する場合：製品で対応する<code class="inline-code">WindowsServer2022</code>を選択</li>
+<li>即時承認を避ける場合：自動承認日数を<code class="inline-code">0</code>にせず、変更管理で定めた検証期間を設定</li>
 </ul>
 </li>
 <li><p>Microsoft製アプリケーションも対象にする要件がある場合だけ、「アプリケーションの承認ルール」を追加</p>
@@ -495,50 +502,50 @@ Get-CimInstance Win32_Service -Filter &quot;Name='AmazonSSMAgent'&quot; |
 </li>
 <li><p>作成されたベースラインID、名前、Windows用承認ルールおよび例外設定を記録</p>
 </li>
-<li><p>作成しただけでは対象EC2に適用されないため、次節に従い、Patch Group値<code>sample-window</code>を作成したベースラインへ関連付ける</p>
+<li><p>作成しただけでは対象EC2に適用されないため、次節に従い、Patch Group値<code class="inline-code">sample-window</code>を作成したベースラインへ関連付ける</p>
 </li>
-<li><p>Scanテストで出力された<code>BaselineId</code>が作成したベースラインIDと一致することを確認してからInstallへ進む</p>
+<li><p>Scanテストで出力された<code class="inline-code">BaselineId</code>が作成したベースラインIDと一致することを確認してからInstallへ進む</p>
 </li>
 </ol>
 <p>「Windowsのデフォルトとして設定」は、Patch Groupを指定しないWindowsノードを含めて影響範囲が広がるため、組織全体の設計・変更承認がある場合だけ使用する</p>
 <p>出典：<a href="https://docs.aws.amazon.com/systems-manager/latest/userguide/patch-manager-create-a-patch-baseline-for-windows.html">Creating a custom patch baseline for Windows Server</a>／出典：<a href="https://docs.aws.amazon.com/systems-manager/latest/userguide/patch-manager-view-predefined-patch-baselines.html">Viewing AWS predefined patch baselines</a></p>
 <h3 id="patch-groupをパッチベースラインへ関連付ける">Patch Groupをパッチベースラインへ関連付ける</h3>
-<p>今回のPatch Group値は<code>sample-window</code></p>
-<p><code>Patch Group</code>タグには次の2つの役割がある</p>
-<ol>
+<p>今回のPatch Group値は<code class="inline-code">sample-window</code></p>
+<p><code class="inline-code">Patch Group</code>タグには次の2つの役割がある</p>
+<ol class="step-list">
 <li>Maintenance Windowが実行対象EC2を選ぶためのタグ条件</li>
 <li>Patch Managerが、そのEC2へどのパッチベースラインを適用するか選ぶための関連付けキー</li>
 </ol>
-<p>Maintenance Windowのターゲット登録だけでは、2つ目の「どのベースラインを使うか」は設定されません。そのため、<code>Patch Group=sample-window</code>を使う構成では、<code>sample-window</code>を使用するWindowsパッチベースラインへ登録する</p>
-<ol>
+<p>Maintenance Windowのターゲット登録だけでは、2つ目の「どのベースラインを使うか」は設定されません。そのため、<code class="inline-code">Patch Group=sample-window</code>を使う構成では、<code class="inline-code">sample-window</code>を使用するWindowsパッチベースラインへ登録する</p>
+<ol class="step-list">
 <li>使用するWindowsパッチベースラインの詳細を開く</li>
 <li>Patch Groupの変更／登録操作を選択</li>
-<li>Patch Group値へ<code>sample-window</code>を入力して登録</li>
+<li>Patch Group値へ<code class="inline-code">sample-window</code>を入力して登録</li>
 <li>ベースラインIDとPatch Group値の組み合わせを確認</li>
 </ol>
-<p>Patch Groupのタグキーには<code>Patch Group</code>または<code>PatchGroup</code>を使用できますが、同一環境ではどちらか一方へ統一します。EC2のインスタンスメタデータからタグを参照できるようにしている場合は、空白を含まない<code>PatchGroup</code>を使用します。本検証では画面証跡に合わせて<code>Patch Group</code>を使用する</p>
+<p>Patch Groupのタグキーには<code class="inline-code">Patch Group</code>または<code class="inline-code">PatchGroup</code>を使用できますが、同一環境ではどちらか一方へ統一します。EC2のインスタンスメタデータからタグを参照できるようにしている場合は、空白を含まない<code class="inline-code">PatchGroup</code>を使用します。本検証では画面証跡に合わせて<code class="inline-code">Patch Group</code>を使用する</p>
 <p>コンソールでPatch Groupを登録できないアカウント／リージョンでは、AWS CLIを使用します。まず、現在の関連付けを照会する</p>
-<div class="code" data-prompt="$"><div class="code-header"><span>powershell</span><button class="copy" type="button">Copy</button></div><pre><code>$patchGroup = 'sample-window'
+<div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$patchGroup = 'sample-window'
 aws ssm get-patch-baseline-for-patch-group `
   --region ap-northeast-1 `
   --patch-group $patchGroup `
   --operating-system WINDOWS `
   --no-cli-pager</code></pre></div>
-<p>関連付けがない場合、または承認済みベースラインと異なる場合だけ、今回の検証値を使用して登録します。本番環境では、<code>$patchGroup</code>と<code>$baselineId</code>を本番確認後の値へ置き換える</p>
-<div class="code" data-prompt="$"><div class="code-header"><span>powershell</span><button class="copy" type="button">Copy</button></div><pre><code>$patchGroup = 'sample-window'
+<p>関連付けがない場合、または承認済みベースラインと異なる場合だけ、今回の検証値を使用して登録します。本番環境では、<code class="inline-code">$patchGroup</code>と<code class="inline-code">$baselineId</code>を本番確認後の値へ置き換える</p>
+<div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$patchGroup = 'sample-window'
 $baselineId = 'pb-04ba050f612fba3a6'
 aws ssm register-patch-baseline-for-patch-group `
   --region ap-northeast-1 `
   --baseline-id $baselineId `
   --patch-group $patchGroup `
   --no-cli-pager</code></pre></div>
-<p>登録後、<code>get-patch-baseline-for-patch-group</code>を再実行し、返された<code>BaselineId</code>と<code>PatchGroup</code>が承認値と一致することを確認する</p>
-<div class="callout callout-warning"><p><strong>注意：関連付け確認前はScan／Installを実行しない</strong><br><code>Patch Group=sample-window</code>を使用する場合、適用するベースラインとの関連付けを照会結果で確認できるまでScan／Installへ進まない</p>
+<p>登録後、<code class="inline-code">get-patch-baseline-for-patch-group</code>を再実行し、返された<code class="inline-code">BaselineId</code>と<code class="inline-code">PatchGroup</code>が承認値と一致することを確認する</p>
+<div class="callout callout-warning"><p><strong>注意：関連付け確認前はScan／Installを実行しない</strong><br><code class="inline-code">Patch Group=sample-window</code>を使用する場合、適用するベースラインとの関連付けを照会結果で確認できるまでScan／Installへ進まない</p>
 </div>
-<p>Patch Groupによるベースライン切り替えが不要で、単にMaintenance Windowの対象を選びたいだけであれば、予約された<code>Patch Group</code>キーではなく、<code>MaintenanceWindow=sample-window</code>などの通常タグをターゲット条件に使用できます。この構成ではPatch Groupとベースラインの関連付け手順を省略する</p>
+<p>Patch Groupによるベースライン切り替えが不要で、単にMaintenance Windowの対象を選びたいだけであれば、予約された<code class="inline-code">Patch Group</code>キーではなく、<code class="inline-code">MaintenanceWindow=sample-window</code>などの通常タグをターゲット条件に使用できます。この構成ではPatch Groupとベースラインの関連付け手順を省略する</p>
 <p>出典：<a href="https://docs.aws.amazon.com/systems-manager/latest/userguide/patch-manager-tag-a-patch-group.html">Create a patch group</a>／出典：<a href="https://docs.aws.amazon.com/systems-manager/latest/userguide/patch-manager-patch-groups.html">How patch groups work</a></p>
 <h3 id="maintenance-windowを作成する">Maintenance Windowを作成する</h3>
-<ol>
+<ol class="step-list">
 <li>Systems Manager－「メンテナンスウィンドウ」を開く</li>
 <li>「メンテナンスウィンドウの作成」を選択</li>
 <li>名前、スケジュール、Duration、Cutoffおよびタイムゾーンを入力</li>
@@ -559,15 +566,15 @@ aws ssm register-patch-baseline-for-patch-group `
 </thead>
 <tbody><tr>
 <td>名前</td>
-<td><code>Sample-MW-WindowsUpdate</code></td>
+<td><code class="inline-code">Sample-MW-WindowsUpdate</code></td>
 </tr>
 <tr>
 <td>スケジュール</td>
-<td><code>cron(0 17 ? * THU#4 *)</code></td>
+<td><code class="inline-code">cron(0 17 ? * THU#4 *)</code></td>
 </tr>
 <tr>
 <td>タイムゾーン</td>
-<td><code>UTC</code></td>
+<td><code class="inline-code">UTC</code></td>
 </tr>
 <tr>
 <td>Duration</td>
@@ -584,61 +591,61 @@ aws ssm register-patch-baseline-for-patch-group `
 </tbody></table>
 <figure class="screenshot-wide aws-console-identity"><figcaption>メンテナンスウィンドウの設定入力</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-patch-manager/010-メンテナンスウィンドウの設定入力.png" alt="メンテナンスウィンドウの設定入力" width="1718" height="1304" loading="lazy"></div></figure>
 
-<p>画像では、① メンテナンスウィンドウ名、② <code>CRON/Rate式</code>、③ CRON式、④ 期間、⑤ カットオフ、⑥ タイムゾーンを設定し、⑦「メンテナンスウィンドウの作成」を選択する</p>
+<p>画像では、① メンテナンスウィンドウ名、② <code class="inline-code">CRON/Rate式</code>、③ CRON式、④ 期間、⑤ カットオフ、⑥ タイムゾーンを設定し、⑦「メンテナンスウィンドウの作成」を選択する</p>
 <figure class="screenshot-wide aws-console-identity"><figcaption>メンテナンスウィンドウの作成完了</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-patch-manager/011-メンテナンスウィンドウの作成完了.png" alt="メンテナンスウィンドウの作成完了" width="1716" height="351" loading="lazy"></div></figure>
 
 <p>画像では、① 作成成功メッセージ、② メンテナンスウィンドウ名、③ 状態が「有効」であること、④ 次の実行時間を確認する</p>
 <div class="callout callout-warning"><p><strong>注意：UTCとJST</strong><br>上記cronは毎月第4木曜17:00 UTC、すなわち日本時間では翌金曜02:00 JSTに実行されます。お客様要件が「第4木曜17:00 JST」の場合はこの設定ではないため、タイムゾーンまたはcronを修正する</p>
 </div>
 <h3 id="maintenance-windowのターゲットを登録する">Maintenance Windowのターゲットを登録する</h3>
-<ol>
+<ol class="step-list">
 <li>作成したMaintenance Windowを開き、「ターゲット」タブを選択</li>
 <li>「ターゲットの登録」を選択</li>
-<li>ターゲット名へ<code>PatchingTarget</code>を入力</li>
+<li>ターゲット名へ<code class="inline-code">PatchingTarget</code>を入力</li>
 <li>「インスタンスタグを指定」を選択</li>
-<li>キーへ<code>Patch Group</code>、値へ<code>sample-window</code>を入力し、「Add」を選択</li>
+<li>キーへ<code class="inline-code">Patch Group</code>、値へ<code class="inline-code">sample-window</code>を入力し、「Add」を選択</li>
 <li>「Register target」を選択</li>
-<li>ターゲット一覧に<code>PatchingTarget</code>が表示されることを確認</li>
+<li>ターゲット一覧に<code class="inline-code">PatchingTarget</code>が表示されることを確認</li>
 </ol>
 <figure class="screenshot-wide aws-console-identity"><figcaption>ターゲット登録を開始</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-patch-manager/012-ターゲット登録を開始.png" alt="ターゲット登録を開始" width="1718" height="408" loading="lazy"></div></figure>
 
 <p>画像では、①「ターゲット」タブを開き、②「ターゲットの登録」を選択する</p>
 <figure class="screenshot-wide aws-console-identity"><figcaption>ターゲット名とPatch Group条件の入力</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-patch-manager/013-ターゲット名とpatch-group条件の入力.png" alt="ターゲット名とPatch Group条件の入力" width="1718" height="1304" loading="lazy"></div></figure>
 
-<p>画像では、① ターゲット名へ<code>PatchingTarget</code>を入力し、②「インスタンスタグを指定」、③ キー<code>Patch Group</code>と値<code>sample-window</code>を入力して「Add」、④「Register target」の順に操作する</p>
+<p>画像では、① ターゲット名へ<code class="inline-code">PatchingTarget</code>を入力し、②「インスタンスタグを指定」、③ キー<code class="inline-code">Patch Group</code>と値<code class="inline-code">sample-window</code>を入力して「Add」、④「Register target」の順に操作する</p>
 <figure class="screenshot-wide aws-console-identity"><figcaption>Patch Groupタグ条件を入力</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-patch-manager/014-patch-groupタグ条件を入力.png" alt="Patch Groupタグ条件を入力" width="1718" height="1304" loading="lazy"></div></figure>
 
-<p>画像では、① ターゲット名、②「インスタンスタグを指定」、③ 追加済みの<code>Patch Group : sample-window</code>を確認し、④「Register target」を選択する</p>
+<p>画像では、① ターゲット名、②「インスタンスタグを指定」、③ 追加済みの<code class="inline-code">Patch Group : sample-window</code>を確認し、④「Register target」を選択する</p>
 <figure class="screenshot-wide aws-console-identity"><figcaption>ターゲット登録完了</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-patch-manager/015-ターゲット登録完了.png" alt="ターゲット登録完了" width="1717" height="401" loading="lazy"></div></figure>
 
-<p>画像では、① 登録成功メッセージ、② ターゲット一覧の<code>PatchingTarget</code>、③ ターゲット数が<code>1</code>であることを確認する</p>
+<p>画像では、① 登録成功メッセージ、② ターゲット一覧の<code class="inline-code">PatchingTarget</code>、③ ターゲット数が<code class="inline-code">1</code>であることを確認する</p>
 <h3 id="ec2へpatch-groupタグを付与する">EC2へPatch Groupタグを付与する</h3>
-<ol>
-<li>EC2コンソールでパイロットインスタンス<code>Sample-mng-001</code>を選択</li>
+<ol class="step-list">
+<li>EC2コンソールでパイロットインスタンス<code class="inline-code">Sample-mng-001</code>を選択</li>
 <li>「タグを管理」を開く</li>
-<li>キー<code>Patch Group</code>、値<code>sample-window</code>を追加</li>
+<li>キー<code class="inline-code">Patch Group</code>、値<code class="inline-code">sample-window</code>を追加</li>
 <li>「保存」を選択</li>
 <li>EC2詳細画面でタグが保存済みであることを確認</li>
 <li>Maintenance Windowのターゲット条件に一致するEC2がパイロット1台だけであることを確認</li>
 </ol>
 <figure class="screenshot-wide aws-console-identity"><figcaption>EC2へPatch Groupタグを入力</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-patch-manager/016-ec2へpatch-groupタグを入力.png" alt="EC2へPatch Groupタグを入力" width="1716" height="457" loading="lazy"></div></figure>
 
-<p>画像では、① タグキーへ<code>Patch Group</code>、② タグ値へ<code>sample-window</code>を入力し、③「保存」を選択する</p>
+<p>画像では、① タグキーへ<code class="inline-code">Patch Group</code>、② タグ値へ<code class="inline-code">sample-window</code>を入力し、③「保存」を選択する</p>
 <figure class="screenshot-wide aws-console-identity"><figcaption>EC2のPatch Groupタグ保存完了</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-patch-manager/017-ec2のpatch-groupタグ保存完了.png" alt="EC2のPatch Groupタグ保存完了" width="1706" height="621" loading="lazy"></div></figure>
 
-<p>画像では、① タグ保存成功メッセージ、② 対象インスタンスの名前とID、③「タグ」タブ、④ <code>Patch Group=sample-window</code>が保存されていることを確認する</p>
-<p>保存完了メッセージと、EC2タグ一覧の<code>Patch Group=sample-window</code>を確認した</p>
+<p>画像では、① タグ保存成功メッセージ、② 対象インスタンスの名前とID、③「タグ」タブ、④ <code class="inline-code">Patch Group=sample-window</code>が保存されていることを確認する</p>
+<p>保存完了メッセージと、EC2タグ一覧の<code class="inline-code">Patch Group=sample-window</code>を確認した</p>
 <h3 id="run-commandタスクを登録する">Run Commandタスクを登録する</h3>
-<ol>
+<ol class="step-list">
 <li>Maintenance Windowの「タスク」タブで「タスクの登録」－「Run Commandタスクの登録」を選択</li>
 <li>タスク名を入力</li>
-<li>コマンドドキュメント<code>AWS-RunPatchBaseline</code>を選択</li>
+<li>コマンドドキュメント<code class="inline-code">AWS-RunPatchBaseline</code>を選択</li>
 <li>ドキュメントのバージョンは「ランタイムのデフォルトバージョン」を選択</li>
-<li>登録済みターゲット<code>PatchingTarget</code>を選択</li>
-<li>パイロット1台ではConcurrencyを1、Error thresholdを1に設定します。Error thresholdは、エラー数が指定値を超えた時点で、まだ開始していない後続ターゲットへの実行を止める上限です。<code>1</code>の場合は1件のエラーを許容し、2件目で後続実行を停止します。実行済みタスクは取り消されず、対象が1台だけの場合は停止対象となる後続ノードもない</li>
-<li>S3出力を有効化し、本番環境ではバケット名<code>skyarch-pid-2849-logs</code>、プレフィックス<code>patchmanager</code>を入力します。検証環境では<code>sample-mw-bucket/patchmanager</code>へ読み替える</li>
+<li>登録済みターゲット<code class="inline-code">PatchingTarget</code>を選択</li>
+<li>パイロット1台ではConcurrencyを1、Error thresholdを1に設定します。Error thresholdは、エラー数が指定値を超えた時点で、まだ開始していない後続ターゲットへの実行を止める上限です。<code class="inline-code">1</code>の場合は1件のエラーを許容し、2件目で後続実行を停止します。実行済みタスクは取り消されず、対象が1台だけの場合は停止対象となる後続ノードもない</li>
+<li>S3出力を有効化し、本番環境ではバケット名<code class="inline-code">skyarch-pid-2849-logs</code>、プレフィックス<code class="inline-code">patchmanager</code>を入力します。検証環境では<code class="inline-code">sample-mw-bucket/patchmanager</code>へ読み替える</li>
 <li>SNS通知は通知要件がある場合だけ有効化</li>
-<li>初回テストでは<code>Operation=Scan</code>、<code>RebootOption=NoReboot</code>を設定</li>
+<li>初回テストでは<code class="inline-code">Operation=Scan</code>、<code class="inline-code">RebootOption=NoReboot</code>を設定</li>
 <li>タイムアウト値を確認して登録</li>
 </ol>
 <figure class="screenshot-wide aws-console-identity"><figcaption>Run Commandタスク登録画面を開く</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-patch-manager/018-run-commandタスク登録画面を開く.png" alt="Run Commandタスク登録画面を開く" width="1716" height="351" loading="lazy"></div></figure>
@@ -646,72 +653,72 @@ aws ssm register-patch-baseline-for-patch-group `
 <p>画像では、① Maintenance Windowの「タスク」タブを選択し、②「タスクの登録」、③「Run Commandタスクの登録」の順に操作する</p>
 <figure class="screenshot-wide aws-console-identity"><figcaption>Run Commandタスクのドキュメントとターゲット</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-patch-manager/019-run-commandタスクのドキュメントとターゲット.png" alt="Run Commandタスクのドキュメントとターゲット" width="1718" height="1304" loading="lazy"></div></figure>
 
-<p>画像では、① タスク名、② コマンドドキュメント<code>AWS-RunPatchBaseline</code>、③ ドキュメントのバージョン、④ タスク優先度、⑤ 登録済みターゲット<code>PatchingTarget</code>を設定する</p>
+<p>画像では、① タスク名、② コマンドドキュメント<code class="inline-code">AWS-RunPatchBaseline</code>、③ ドキュメントのバージョン、④ タスク優先度、⑤ 登録済みターゲット<code class="inline-code">PatchingTarget</code>を設定する</p>
 <figure class="screenshot-wide aws-console-identity"><figcaption>S3出力、ScanおよびNoRebootの設定</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-patch-manager/020-s3出力-scanおよびnorebootの設定.png" alt="S3出力、ScanおよびNoRebootの設定" width="1439" height="1093" loading="lazy"></div></figure>
 
-<p>画像では、①「S3への書き込みの有効化」、② 検証用S3バケット名、③ キープレフィックス、④ <code>Operation=Scan</code>、⑤ <code>RebootOption=NoReboot</code>、⑥ <code>Step Timeout Seconds=10800</code>、⑦ コマンドのタイムアウト<code>600</code>秒を設定する</p>
+<p>画像では、①「S3への書き込みの有効化」、② 検証用S3バケット名、③ キープレフィックス、④ <code class="inline-code">Operation=Scan</code>、⑤ <code class="inline-code">RebootOption=NoReboot</code>、⑥ <code class="inline-code">Step Timeout Seconds=10800</code>、⑦ コマンドのタイムアウト<code class="inline-code">600</code>秒を設定する</p>
 <figure class="screenshot-wide aws-console-identity"><figcaption>Run Commandタスク登録完了</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-patch-manager/021-run-commandタスク登録完了.png" alt="Run Commandタスク登録完了" width="1718" height="411" loading="lazy"></div></figure>
 
-<p>画像では、① タスク登録成功メッセージ、②「タスク」タブ、③ タスク名、④ タスクARN欄の<code>AWS-RunPatchBaseline</code>、⑤ タイプ<code>RUN_COMMAND</code>とターゲット数<code>1</code>を確認する</p>
-<p><code>Operation=Scan</code>はコンプライアンスを検出するだけで、更新プログラムをインストールせず、OSも再起動しません。初回テストでは、誤って<code>Install</code>を実行することを防ぐため、<code>Operation=Scan</code>と<code>RebootOption=NoReboot</code>の両方を確認する</p>
+<p>画像では、① タスク登録成功メッセージ、②「タスク」タブ、③ タスク名、④ タスクARN欄の<code class="inline-code">AWS-RunPatchBaseline</code>、⑤ タイプ<code class="inline-code">RUN_COMMAND</code>とターゲット数<code class="inline-code">1</code>を確認する</p>
+<p><code class="inline-code">Operation=Scan</code>はコンプライアンスを検出するだけで、更新プログラムをインストールせず、OSも再起動しません。初回テストでは、誤って<code class="inline-code">Install</code>を実行することを防ぐため、<code class="inline-code">Operation=Scan</code>と<code class="inline-code">RebootOption=NoReboot</code>の両方を確認する</p>
 <h3 id="実行前チェック">実行前チェック</h3>
 <p>次のすべてを満たすまでMaintenance Windowを実行しない</p>
 <ul>
 <li><input disabled="" type="checkbox"> EC2が実行中で、ステータスチェックが2/2である</li>
 <li><input disabled="" type="checkbox"> Fleet ManagerのPing statusがOnlineである</li>
-<li><input disabled="" type="checkbox"> <code>AmazonSSMAgent</code>がRunningである</li>
+<li><input disabled="" type="checkbox"> <code class="inline-code">AmazonSSMAgent</code>がRunningである</li>
 <li><input disabled="" type="checkbox"> EC2 IAMロールに必要なSSM権限がある</li>
-<li><input disabled="" type="checkbox"> EC2 IAMロールで<code>skyarch-pid-2849-logs/patchmanager/</code>へ書き込める</li>
-<li><input checked="" disabled="" type="checkbox"> <code>Patch Group=sample-window</code>がEC2へ保存されている</li>
-<li><input disabled="" type="checkbox"> <code>sample-window</code>と使用するWindowsパッチベースラインの関連付けを確認済みである</li>
+<li><input disabled="" type="checkbox"> EC2 IAMロールで<code class="inline-code">skyarch-pid-2849-logs/patchmanager/</code>へ書き込める</li>
+<li><input checked="" disabled="" type="checkbox"> <code class="inline-code">Patch Group=sample-window</code>がEC2へ保存されている</li>
+<li><input disabled="" type="checkbox"> <code class="inline-code">sample-window</code>と使用するWindowsパッチベースラインの関連付けを確認済みである</li>
 <li><input disabled="" type="checkbox"> ターゲットに一致するEC2がパイロット1台だけである</li>
-<li><input disabled="" type="checkbox"> 初回テストが<code>Operation=Scan</code>である</li>
-<li><input disabled="" type="checkbox"> 初回テストの<code>RebootOption</code>が<code>NoReboot</code>である</li>
+<li><input disabled="" type="checkbox"> 初回テストが<code class="inline-code">Operation=Scan</code>である</li>
+<li><input disabled="" type="checkbox"> 初回テストの<code class="inline-code">RebootOption</code>が<code class="inline-code">NoReboot</code>である</li>
 <li><input disabled="" type="checkbox"> 本番Installの場合、バックアップ、再起動、業務停止および確認担当の承認がある</li>
 </ul>
 <h3 id="scanテストと成功判定">Scanテストと成功判定</h3>
-<ol>
-<li>パイロット1台へ<code>AWS-RunPatchBaseline</code>を<code>Operation=Scan</code>で実行</li>
+<ol class="step-list">
+<li>パイロット1台へ<code class="inline-code">AWS-RunPatchBaseline</code>を<code class="inline-code">Operation=Scan</code>で実行</li>
 <li>Maintenance Window、タスク、Run Commandおよびノード別結果を確認</li>
 <li>S3へ標準出力／標準エラーが保存されたことを確認</li>
 <li>Patch ManagerのComplianceを開き、最新スキャン結果を確認</li>
 </ol>
 <p>次をすべて満たした場合、Scan実行成功と判定する</p>
 <ul>
-<li>Run Command全体と対象ノードが<code>Success</code></li>
-<li>Windowsの<code>PatchWindows</code>ステップが<code>Success</code>、応答コード0</li>
+<li>Run Command全体と対象ノードが<code class="inline-code">Success</code></li>
+<li>Windowsの<code class="inline-code">PatchWindows</code>ステップが<code class="inline-code">Success</code>、応答コード0</li>
 <li>Failed、Timed out、Delivery timed outが0</li>
 <li>S3出力が実行IDおよび対象ノードと一致</li>
 <li>Complianceに対象ノード、ベースライン、最新スキャン時刻が反映</li>
 </ul>
-<p>Scan後に<code>MISSING</code>または<code>NonCompliant</code>が表示されても、未適用パッチを正常に検出した結果であればScanコマンドの失敗ではない</p>
+<p>Scan後に<code class="inline-code">MISSING</code>または<code class="inline-code">NonCompliant</code>が表示されても、未適用パッチを正常に検出した結果であればScanコマンドの失敗ではない</p>
 <h4 id="今回の確認結果-2">今回の確認結果</h4>
-<p>Scanを意図した2026年9月8日00:00 JSTの実行は、Run Command出力上では<code>OperationType=Install</code>、<code>RebootOption=NoReboot</code>でした。そのため、Maintenance WindowとRun Commandの成功は確認できましたが、Scan単独テストの証跡としては扱わない</p>
+<p>Scanを意図した2026年9月8日00:00 JSTの実行は、Run Command出力上では<code class="inline-code">OperationType=Install</code>、<code class="inline-code">RebootOption=NoReboot</code>でした。そのため、Maintenance WindowとRun Commandの成功は確認できましたが、Scan単独テストの証跡としては扱わない</p>
 <figure class="screenshot-wide aws-console-identity"><figcaption>初回実行の詳細</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-patch-manager/022-初回実行の詳細.png" alt="初回実行の詳細" width="1713" height="809" loading="lazy"></div></figure>
 
-<p>画像では、① Maintenance Window ID・実行ID・開始時刻・終了時刻、② <code>AWS-RunPatchBaseline</code>タスクのステータス、③ 対象ノードのタスク呼び出しを確認する。実際のScan／Install種別は、この画面だけで判断せずRun Command出力の<code>OperationType</code>で判定する</p>
+<p>画像では、① Maintenance Window ID・実行ID・開始時刻・終了時刻、② <code class="inline-code">AWS-RunPatchBaseline</code>タスクのステータス、③ 対象ノードのタスク呼び出しを確認する。実際のScan／Install種別は、この画面だけで判断せずRun Command出力の<code class="inline-code">OperationType</code>で判定する</p>
 <h3 id="installテストと成功判定">Installテストと成功判定</h3>
-<p>Scan結果と変更承認を確認した後、同じパイロット1台へ<code>Operation=Install</code>を実行します。<code>RebootIfNeeded</code>を使用する場合は、業務停止時間と再起動後確認を事前に調整する</p>
+<p>Scan結果と変更承認を確認した後、同じパイロット1台へ<code class="inline-code">Operation=Install</code>を実行します。<code class="inline-code">RebootIfNeeded</code>を使用する場合は、業務停止時間と再起動後確認を事前に調整する</p>
 <p>次をすべて満たした場合、Install実行成功と判定する</p>
 <ul>
-<li>Maintenance Window、タスク、Run Commandおよび対象ノードが<code>Success</code></li>
-<li>Windowsの<code>PatchWindows</code>ステップが<code>Success</code>、応答コード0</li>
+<li>Maintenance Window、タスク、Run Commandおよび対象ノードが<code class="inline-code">Success</code></li>
+<li>Windowsの<code class="inline-code">PatchWindows</code>ステップが<code class="inline-code">Success</code>、応答コード0</li>
 <li>S3へ実行ログが保存されている</li>
 <li>再起動後、EC2ステータスチェックが2/2で、Fleet ManagerがOnlineへ復帰</li>
 <li>Windowsサービス、イベントログ、アプリケーションおよび業務疎通に異常なし</li>
-<li>再Scan後、意図したベースライン内で<code>MISSING=0</code>、<code>FAILED=0</code>、<code>INSTALLED_PENDING_REBOOT=0</code></li>
+<li>再Scan後、意図したベースライン内で<code class="inline-code">MISSING=0</code>、<code class="inline-code">FAILED=0</code>、<code class="inline-code">INSTALLED_PENDING_REBOOT=0</code></li>
 </ul>
 <h4 id="install前にwindowsとawsの状態を記録する">Install前にWindowsとAWSの状態を記録する</h4>
-<ol>
+<ol class="step-list">
 <li>Windowsへ管理者権限で接続</li>
-<li><code>winver</code>を開き、Windows ServerのバージョンとOSビルドを記録</li>
+<li><code class="inline-code">winver</code>を開き、Windows ServerのバージョンとOSビルドを記録</li>
 <li>「設定」－「更新とセキュリティ」－「Windows Update」を開き、利用可能な更新、再起動待ちおよび管理ポリシーの表示を記録</li>
 <li>「更新の履歴を表示する」を開き、既存履歴を記録します。事前確認では「更新プログラムのチェック」を押しない</li>
 <li>Systems ManagerのComplianceとFleet Managerのパッチ画面を開き、対象ノード、ベースライン、最終更新日時、必要な更新、エラーおよび適用済みKBを記録</li>
 </ol>
 <figure class="screenshot-wide"><figcaption>Install前のOSビルド</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-patch-manager/023-install前のosビルド.png" alt="Install前のOSビルド" width="537" height="471" loading="lazy"></div></figure>
 
-<p>画像ではWindows ServerのバージョンとOSビルドを記録します。今回のInstall前はWindows Server 2022 Version 21H2、OSビルド<code>20348.5499</code>だった</p>
+<p>画像ではWindows ServerのバージョンとOSビルドを記録します。今回のInstall前はWindows Server 2022 Version 21H2、OSビルド<code class="inline-code">20348.5499</code>だった</p>
 <figure class="screenshot-wide"><figcaption>Install前のWindows Update状態</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-patch-manager/024-install前のwindows-update状態.png" alt="Install前のWindows Update状態" width="1202" height="934" loading="lazy"></div></figure>
 
 <p>画像では、①「利用できる更新プログラムはありません」、② 自動更新が組織のポリシーで無効であること、③「更新の履歴を表示する」のリンクを確認する。この画面の表示だけではPatch Managerの準拠を判定しない</p>
@@ -725,30 +732,30 @@ aws ssm register-patch-baseline-for-patch-group `
 
 <p>画像では、① 適用されたパッチベースラインID・設定タイプ・最終更新日時、② インストール済み件数・エラー件数・必要な更新数、③ KB番号・分類・状態・重要度を記録する</p>
 <h4 id="installと再起動設定を確認する">Installと再起動設定を確認する</h4>
-<p>Installを実行する場合は、Maintenance WindowのRun Commandタスクを編集し、<code>Operation=Install</code>を選択します。<code>RebootIfNeeded</code>は、Patch Managerが1件以上のパッチをインストールした場合、または<code>INSTALLED_PENDING_REBOOT</code>を検出した場合にOSを再起動します。個々のパッチが再起動を必要とするかを判定してから再起動する設定ではありません。今回再起動しなかったのは、新規適用パッチがなく、<code>InstalledPendingRebootCount=0</code>だったため</p>
-<p><code>NoReboot</code>を選択すると、Patch Managerはパッチ適用後にOSを再起動しません。ただし、インストーラーによるサービス再起動まで抑止するものではない</p>
+<p>Installを実行する場合は、Maintenance WindowのRun Commandタスクを編集し、<code class="inline-code">Operation=Install</code>を選択します。<code class="inline-code">RebootIfNeeded</code>は、Patch Managerが1件以上のパッチをインストールした場合、または<code class="inline-code">INSTALLED_PENDING_REBOOT</code>を検出した場合にOSを再起動します。個々のパッチが再起動を必要とするかを判定してから再起動する設定ではありません。今回再起動しなかったのは、新規適用パッチがなく、<code class="inline-code">InstalledPendingRebootCount=0</code>だったため</p>
+<p><code class="inline-code">NoReboot</code>を選択すると、Patch Managerはパッチ適用後にOSを再起動しません。ただし、インストーラーによるサービス再起動まで抑止するものではない</p>
 <figure class="screenshot-wide aws-console-identity"><figcaption>InstallとRebootIfNeededの設定</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-patch-manager/028-installとrebootifneededの設定.png" alt="InstallとRebootIfNeededの設定" width="1718" height="1304" loading="lazy"></div></figure>
 
-<p>画像では、① <code>Operation=Install</code>、② <code>RebootOption=RebootIfNeeded</code>、③ <code>Step Timeout Seconds=10800</code>、④ コマンドのタイムアウト<code>600</code>秒を設定し、⑤ Run Commandタスクを更新する</p>
+<p>画像では、① <code class="inline-code">Operation=Install</code>、② <code class="inline-code">RebootOption=RebootIfNeeded</code>、③ <code class="inline-code">Step Timeout Seconds=10800</code>、④ コマンドのタイムアウト<code class="inline-code">600</code>秒を設定し、⑤ Run Commandタスクを更新する</p>
 <p>出典：<a href="https://docs.aws.amazon.com/systems-manager/latest/userguide/patch-manager-aws-runpatchbaseline.html">AWS-RunPatchBaseline command document</a></p>
 <h4 id="awsコンソールでinstallの成功を確認する">AWSコンソールでInstallの成功を確認する</h4>
-<ol>
+<ol class="step-list">
 <li>Maintenance Windowの「履歴」を開く</li>
 <li>Install実行のステータスが「成功」であることを確認し、開始時刻と終了時刻を記録</li>
 <li>実行IDを選択し、Execution Tasksとタスク呼び出しが「成功／Success」であることを確認</li>
 <li>Run CommandのコマンドIDを開き、全体、詳細および対象ノードのステータスが「成功」で、エラー数と配信タイムアウト数が0であることを確認</li>
-<li>コマンドドキュメントが<code>AWS-RunPatchBaseline</code>、実行パラメータが<code>Install/RebootIfNeeded</code>であることを確認</li>
-<li>「出力の表示」で<code>OperationType</code>、<code>RebootOption</code>、<code>InstalledCount</code>、<code>MissingCount</code>、<code>FailedCount</code>、<code>InstalledPendingRebootCount</code>および新規インストールKB一覧を記録</li>
+<li>コマンドドキュメントが<code class="inline-code">AWS-RunPatchBaseline</code>、実行パラメータが<code class="inline-code">Install/RebootIfNeeded</code>であることを確認</li>
+<li>「出力の表示」で<code class="inline-code">OperationType</code>、<code class="inline-code">RebootOption</code>、<code class="inline-code">InstalledCount</code>、<code class="inline-code">MissingCount</code>、<code class="inline-code">FailedCount</code>、<code class="inline-code">InstalledPendingRebootCount</code>および新規インストールKB一覧を記録</li>
 </ol>
 <figure class="screenshot-wide aws-console-identity"><figcaption>2回のMaintenance Window実行成功</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-patch-manager/029-2回のmaintenance-window実行成功.png" alt="2回のMaintenance Window実行成功" width="1716" height="468" loading="lazy"></div></figure>
 
 <p>画像では、① 01:00 JSTに開始したInstall実行、② 00:00 JSTの初回実行が「成功」で完了したことを確認する。コンソール表示時刻はUTCであるため、日本時間へ9時間加算する</p>
 <figure class="screenshot-wide aws-console-identity"><figcaption>Install実行の詳細</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-patch-manager/030-install実行の詳細.png" alt="Install実行の詳細" width="1717" height="857" loading="lazy"></div></figure>
 
-<p>画像では、① Maintenance Window ID・実行ID・開始時刻・終了時刻、② <code>AWS-RunPatchBaseline</code>タスク、③ 対象ノードのタスク呼び出しが成功していることを確認する</p>
+<p>画像では、① Maintenance Window ID・実行ID・開始時刻・終了時刻、② <code class="inline-code">AWS-RunPatchBaseline</code>タスク、③ 対象ノードのタスク呼び出しが成功していることを確認する</p>
 <figure class="screenshot-wide aws-console-identity"><figcaption>Run CommandのInstall実行成功</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-patch-manager/031-run-commandのinstall実行成功.png" alt="Run CommandのInstall実行成功" width="1718" height="1304" loading="lazy"></div></figure>
 
-<p>画像では、① 全体と詳細のステータス・完了数・エラー数・配信タイムアウト数、② 対象ノードのステータスと実行時刻、③ <code>AWS-RunPatchBaseline</code>、④ <code>Operation=Install</code>・<code>RebootOption=RebootIfNeeded</code>・<code>StepTimeoutSeconds=10800</code>を確認する</p>
+<p>画像では、① 全体と詳細のステータス・完了数・エラー数・配信タイムアウト数、② 対象ノードのステータスと実行時刻、③ <code class="inline-code">AWS-RunPatchBaseline</code>、④ <code class="inline-code">Operation=Install</code>・<code class="inline-code">RebootOption=RebootIfNeeded</code>・<code class="inline-code">StepTimeoutSeconds=10800</code>を確認する</p>
 <h4 id="今回のinstall実行結果">今回のInstall実行結果</h4>
 <p>2026年9月8日01:00 JSTの検証結果は次のとおり</p>
 <table>
@@ -761,47 +768,47 @@ aws ssm register-patch-baseline-for-patch-group `
 </thead>
 <tbody><tr>
 <td>コマンドID</td>
-<td><code>9c048d9e-720c-47bc-ab41-b7d5fdc43045</code></td>
+<td><code class="inline-code">9c048d9e-720c-47bc-ab41-b7d5fdc43045</code></td>
 <td>記録済み</td>
 </tr>
 <tr>
 <td>Operation／RebootOption</td>
-<td><code>Install</code>／<code>RebootIfNeeded</code></td>
+<td><code class="inline-code">Install</code>／<code class="inline-code">RebootIfNeeded</code></td>
 <td>設定どおり</td>
 </tr>
 <tr>
 <td>全体／対象ノード</td>
-<td><code>Success</code>／<code>Success</code></td>
+<td><code class="inline-code">Success</code>／<code class="inline-code">Success</code></td>
 <td>成功</td>
 </tr>
 <tr>
 <td>応答コード</td>
-<td><code>【証跡未取得】</code></td>
+<td><code class="inline-code">【証跡未取得】</code></td>
 <td>今回取得した画像には表示されていません。次回は対象ノードの出力詳細で取得する</td>
 </tr>
 <tr>
 <td>使用ベースライン</td>
-<td><code>AWS-DefaultPatchBaseline</code>、<code>pb-04ba050f612fba3a6</code></td>
+<td><code class="inline-code">AWS-DefaultPatchBaseline</code>、<code class="inline-code">pb-04ba050f612fba3a6</code></td>
 <td>確認済み</td>
 </tr>
 <tr>
 <td>Patch Group</td>
-<td><code>sample-window</code></td>
+<td><code class="inline-code">sample-window</code></td>
 <td>実行出力で確認済み。ベースライン関連付けの直接照会は未取得</td>
 </tr>
 <tr>
 <td>InstalledCount</td>
-<td><code>3</code></td>
+<td><code class="inline-code">3</code></td>
 <td>ベースラインに対する既存のインストール済み件数。今回3件を新規適用した意味ではない</td>
 </tr>
 <tr>
 <td>MissingCount／FailedCount</td>
-<td><code>0</code>／<code>0</code></td>
+<td><code class="inline-code">0</code>／<code class="inline-code">0</code></td>
 <td>ベースライン対象の不足・失敗なし</td>
 </tr>
 <tr>
 <td>InstalledPendingRebootCount</td>
-<td><code>0</code></td>
+<td><code class="inline-code">0</code></td>
 <td>再起動待ちなし</td>
 </tr>
 <tr>
@@ -817,60 +824,65 @@ aws ssm register-patch-baseline-for-patch-group `
 <tr>
 <td>S3出力</td>
 <td>保存確認済み</td>
-<td><code>sample-mw-bucket/patchmanager/</code>に保存された出力で、コマンドID、ノードID、実行種別、集計値および実行時刻をRun Command画面と照合済み</td>
+<td><code class="inline-code">sample-mw-bucket/patchmanager/</code>に保存された出力で、コマンドID、ノードID、実行種別、集計値および実行時刻をRun Command画面と照合済み</td>
 </tr>
 </tbody></table>
-<p><code>Success</code>は、指定したベースラインに基づく処理がエラーなく完了したことを示します。今回のように新規適用対象が0件の場合も<code>Success</code>となります。実際に更新されたKBを確認する場合は、Run Command出力末尾の<code>KbArticleId / Installed / Message</code>一覧、Windowsの更新履歴およびOSビルドを実行前後で比較する</p>
-<p>今回のS3出力では、<code>InstalledCount=3</code>、<code>InstalledOtherCount=6</code>である一方、実行末尾の<code>KbArticleId / Installed / Message</code>一覧は空でした。このため、3件と6件はスキャン時点で既にインストール済みと分類された件数であり、今回新規に9件を適用した意味ではありません。<code>rebootCount=0</code>、<code>InstalledPendingRebootCount=0</code>であることから、今回の実行で再起動は発生しておらず、再起動待ちもない</p>
+<p><code class="inline-code">Success</code>は、指定したベースラインに基づく処理がエラーなく完了したことを示します。今回のように新規適用対象が0件の場合も<code class="inline-code">Success</code>となります。実際に更新されたKBを確認する場合は、Run Command出力末尾の<code class="inline-code">KbArticleId / Installed / Message</code>一覧、Windowsの更新履歴およびOSビルドを実行前後で比較する</p>
+<p>今回のS3出力では、<code class="inline-code">InstalledCount=3</code>、<code class="inline-code">InstalledOtherCount=6</code>である一方、実行末尾の<code class="inline-code">KbArticleId / Installed / Message</code>一覧は空でした。このため、3件と6件はスキャン時点で既にインストール済みと分類された件数であり、今回新規に9件を適用した意味ではありません。<code class="inline-code">rebootCount=0</code>、<code class="inline-code">InstalledPendingRebootCount=0</code>であることから、今回の実行で再起動は発生しておらず、再起動待ちもない</p>
 <h4 id="s3でinstall実行ログを確認する">S3でInstall実行ログを確認する</h4>
-<ol>
+<ol class="step-list">
 <li>S3コンソールで、Run Commandタスクに指定したバケットを開く</li>
-<li>キープレフィックス<code>patchmanager/</code>を開く</li>
-<li>対象コマンドID、対象ノードID、プラグイン名<code>awsrunPowerShellScript</code>、ステップ名<code>PatchWindows</code>の順に開く</li>
-<li><code>stdout</code>を開き、Run Command画面とコマンドID、ノードID、実行時刻、<code>OperationType</code>、<code>RebootOption</code>および集計値が一致することを確認</li>
-<li><code>stderr</code>が作成されている場合は内容を確認し、エラーの有無を判定</li>
+<li>キープレフィックス<code class="inline-code">patchmanager/</code>を開く</li>
+<li>対象コマンドID、対象ノードID、プラグイン名<code class="inline-code">awsrunPowerShellScript</code>、ステップ名<code class="inline-code">PatchWindows</code>の順に開く</li>
+<li><code class="inline-code">stdout</code>を開き、Run Command画面とコマンドID、ノードID、実行時刻、<code class="inline-code">OperationType</code>、<code class="inline-code">RebootOption</code>および集計値が一致することを確認</li>
+<li><code class="inline-code">stderr</code>が作成されている場合は内容を確認し、エラーの有無を判定</li>
 </ol>
 <figure class="screenshot-wide aws-console-identity"><figcaption>S3のpatchmanagerプレフィックス</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-patch-manager/032-s3のpatchmanagerプレフィックス.png" alt="S3のpatchmanagerプレフィックス" width="1716" height="444" loading="lazy"></div></figure>
 
-<p>画像では、① Run Commandタスクで指定したバケット<code>sample-mw-bucket</code>を確認し、② <code>patchmanager/</code>プレフィックスを開く</p>
+<p>画像では、① Run Commandタスクで指定したバケット<code class="inline-code">sample-mw-bucket</code>を確認し、② <code class="inline-code">patchmanager/</code>プレフィックスを開く</p>
 <figure class="screenshot-wide aws-console-identity"><figcaption>S3に保存されたInstall実行stdout</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-patch-manager/033-s3に保存されたinstall実行stdout.png" alt="S3に保存されたInstall実行stdout" width="1716" height="444" loading="lazy"></div></figure>
 
-<p>画像では、① 対象コマンドID、② 対象ノードID、③ <code>awsrunPowerShellScript/PatchWindows</code>配下であること、④ <code>stdout</code>の更新日時とサイズを確認し、オブジェクトを開く</p>
+<p>画像では、① 対象コマンドID、② 対象ノードID、③ <code class="inline-code">awsrunPowerShellScript/PatchWindows</code>配下であること、④ <code class="inline-code">stdout</code>の更新日時とサイズを確認し、オブジェクトを開く</p>
 <h4 id="windows-server内でinstall後の状態を確認する">Windows Server内でInstall後の状態を確認する</h4>
-<ol>
+<ol class="step-list">
 <li>再起動が発生した場合は、RDPまたは承認済み運用経路で再接続できることを確認</li>
-<li><code>winver</code>を開き、Install前に記録したWindowsバージョンとOSビルドから変化したか比較</li>
+<li><code class="inline-code">winver</code>を開き、Install前に記録したWindowsバージョンとOSビルドから変化したか比較</li>
 <li>「コントロールパネル」－「プログラム」－「プログラムと機能」－「インストールされた更新プログラムを表示」を開く</li>
 <li>KB番号とインストール日をInstall前後で比較します。今回の実行時刻より前の日付のKBは、今回SSMが新規適用した更新として扱わない</li>
 <li>必要に応じてWindowsイベントログ、サービス状態および業務アプリケーションの疎通を確認</li>
 </ol>
 <figure class="screenshot-wide"><figcaption>Install後のOSビルド</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-patch-manager/034-install後のosビルド.png" alt="Install後のOSビルド" width="534" height="472" loading="lazy"></div></figure>
 
-<p>画像ではInstall後のWindowsバージョンとOSビルドを確認する。今回の結果はInstall前と同じVersion 21H2、OSビルド<code>20348.5499</code>であり、OSビルドの変化はありませんだった</p>
+<p>画像ではInstall後のWindowsバージョンとOSビルドを確認する。今回の結果はInstall前と同じVersion 21H2、OSビルド<code class="inline-code">20348.5499</code>であり、OSビルドの変化はありませんだった</p>
 <figure class="screenshot-wide"><figcaption>Install後のインストール済み更新</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-patch-manager/035-install後のインストール済み更新.png" alt="Install後のインストール済み更新" width="1142" height="668" loading="lazy"></div></figure>
 
 <p>画像では、① Install後にWindowsへ登録されているKB番号、② 各KBのインストール日を確認する。今回表示された日付はいずれもSSM実行日の2026年9月8日より前であり、今回新規に適用されたKBではない</p>
 <h3 id="systems-managerの成功とwindows-update表示の違い">Systems Managerの成功とWindows Update表示の違い</h3>
-<p>Systems Managerの<code>Success</code>と、Windows Update画面に「利用可能な更新プログラムはありません」と表示されることは同じ意味ではありません。また、Patch Managerで<code>Compliant</code>でも、Windows Updateに別の更新が表示される場合がある</p>
-<ul>
-<li>Patch Managerの<code>Success</code>：<code>AWS-RunPatchBaseline</code>コマンドが正常終了したことを示する</li>
-<li>Patch Managerの<code>Compliant</code>／<code>MissingCount=0</code>：使用したパッチベースラインで承認された更新に不足がないことを示する</li>
+<p>Systems Managerの<code class="inline-code">Success</code>と、Windows Update画面に「利用可能な更新プログラムはありません」と表示されることは同じ意味ではありません。また、Patch Managerで<code class="inline-code">Compliant</code>でも、Windows Updateに別の更新が表示される場合がある</p>
+<ul class="check-list">
+<li>Patch Managerの<code class="inline-code">Success</code>：<code class="inline-code">AWS-RunPatchBaseline</code>コマンドが正常終了したことを示する</li>
+<li>Patch Managerの<code class="inline-code">Compliant</code>／<code class="inline-code">MissingCount=0</code>：使用したパッチベースラインで承認された更新に不足がないことを示する</li>
 <li>Windows Updateの表示：Windows UpdateまたはWSUSが現在提示する更新を表示します。パッチベースラインの分類、重要度および承認待機日数と一致するとは限らない</li>
 </ul>
-<p>今回使用した<code>AWS-DefaultPatchBaseline</code>は、Windows Serverについて、分類が<code>CriticalUpdates</code>または<code>SecurityUpdates</code>で、MSRC重要度が<code>Critical</code>または<code>Important</code>の更新を、公開または更新から7日後に承認します。Windows Updateで検出された<code>KB2267602</code>はMicrosoft Defender Antivirusのセキュリティインテリジェンス更新であり、頻繁に更新される定義更新です。今回のデフォルトベースラインで承認されたOSパッチとは別に管理されるため、Patch Managerが<code>Compliant</code>でもWindows Updateに表示される場合がある</p>
+<p>今回使用した<code class="inline-code">AWS-DefaultPatchBaseline</code>は、Windows Serverについて、分類が<code class="inline-code">CriticalUpdates</code>または<code class="inline-code">SecurityUpdates</code>で、MSRC重要度が<code class="inline-code">Critical</code>または<code class="inline-code">Important</code>の更新を、公開または更新から7日後に承認します。Windows Updateで検出された<code class="inline-code">KB2267602</code>はMicrosoft Defender Antivirusのセキュリティインテリジェンス更新であり、頻繁に更新される定義更新です。今回のデフォルトベースラインで承認されたOSパッチとは別に管理されるため、Patch Managerが<code class="inline-code">Compliant</code>でもWindows Updateに表示される場合がある</p>
 <figure class="screenshot-wide"><figcaption>ベースライン対象外更新の検出</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-patch-manager/036-ベースライン対象外更新の検出.png" alt="ベースライン対象外更新の検出" width="1201" height="730" loading="lazy"></div></figure>
 
-<p>画像では、① SSM Install完了後の手動確認でWindows Updateが<code>KB2267602</code>を検出してインストールを開始したこと、② 自動更新が組織のポリシーで無効であることを確認する。この更新はSSMの実行終了後に手動の「更新プログラムのチェック」で開始されたため、SSMが適用した更新として記録しない</p>
+<p>画像では、① SSM Install完了後の手動確認でWindows Updateが<code class="inline-code">KB2267602</code>を検出してインストールを開始したこと、② 自動更新が組織のポリシーで無効であることを確認する。この更新はSSMの実行終了後に手動の「更新プログラムのチェック」で開始されたため、SSMが適用した更新として記録しない</p>
 <figure class="screenshot-wide"><figcaption>手動更新したKB2267602の履歴</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-patch-manager/037-手動更新したkb2267602の履歴.png" alt="手動更新したKB2267602の履歴" width="1201" height="730" loading="lazy"></div></figure>
 
-<p>画像では、Windows Updateから手動でインストールされた<code>KB2267602</code>のバージョンと成功表示を確認する。SSMのInstall結果とは区別して記録する</p>
+<p>画像では、Windows Updateから手動でインストールされた<code class="inline-code">KB2267602</code>のバージョンと成功表示を確認する。SSMのInstall結果とは区別して記録する</p>
 <div class="callout callout-warning"><p><strong>注意：実行前のWindows Update操作</strong><br>SSMによる適用前後を比較する場合、Install前にWindows Updateの「更新プログラムのチェック」を押すと、Windows Update側でダウンロードやインストールが始まり、SSMの適用結果と混在する可能性があります。事前確認では画面表示と既存履歴だけを記録し、手動チェックはSSM実行後の切り分け作業として実施する</p>
 </div>
 <ul>
 <li>出典：<a href="https://docs.aws.amazon.com/systems-manager/latest/userguide/patch-manager-installing-patches.html">How patches are installed</a></li>
 <li>出典：<a href="https://learn.microsoft.com/en-us/defender-endpoint/microsoft-defender-antivirus-updates">Microsoft Defender Antivirus security intelligence and product updates</a></li>
 </ul>
-
+      <h2 id="related-pages">関連ページ</h2>
+      <div class="page-link-grid">
+        <a class="page-link-card" href="workspaces-image-bundle.html"><strong>WorkSpaces カスタムイメージ・バンドル</strong><span>マルチVPC・閉域VDI基盤案件の関連手順</span></a>
+        <a class="page-link-card" href="workspaces-skill-transfer.html"><strong>全体構築・運用順序</strong><span>マルチVPC・閉域VDI基盤案件の関連手順</span></a>
+        <a class="page-link-card" href="workspaces-cost-optimizer.html"><strong>Amazon WorkSpaces Cost Optimizer</strong><span>マルチVPC・閉域VDI基盤案件の関連手順</span></a>
+      </div>
     </main>
   </div>
   <script src="../assets/app.js?v=20260908-skill-transfer1"></script>
