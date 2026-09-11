@@ -24,55 +24,6 @@
       <div class="sidebar-heading">
         <button class="icon-button sidebar-toggle sidebar-toggle-inline" type="button" aria-controls="site-sidebar" aria-expanded="true" title="ナビゲーションを閉じる" aria-label="ナビゲーションを閉じる">☰</button>
       </div>
-      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">✎</span>記事</p>
-      <a href="cloudflare-private-site.html">Private GitHubリポジトリをCloudflare Workersで認証付き公開してみた</a>
-      <details class="sidebar-nested-menu" open>
-        <summary>マルチVPC・閉域VDI基盤案件（9ページ）</summary>
-        <div class="sidebar-subnav">
-          <a href="workspaces-skill-transfer.html">全体構築・運用順序</a>
-          <a href="workspaces-managed-ad.html">AWS Managed Microsoft AD 構築・管理</a>
-          <a href="workspaces-management-ec2.html">管理用EC2・Active Directory管理</a>
-          <a href="workspaces-ad-connector.html">AD Connector 構築・権限委任</a>
-          <a href="workspaces-provisioning-gpo.html">Amazon WorkSpaces 構築・OU・GPO</a>
-          <a class="active" href="workspaces-image-bundle.html">WorkSpaces カスタムイメージ・バンドル</a>
-          <a href="workspaces-patch-manager.html">Systems Manager Patch Manager</a>
-          <a href="workspaces-cost-optimizer.html">Amazon WorkSpaces Cost Optimizer</a>
-          <a href="workspaces-cloudwatch-monitoring.html">CloudWatch・SNS 監視／通知</a>
-        </div>
-      </details>
-      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">◈</span>Terraform</p>
-      <a href="terraform.html">Terraform 概要</a>
-      <a href="hcp-terraform.html">HCP Terraform（Terraform Cloud）</a>
-      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">☁︎</span>AWS</p>
-      <a href="cloudformation.html">CloudFormation 運用手順集</a>
-      <a href="aws-cli.html">AWS CLI 特殊対応</a>
-      <a href="aws-cli-reference.html">AWS CLI コマンドリファレンス</a>
-      <a href="eventbridge-scheduler.html">EventBridge Scheduler</a>
-      <a href="aws-directory-service.html">AWS Directory Service 運用手順</a>
-      <a href="amazon-workspaces.html">Amazon WorkSpaces</a>
-      <a href="amazon-ses.html">Amazon SES SMTPリレー</a>
-      <a href="amazon-ses-monitoring.html">Amazon SES 配信監視</a>
-      <a href="amazon-rds-blue-green.html">Amazon RDS Blue/Green Deployments</a>
-      <a href="apache-acm-certificate-update.html">証明書更新（ACMエクスポート）</a>
-      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">⚙︎</span>OS／ミドルウェア</p>
-      <a href="rhel9.html">Red Hat Enterprise Linux 9</a>
-      <a href="rhel10.html">Red Hat Enterprise Linux 10</a>
-      <a href="amazon-linux-2023.html">Amazon Linux 2023</a>
-      <a href="windows-server-2022.html">Windows Server 2022</a>
-      <a href="windows-server-2025.html">Windows Server 2025</a>
-      <a href="windows-server-2016-upgrade.html">Windows Server 2016 インプレースアップグレード</a>
-      <a href="storage.html">ストレージ管理</a>
-      <a href="apache.html">Apache</a>
-      <a href="apache-self-signed-ssl-termination.html">Apache SSL終端（自己署名証明書）</a>
-      <a href="redis.html">Redis（KVS）</a>
-      <a href="nfs.html">NFS</a>
-      <a href="samba.html">Samba</a>
-      <a href="mariadb.html">MariaDB</a>
-      <a href="postgresql.html">PostgreSQL</a>
-      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">▤</span>リファレンス</p>
-      <a href="../writing-style-guide.html">[GitHub Pages] 記法・テンプレート</a>
-      <a href="troubleshooting.html">障害切り分けチェックリスト</a>
-      <a href="eol.html">EOL / ライフサイクル一覧表</a>
     </aside>
     <main class="content workspaces-skill-transfer-guide">
       <nav class="breadcrumb" aria-label="Breadcrumb">
@@ -82,33 +33,86 @@
       <h1>WorkSpaces カスタムイメージ・バンドル</h1>
       <div class="page-summary"><strong>⚡ このページの要約</strong><p class="lead">Image Checkerの合格後にカスタムイメージとバンドルを作成し、検証用WorkSpaceで確認する<br>別AWSアカウントへの共有・コピー・再作成と、RDPを使用する場合の制約をまとめる</p></div>
       <nav class="section-links" aria-label="主要セクション">
-        <a href="#amazon-workspacesカスタムイメージ-バンドル作成-共有手順">Amazon WorkSpacesカスタムイメージ・バンドル作成・共有手順</a>
-        <a href="#amazon-workspaces-rdp接続運用手順">Amazon WorkSpaces RDP接続運用手順</a>
-        <a href="#related-pages">関連ページ</a>
+        <a href="#9-amazon-workspaces-カスタムイメージ-バンドル作成-共有手順書">⑨[Amazon WorkSpaces] カスタムイメージ・バンドル作成・共有手順書</a>
       </nav>
-<h2 id="amazon-workspacesカスタムイメージ-バンドル作成-共有手順">Amazon WorkSpacesカスタムイメージ・バンドル作成・共有手順</h2>
-<p><strong>目次</strong></p>
-<!-- Confluenceでは、この位置に目次マクロを配置する -->
+<section id="workspacesImage" class="procedure-document">
 
+<h2 id="9-amazon-workspaces-カスタムイメージ-バンドル作成-共有手順書">⑨[Amazon WorkSpaces] カスタムイメージ・バンドル作成・共有手順書</h2><nav class="section-links document-toc" aria-label="この手順の目次"><a href="#概要">概要</a> <a href="#仕様">仕様</a> <a href="#前提条件">前提条件</a> <a href="#構築作業">構築作業</a> <a href="#運用作業">運用作業</a> <a href="#構築後確認">構築後確認</a></nav>
 <h3 id="概要">概要</h3>
-<h4 id="本手順書で実施すること">本手順書で実施すること</h4>
-<p>Windows Server 2022、DCV、PowerPro、ルート80GB／ユーザー50GBの参照WorkSpaceへ、共通アプリケーションとOS設定を適用します。AWS Image Checkerに合格した参照WorkSpaceから<code class="inline-code">WindowsServer2022-Japanese-DCV</code>イメージとPowerProカスタムバンドルを作成し、検証用WorkSpaceで動作を確認する</p>
-<p>他AWSアカウントへ展開する場合は、カスタムバンドルではなくカスタムイメージを共有します。共有先はイメージを自身のアカウントへコピーし、そのコピーからカスタムバンドルを作成する</p>
-<h4 id="完了条件">完了条件</h4>
-<ul class="check-list">
-<li>✔ 参照WorkSpaceのOS、アプリケーション、空き容量、プロファイルおよび暗号化状態を確認している</li>
-<li>✔ AWS Image Checkerの全項目が<code class="inline-code">PASSED</code>で、<code class="inline-code">Validation successful</code>となっている</li>
-<li>✔ カスタムイメージとカスタムバンドルが「利用可能」である</li>
-<li>✔ カスタムバンドルのPowerPro、80GB／50GBおよび元イメージIDを確認している</li>
-<li>✔ カスタムバンドルから作成した検証用WorkSpaceでアプリケーション、DCV、OUおよびGPOを確認している</li>
-<li>✔ 共有先AWSアカウントでイメージをコピーし、共有先の新しいイメージIDを確認している</li>
-</ul>
-<h3 id="今回の設定値">今回の設定値</h3>
 <table>
 <thead>
 <tr>
 <th>項目</th>
-<th>今回の設定値</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>目的</td>
+<td>共通設定を含むカスタムイメージとバンドルを作成し、検証後に必要なAWSアカウントへ共有します。</td>
+</tr>
+<tr>
+<td>対象</td>
+<td>Windows Server 2022ベース・DCVの参照WorkSpace</td>
+</tr>
+<tr>
+<td>実施内容</td>
+<td>参照端末の準備、Image Checker、イメージ・バンドル作成、検証</td>
+</tr>
+<tr>
+<td>運用作業</td>
+<td>更新、展開対象管理、他アカウントへの共有・コピー、共有解除</td>
+</tr>
+</tbody></table>
+<h3 id="仕様">仕様</h3>
+<h4 id="構成-動作">構成・動作</h4>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>管理する内容</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>カスタムイメージ</td>
+<td>Windows、Cドライブ上のアプリケーション、OS設定</td>
+</tr>
+<tr>
+<td>カスタムバンドル</td>
+<td>カスタムイメージ、コンピューティングタイプ、ルート／ユーザーボリューム</td>
+</tr>
+<tr>
+<td>Directory ID／ユーザー</td>
+<td>WorkSpaceの所属ディレクトリと利用者</td>
+</tr>
+<tr>
+<td>ADグループ</td>
+<td>環境ごとの展開対象ユーザー</td>
+</tr>
+<tr>
+<td>GPO</td>
+<td>利用開始後も変更するセキュリティ・ユーザー設定</td>
+</tr>
+</tbody></table>
+<p>ADグループとカスタムバンドルはWorkSpaces標準機能で直接関連付けられません。環境ごとにADグループ、Directory IDおよびBundle IDの対応表を管理し、グループメンバーを抽出してユーザー単位でWorkSpaceを作成します。ADグループからユーザーを削除しても、WorkSpaceは自動削除されません。</p>
+<h4 id="管理範囲">管理範囲</h4>
+<p>参照WorkSpaceのOS・共通アプリケーションをイメージで管理し、利用開始後のポリシー変更はGPOで管理します。共有は必要なAWSアカウントに限定します。</p>
+<h4 id="制約事項">制約事項</h4>
+<p>暗号化したWorkSpaceからカスタムイメージは作成できません。カスタムバンドルの容量は元イメージの容量以上が必要です。共有は同じリージョンのAWSアカウント間で行い、共有先はイメージをコピーしてから利用します。</p>
+<h3 id="前提条件">前提条件</h3>
+<h4 id="既存リソース-ネットワーク">既存リソース・ネットワーク</h4>
+<ul>
+<li>状態が<code class="inline-code">Available</code>、変更状態が<code class="inline-code">None</code>で、両ボリュームが暗号化されていないこと。</li>
+<li>必要なWindows更新・アプリケーションとImage Checkerを実行できること。</li>
+</ul>
+<h4 id="権限-接続環境">権限・接続環境</h4>
+<p>AWSコンソールの作業には、WorkSpacesと関連するDirectory Service・EC2・IAMリソースを操作できるIAMユーザーまたはロールを使用します。弊社で使用する<code class="inline-code">AdministratorAccess</code>付きのユーザーまたはロールでも対応できます。SCP、アクセス許可境界や明示的な拒否による制限がある場合は、別途確認します。IAM権限とActive Directory内の管理権限は、それぞれ用意します。詳細は<a href="https://docs.aws.amazon.com/aws-managed-policy/latest/reference/AdministratorAccess.html">AdministratorAccess</a>を参照してください。</p>
+<p>参照WorkSpaceのローカル管理権限と、共有先でのイメージコピー・バンドル作成権限を準備します。</p>
+<h4 id="事前に準備する情報">事前に準備する情報</h4>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>設定値</th>
 </tr>
 </thead>
 <tbody><tr>
@@ -117,7 +121,7 @@
 </tr>
 <tr>
 <td>作成元Directory ID</td>
-<td><code class="inline-code">d-956739e3e4</code></td>
+<td>作成元WorkSpaceの詳細で確認した値</td>
 </tr>
 <tr>
 <td>参照WorkSpace ID</td>
@@ -157,7 +161,7 @@
 </tr>
 <tr>
 <td>ルート／ユーザーボリューム</td>
-<td>80GB／50GB</td>
+<td>設計値：80GB／50GB。作成元イメージとバンドルの実容量は作成前後に確認</td>
 </tr>
 <tr>
 <td>ボリューム暗号化</td>
@@ -168,92 +172,70 @@
 <td><code class="inline-code">7321********</code></td>
 </tr>
 </tbody></table>
-<p>イメージの説明には作成元バンドル、OS、言語、TPM、プロトコルおよび主要アプリケーションを記載します。作成日はAWSコンソールに表示されるため、説明へ重複して記載しない</p>
-<h3 id="イメージ-バンドルおよび展開対象">イメージ、バンドルおよび展開対象</h3>
-<table>
-<thead>
-<tr>
-<th>項目</th>
-<th>管理する内容</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>カスタムイメージ</td>
-<td>Windows、Cドライブ上のアプリケーション、OS設定</td>
-</tr>
-<tr>
-<td>カスタムバンドル</td>
-<td>カスタムイメージ、コンピューティングタイプ、ルート／ユーザーボリューム</td>
-</tr>
-<tr>
-<td>Directory ID／ユーザー</td>
-<td>WorkSpaceの所属ディレクトリと利用者</td>
-</tr>
-<tr>
-<td>ADグループ</td>
-<td>環境ごとの展開対象ユーザー</td>
-</tr>
-<tr>
-<td>GPO</td>
-<td>利用開始後も変更するセキュリティ・ユーザー設定</td>
-</tr>
-</tbody></table>
-<p>ADグループとカスタムバンドルはWorkSpaces標準機能で直接関連付けられません。環境ごとにADグループ、Directory IDおよびBundle IDの対応表を管理し、グループメンバーを抽出してユーザー単位でWorkSpaceを作成します。ADグループからユーザーを削除しても、WorkSpaceは自動削除されない</p>
-<h3 id="前提条件">前提条件</h3>
+<p>イメージの説明には作成元バンドル、OS、言語、TPM、プロトコルおよび主要アプリケーションを記載します。作成日はAWSコンソールに表示されるため、説明へ重複して記載しません。</p>
+<div class="callout callout-info"><p><strong>ℹ️ 情報：取得時のIDと実作業の値</strong></p>
+<p>図4の参照WorkSpaceは<code class="inline-code">ws-jkxz7js0s</code>で、⑥の作成例とは別の端末です。表内のWorkSpace・イメージ・バンドルIDは取得時の例です。作成元Directory IDは画像から確認できないため、実作業ではWorkSpaceの詳細で確認します。</p>
+</div>
 <ul>
-<li>✔ 参照WorkSpaceが「利用可能」で、変更状態が「なし」である</li>
-<li>✔ 参照WorkSpaceのルート／ユーザーボリュームが暗号化されていない</li>
-<li>✔ Cドライブに12GiBを超える空き容量がある</li>
-<li>✔ イメージへ取り込むユーザープロファイルが10GiB未満である</li>
-<li>✔ 承認済みWindows更新とアプリケーションを適用済みである</li>
-<li>✔ アプリケーションはCドライブへ導入し、Sysprepに対応している</li>
-<li>✔ ドメインユーザーの資格情報で起動するサービスが残っていない</li>
-<li>✔ WorkSpaces、DCV、RDP、WinRM、PowerShellおよびAWSドライバーを削除していない</li>
-<li>✔ ネットワークアダプターがDHCPを使用し、意図しない追加ドライブがない</li>
-<li>✔ 共有元と共有先のAWSアカウントID、リージョン、IAM権限およびクォータを確認している</li>
+<li>参照WorkSpaceが「利用可能」で、変更状態が「なし」こと。</li>
+<li>参照WorkSpaceのルート／ユーザーボリュームが暗号化されていない</li>
+<li>Cドライブに12GiBを超える空き容量がある</li>
+<li>イメージへ取り込むユーザープロファイルが10GiB未満こと。</li>
+<li>承認済みWindows更新とアプリケーションを適用済みこと。</li>
+<li>アプリケーションはCドライブへ導入し、Sysprepに対応している</li>
+<li>ドメインユーザーの資格情報で起動するサービスが残っていない</li>
+<li>WorkSpaces、DCV、RDP、WinRM、PowerShellおよびAWSドライバーを削除していない</li>
+<li>ネットワークアダプターがDHCPを使用し、意図しない追加ドライブがない</li>
+<li>共有元と共有先のAWSアカウントID、リージョン、IAM権限およびクォータを確認している</li>
 </ul>
-<p>暗号化されたWorkSpaceからカスタムイメージは作成できません。カスタムバンドルのボリュームは、作成元イメージで利用できるサイズとAWSの許容範囲に従います。作成画面と作成後のバンドル詳細で実値を確認する</p>
-<h3 id="参照workspaceの準備">参照WorkSpaceの準備</h3>
+<p>暗号化されたWorkSpaceからカスタムイメージは作成できません。カスタムバンドルのボリュームは、作成元イメージで利用できるサイズとAWSの許容範囲に従います。作成画面と作成後のバンドル詳細で実値を確認します。</p>
+<h3 id="構築作業">構築作業</h3>
+<h4 id="1-参照workspaceを準備する">1. 参照WorkSpaceを準備する</h4>
 <ol class="step-list">
-<li><a href="workspaces-provisioning-gpo.html">Amazon WorkSpaces作成・バンドル設定手順</a>に従い、イメージ作成専用WorkSpaceを作成</li>
-<li>Windows Server 2022、DCV、PowerPro、ルート80GB／ユーザー50GBを指定</li>
-<li>ボリューム暗号化を選択していないことを確認</li>
-<li>専用ユーザーを使用し、個人の業務データを保存しない</li>
-<li>本番用GPOがImage Checkerを妨げる場合は、イメージ作成専用OUで影響を分離</li>
-<li>承認済みWindows更新と共通アプリケーションを適用</li>
-<li>ライセンスが複製後の利用条件を満たすことを確認</li>
-<li>個人ファイル、ダウンロード、一時ファイル、キャッシュ、ブラウザー履歴および認証情報を削除</li>
-<li>不要なユーザープロファイルを削除し、対象プロファイルが10GiB未満であることを確認</li>
-<li>Cドライブに12GiBを超える空き容量があることを確認</li>
-<li>Windowsを再起動し、アプリケーション、ネットワークおよびDCV接続を確認</li>
-<li>WorkSpacesクライアントを切断</li>
+<li><a href="workspaces-provisioning-gpo.html#workspacesBuild">Amazon WorkSpaces作成・バンドル設定手順</a>に従い、イメージ作成専用WorkSpaceを作成します。</li>
+<li>Windows Server 2022、DCV、PowerPro、ルート80GB／ユーザー50GBを指定します。</li>
+<li>ボリューム暗号化を選択していないことを確認します。</li>
+<li>専用ユーザーを使用し、個人の業務データを保存しません。</li>
+<li>イメージ作成用端末にはお客様固有のGPO設定を適用せず、イメージ作成後の展開先で適用します。必要に応じて専用OUを使用し、AWS管理の既定GPOは変更しません。</li>
+<li>承認済みWindows更新と共通アプリケーションを適用します。</li>
+<li>ライセンスが複製後の利用条件を満たすことを確認します。</li>
+<li>個人ファイル、ダウンロード、一時ファイル、キャッシュ、ブラウザー履歴および認証情報を削除します。</li>
+<li>不要なユーザープロファイルを削除し、対象プロファイルが10GiB未満となっていることを確認します。</li>
+<li>Cドライブに12GiBを超える空き容量があることを確認します。</li>
+<li>Windowsを再起動し、アプリケーション、ネットワークおよびDCV接続を確認します。</li>
+<li>WorkSpacesクライアントを切断します。</li>
 </ol>
-<p>利用開始後も変更する設定はイメージへ固定せず、GPOで管理する</p>
-<h3 id="aws-image-checker">AWS Image Checker</h3>
-<h4 id="検査を実行する">検査を実行する</h4>
+<p>利用開始後も変更する設定はイメージへ固定せず、GPOで管理します。</p>
+<h4 id="2-image-checkerを実行する">2. Image Checkerを実行する</h4>
+<h5 id="検査を実行する">検査を実行する</h5>
 <ol class="step-list">
-<li>参照WorkSpaceへ管理者権限で接続</li>
-<li>管理者PowerShellでImage Checkerを起動</li>
+<li>参照WorkSpaceへ管理者権限で接続します。</li>
+<li>管理者PowerShellでImage Checkerを起動します。</li>
 </ol>
 <div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>Start-Process 'C:\Program Files\Amazon\ImageChecker.exe' -Verb RunAs</code></pre></div>
+<p>UACが表示された場合は発行元を確認して「はい」を選択します。</p>
+<figure class="screenshot-wide"><figcaption>参考図1　Image Checkerの実行前画面</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-image-bundle/001-image-checker実行前.png" alt="Image Checker実行前" width="533" height="694" loading="lazy"></div></figure>
+
+
+
 <ol start="3">
-<li>「Run」を選択</li>
-<li>全項目が<code class="inline-code">PASSED</code>で、<code class="inline-code">Validation successful</code>と表示されることを確認</li>
-<li>警告またはエラーが残る場合は、イメージ作成へ進まない</li>
+<li>「Run」を選択します。</li>
+<li>全項目が<code class="inline-code">PASSED</code>で、<code class="inline-code">Validation successful</code>と表示されることを確認します。</li>
+<li>警告またはエラーが残る場合は、イメージ作成へ進みません。</li>
 </ol>
-<h4 id="staged-appx警告の解消">Staged AppX警告の解消</h4>
-<p><code class="inline-code">One or more AppX packages are in a staged state</code>と表示された場合は、図1の警告対象を確認する</p>
-<figure class="screenshot-wide"><figcaption>Image CheckerのAppXステージ状態警告</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-image-bundle/001-image-checkerのappxステージ状態警告.png" alt="Image CheckerのAppXステージ状態警告" width="530" height="690" loading="lazy"></div></figure>
+<h5 id="staged-appx警告の解消">Staged AppX警告の解消</h5>
+<p><code class="inline-code">One or more AppX packages are in a staged state</code>と表示された場合は、図1の警告対象を確認します。</p>
+<figure class="screenshot-wide"><figcaption>図1　ImageChecker_AppXステージ状態警告</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-image-bundle/002-image-checkerのappxステージ状態警告.png" alt="Image CheckerのAppXステージ状態警告" width="530" height="690" loading="lazy"></div></figure>
 
 
 
-<p>最初に管理者PowerShellで<code class="inline-code">Staged</code>のパッケージを特定し、結果を保存します。再登録の対象端末は、イメージ作成専用の参照WorkSpaceだけです。<code class="inline-code">Staged</code>が1件以上あり、個別パッケージの削除後も同じ警告が残る場合に限って、後述の再登録を実施します。対象が0件の場合は再登録せず、Image Checkerの<code class="inline-code">Info</code>とログから別の原因を確認する</p>
+<p>最初に管理者PowerShellで<code class="inline-code">Staged</code>のパッケージを特定し、結果を保存します。再登録の対象端末は、イメージ作成専用の参照WorkSpaceだけです。<code class="inline-code">Staged</code>が1件以上あり、個別の対処後も同じ警告が残り、対象と影響を確認できた場合に限って、後述の再登録を実施します。対象が0件の場合は再登録せず、Image Checkerの<code class="inline-code">Info</code>とログから別の原因を確認します。</p>
 <div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$stagedPackages = Get-AppxPackage -AllUsers |
     Where-Object { $_.PackageUserInformation -match 'Staged' }
 
 $stagedPackages |
     Select-Object Name, PackageFullName, PackageUserInformation</code></pre></div>
-<p>今回の環境では、個別パッケージ削除では警告が解消しませんでした。この場合は、管理者PowerShellで、全ユーザーに登録されていて有効な<code class="inline-code">AppXManifest.xml</code>を持つ既存AppXパッケージを再登録します。再登録対象は<code class="inline-code">Staged</code>と表示された1パッケージだけではなく、この条件を満たす既存AppXパッケージ</p>
+<p>個別の対処後も同じ警告が残り、再登録が必要な場合は、管理者PowerShellで、全ユーザーから列挙した、有効な<code class="inline-code">AppXManifest.xml</code>を持つ既存AppXパッケージを再登録します。再登録対象は<code class="inline-code">Staged</code>と表示された1パッケージだけではなく、この条件を満たす既存AppXパッケージです。</p>
 <div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$packagesToRegister = Get-AppxPackage -AllUsers |
     Where-Object {
         $_.InstallLocation -and
@@ -261,7 +243,7 @@ $stagedPackages |
     }
 
 $packagesToRegister | ForEach-Object {
-    Add-AppxPackage -DisableDevelopmentMode -Register (Join-Path $_.InstallLocation 'AppXManifest.xml')
+    Add-AppxPackage -DisableDevelopmentMode -Register (Join-Path $_.InstallLocation 'AppXManifest.xml') -ErrorAction Stop
 }
 
 $remainingStagedPackages = Get-AppxPackage -AllUsers |
@@ -269,285 +251,188 @@ $remainingStagedPackages = Get-AppxPackage -AllUsers |
     Select-Object Name, PackageFullName, PackageUserInformation
 
 $remainingStagedPackages</code></pre></div>
-<div class="callout callout-error"><p><strong>警告：AppX再登録は参照WorkSpaceだけで実施する</strong></p>
-<p>このコマンドは全ユーザーの既存AppXパッケージ登録を処理します。業務利用中のWorkSpaceへ一律実行せず、イメージ作成専用の参照WorkSpaceで、実行前の<code class="inline-code">Staged</code>一覧とインストール済みアプリを記録してから1回だけ実行します。<code class="inline-code">$remainingStagedPackages</code>の出力がなく、業務アプリとスタートメニューが正常で、Image Checkerを再実行して全項目が<code class="inline-code">PASSED</code>になった場合だけイメージ作成へ進みます。AppX再登録でエラーが発生する、<code class="inline-code">Staged</code>が残る、アプリが起動しない、またはImage Checkerの警告が残る場合はイメージ作成を中止します。パッケージを推測で削除せず、変更前の健全なスナップショットからの復元、または参照WorkSpaceの再構築を選択する</p>
+<div class="callout callout-warning"><p><strong>⚠️ 注意：AppX再登録は参照WorkSpaceだけで実施する</strong></p>
+<p>このコマンドは全ユーザーからパッケージを列挙し、実行ユーザーのコンテキストで再登録します。全ユーザーへ一括でインストールする処理とは異なります。業務利用中のWorkSpaceへ一律実行せず、イメージ作成専用の参照WorkSpaceで、実行前の<code class="inline-code">Staged</code>一覧とインストール済みアプリを記録してから1回だけ実行します。<code class="inline-code">$remainingStagedPackages</code>の出力がなく、業務アプリとスタートメニューが正常で、Image Checkerを再実行して全項目が<code class="inline-code">PASSED</code>になった場合だけイメージ作成へ進みます。AppX再登録でエラーが発生する、<code class="inline-code">Staged</code>が残る、アプリが起動しない、またはImage Checkerの警告が残る場合はイメージ作成を中止します。パッケージを推測で削除せず、変更前の健全なスナップショットからの復元、または参照WorkSpaceの再構築を選択します。</p>
 </div>
-<p>出典：<a href="https://dev.classmethod.jp/articles/aws-workspaces-image-checker-error-appx/">DevelopersIO：WorkSpacesのImage CheckerでAppX関連エラーが出た場合の対処</a>記事では<code class="inline-code">Staged</code>パッケージの削除で解消しなかった後、全AppXパッケージの再登録により<code class="inline-code">Staged</code>が0件となり、Image Checkerとイメージ作成が成功した事例を紹介している</p>
-<p>図2で全項目が<code class="inline-code">PASSED</code>、図3で<code class="inline-code">Validation successful</code>を確認する</p>
-<figure class="screenshot-wide"><figcaption>Image Checkerの全項目合格</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-image-bundle/002-image-checkerの全項目合格.png" alt="Image Checkerの全項目合格" width="534" height="689" loading="lazy"></div></figure>
+<p>再登録の動作は<a href="https://learn.microsoft.com/en-us/powershell/module/appx/add-appxpackage">Add-AppxPackage</a>を参照してください。警告に応じた個別対処を優先し、アプリケーションの削除は対象と影響を確認してから実施します。</p>
+<p>図2で全項目が<code class="inline-code">PASSED</code>、図3で<code class="inline-code">Validation successful</code>を確認します。</p>
+<figure class="screenshot-wide"><figcaption>図2　ImageChecker全項目合格</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-image-bundle/003-image-checkerの全項目合格.png" alt="Image Checkerの全項目合格" width="534" height="689" loading="lazy"></div></figure>
 
 
 
-<figure class="screenshot-wide"><figcaption>Image Checkerの正常完了</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-image-bundle/003-image-checkerの正常完了.png" alt="Image Checkerの正常完了" width="531" height="689" loading="lazy"></div></figure>
+<figure class="screenshot-wide"><figcaption>図3　ImageChecker正常完了</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-image-bundle/004-image-checkerの正常完了.png" alt="Image Checkerの正常完了" width="531" height="689" loading="lazy"></div></figure>
 
 
 
-<h3 id="カスタムイメージの作成">カスタムイメージの作成</h3>
-<p>出典：<a href="https://docs.aws.amazon.com/ja_jp/workspaces/latest/adminguide/create-custom-bundle.html">AWS公式：カスタムWorkSpacesイメージとバンドルを作成する</a></p>
-<div class="callout callout-info"><p><strong>情報：イメージ作成時のWorkSpace状態</strong></p>
-<p>作成元WorkSpaceは「利用可能（<code class="inline-code">Available</code>）」、変更状態は「なし（<code class="inline-code">None</code>）」である必要があります。AutoStopで停止中の場合は起動して利用可能になるまで待ちます。利用者のログインは不要ですが、作成中は使用できないため、クライアントを切断してから実行する</p>
+<div class="callout callout-error"><p><strong>❌ エラー：Image Checkerが合格しない場合</strong></p>
+<p>イメージ作成を開始せず、<code class="inline-code">Info</code>とログファイルで対象項目を確認します。修正後に再実行し、全項目の合格と<code class="inline-code">Validation successful</code>を確認してから進みます。</p>
+</div>
+<h4 id="3-カスタムイメージを作成する">3. カスタムイメージを作成する</h4>
+<p>作成要件と最新の制約は<a href="https://docs.aws.amazon.com/ja_jp/workspaces/latest/adminguide/create-custom-bundle.html">カスタムWorkSpacesイメージとバンドルを作成する</a>を参照してください。</p>
+<div class="callout callout-info"><p><strong>ℹ️ 情報：イメージ作成時のWorkSpace状態</strong></p>
+<p>作成元WorkSpaceが「利用可能（<code class="inline-code">Available</code>）」、変更状態が「なし（<code class="inline-code">None</code>）」となっていることを確認します。AutoStopで停止中の場合は起動して利用可能になるまで待ちます。利用者のログインは不要ですが、作成中は使用できないため、クライアントを切断してから実行します。</p>
 </div>
 <ol class="step-list">
-<li><p>Amazon WorkSpacesコンソールで作成元WorkSpaceを選択</p>
+<li><p>Amazon WorkSpacesコンソールで作成元WorkSpaceを選択します。</p>
 </li>
-<li><p>WorkSpace ID、状態、変更状態、暗号化および作成元バンドルを確認</p>
+<li><p>WorkSpace ID、状態、変更状態、暗号化および作成元バンドルを確認します。</p>
 </li>
-<li><p>「アクション」から「イメージの作成」を選択</p>
+<li><p>「アクション」から「イメージの作成」を選択します。</p>
 </li>
-<li><p>イメージ名へ<code class="inline-code">WindowsServer2022-Japanese-DCV</code>を入力</p>
+<li><p>イメージ名へ<code class="inline-code">WindowsServer2022-Japanese-DCV</code>を入力します。</p>
 </li>
-<li><p>説明へ今回の設定値に記載した文字列を入力</p>
+<li><p>説明へ設定値に記載した文字列を入力します。</p>
 </li>
-<li><p>作成元バンドル、OS、言語、TPM、プロトコルおよび主要アプリケーションを照合</p>
+<li><p>作成元バンドル、OS、言語、TPM、プロトコルおよび主要アプリケーションを照合します。</p>
 </li>
-<li><p>「イメージの作成」を選択</p>
+<li><p>「イメージの作成」を選択します。</p>
 </li>
 </ol>
-<p>図5では、①イメージ名、②説明、③「イメージの作成」を確認する</p>
-<figure class="screenshot-wide aws-console-identity"><figcaption>カスタムイメージ作成条件入力</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-image-bundle/004-カスタムイメージ作成条件入力.png" alt="カスタムイメージ作成条件入力" width="1718" height="1304" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><figcaption>図4　カスタムイメージ作成条件入力</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-image-bundle/005-カスタムイメージ作成条件入力.png" alt="カスタムイメージ作成条件入力" width="1718" height="1304" loading="lazy"></div></figure>
 
 
 
 <ol start="8">
-<li>「イメージ」を開き、対象イメージが「利用可能」になるまで待機</li>
-<li>イメージ名、イメージID、OS、プロトコルおよび所有者を確認</li>
+<li>「イメージ」を開き、対象イメージが「利用可能」になるまで待ちます。</li>
+<li>イメージ名、イメージID、OS、プロトコルおよび所有者を確認します。</li>
 </ol>
-<figure class="screenshot-wide aws-console-identity"><figcaption>カスタムイメージ利用可能確認</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-image-bundle/005-カスタムイメージ利用可能確認.png" alt="カスタムイメージ利用可能確認" width="1718" height="367" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><figcaption>図5　カスタムイメージ利用可能確認</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-image-bundle/006-カスタムイメージ利用可能確認.png" alt="カスタムイメージ利用可能確認" width="1718" height="367" loading="lazy"></div></figure>
 
 
 
-<h3 id="カスタムバンドルの作成">カスタムバンドルの作成</h3>
+<h4 id="4-カスタムバンドルを作成する">4. カスタムバンドルを作成する</h4>
 <ol class="step-list">
-<li>「イメージ」で作成したカスタムイメージを選択</li>
-<li>「アクション」から「バンドルの作成」を選択</li>
+<li>「イメージ」で作成したカスタムイメージを選択します。</li>
+<li>「アクション」から「バンドルの作成」を選択します。</li>
 </ol>
-<p>図7では、①「アクション」、②「バンドルの作成」を選択する</p>
-<figure class="screenshot-wide aws-console-identity"><figcaption>カスタムバンドル作成開始</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-image-bundle/006-カスタムバンドル作成開始.png" alt="カスタムバンドル作成開始" width="1718" height="367" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><figcaption>図6　カスタムバンドル作成開始</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-image-bundle/007-カスタムバンドル作成開始.png" alt="カスタムバンドル作成開始" width="1718" height="367" loading="lazy"></div></figure>
 
 
 
 <ol start="3">
-<li>バンドル名へ<code class="inline-code">WindowsServer2022-Japanese-DCV-PowerPro</code>を入力</li>
-<li>コンピューティングタイプにPowerPro、ルート80GB、ユーザー50GBを指定</li>
-<li>「バンドルの作成」を選択</li>
+<li>バンドル名へ<code class="inline-code">WindowsServer2022-Japanese-DCV-PowerPro</code>を入力します。</li>
+<li>コンピューティングタイプにPowerProを指定し、元イメージ以上の容量を選択します。設計値が80GB／50GBの場合は、その容量で利用できるイメージを使用します。</li>
+<li>「バンドルの作成」を選択します。</li>
 </ol>
-<p>図8では、①バンドル名、②PowerPro、③80GB／50GB、④「バンドルの作成」を確認する</p>
-<figure class="screenshot-wide aws-console-identity"><figcaption>カスタムバンドル設定</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-image-bundle/007-カスタムバンドル設定.png" alt="カスタムバンドル設定" width="1718" height="1304" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><figcaption>図7　カスタムバンドル設定</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-image-bundle/008-カスタムバンドル設定.png" alt="カスタムバンドル設定" width="1718" height="1304" loading="lazy"></div></figure>
 
 
 
 <ol start="6">
-<li>「バンドル」で状態が「利用可能」になるまで待機</li>
-<li>バンドルID、元イメージID、PowerPro、80GB／50GBおよびDCVを確認</li>
+<li>「バンドル」で状態が「利用可能」になるまで待ちます。</li>
+<li>バンドルID、元イメージID、PowerPro、承認済みのルート／ユーザー容量およびDCVを確認します。</li>
 </ol>
-<figure class="screenshot-wide aws-console-identity"><figcaption>カスタムバンドル作成完了</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-image-bundle/008-カスタムバンドル作成完了.png" alt="カスタムバンドル作成完了" width="1717" height="455" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><figcaption>図8　カスタムバンドル作成完了</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-image-bundle/009-カスタムバンドル作成完了.png" alt="カスタムバンドル作成完了" width="1717" height="455" loading="lazy"></div></figure>
 
 
 
-<p>AWS CLIで確認する場合は、実際のBundle IDを指定する</p>
-<div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>aws workspaces describe-workspace-bundles --bundle-ids wsb-757191hn0 --region ap-northeast-1 --query &quot;Bundles[0].{State:State,ImageId:ImageId,Compute:ComputeType.Name,RootGiB:RootStorage.Capacity,UserGiB:UserStorage.Capacity}&quot; --output table --no-cli-pager</code></pre></div>
-<p><code class="inline-code">State=AVAILABLE</code>、元イメージID、<code class="inline-code">Compute=POWERPRO</code>、<code class="inline-code">RootGiB=80</code>、<code class="inline-code">UserGiB=50</code>が一致しないバンドルは展開に使用しない</p>
-<h3 id="カスタムバンドルの検証">カスタムバンドルの検証</h3>
+<div class="callout callout-warning"><p><strong>⚠️ 注意：ソースイメージとバンドルの容量を確認</strong></p>
+<p>図7には、ソースイメージのルート容量175GBと、入力欄の80GB／50GBが表示されています。作成後の容量は図8の一覧に表示されていないため、バンドル詳細または次のCLIで確認します。元イメージの容量を下回るバンドルは作成できません。80GBが必要な場合は、80GBの参照WorkSpaceからイメージを作成します。</p>
+</div>
+<p>AWS CLIで確認する場合は、実際のBundle IDを指定します。</p>
+<div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$bundleId = '&lt;作成したBundle ID&gt;'
+aws workspaces describe-workspace-bundles --bundle-ids $bundleId --region ap-northeast-1 --query &quot;Bundles[0].{State:State,ImageId:ImageId,Compute:ComputeType.Name,RootGiB:RootStorage.Capacity,UserGiB:UserStorage.Capacity}&quot; --output table --no-cli-pager</code></pre></div>
+<p><code class="inline-code">State=AVAILABLE</code>、元イメージID、<code class="inline-code">Compute=POWERPRO</code>、ルート／ユーザー容量が承認済み設計と一致しないバンドルは展開に使用しません。</p>
+<h4 id="5-カスタムバンドルを検証する">5. カスタムバンドルを検証する</h4>
 <ol class="step-list">
-<li>WorkSpaces作成画面で「手動で設定」、「WorkSpacesバンドルを使用」の順に選択</li>
-<li>作成したカスタムバンドル名とBundle IDを指定して、検証用WorkSpaceを1台作成</li>
-<li><code class="inline-code">AVAILABLE</code>になるまで待ち、クライアントから接続</li>
-<li>OS、DCV、PowerPro、80GB／50GBおよび共通アプリケーションを確認</li>
-<li>コンピューターオブジェクトが対象OUにあることを確認</li>
-<li><code class="inline-code">gpupdate /force</code>と<code class="inline-code">gpresult /scope computer /r</code>で意図したGPOを確認</li>
-<li>業務通信、再起動、サインアウトおよび再サインインを確認</li>
-<li>検証結果が承認されるまで、本番で使用するBundle IDを切り替えない</li>
+<li>WorkSpaces作成画面で「手動で設定」、「WorkSpacesバンドルを使用」の順に選択します。</li>
+<li>作成したカスタムバンドル名とBundle IDを指定して、検証用WorkSpaceを1台作成します。</li>
+<li><code class="inline-code">AVAILABLE</code>になるまで待ち、クライアントから接続します。</li>
+<li>OS、DCV、PowerPro、承認済みのルート／ユーザー容量および共通アプリケーションを確認します。</li>
+<li>コンピューターオブジェクトが対象OUにあることを確認します。</li>
+<li><code class="inline-code">gpupdate /force</code>と<code class="inline-code">gpresult /scope computer /r</code>で意図したGPOを確認します。</li>
+<li>業務通信、再起動、サインアウトおよび再サインインを確認します。</li>
+<li>検証結果が承認されるまで、本番で使用するBundle IDを切り替えません。</li>
 </ol>
-<p>「既存のWorkSpaceからコピー」は既存機の設定を複製する経路であり、新しいカスタムバンドルを選択した確認には使用しない</p>
-<h3 id="イメージとバンドルの更新">イメージとバンドルの更新</h3>
-<p>既存イメージを直接編集せず、現行バンドルから更新作業用WorkSpaceを作成して、OS・アプリケーション・設定を変更します。Image Checkerに合格した新しい版のイメージから、新しい版のバンドルを作成します。検証後に環境別のBundle IDを切り替え、旧イメージと旧バンドルは承認済みの保管期限まで残す</p>
-<p>既存バンドルの元イメージを更新しても、作成済みWorkSpaceのOSやアプリケーションは自動更新されません。再構築または再作成は、データ、スナップショットおよび利用者影響を確認した別作業として実施する</p>
-<h3 id="adグループによる展開対象管理">ADグループによる展開対象管理</h3>
+<p>「既存のWorkSpaceからコピー」は既存機の設定を複製する経路です。新しいカスタムバンドルを選択した確認には使用しません。</p>
+<h3 id="運用作業">運用作業</h3>
+<h4 id="1-イメージとバンドルを更新する">1. イメージとバンドルを更新する</h4>
+<p>既存イメージを直接編集せず、現行バンドルから更新作業用WorkSpaceを作成して、OS・アプリケーション・設定を変更します。Image Checkerに合格した新しい版のイメージから、新しい版のバンドルを作成します。検証後に環境別のBundle IDを切り替え、旧イメージと旧バンドルは承認済みの保管期限まで残します。</p>
+<p>既存バンドルの元イメージを更新しても、作成済みWorkSpaceのOSやアプリケーションは自動更新されません。再構築または再作成は、データ、スナップショットおよび利用者影響を確認した別作業として実施します。</p>
+<h4 id="2-adグループで展開対象を管理する">2. ADグループで展開対象を管理する</h4>
 <ol class="step-list">
-<li>環境ごとにADグループ、Directory IDおよび検証済みBundle IDの対応表を承認</li>
-<li>グループメンバーから、無効ユーザー、サービスアカウントおよび既存WorkSpace利用者を除外</li>
-<li>同一ディレクトリ内でユーザーが重複していないことを確認</li>
-<li>対象人数、WorkSpacesクォータおよびサブネットの空きIPを確認</li>
-<li>各環境で1名の検証ユーザーを先行作成し、承認後に残りを展開</li>
+<li>環境ごとにADグループ、Directory IDおよび検証済みBundle IDの対応表を承認します。</li>
+<li>グループメンバーから、無効ユーザー、サービスアカウントおよび既存WorkSpace利用者を除外します。</li>
+<li>同一ディレクトリ内でユーザーが重複していないことを確認します。</li>
+<li>対象人数、WorkSpacesクォータおよびサブネットの空きIPを確認します。</li>
+<li>各環境で1名の検証ユーザーを先行作成し、承認後に残りを展開します。</li>
 </ol>
-<p>グループ追加だけではWorkSpaceは自動作成されません。一括作成する場合は、承認済みスクリプトまたは自動化でユーザーごとに作成要求を発行する</p>
-<h3 id="他awsアカウントへの共有">他AWSアカウントへの共有</h3>
-<p>カスタムバンドルは共有できません。カスタムイメージの共有と共有解除は出典：<a href="https://docs.aws.amazon.com/ja_jp/workspaces/latest/adminguide/share-custom-image.html">AWS公式：カスタムイメージを共有または共有解除する</a>、共有先でのコピーは出典：<a href="https://docs.aws.amazon.com/ja_jp/workspaces/latest/adminguide/copy-custom-image.html">AWS公式：カスタムイメージをコピーする</a></p>
-<h4 id="共有元awsアカウント">共有元AWSアカウント</h4>
+<p>グループ追加だけではWorkSpaceは自動作成されません。一括作成する場合は、承認済みスクリプトまたは自動化でユーザーごとに作成要求を発行します。</p>
+<h4 id="3-他awsアカウントへ共有する-必要な場合">3. 他AWSアカウントへ共有する（必要な場合）</h4>
+<p>カスタムバンドルは共有できません。カスタムイメージの共有と共有解除は<a href="https://docs.aws.amazon.com/ja_jp/workspaces/latest/adminguide/share-custom-image.html">カスタムイメージを共有または共有解除する</a>、共有先でのコピーは<a href="https://docs.aws.amazon.com/ja_jp/workspaces/latest/adminguide/copy-custom-image.html">カスタムイメージをコピーする</a>を参照してください。</p>
+<h5 id="共有元awsアカウント">共有元AWSアカウント</h5>
 <ol class="step-list">
-<li>共有元で対象リージョンの「イメージ」を開く</li>
-<li>イメージ名、イメージID、状態、OSおよびプロトコルを作業申請と照合</li>
-<li>「共有アカウント」で「アカウントを追加」を選択</li>
+<li>共有元で対象リージョンの「イメージ」を開きます。</li>
+<li>イメージ名、イメージID、状態、OSおよびプロトコルを作業申請と照合します。</li>
+<li>「共有アカウント」で「アカウントを追加」を選択します。</li>
 </ol>
-<figure class="screenshot-wide aws-console-identity"><figcaption>共有対象イメージ選択</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-image-bundle/009-共有対象イメージ選択.png" alt="共有対象イメージ選択" width="1718" height="1304" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><figcaption>図9　共有対象イメージ選択</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-image-bundle/010-共有対象イメージ選択.png" alt="共有対象イメージ選択" width="1718" height="1304" loading="lazy"></div></figure>
 
 
 
 <ol start="4">
-<li>共有先の12桁AWSアカウントIDを入力</li>
-<li>作業申請と再照合し、「イメージの共有」を選択</li>
+<li>共有先の12桁AWSアカウントIDを入力します。</li>
+<li>作業申請と再照合し、「イメージの共有」を選択します。</li>
 </ol>
-<p>図11では、①共有先AWSアカウントID、②「イメージの共有」を確認する</p>
-<figure class="screenshot-wide aws-console-identity"><figcaption>共有先AWSアカウント追加</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-image-bundle/010-共有先awsアカウント追加.png" alt="共有先AWSアカウント追加" width="1717" height="645" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><figcaption>図10　共有先AWSアカウント追加</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-image-bundle/011-共有先awsアカウント追加.png" alt="共有先AWSアカウント追加" width="1717" height="645" loading="lazy"></div></figure>
 
 
 
 <ol start="6">
-<li>成功メッセージと共有アカウント一覧を確認</li>
+<li>成功メッセージと共有アカウント一覧を確認します。</li>
 </ol>
-<p>図12では、①成功メッセージ、②共有先AWSアカウントを確認する</p>
-<figure class="screenshot-wide aws-console-identity"><figcaption>カスタムイメージ共有完了</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-image-bundle/011-カスタムイメージ共有完了.png" alt="カスタムイメージ共有完了" width="1718" height="1304" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><figcaption>図11　カスタムイメージ共有完了</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-image-bundle/012-カスタムイメージ共有完了.png" alt="カスタムイメージ共有完了" width="1718" height="1304" loading="lazy"></div></figure>
 
 
 
-<p>図11～14のAWSアカウントIDは、先頭4桁だけを残し、残り8桁を<code class="inline-code">*</code>でマスクした画像を使用します。実作業では12桁の値を作業申請と照合する</p>
-<h4 id="共有先awsアカウント">共有先AWSアカウント</h4>
+<p>図10～13のAWSアカウントIDは、先頭4桁だけを残し、残り8桁を<code class="inline-code">*</code>でマスクした画像を使用します。実作業では12桁の値を作業申請と照合します。</p>
+<h5 id="共有先awsアカウント">共有先AWSアカウント</h5>
 <ol class="step-list">
-<li>共有元と同じリージョンで、共有されたイメージを表示</li>
-<li>共有元AWSアカウント、イメージ名およびイメージIDを照合</li>
-<li>「イメージのコピー」を選択し、共有先で使用する名前と説明を入力</li>
-<li>コピーが「利用可能」になるまで待ち、共有先で新しいイメージIDが発行されたことを確認</li>
-<li>共有先のコピーからPowerPro、80GB／50GBのカスタムバンドルを作成</li>
-<li>検証用WorkSpaceを1台作成し、カスタムバンドルの検証項目を実施</li>
+<li>共有元と同じリージョンで、共有されたイメージを表示します。</li>
+<li>共有元AWSアカウント、イメージ名およびイメージIDを照合します。</li>
+<li>「イメージのコピー」を選択し、共有先で使用する名前と説明を入力します。</li>
+<li>コピーが「利用可能」になるまで待ち、共有先で新しいイメージIDが発行されたことを確認します。</li>
+<li>共有先のコピーからPowerProと承認済み容量のカスタムバンドルを作成します。</li>
+<li>検証用WorkSpaceを1台作成し、カスタムバンドルの検証項目を実施します。</li>
 </ol>
-<p>共有先で作成したコピーは、共有元が共有を解除しても残ります。共有先がコピーしたイメージを別AWSアカウントへ再共有することはできないため、新たな共有先には元の所有アカウントから共有する</p>
-<h3 id="共有解除">共有解除</h3>
+<p>共有先で作成したコピーは、共有元が共有を解除しても残ります。新たな共有先へ展開する場合は、元の所有アカウントで共有を設定します。</p>
+<div class="callout callout-info"><p><strong>ℹ️ 情報：共有先での作業記録</strong></p>
+<p>本書の画像は共有元の操作例です。共有先でのコピー完了、新しいイメージID、バンドル作成とWorkSpace接続の結果を別途確認します。</p>
+</div>
+<h4 id="4-共有を解除する-必要な場合">4. 共有を解除する（必要な場合）</h4>
 <ol class="step-list">
-<li>共有先でコピー処理が進行中でないことを確認</li>
-<li>共有元の対象イメージで、共有解除するAWSアカウントを選択</li>
-<li>AWSアカウントIDを照合し、「共有解除」を選択</li>
+<li>共有先でコピー処理が進行中でないことを確認します。</li>
+<li>共有元の対象イメージで、共有解除するAWSアカウントを選択します。</li>
+<li>AWSアカウントIDを照合し、「共有解除」を選択します。</li>
 </ol>
-<p>図13では、①対象AWSアカウント、②「共有解除」を確認する</p>
-<figure class="screenshot-wide aws-console-identity"><figcaption>共有解除対象AWSアカウント選択</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-image-bundle/012-共有解除対象awsアカウント選択.png" alt="共有解除対象AWSアカウント選択" width="1718" height="1304" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><figcaption>図12　共有解除対象AWSアカウント選択</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-image-bundle/013-共有解除対象awsアカウント選択.png" alt="共有解除対象AWSアカウント選択" width="1718" height="1304" loading="lazy"></div></figure>
 
 
 
 <ol start="4">
-<li>確認ダイアログのイメージ名とAWSアカウントIDを再確認し、「共有解除」を選択</li>
+<li>確認ダイアログのイメージ名とAWSアカウントIDを再確認し、「共有解除」を選択します。</li>
 </ol>
-<p>図14では、①対象、②「共有解除」を確認する</p>
-<figure class="screenshot-wide aws-console-identity"><figcaption>カスタムイメージ共有解除確認</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-image-bundle/013-カスタムイメージ共有解除確認.png" alt="カスタムイメージ共有解除確認" width="1718" height="1304" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><figcaption>図13　カスタムイメージ共有解除確認</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-image-bundle/014-カスタムイメージ共有解除確認.png" alt="カスタムイメージ共有解除確認" width="1718" height="1304" loading="lazy"></div></figure>
 
 
 
 <ol start="5">
-<li>成功通知、または共有アカウント一覧から対象が消えたことを確認</li>
+<li>成功通知、または共有アカウント一覧から対象が消えたことを確認します。</li>
 </ol>
-<p>共有解除前に共有先がコピーしたイメージは残るため、削除が必要な場合は共有先で処理する</p>
-<h3 id="切り戻しと削除">切り戻しと削除</h3>
-<p>新しいイメージまたはバンドルに問題がある場合は展開を停止し、環境別対応表を直前の検証済みBundle IDへ戻します。問題のバンドルから作成したWorkSpaceを特定し、データと利用者影響を確認して再構築または再作成します。切り戻し完了まで旧イメージと旧バンドルを削除しない</p>
-<p>カスタムイメージまたはバンドルを削除する場合は、出典：<a href="https://docs.aws.amazon.com/ja_jp/workspaces/latest/adminguide/delete_bundle.html">AWS公式：カスタムバンドルとイメージを削除する</a>に従い、依存するWorkSpace、バンドル、共有先およびコピー処理がないことを確認する</p>
-<p>WorkSpaceへRDP接続して調査する場合は、<a href="workspaces-image-bundle.html">Amazon WorkSpaces RDP接続運用手順</a>に従う</p>
-<hr>
-
-<h2 id="amazon-workspaces-rdp接続運用手順">Amazon WorkSpaces RDP接続運用手順</h2>
-<p><strong>目次</strong></p>
-<!-- Confluenceでは、この位置に目次マクロを配置する -->
-
-<h3 id="概要-2">概要</h3>
-<h4 id="本手順書で実施すること-2">本手順書で実施すること</h4>
-<p>WorkSpacesクライアントで接続できないWindows WorkSpaceを調査する場合に限り、管理用EC2または承認済みの同一ディレクトリ内WorkSpaceから、対象のプライベートIPアドレスへRDP接続します。接続元、TCP 3389の許可範囲、Windowsのログオン権限および作業後の閉塞までを一つの変更作業として実施する</p>
-<p>RDPは通常の利用経路ではありません。利用者の恒常的な接続や、インターネットからの直接接続には使用しない</p>
-<h4 id="完了条件-2">完了条件</h4>
-<ul>
-<li>✔ 対象WorkSpaceとRDPを使用する調査目的が承認されている</li>
-<li>✔ TCP 3389の接続元が管理用EC2または承認済み管理用CIDRだけに限定されている</li>
-<li>✔ 対象WorkSpaceのコンピューター名を確認してから調査を実施している</li>
-<li>✔ 調査後にRDPセッションを終了し、一時許可ルールを削除している</li>
-<li>✔ セキュリティグループなどのAWS API操作はCloudTrailの管理イベントで確認し、RDPログオンなどのWindows側イベントは監査設定と保持期間の範囲内でWindowsイベントログから確認している</li>
+<p>共有解除前に共有先がコピーしたイメージは残るため、削除が必要な場合は共有先で処理します。</p>
+<h4 id="5-切り戻しと削除を行う">5. 切り戻しと削除を行う</h4>
+<p>新しいイメージまたはバンドルに問題がある場合は展開を停止し、環境別対応表を直前の検証済みBundle IDへ戻します。問題のバンドルから作成したWorkSpaceを特定し、データと利用者影響を確認して再構築または再作成します。切り戻し完了まで旧イメージと旧バンドルを削除しません。</p>
+<p>カスタムイメージまたはバンドルを削除する場合は、<a href="https://docs.aws.amazon.com/ja_jp/workspaces/latest/adminguide/delete_bundle.html">カスタムバンドルとイメージを削除する</a>に従い、依存するWorkSpace、バンドル、共有先およびコピー処理がないことを確認します。</p>
+<h3 id="構築後確認">構築後確認</h3>
+<ul class="check-list">
+<li><input disabled="" type="checkbox"> 参照WorkSpaceのOS、アプリケーション、空き容量、プロファイルおよび暗号化状態を確認している</li>
+<li><input disabled="" type="checkbox"> AWS Image Checkerの全項目が<code class="inline-code">PASSED</code>で、<code class="inline-code">Validation successful</code>となっている</li>
+<li><input disabled="" type="checkbox"> カスタムイメージとカスタムバンドルが「利用可能」</li>
+<li><input disabled="" type="checkbox"> カスタムバンドルのPowerPro、承認済みのルート／ユーザー容量および元イメージIDを確認している</li>
+<li><input disabled="" type="checkbox"> カスタムバンドルから作成した検証用WorkSpaceでアプリケーション、DCV、OUおよびGPOを確認している</li>
+<li><input disabled="" type="checkbox"> 共有を実施した場合は、共有先でコピー・バンドル作成・WorkSpace接続を確認している</li>
 </ul>
-<h3 id="今回の設定値-2">今回の設定値</h3>
-<table>
-<thead>
-<tr>
-<th>項目</th>
-<th>今回の設定値</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>通常の接続方法</td>
-<td>WorkSpacesクライアント</td>
-</tr>
-<tr>
-<td>RDPの用途</td>
-<td>障害調査・承認済み保守だけ</td>
-</tr>
-<tr>
-<td>接続先</td>
-<td>対象WorkSpaceのプライベートIP</td>
-</tr>
-<tr>
-<td>接続元</td>
-<td>管理用EC2または承認済みの同一ディレクトリ内WorkSpace</td>
-</tr>
-<tr>
-<td>通信</td>
-<td>TCP 3389</td>
-</tr>
-<tr>
-<td>接続元制限</td>
-<td><code class="inline-code">0.0.0.0/0</code>および<code class="inline-code">::/0</code>は使用しない</td>
-</tr>
-<tr>
-<td>AWS側の証跡</td>
-<td>CloudTrailの管理イベント（セキュリティグループなどのAWS API操作）</td>
-</tr>
-<tr>
-<td>Windows側の証跡</td>
-<td>監査設定と保持期間の範囲内で記録されたRDPログオンなどのイベント</td>
-</tr>
-</tbody></table>
-<h3 id="前提条件-2">前提条件</h3>
-<ul>
-<li>✔ 対象WorkSpaceのID、Directory ID、ユーザー、プライベートIPおよび状態を確認している</li>
-<li>✔ 接続元から対象WorkSpaceのプライベートIPへ経路がある</li>
-<li>✔ セキュリティグループとネットワークACLで必要な通信を許可できる</li>
-<li>✔ 対象WindowsでRemote Desktop Servicesが起動している</li>
-<li>✔ Windows Defender Firewallで承認済みのRDP通信を許可している</li>
-<li>✔ 接続ユーザーが<code class="inline-code">Remote Desktop Users</code>または<code class="inline-code">Administrators</code>に所属している</li>
-<li>✔ 「リモート デスクトップ サービスを使ったログオンを許可」の対象であり、「拒否」の対象ではない</li>
-<li>✔ DNS、Kerberosおよびドメインコントローラーとの通信が正常である</li>
-<li>✔ 一時許可ルールの削除担当者と削除時刻を決めている</li>
-</ul>
-<div class="callout callout-warning"><p><strong>注意：RDPをインターネットへ公開しない</strong></p>
-<p>TCP 3389の接続元に<code class="inline-code">0.0.0.0/0</code>または<code class="inline-code">::/0</code>を指定しません。WorkSpacesクライアント向けのデバイス制御だけではRDP接続を制御できないため、ネットワーク、Windows Defender Firewall、ログオン権限およびADグループで重ねて制御する</p>
-</div>
-<h3 id="接続前のセキュリティ設定">接続前のセキュリティ設定</h3>
-<ol class="step-list">
-<li>WorkSpacesコンソールで対象WorkSpaceを開き、WorkSpace ID、Directory ID、ユーザー、状態およびプライベートIPを作業申請と照合</li>
-<li>対象ディレクトリへ関連付けた追加セキュリティグループを確認</li>
-<li>管理用EC2のセキュリティグループ、または承認済み管理用CIDRからTCP 3389を許可</li>
-<li>AWSが自動作成した<code class="inline-code">&lt;Directory ID&gt;_workspacesMembers</code>の既存ルールを削除または置換しない</li>
-<li>Windows側でRDP、NLA、Windows Defender Firewall、許可／拒否のユーザー権利を確認</li>
-<li>一時ルールには、変更申請番号、用途および削除予定時刻を記録</li>
-</ol>
-<p>多数のWorkSpacesを管理する場合は、RDP権限、Windows Defender Firewallおよび監査設定を個別変更せず、専用GPOとADグループで管理します。「制限されたグループ」を使用すると既存メンバーを置換する可能性があるため、既存のローカルグループ構成を維持する場合は、グループポリシー基本設定の「ローカル ユーザーとグループ」などで追加方式を選択する</p>
-<h3 id="rdp接続">RDP接続</h3>
-<ol class="step-list">
-<li>管理用EC2または承認済みの同一ディレクトリ内WorkSpaceで「リモート デスクトップ接続」を起動</li>
-<li>接続先へ対象WorkSpaceのプライベートIPアドレスを入力</li>
-<li>承認済みのドメインユーザーで接続</li>
-<li>接続後に<code class="inline-code">hostname</code>を実行し、WorkSpacesコンソールのコンピューター名と一致することを確認</li>
-<li>承認された調査または保守作業だけを実施</li>
-<li>作業完了後にサインアウトし、RDPセッションが残っていないことを確認</li>
-<li>一時的に追加したTCP 3389ルールを削除</li>
-<li>セキュリティグループなどAWS APIによる変更は、CloudTrailの管理イベントで対象API、実行者および実行時刻を確認する。CloudTrailにはRDPセッション内のWindows操作や通信内容は記録されません。Windowsイベントログでは、監査ポリシーが有効で、かつログの保持期間内に記録されたRDPログオンなどのイベントだけを確認する。任意のWindows操作がすべて記録されるわけではないため、実施コマンド、変更前後の値および担当者は作業記録にも残す</li>
-</ol>
-<h3 id="接続できない場合の確認">接続できない場合の確認</h3>
-<p>次の順で切り分ける</p>
-<ol class="step-list">
-<li>WorkSpaceが削除中、停止中または再構築中ではないことを確認</li>
-<li>接続先が対象WorkSpaceの現在のプライベートIPであることを確認</li>
-<li>接続元から対象IPのTCP 3389へ到達できることを確認</li>
-<li>セキュリティグループとネットワークACLの往復通信を確認</li>
-<li>Windows Defender FirewallのRDP受信規則を確認</li>
-<li><code class="inline-code">TermService</code>が実行中か確認</li>
-<li>接続ユーザーのADグループ、ローカルグループおよびユーザー権利を確認</li>
-<li>DNS名前解決、時刻同期およびドメインコントローラーへの通信を確認</li>
-<li>監査設定とログ保持期間を確認し、記録されている場合はWindowsイベントログでRDP、認証およびグループポリシー関連イベントを確認</li>
-</ol>
-<p>AWS公式では、<code class="inline-code">UNHEALTHY</code>となったWorkSpaceに対し、同じディレクトリ内の正常なWorkSpaceからRDPで調査する方法を案内しています。最初にWorkSpacesコンソールから再起動し、RDP接続後は必要ポート、CPU負荷、Windows Firewallおよび<code class="inline-code">SkylightWorkspacesConfigService</code>を確認する。再構築はデータ損失の可能性があるため、ほかの調査を終えた後の最終手段</p>
-<p>出典：<a href="https://docs.aws.amazon.com/ja_jp/workspaces/latest/adminguide/amazon-workspaces-troubleshooting.html">AWS公式：WorkSpaces Personalに関する問題のトラブルシューティング</a></p>
+</section>
       <h2 id="related-pages">関連ページ</h2>
       <div class="page-link-grid">
         <a class="page-link-card" href="workspaces-provisioning-gpo.html"><strong>Amazon WorkSpaces 構築・OU・GPO</strong><span>マルチVPC・閉域VDI基盤案件の関連手順</span></a>

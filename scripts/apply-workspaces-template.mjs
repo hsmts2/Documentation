@@ -80,7 +80,7 @@ const buildSectionLinks = (html) => {
 const buildRelatedPages = (index) => {
   const links = [];
   if (index > 0) links.push(pages[index - 1]);
-  if (index !== 0) links.push(pages[0]);
+  if (index !== 0 && index !== 1) links.push(pages[0]);
   if (index < pages.length - 1) links.push(pages[index + 1]);
   return `      <h2 id="related-pages">関連ページ</h2>\n      <div class="page-link-grid">\n${links.map(([file, label]) => `        <a class="page-link-card" href="${file}"><strong>${label}</strong><span>${seriesTitle}の関連手順</span></a>`).join("\n")}\n      </div>\n`;
 };

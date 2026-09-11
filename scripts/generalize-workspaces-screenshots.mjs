@@ -25,10 +25,15 @@ const targetDirectories = process.env.TARGET_DIRECTORIES
   ? process.env.TARGET_DIRECTORIES.split(",").map((value) => value.trim()).filter(Boolean)
   : defaultTargetDirectories;
 const imagePaths = [];
-for (const directoryName of targetDirectories) {
-  const directory = path.join(assetRoot, directoryName);
-  for (const entry of await fs.readdir(directory, { withFileTypes: true })) {
-    if (entry.isFile() && /\.(?:png|jpe?g)$/i.test(entry.name)) imagePaths.push(path.join(directory, entry.name));
+if (process.env.WORKSPACES_IMAGE_MANIFEST) {
+  const manifest = JSON.parse(await fs.readFile(process.env.WORKSPACES_IMAGE_MANIFEST, "utf8"));
+  imagePaths.push(...new Set(manifest.map(item => item.destination)));
+} else {
+  for (const directoryName of targetDirectories) {
+    const directory = path.join(assetRoot, directoryName);
+    for (const entry of await fs.readdir(directory, { withFileTypes: true })) {
+      if (entry.isFile() && /\.(?:png|jpe?g)$/i.test(entry.name)) imagePaths.push(path.join(directory, entry.name));
+    }
   }
 }
 const startIndex = Number(process.env.FILE_START || 0);
@@ -52,6 +57,10 @@ const xmlEscape = (value) => value
 
 const replacementFor = (value) => {
   return value
+    .replace(/\b\d{12}\b/g, "000000000000")
+    .replace(/ibm-as/gi, "t_hashimoto")
+    .replace(/ad\.datumidea\.jp/gi, publicDomain)
+    .replace(/skyarch-pid-2849-logs/gi, "sample-mw-bucket")
     .replace(/p{1,2}-?pm(?:\.?example[-.]com)/gi, publicDomain)
     .replace(/p{1,2}-?pm/gi, (matched) => {
     if (matched === matched.toUpperCase()) return publicPrefix.toUpperCase();
@@ -281,7 +290,7 @@ const backgroundAt = async (image, match, metadata) => {
 const processFile = async (worker, file) => {
   const image = sharp(file);
   const metadata = await image.metadata();
-  const manualReplacements = manualReplacementsFor(file);
+  const manualReplacements = process.env.WORKSPACES_IMAGE_MANIFEST ? [] : manualReplacementsFor(file);
   const ocrScale = 2;
   const ocrInput = await image.clone().grayscale().threshold(215).resize({ width: metadata.width * ocrScale }).sharpen().toBuffer();
   const result = await worker.recognize(ocrInput, {}, { text: true, tsv: true });
@@ -289,7 +298,7 @@ const processFile = async (worker, file) => {
     const columns = row.split("\t");
     if (columns.length < 12 || columns[0] !== "5") return [];
     const text = columns[11];
-    if (!/(?:p-?pm|ppm)(?:\.?example\.com)?/i.test(text)) return [];
+    if (!/(?:p-?pm|ppm)(?:\.?example\.com)?|\b\d{12}\b|ibm-as|ad\.datumidea\.jp|skyarch-pid-2849-logs/i.test(text)) return [];
     return [{
       text,
       left: Number(columns[6]) / ocrScale,

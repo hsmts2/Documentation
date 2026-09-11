@@ -24,55 +24,6 @@
       <div class="sidebar-heading">
         <button class="icon-button sidebar-toggle sidebar-toggle-inline" type="button" aria-controls="site-sidebar" aria-expanded="true" title="ナビゲーションを閉じる" aria-label="ナビゲーションを閉じる">☰</button>
       </div>
-      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">✎</span>記事</p>
-      <a href="cloudflare-private-site.html">Private GitHubリポジトリをCloudflare Workersで認証付き公開してみた</a>
-      <details class="sidebar-nested-menu" open>
-        <summary>マルチVPC・閉域VDI基盤案件（9ページ）</summary>
-        <div class="sidebar-subnav">
-          <a class="active" href="workspaces-skill-transfer.html">全体構築・運用順序</a>
-          <a href="workspaces-managed-ad.html">AWS Managed Microsoft AD 構築・管理</a>
-          <a href="workspaces-management-ec2.html">管理用EC2・Active Directory管理</a>
-          <a href="workspaces-ad-connector.html">AD Connector 構築・権限委任</a>
-          <a href="workspaces-provisioning-gpo.html">Amazon WorkSpaces 構築・OU・GPO</a>
-          <a href="workspaces-image-bundle.html">WorkSpaces カスタムイメージ・バンドル</a>
-          <a href="workspaces-patch-manager.html">Systems Manager Patch Manager</a>
-          <a href="workspaces-cost-optimizer.html">Amazon WorkSpaces Cost Optimizer</a>
-          <a href="workspaces-cloudwatch-monitoring.html">CloudWatch・SNS 監視／通知</a>
-        </div>
-      </details>
-      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">◈</span>Terraform</p>
-      <a href="terraform.html">Terraform 概要</a>
-      <a href="hcp-terraform.html">HCP Terraform（Terraform Cloud）</a>
-      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">☁︎</span>AWS</p>
-      <a href="cloudformation.html">CloudFormation 運用手順集</a>
-      <a href="aws-cli.html">AWS CLI 特殊対応</a>
-      <a href="aws-cli-reference.html">AWS CLI コマンドリファレンス</a>
-      <a href="eventbridge-scheduler.html">EventBridge Scheduler</a>
-      <a href="aws-directory-service.html">AWS Directory Service 運用手順</a>
-      <a href="amazon-workspaces.html">Amazon WorkSpaces</a>
-      <a href="amazon-ses.html">Amazon SES SMTPリレー</a>
-      <a href="amazon-ses-monitoring.html">Amazon SES 配信監視</a>
-      <a href="amazon-rds-blue-green.html">Amazon RDS Blue/Green Deployments</a>
-      <a href="apache-acm-certificate-update.html">証明書更新（ACMエクスポート）</a>
-      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">⚙︎</span>OS／ミドルウェア</p>
-      <a href="rhel9.html">Red Hat Enterprise Linux 9</a>
-      <a href="rhel10.html">Red Hat Enterprise Linux 10</a>
-      <a href="amazon-linux-2023.html">Amazon Linux 2023</a>
-      <a href="windows-server-2022.html">Windows Server 2022</a>
-      <a href="windows-server-2025.html">Windows Server 2025</a>
-      <a href="windows-server-2016-upgrade.html">Windows Server 2016 インプレースアップグレード</a>
-      <a href="storage.html">ストレージ管理</a>
-      <a href="apache.html">Apache</a>
-      <a href="apache-self-signed-ssl-termination.html">Apache SSL終端（自己署名証明書）</a>
-      <a href="redis.html">Redis（KVS）</a>
-      <a href="nfs.html">NFS</a>
-      <a href="samba.html">Samba</a>
-      <a href="mariadb.html">MariaDB</a>
-      <a href="postgresql.html">PostgreSQL</a>
-      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">▤</span>リファレンス</p>
-      <a href="../writing-style-guide.html">[GitHub Pages] 記法・テンプレート</a>
-      <a href="troubleshooting.html">障害切り分けチェックリスト</a>
-      <a href="eol.html">EOL / ライフサイクル一覧表</a>
     </aside>
     <main class="content workspaces-skill-transfer-guide">
       <nav class="breadcrumb" aria-label="Breadcrumb">
@@ -83,9 +34,9 @@
       <div class="page-summary"><strong>⚡ このページの要約</strong><p class="lead">AWS Managed Microsoft AD、AD Connector、Amazon WorkSpaces、OU・GPO、カスタムイメージ、Systems Manager、Cost Optimizerを依存関係に沿って再構築する<br>実機検証で確認した設定値、工程ゲート、証跡画像および運用上の判断基準をまとめる</p></div>
       <nav class="section-links" aria-label="主要セクション">
         <a href="#environment-components">環境構成</a>
-        <a href="#aws基盤-amazon-workspaces-構築-運用作業順序">AWS基盤・Amazon WorkSpaces 構築・運用作業順序</a>
+        <a href="#全体構築-運用順序">全体構築・運用順序</a>
       </nav>
-<nav class="skill-transfer-journey" aria-label="技術移管の詳細手順">
+<nav class="skill-transfer-journey" aria-label="マルチVPC・閉域VDI基盤案件の詳細手順">
       <a href="workspaces-managed-ad.html"><strong>1. Managed AD</strong><span>構成・作成・ユーザー管理</span></a>
       <a href="workspaces-management-ec2.html"><strong>2. 管理用EC2</strong><span>接続・ADUC・GPMC</span></a>
       <a href="workspaces-ad-connector.html"><strong>3. AD Connector</strong><span>権限委任・Peering・作成</span></a>
@@ -96,6 +47,7 @@
       <a href="workspaces-cloudwatch-monitoring.html"><strong>8. 監視・通知</strong><span>CloudWatch・SNS・動作確認</span></a>
     </nav>
     <figure class="architecture-figure"><figcaption>全体構成: 4つのVPCとオンプレミス拠点をDirect Connectで接続し、Managed AD、WorkSpaces、ファイル共有および管理機能を分離する</figcaption><img src="../assets/img/workspaces-skill-transfer/workspaces-skill-transfer-architecture.png" alt="4つのVPCとオンプレミス拠点を接続するAmazon WorkSpaces全体ネットワーク構成図" loading="eager"></figure>
+    <div class="callout callout-info"><strong>ℹ️ 情報：構成図と検証環境の範囲</strong><p>上図は閉域VDI基盤の4 VPC構成例です。詳細手順に登場するVPC005・006は追加展開例として扱います。Cost Optimizerの構築検証では、図の管理VPCと別に専用VPC（10.250.0.0/24）を作成しています。各構成の設定値を混在させず、作業対象のパラメータを照合します。</p></div>
     <h2 id="environment-components">環境構成</h2>
     <p>オンプレミス拠点とAWS CloudをDirect Connectで接続し、認証・管理系とVDI系の役割を4つのVPCへ分離する</p>
     <table>
@@ -111,200 +63,233 @@
     </table>
     <p>掲載内容では、ディレクトリの完全修飾ドメイン名を<code class="inline-code">ad.example.com</code>、環境固有のリソース名を<code class="inline-code">ad-</code>で始まる名称へ一般化している</p>
     <hr>
-<h2 id="aws基盤-amazon-workspaces-構築-運用作業順序">AWS基盤・Amazon WorkSpaces 構築・運用作業順序</h2>
-<h3 id="1-この文書の目的">1. この文書の目的</h3>
-<p>本書は、AWS Managed Microsoft ADの作成からAmazon WorkSpacesの利用開始、カスタムイメージ／バンドル作成および別AWSアカウントへの共有・展開までを、依存関係に沿って実施するための全体索引です。各画面の操作はリンク先の個別手順書を使用し、この文書では「何を先に終わらせるか」と「次へ進める条件」を確認する</p>
-<h3 id="2-推奨する全体順序">2. 推奨する全体順序</h3>
+<section id="overview" class="procedure-document">
+
+<h2 id="全体構築-運用順序">全体構築・運用順序</h2><nav class="section-links document-toc" aria-label="この手順の目次"><a href="#概要">概要</a> <a href="#仕様">仕様</a> <a href="#前提条件">前提条件</a> <a href="#構築作業">構築作業</a> <a href="#構築後確認">構築後確認</a></nav>
+<h3 id="概要">概要</h3>
 <table>
 <thead>
 <tr>
-<th align="right">順序</th>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>目的</td>
+<td>Managed AD、AD Connector、WorkSpacesと運用機能を、依存関係に沿って構築・確認します。</td>
+</tr>
+<tr>
+<td>対象</td>
+<td>閉域VDI基盤の構成例と、各サービスの構築・運用検証手順です。</td>
+</tr>
+<tr>
+<td>設定値</td>
+<td>ページ内の値は検証例です。実作業では対象環境の承認済みパラメータへ置き換えます。</td>
+</tr>
+</tbody></table>
+<h3 id="仕様">仕様</h3>
+<h4 id="構成-動作">構成・動作</h4>
+<p>Managed ADが認証とDNSを提供し、AD Connectorを介してWorkSpacesを利用します。管理用EC2からユーザー、OU、権限委任、GPOを管理します。パッチ適用、コスト最適化、監視通知は、それぞれの管理対象と実行権限を確認して導入します。</p>
+<h4 id="管理範囲">管理範囲</h4>
+<p>AWS管理のドメインコントローラーとGPO、お客様が管理するEC2・OU・GPOを区別します。ドメインコントローラー用SG、管理用EC2のSG、AD ConnectorのSGは、それぞれDirectory ID、VPC、関連リソースを照合します。</p>
+<h3 id="前提条件">前提条件</h3>
+<ul>
+<li>VPCとサブネットのCIDR、異なる2つのAZ、接続経路、DNS、IAM権限を決定していること。</li>
+<li>VPCピアリングで使用するCIDRが重複せず、両方向のルートと必要な通信を設計していること。</li>
+<li>作業対象のアカウント、リージョン、リソース、作業時間帯と切り戻し方法を確認していること。</li>
+</ul>
+<h3 id="構築作業">構築作業</h3>
+<h4 id="認証-ネットワークの準備">認証・ネットワークの準備</h4>
+<table>
+<thead>
+<tr>
+<th>順序</th>
 <th>作業</th>
 <th>次へ進む条件</th>
-<th>使用する手順書</th>
+<th>手順</th>
 </tr>
 </thead>
 <tbody><tr>
-<td align="right">0</td>
-<td>VPC・サブネット・CIDR・DNS・IAM・接続方式を設計する</td>
-<td>CIDRが重複せず、Managed AD用とAD Connector／WorkSpaces用の各2サブネット、VPCピアリング、往復ルートおよび必要通信の設計が確定している</td>
-<td>構成資料・パラメータシート</td>
+<td>1</td>
+<td>Managed ADを作成</td>
+<td>アクティブ、DNS IP、Directory ID、2サブネットを確認</td>
+<td><a href="workspaces-managed-ad.html#managedAdBuild">① Managed AD構築</a></td>
 </tr>
 <tr>
-<td align="right">1</td>
-<td>AWS Managed Microsoft ADを作成する</td>
-<td>ディレクトリが「アクティブ」で、DNS IP、VPC、2サブネットおよびDirectory IDを確認できる</td>
-<td><a href="workspaces-managed-ad.html">AWS Managed Microsoft AD構築手順</a></td>
+<td>2</td>
+<td>ユーザー・グループを準備</td>
+<td>利用ユーザーと所属グループを確認</td>
+<td><a href="workspaces-managed-ad.html#managedAdUsers">② ユーザー・グループ管理</a></td>
 </tr>
 <tr>
-<td align="right">2</td>
-<td>ディレクトリ管理用EC2を起動して接続する</td>
-<td>EC2が実行中、ステータスチェック合格、ドメイン参加済みで、ADUCとGPMCを使用できる</td>
-<td><a href="workspaces-management-ec2.html">管理用EC2起動・接続・AD管理開始手順</a></td>
+<td>3</td>
+<td>管理用EC2を起動・接続</td>
+<td>ドメイン参加とAD管理ツールの利用を確認</td>
+<td><a href="workspaces-management-ec2.html#managementEc2">③ 管理用EC2</a></td>
 </tr>
 <tr>
-<td align="right">3</td>
-<td>ADの初期オブジェクトと権限を準備する</td>
-<td>WorkSpaces利用ユーザー、<code class="inline-code">Connectors</code>、AD Connector専用サービスアカウント、WorkSpaces OUおよび必要な委任がそろっている</td>
-<td><a href="workspaces-managed-ad.html">ユーザー・グループメンバーシップ管理手順</a>、<a href="workspaces-ad-connector.html">AD Connector用サービスアカウント・権限委任手順</a>、<a href="workspaces-provisioning-gpo.html">WorkSpaces用OU設定手順</a>の5～6章</td>
+<td>4</td>
+<td>サービスアカウント、OU、権限委任を準備</td>
+<td>Connectorsの所属と対象OUのACLを確認</td>
+<td><a href="workspaces-ad-connector.html#connectorDelegation">④ サービスアカウント・権限委任</a></td>
 </tr>
 <tr>
-<td align="right">4</td>
-<td>VPCピアリング、往復ルート、NACLおよびManaged AD側DC用SGを設定する</td>
-<td>ピアリングがアクティブで、両方向のルートと必要通信があり、AD Connector側相当の接続元から2台のDNS／DCへ名前解決と疎通を確認できる</td>
-<td><a href="workspaces-ad-connector.html">VPCピアリング・DC用SG変更・AD Connector作成手順</a>の5～6章</td>
+<td>5</td>
+<td>VPCピアリング・ルート・DC用SGを設定</td>
+<td>SG変更後に2台のDNS／DCへの名前解決と通信を確認</td>
+<td><a href="workspaces-ad-connector.html#connectorBuild">⑤ ネットワークとAD Connector</a></td>
 </tr>
 <tr>
-<td align="right">5</td>
-<td>AD Connectorを作成する</td>
-<td>AD Connectorが「アクティブ」で、対象ドメインのユーザーを検索でき、自動作成SGをManaged AD側SGと区別して確認できる</td>
-<td><a href="workspaces-ad-connector.html">VPCピアリング・DC用SG変更・AD Connector作成手順</a>の7～9章</td>
-</tr>
-<tr>
-<td align="right">6</td>
-<td>AD ConnectorをWorkSpacesへ登録し、ターゲットOUを設定する</td>
-<td>登録状態が「登録済み」で、WorkSpaces用2サブネットとターゲットOUが正しい</td>
-<td><a href="workspaces-provisioning-gpo.html">Amazon WorkSpaces作成・バンドル設定手順</a>の6章、<a href="workspaces-provisioning-gpo.html">WorkSpaces用OU設定手順</a>の7章</td>
-</tr>
-<tr>
-<td align="right">7</td>
-<td>パイロットWorkSpaceを1台作成する</td>
-<td>対象ユーザー、バンドル、実行モード、ストレージ、暗号化、タグおよびディレクトリを確認し、ステータスが「使用可能」になる</td>
-<td><a href="workspaces-provisioning-gpo.html">Amazon WorkSpaces作成・バンドル設定手順</a>の7～8章</td>
-</tr>
-<tr>
-<td align="right">8</td>
-<td>パイロットへログインし、WSP管理テンプレートを取得する</td>
-<td><code class="inline-code">C:\Program Files\Amazon\WSP</code>の<code class="inline-code">wsp.admx</code>／<code class="inline-code">wsp.adml</code>を確認し、承認済みの経路で管理用EC2へ受け渡せる</td>
-<td><a href="workspaces-provisioning-gpo.html">WorkSpaces用GPO設定手順</a>の4章</td>
-</tr>
-<tr>
-<td align="right">9</td>
-<td>WorkSpaces専用GPOを作成して対象OUへリンクする</td>
-<td>GPOの設定、リンク先、リンク有効状態、セキュリティフィルターおよびWMIフィルターを確認できる</td>
-<td><a href="workspaces-provisioning-gpo.html">WorkSpaces用GPO設定手順</a>の5～8章</td>
-</tr>
-<tr>
-<td align="right">10</td>
-<td>OU所属とGPO適用結果を確認する</td>
-<td><code class="inline-code">gpupdate</code>、<code class="inline-code">gpresult</code>、ADUCおよび実動作で、対象OUとGPOが正しく適用されている</td>
-<td><a href="workspaces-provisioning-gpo.html">WorkSpaces用OU設定手順</a>の9章、<a href="workspaces-provisioning-gpo.html">WorkSpaces用GPO設定手順</a>の11章</td>
-</tr>
-<tr>
-<td align="right">11</td>
-<td>パイロットWorkSpaceの総合確認を完了する</td>
-<td>AWS側設定、AD側OU、クライアント接続、アプリケーションおよび業務疎通を確認できる</td>
-<td><a href="workspaces-provisioning-gpo.html">Amazon WorkSpaces作成・バンドル設定手順</a>の9章</td>
-</tr>
-<tr>
-<td align="right">12</td>
-<td>非暗号化のイメージ作成専用WorkSpaceを準備する</td>
-<td>顧客仕様のOS・DCV・PowerPro・ストレージで、個人データを含まない専用機を準備できる</td>
-<td><a href="workspaces-image-bundle.html">カスタムイメージ・バンドル作成・共有手順</a>の5～7章</td>
-</tr>
-<tr>
-<td align="right">13</td>
-<td>Image Checkerを実行し、警告・失敗を解消する</td>
-<td>すべての検査項目が<code class="inline-code">PASSED</code>で、<code class="inline-code">Validation successful</code>を確認できる</td>
-<td>同手順の8章</td>
-</tr>
-<tr>
-<td align="right">14</td>
-<td>カスタムイメージを作成する</td>
-<td>対象イメージが「利用可能」で、イメージ名とImage IDを記録できる</td>
-<td>同手順の9章</td>
-</tr>
-<tr>
-<td align="right">15</td>
-<td>カスタムバンドルを作成する</td>
-<td>対象バンドルが「利用可能」で、CLIまたは詳細画面によりImage ID、PowerPro、80GB／50GBを確認できる</td>
-<td>同手順の10章</td>
-</tr>
-<tr>
-<td align="right">16</td>
-<td>カスタムバンドルから検証用WorkSpaceを作成する</td>
-<td>カスタムBundle IDを明示的に選択し、ログイン、アプリ、OU、GPO、容量および業務疎通を確認できる</td>
-<td>同手順の11章</td>
-</tr>
-<tr>
-<td align="right">17</td>
-<td>カスタムイメージを共有先AWSアカウントへ共有する</td>
-<td>共有元の共有アカウント一覧へ承認済みの12桁AWSアカウントIDが表示される</td>
-<td>同手順の14.1章</td>
-</tr>
-<tr>
-<td align="right">18</td>
-<td>共有先でイメージをコピーし、バンドルを再作成する</td>
-<td>共有先所有の新Image IDと新Bundle IDが発行され、必要な構成を確認できる</td>
-<td>同手順の14.2～14.3章</td>
-</tr>
-<tr>
-<td align="right">19</td>
-<td>共有先で検証用WorkSpaceを作成してから展開する</td>
-<td>共有先の検証用WorkSpaceで接続、アプリ、容量、OU、GPOおよび業務疎通を確認し、承認後に残りの対象へ展開できる</td>
-<td>同手順の11章・14.3章</td>
+<td>6</td>
+<td>AD Connectorを作成</td>
+<td>アクティブ、接続先ドメイン、2サブネットを確認</td>
+<td><a href="workspaces-ad-connector.html#connectorBuild">⑤ AD Connector作成</a></td>
 </tr>
 </tbody></table>
-<p>順序3のAD準備と順序4のネットワーク準備は、担当を分けて並行実施できる。ただし、両方が完了するまでAD Connectorの作成へ進まない</p>
-<div class="code"><div class="code-header"><span>text</span><button class="copy" type="button">Copy</button></div><pre><code>Managed ADがアクティブ
-        │
-        ├─ 管理用EC2 ─ ADユーザー・OU・委任の準備 ─┐
-        │                                            ├─ AD Connector作成
-        └─ VPCピアリング ─ 往復ルート・NACL・DC用SG ─┘</code></pre></div>
-<h3 id="3-ユーザー提示順序からの主な調整点">3. ユーザー提示順序からの主な調整点</h3>
-<h4 id="3-1-vpcピアリングはad-connector作成前に完了させる">3.1 VPCピアリングはAD Connector作成前に完了させる</h4>
-<p>VPCピアリング、双方のルート、NACLおよびManaged AD側DC用SGを先に設定します。AD Connectorは作成時にDNS、Kerberos、LDAP等で接続先ディレクトリへ到達する必要があるため、ネットワークが未完成のまま作成工程へ進まない</p>
-<p>VPCピアリングの作成、承諾、VPC002／VPC003双方のルート追加および事前確認は、<a href="workspaces-ad-connector.html">VPCピアリング・DC用SG変更・AD Connector作成手順</a>の5.2～5.5章へ統合しています。同手順書の6章にあるDC用SG変更は、ピアリングが<code class="inline-code">アクティブ</code>で、往復ルートが保存されたことを確認してから実施する</p>
-<h4 id="3-2-ad-connector用アカウントとou委任はad-connector作成前に完了させる">3.2 AD Connector用アカウントとOU委任はAD Connector作成前に完了させる</h4>
-<p><code class="inline-code">Connectors</code>グループ、AD Connectorごとの専用サービスアカウント、コンピューター格納先OUおよび必要権限を先に準備します。WorkSpacesを使用する場合は、対象OUへコンピューターオブジェクトを作成するための書き込み権限も必要</p>
-<h4 id="3-3-wsp固有gpoはパイロットworkspaceの後に設定する">3.3 WSP固有GPOはパイロットWorkSpaceの後に設定する</h4>
-<p>WSP用の<code class="inline-code">wsp.admx</code>／<code class="inline-code">wsp.adml</code>は、稼働中のWindows WorkSpaceにある<code class="inline-code">C:\Program Files\Amazon\WSP</code>から取得します。そのため、まず最小構成のパイロットWorkSpaceを1台作成してログインし、テンプレートを取得してから、管理用EC2で中央ストアへ配置して専用GPOを設定する</p>
-<p>GPO設定後は、パイロットで<code class="inline-code">gpupdate</code>／再起動と<code class="inline-code">gpresult</code>を実施します。新規作成時からの適用を確認する場合は、別の検証用WorkSpaceを新規作成するか、影響を確認したうえでパイロットを再構築します。確認完了後に残りのWorkSpacesを展開する</p>
-<h3 id="4-自動作成されるsgを取り違えない">4. 自動作成されるSGを取り違えない</h3>
+<h4 id="workspaces-ou-gpo">WorkSpaces・OU・GPO</h4>
 <table>
 <thead>
 <tr>
-<th>SG</th>
-<th>作成される時点・用途</th>
-<th>本手順での扱い</th>
+<th>順序</th>
+<th>作業</th>
+<th>次へ進む条件</th>
+<th>手順</th>
 </tr>
 </thead>
 <tbody><tr>
-<td>管理用EC2のSG（検証画面では<code class="inline-code">AmazonSSMDirectoryServiceSecurityGroup</code>）</td>
-<td>ディレクトリ管理用EC2の接続制御</td>
-<td>管理用EC2のSG。ドメインコントローラー用SGとして変更しない</td>
+<td>7</td>
+<td>AD ConnectorをWorkSpacesへ登録</td>
+<td>ディレクトリ登録とWorkSpaces用サブネットを確認</td>
+<td><a href="workspaces-provisioning-gpo.html#workspacesBuild">⑥ ディレクトリ登録</a></td>
 </tr>
 <tr>
-<td>Managed ADのドメインコントローラー用SG</td>
-<td>Managed AD作成時。ドメインコントローラーENIの通信制御</td>
-<td>ピアリング先VPCから必要なAD通信を許可する場合に、対象Directory IDとVPCを照合して変更する</td>
+<td>8</td>
+<td>ターゲットOUを設定</td>
+<td>既存OUとConnectorsへの委任を照合し、DNを保存</td>
+<td><a href="workspaces-provisioning-gpo.html#workspacesOu">⑦ ターゲットOU</a></td>
 </tr>
 <tr>
-<td>AD Connector／WorkSpaces登録に関連する<code class="inline-code">_controllers</code>、<code class="inline-code">_workspacesMembers</code> SG</td>
-<td>AD Connector作成またはWorkSpacesへのディレクトリ登録時</td>
-<td>Managed AD側SGと区別して確認する。根拠なく削除・置換・デタッチしない</td>
+<td>9</td>
+<td>パイロットWorkSpaceを作成・接続</td>
+<td>AVAILABLE、OU所属、クライアント接続を確認</td>
+<td><a href="workspaces-provisioning-gpo.html#workspacesBuild">⑥ WorkSpaces構築・接続</a></td>
+</tr>
+<tr>
+<td>10</td>
+<td>GPOを作成・リンク</td>
+<td>管理テンプレート、GPO設定、対象OUのリンクを確認</td>
+<td><a href="workspaces-provisioning-gpo.html#workspacesGpo">⑧ GPO設定</a></td>
+</tr>
+<tr>
+<td>11</td>
+<td>GPO適用と業務動作を確認</td>
+<td>gpupdate、gpresult、対象設定の実動作を確認</td>
+<td><a href="workspaces-provisioning-gpo.html#workspacesGpo">⑧ GPO適用確認</a></td>
 </tr>
 </tbody></table>
-<p>したがって、管理用EC2起動の直後に変更する対象は「管理用EC2のSG」ではありません。変更対象は、ピアリング先からのAD通信を受ける<strong>Managed AD側のドメインコントローラー用SG</strong></p>
-<h3 id="5-default-domain-policy確認画像の配置">5. Default Domain Policy確認画像の配置</h3>
-<p><code class="inline-code">図8_Default_Domain_Policyのアカウントポリシー.png</code>は、管理用EC2の起動証跡ではなく、管理用EC2へ接続してGPMCを開いた後のポリシー確認証跡として使用する</p>
-<p>管理用EC2手順の図8で確認できるのはDefault Domain Policyの設定値です。細かなパスワードポリシー（PSO）が割り当てられているユーザーの実効パスワードポリシーとは一致しない場合があるため、両者を同じものとして説明しない</p>
-<h3 id="6-工程ゲート">6. 工程ゲート</h3>
+<div class="callout callout-info"><p><strong>ℹ️ 情報：OU準備とターゲットOU設定の順序</strong></p>
+<p>OU作成・権限委任は管理用EC2から先に実施できます。WorkSpaces側のターゲットOU設定はディレクトリ登録後、新規WorkSpaceの作成前に実施します。既存のOU・委任は再作成せず、同じ対象と設定内容を確認します。GPO適用確認はGPO作成後に実施します。</p>
+</div>
+<h4 id="イメージ-展開">イメージ・展開</h4>
+<table>
+<thead>
+<tr>
+<th>順序</th>
+<th>作業</th>
+<th>次へ進む条件</th>
+<th>手順</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>12</td>
+<td>参照WorkSpaceを準備しImage Checkerを実行</td>
+<td>イメージ作成要件を満たし、全項目PASSED</td>
+<td><a href="workspaces-image-bundle.html#workspacesImage">⑨ イメージ・バンドル</a></td>
+</tr>
+<tr>
+<td>13</td>
+<td>カスタムイメージとバンドルを作成</td>
+<td>Image ID、Bundle ID、コンピュートと容量を確認</td>
+<td><a href="workspaces-image-bundle.html#workspacesImage">⑨ 作成・検証</a></td>
+</tr>
+<tr>
+<td>14</td>
+<td>検証用WorkSpaceで確認</td>
+<td>接続、アプリ、OU、GPO、容量を確認</td>
+<td><a href="workspaces-image-bundle.html#workspacesImage">⑨ バンドル検証</a></td>
+</tr>
+<tr>
+<td>15</td>
+<td>必要な場合のみ他アカウントへ共有</td>
+<td>共有先でイメージをコピーし、バンドルを作成・検証</td>
+<td><a href="workspaces-image-bundle.html#workspacesImage">⑨ 共有・共有解除</a></td>
+</tr>
+</tbody></table>
+<h4 id="運用機能の構築">運用機能の構築</h4>
+<table>
+<thead>
+<tr>
+<th>順序</th>
+<th>作業</th>
+<th>次へ進む条件</th>
+<th>手順</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>16</td>
+<td>Systems Manager環境を構築</td>
+<td>IAM、通信、SSM Agent、マネージドノードを確認</td>
+<td><a href="workspaces-patch-manager.html#systemsManagerBuild">⑩ Systems Manager環境構築</a></td>
+</tr>
+<tr>
+<td>17</td>
+<td>Patch Managerを設定</td>
+<td>ベースライン、タグ、対象、時間帯、出力先を確認</td>
+<td><a href="workspaces-patch-manager.html#patchSettings">⑪ Patch Manager設定</a></td>
+</tr>
+<tr>
+<td>18</td>
+<td>Scan・Installを実行して確認</td>
+<td>コマンド結果、実際のKB適用、再起動、S3ログを照合</td>
+<td><a href="workspaces-patch-manager.html#patchOperations">⑫ Patch Manager運用</a></td>
+</tr>
+<tr>
+<td>19</td>
+<td>Cost Optimizerを構築</td>
+<td>バージョンと設定を確認し、DryRun=Yesで構築</td>
+<td><a href="workspaces-cost-optimizer.html#costOptimizerDeploy">⑬ 構築・設定</a></td>
+</tr>
+<tr>
+<td>20</td>
+<td>初回レポートを確認し、必要に応じDry Run解除</td>
+<td>対象・除外・しきい値・変更承認を確認</td>
+<td><a href="workspaces-cost-optimizer.html#costOptimizerSettings">⑭ Dry Run解除</a>・<a href="workspaces-cost-optimizer.html#costOptimizerReports">⑯ レポート・監視</a></td>
+</tr>
+<tr>
+<td>21</td>
+<td>実行時刻の方針を確認</td>
+<td>UTC日内の重複実行を避け、CloudFormationで構成管理</td>
+<td><a href="workspaces-cost-optimizer.html#costOptimizerSchedule">⑮ 実行時刻変更方針</a></td>
+</tr>
+<tr>
+<td>22</td>
+<td>CloudWatch・SNSを設定</td>
+<td>対象メトリクス、しきい値、SNS購読・承認、通知先を確認</td>
+<td><a href="workspaces-cloudwatch-monitoring.html#cloudWatchEc2">⑰ EC2・Windows監視／SNS</a>・<a href="workspaces-cloudwatch-monitoring.html#cloudWatchWorkSpaces">⑱ WorkSpaces監視</a></td>
+</tr>
+</tbody></table>
+<p>監視・通知は、対象リソースの作成後から並行して準備できます。本番運用へ移る前に、必要な監視と通知試験を完了します。</p>
+<h3 id="構築後確認">構築後確認</h3>
 <ul class="check-list">
-<li>Managed ADが「アクティブ」になる前に、管理用EC2やAD Connectorを作成しない</li>
-<li>管理用EC2のドメイン参加を確認する前に、ADUC／GPMCで変更作業を始めない</li>
-<li>ピアリング、往復ルート、NACL、DC用SGおよびDNS疎通がそろう前に、AD Connectorを作成しない</li>
-<li>サービスアカウントとOU権限を確認する前に、AD Connectorを作成しない</li>
-<li>AD Connectorが「アクティブ」になる前に、WorkSpacesへ登録しない</li>
-<li>WorkSpacesのターゲットOUを確認する前に、パイロットWorkSpaceを作成しない</li>
-<li>パイロットへログインできただけで完了とせず、WSP管理テンプレートを取得して専用GPOを設定する</li>
-<li>OU所属とGPO適用結果を確認する前に、残りのWorkSpacesを展開しない</li>
-<li>Image Checkerのすべての検査項目が合格する前に、カスタムイメージを作成しない</li>
-<li>カスタムバンドルのImage ID、コンピューティングタイプおよびボリュームを実値確認する前に、検証用WorkSpaceを作成しない</li>
-<li>カスタムバンドルから起動した検証用WorkSpaceが合格する前に、共有または本番展開を開始しない</li>
-<li>共有先でのイメージコピー、バンドル再作成および検証用WorkSpaceの確認が終わる前に、アカウント間展開を完了扱いにしない</li>
+<li><input disabled="" type="checkbox"> Directory ID、DNS IP、VPC、サブネット、往復経路とSGが対象環境の設計と一致している</li>
+<li><input disabled="" type="checkbox"> WorkSpacesの接続、OU所属、GPO適用、アプリケーション動作を確認している</li>
+<li><input disabled="" type="checkbox"> カスタムバンドルを使用する場合は、そのバンドルから作成したWorkSpaceで検証している</li>
+<li><input disabled="" type="checkbox"> Patch Managerの処理成功と、実際に適用された更新・再起動を区別して記録している</li>
+<li><input disabled="" type="checkbox"> Cost Optimizerの設定変更と、変更後の実行結果を区別して確認している</li>
+<li><input disabled="" type="checkbox"> SNS購読・受信、アラーム履歴、メトリクスの最新時刻を確認している</li>
+<li><input disabled="" type="checkbox"> 未検証の項目は未確認として残し、実施担当者と確認時期を決定している</li>
 </ul>
-
+</section>
     </main>
   </div>
   <script src="../assets/app.js?v=20260908-skill-transfer1"></script>
