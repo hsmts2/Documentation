@@ -87,7 +87,7 @@
 
 <h3 id="構築作業">構築作業</h3>
 <h4 id="1-directory-serviceから管理用ec2の起動画面を開く">1. Directory Serviceから管理用EC2の起動画面を開く</h4>
-<ol class="step-list">
+<ol>
 <li>AWSマネジメントコンソールへサインインします。</li>
 <li>リージョンが「アジアパシフィック（東京）」になっていることを確認します。</li>
 <li>Directory Serviceを開き、「ディレクトリ」から対象のDirectory IDを選択します。</li>
@@ -161,7 +161,7 @@
 <p>同名のSGが存在する場合、このAutomationは既存SGのルールを変更しません。リモートアクセスCIDRの入力値だけで判断せず、関連付けるSGの実際のルールを確認します。</p>
 <p><a href="https://docs.aws.amazon.com/systems-manager-automation-runbooks/latest/userguide/automation-awssupport-create-ds-management-instance.html">AWS-CreateDSManagementInstanceのパラメータ</a></p>
 </div>
-<ol class="step-list">
+<ol>
 <li>画面上部のDirectory IDとディレクトリ名が対象と一致することを確認します。</li>
 <li>キーペア名に<code class="inline-code">RSA-key</code>を選択し、AMI IDに表のSSMパラメータを入力します。</li>
 <li>「同等のAWS CLIコマンドを表示」を開き、Directory ID、リージョンおよび各パラメータを表と照合します。</li>
@@ -198,7 +198,7 @@
 <p>実行履歴で失敗ステップとエラーメッセージを確認します。再実行前に、IAM権限、VPC・サブネット、SG、AMIおよびサービスエンドポイントへの到達性を確認し、作成途中のリソースが残っていないか調べます。</p>
 </div>
 <h4 id="3-管理用ec2の稼働状態を確認する">3. 管理用EC2の稼働状態を確認する</h4>
-<ol class="step-list">
+<ol>
 <li>EC2コンソールの「インスタンス」を開き、Automationで作成されたインスタンスIDを選択します。</li>
 <li>状態が「実行中」になり、すべてのステータスチェックに合格するまで待ちます。図3では「3/3 のチェックに合格しました」と表示されています。</li>
 <li>VPC、サブネット、IAMロール、SG、AMI、インスタンスタイプおよびIMDSv2の設定を照合します。</li>
@@ -212,7 +212,7 @@
 <div class="callout callout-info"><p><strong>ℹ️ 情報：Fleet Managerの補足画像について</strong></p>
 <p>図3-1・3-2は、別インスタンス<code class="inline-code">Sample-mng-001</code>で取得した操作例です。本作業では、手順3で確認した管理用EC2のインスタンスIDを選択します。図4は本手順の管理用EC2への接続完了画面です。</p>
 </div>
-<ol class="step-list">
+<ol>
 <li>Systems Managerを開き、「Fleet Manager」を選択します。</li>
 <li>対象のインスタンスIDを確認し、ノードのチェックボックスを選択します。Pingステータスが「オンライン」になっていることを確認します。</li>
 </ol>
@@ -241,7 +241,7 @@
 <p><a href="https://docs.aws.amazon.com/systems-manager/latest/userguide/fleet-manager-remote-desktop-connections.html">Fleet ManagerからWindows Serverへ接続する</a></p>
 </div>
 <h4 id="5-管理用ec2のドメイン参加を確認する">5. 管理用EC2のドメイン参加を確認する</h4>
-<ol class="step-list">
+<ol>
 <li>「サーバー マネージャー」を開き、「ローカル サーバー」を選択します。</li>
 <li>「ドメイン」に<code class="inline-code">ad.example.com</code>が表示されることを確認します。</li>
 </ol>
@@ -251,7 +251,7 @@
 
 <p>ドメインが表示されない場合は、対象Directory ID、VPC、DNS、IAMインスタンスプロファイルおよびAutomationの実行結果を確認します。ドメイン参加が完了してから、AD管理ツールの確認へ進みます。</p>
 <h4 id="6-ドメイン資格情報でgpmcを起動する">6. ドメイン資格情報でGPMCを起動する</h4>
-<ol class="step-list">
+<ol>
 <li>Windowsの検索欄で「グループ ポリシーの管理」を検索します。</li>
 <li>検索結果を右クリックし、「別のユーザーとして実行」を選択します。</li>
 </ol>
@@ -274,7 +274,7 @@
 <p>Fleet Managerへの接続に使用したローカル<code class="inline-code">Administrator</code>と、AD管理に使用するドメインユーザーを区別します。サービスアカウントを人の管理作業に共用せず、担当作業に必要な委任権限を持つユーザーを使用します。</p>
 </div>
 <h4 id="7-gpo一覧とdefault-domain-policyを確認する">7. GPO一覧とDefault Domain Policyを確認する</h4>
-<ol class="step-list">
+<ol>
 <li>GPMCで対象フォレスト、ドメイン、<code class="inline-code">ad.example.com</code>の順に展開します。</li>
 <li>「グループ ポリシー オブジェクト」を選択し、GPO一覧が表示されることを確認します。</li>
 <li>GPO名、状態、WMIフィルター、更新日時および所有者を変更前の状態として確認します。図7では7件のGPOが表示されています。</li>
@@ -393,7 +393,7 @@
 </tbody></table>
 <h4 id="2-gpmcの参照先ドメインコントローラーを切り替えて確認する-異常時のみ">2. GPMCの参照先ドメインコントローラーを切り替えて確認する（異常時のみ）</h4>
 <p>GPO、リンクまたは更新日時の表示に差異がある場合に、GPMCの問い合わせ先を切り替えて確認します。ドメインコントローラー自体の構成や稼働状態は、この操作では変わりません。</p>
-<ol class="step-list">
+<ol>
 <li>GPMCで<code class="inline-code">ad.example.com</code>を右クリックし、「ドメイン コントローラーの変更」を選択します。</li>
 </ol>
 <figure class="screenshot-wide"><figcaption>参考図1　GPMCの参照先ドメインコントローラー変更メニュー</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-management-ec2/012-gpmcの参照先ドメインコントローラー変更メニュー.png" alt="GPMCの参照先ドメインコントローラー変更メニュー" width="1363" height="713" loading="lazy"></div></figure>
@@ -416,7 +416,7 @@
 <p>参照先の切り替えは、通常の構築作業には含めません。ドメインコントローラー間の表示差異を調査する際に使用します。レプリケーションの問題は、確認結果に基づいて別途対処します。</p>
 </div>
 <h4 id="3-管理用ec2の利用を終了する">3. 管理用EC2の利用を終了する</h4>
-<ol class="step-list">
+<ol>
 <li>AD管理ツールでの作業を終了し、Fleet Managerの接続を終了します。</li>
 <li>常時稼働させない設計の場合は、承認済みの運用手順に従ってEC2を停止します。</li>
 <li>EC2を削除する場合は、後続のADUC・GPMC操作や障害調査で使用しないことを確認します。</li>

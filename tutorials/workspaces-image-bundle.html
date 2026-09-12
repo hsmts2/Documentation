@@ -84,7 +84,7 @@
 
 <section id="workspacesImage" class="procedure-document">
 
-<h2 id="9-amazon-workspaces-カスタムイメージ-バンドル作成-共有手順書">⑨[Amazon WorkSpaces] カスタムイメージ・バンドル作成・共有手順書</h2>
+<h2 id="9-amazon-workspaces-カスタムイメージ-バンドル作成-共有手順書">[Amazon WorkSpaces] カスタムイメージ・バンドル作成・共有手順書</h2>
 <h3 id="仕様">仕様</h3>
 <h4 id="構成-動作">構成・動作</h4>
 <table>
@@ -122,7 +122,7 @@
 <p>暗号化したWorkSpaceからカスタムイメージは作成できません。カスタムバンドルの容量は元イメージの容量以上が必要です。共有は同じリージョンのAWSアカウント間で行い、共有先はイメージをコピーしてから利用します。</p>
 <h3 id="構築作業">構築作業</h3>
 <h4 id="1-参照workspaceを準備する">1. 参照WorkSpaceを準備する</h4>
-<ol class="step-list">
+<ol>
 <li><a href="workspaces-provisioning-gpo.html#workspacesBuild">Amazon WorkSpaces作成・バンドル設定手順</a>に従い、イメージ作成専用WorkSpaceを作成します。</li>
 <li>Windows Server 2022、DCV、PowerPro、ルート80GB／ユーザー50GBを指定します。</li>
 <li>ボリューム暗号化を選択していないことを確認します。</li>
@@ -139,7 +139,7 @@
 <p>利用開始後も変更する設定はイメージへ固定せず、GPOで管理します。</p>
 <h4 id="2-image-checkerを実行する">2. Image Checkerを実行する</h4>
 <h5 id="検査を実行する">検査を実行する</h5>
-<ol class="step-list">
+<ol>
 <li>参照WorkSpaceへ管理者権限で接続します。</li>
 <li>管理者PowerShellでImage Checkerを起動します。</li>
 </ol>
@@ -203,7 +203,7 @@ $remainingStagedPackages</code></pre></div>
 <div class="callout callout-info"><p><strong>ℹ️ 情報：イメージ作成時のWorkSpace状態</strong></p>
 <p>作成元WorkSpaceが「利用可能（<code class="inline-code">Available</code>）」、変更状態が「なし（<code class="inline-code">None</code>）」となっていることを確認します。AutoStopで停止中の場合は起動して利用可能になるまで待ちます。利用者のログインは不要ですが、作成中は使用できないため、クライアントを切断してから実行します。</p>
 </div>
-<ol class="step-list">
+<ol>
 <li><p>Amazon WorkSpacesコンソールで作成元WorkSpaceを選択します。</p>
 </li>
 <li><p>WorkSpace ID、状態、変更状態、暗号化および作成元バンドルを確認します。</p>
@@ -232,7 +232,7 @@ $remainingStagedPackages</code></pre></div>
 
 
 <h4 id="4-カスタムバンドルを作成する">4. カスタムバンドルを作成する</h4>
-<ol class="step-list">
+<ol>
 <li>「イメージ」で作成したカスタムイメージを選択します。</li>
 <li>「アクション」から「バンドルの作成」を選択します。</li>
 </ol>
@@ -265,7 +265,7 @@ $remainingStagedPackages</code></pre></div>
 aws workspaces describe-workspace-bundles --bundle-ids $bundleId --region ap-northeast-1 --query &quot;Bundles[0].{State:State,ImageId:ImageId,Compute:ComputeType.Name,RootGiB:RootStorage.Capacity,UserGiB:UserStorage.Capacity}&quot; --output table --no-cli-pager</code></pre></div>
 <p><code class="inline-code">State=AVAILABLE</code>、元イメージID、<code class="inline-code">Compute=POWERPRO</code>、ルート／ユーザー容量が承認済み設計と一致しないバンドルは展開に使用しません。</p>
 <h4 id="5-カスタムバンドルを検証する">5. カスタムバンドルを検証する</h4>
-<ol class="step-list">
+<ol>
 <li>WorkSpaces作成画面で「手動で設定」、「WorkSpacesバンドルを使用」の順に選択します。</li>
 <li>作成したカスタムバンドル名とBundle IDを指定して、検証用WorkSpaceを1台作成します。</li>
 <li><code class="inline-code">AVAILABLE</code>になるまで待ち、クライアントから接続します。</li>
@@ -281,7 +281,7 @@ aws workspaces describe-workspace-bundles --bundle-ids $bundleId --region ap-nor
 <p>既存イメージを直接編集せず、現行バンドルから更新作業用WorkSpaceを作成して、OS・アプリケーション・設定を変更します。Image Checkerに合格した新しい版のイメージから、新しい版のバンドルを作成します。検証後に環境別のBundle IDを切り替え、旧イメージと旧バンドルは承認済みの保管期限まで残します。</p>
 <p>既存バンドルの元イメージを更新しても、作成済みWorkSpaceのOSやアプリケーションは自動更新されません。再構築または再作成は、データ、スナップショットおよび利用者影響を確認した別作業として実施します。</p>
 <h4 id="2-adグループで展開対象を管理する">2. ADグループで展開対象を管理する</h4>
-<ol class="step-list">
+<ol>
 <li>環境ごとにADグループ、Directory IDおよび検証済みBundle IDの対応表を承認します。</li>
 <li>グループメンバーから、無効ユーザー、サービスアカウントおよび既存WorkSpace利用者を除外します。</li>
 <li>同一ディレクトリ内でユーザーが重複していないことを確認します。</li>
@@ -292,7 +292,7 @@ aws workspaces describe-workspace-bundles --bundle-ids $bundleId --region ap-nor
 <h4 id="3-他awsアカウントへ共有する-必要な場合">3. 他AWSアカウントへ共有する（必要な場合）</h4>
 <p>カスタムバンドルは共有できません。カスタムイメージの共有と共有解除は<a href="https://docs.aws.amazon.com/ja_jp/workspaces/latest/adminguide/share-custom-image.html">カスタムイメージを共有または共有解除する</a>、共有先でのコピーは<a href="https://docs.aws.amazon.com/ja_jp/workspaces/latest/adminguide/copy-custom-image.html">カスタムイメージをコピーする</a>を参照してください。</p>
 <h5 id="共有元awsアカウント">共有元AWSアカウント</h5>
-<ol class="step-list">
+<ol>
 <li>共有元で対象リージョンの「イメージ」を開きます。</li>
 <li>イメージ名、イメージID、状態、OSおよびプロトコルを作業申請と照合します。</li>
 <li>「共有アカウント」で「アカウントを追加」を選択します。</li>
@@ -318,7 +318,7 @@ aws workspaces describe-workspace-bundles --bundle-ids $bundleId --region ap-nor
 
 <p>図10～13のAWSアカウントIDは、先頭4桁だけを残し、残り8桁を<code class="inline-code">*</code>でマスクした画像を使用します。実作業では12桁の値を作業申請と照合します。</p>
 <h5 id="共有先awsアカウント">共有先AWSアカウント</h5>
-<ol class="step-list">
+<ol>
 <li>共有元と同じリージョンで、共有されたイメージを表示します。</li>
 <li>共有元AWSアカウント、イメージ名およびイメージIDを照合します。</li>
 <li>「イメージのコピー」を選択し、共有先で使用する名前と説明を入力します。</li>
@@ -331,7 +331,7 @@ aws workspaces describe-workspace-bundles --bundle-ids $bundleId --region ap-nor
 <p>本書の画像は共有元の操作例です。共有先でのコピー完了、新しいイメージID、バンドル作成とWorkSpace接続の結果を別途確認します。</p>
 </div>
 <h4 id="4-共有を解除する-必要な場合">4. 共有を解除する（必要な場合）</h4>
-<ol class="step-list">
+<ol>
 <li>共有先でコピー処理が進行中でないことを確認します。</li>
 <li>共有元の対象イメージで、共有解除するAWSアカウントを選択します。</li>
 <li>AWSアカウントIDを照合し、「共有解除」を選択します。</li>

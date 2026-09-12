@@ -198,7 +198,7 @@
 </div>
 <h3 id="構築作業">構築作業</h3>
 <h4 id="1-directory-serviceのセットアップを開始する">1. Directory Serviceのセットアップを開始する</h4>
-<ol class="step-list">
+<ol>
 <li>AWSマネジメントコンソールへサインインします。</li>
 <li>画面右上で、リージョンが「アジアパシフィック（東京）」になっていることを確認します。</li>
 <li>サービス検索から「Directory Service」を開きます。</li>
@@ -210,7 +210,7 @@
 
 
 <h4 id="2-ディレクトリタイプを選択する">2. ディレクトリタイプを選択する</h4>
-<ol class="step-list">
+<ol>
 <li>「ディレクトリタイプ」で「AWS Managed Microsoft AD」を選択します。</li>
 <li>「AWS Managed Microsoft ADの使用を開始する」で「AWS managed ADドメインを新規作成」を選択します。</li>
 <li>「次へ」を選択します。</li>
@@ -254,7 +254,7 @@
 <td>未入力</td>
 </tr>
 </tbody></table>
-<ol class="step-list">
+<ol>
 <li>エディションで「Standard Edition」を選択します。</li>
 <li>ディレクトリのDNS名に<code class="inline-code">ad.example.com</code>を入力します。</li>
 <li>ディレクトリのNetBIOS名に<code class="inline-code">ad</code>を入力します。</li>
@@ -269,7 +269,7 @@
 
 
 <h4 id="4-adminパスワードを入力する">4. Adminパスワードを入力する</h4>
-<ol class="step-list">
+<ol>
 <li>「Adminパスワード」に、準備したパスワードを入力します。</li>
 <li>「パスワードを確認」に、同じパスワードを再入力します。</li>
 <li>次のパスワード要件を満たしていることを確認します。<ul>
@@ -321,7 +321,7 @@
 <div class="callout callout-warning"><p><strong>⚠️ 注意：サブネット1とサブネット2のアベイラビリティーゾーンを照合する</strong></p>
 <p>サブネット1が<code class="inline-code">ap-northeast-1a</code>、サブネット2が<code class="inline-code">ap-northeast-1c</code>に属していることを確認してから「次へ」を選択します。</p>
 </div>
-<ol class="step-list">
+<ol>
 <li>VPCで<code class="inline-code">ad-vpc-002</code>を選択します。</li>
 <li>ネットワークタイプで「IPv4のみ」を選択します。</li>
 <li>サブネット1で<code class="inline-code">ad-pri-sub-002-002a</code>を選択します。</li>
@@ -534,7 +534,7 @@
 </div>
 <h3 id="構築作業-2">構築作業</h3>
 <h4 id="1-ユーザーとグループの管理機能を有効化する">1. ユーザーとグループの管理機能を有効化する</h4>
-<ol class="step-list">
+<ol>
 <li>AWSマネジメントコンソールへサインインし、プライマリリージョンのアジアパシフィック（東京）を選択します。</li>
 <li>Directory Serviceの「ディレクトリ」を開きます。</li>
 <li>ディレクトリID、DNS名<code class="inline-code">ad.example.com</code>、ディレクトリタイプ「Microsoft AD」およびステータス「アクティブ」を照合します。</li>
@@ -616,7 +616,7 @@
 <p>本手順で使用するDirectory Service Dataコンソールでは、作成後のユーザーログイン名を変更できません。綴りと命名規則を確認してから入力します。</p>
 <p><a href="https://docs.aws.amazon.com/ja_jp/directoryservice/latest/admin-guide/ms_ad_create_user.html">Directory Service Dataコンソールによるユーザーの作成</a></p>
 </div>
-<ol class="step-list">
+<ol>
 <li>対象ディレクトリの「ユーザー」タブで「ユーザーを作成」を選択します。</li>
 <li>ユーザーログイン名に<code class="inline-code">sampleadmin</code>を入力します。</li>
 <li>初期パスワードを入力し、確認用の欄へ同じパスワードを再入力します。</li>
@@ -674,7 +674,7 @@
 <div class="callout callout-warning"><p><strong>⚠️ 注意：FSx管理を担当するユーザーだけを追加する</strong></p>
 <p><code class="inline-code">AWS Delegated FSx Administrators</code>は、FSx管理用の高権限グループです。作業依頼と追加対象を照合してから操作します。既存の子グループは変更しません。</p>
 </div>
-<ol class="step-list">
+<ol>
 <li>対象ディレクトリの「グループ」タブを開きます。</li>
 <li><code class="inline-code">AWS Delegated FSx Administrators</code>を検索します。</li>
 <li>検索結果のグループ名リンクを選択し、詳細画面を開きます。</li>
@@ -736,7 +736,7 @@
 <div class="callout callout-info"><p><strong>ℹ️ 情報：グループから削除してもユーザーアカウントは残る</strong></p>
 <p>この操作で削除する対象は、指定グループのメンバーシップです。ユーザーアカウント自体や、他のグループへの所属は残ります。</p>
 </div>
-<ol class="step-list">
+<ol>
 <li>対象ディレクトリの「グループ」タブで、<code class="inline-code">AWS Delegated Administrators</code>を開きます。</li>
 <li>「メンバー」タブで、ログイン名が<code class="inline-code">sampleadmin</code>、メンバータイプが「ユーザー」の行を確認します。</li>
 <li><code class="inline-code">sampleadmin</code>だけを選択し、削除元グループ名とユーザーログイン名を再確認します。</li>
@@ -782,7 +782,7 @@
 <p>この操作は、ユーザーアカウント自体を削除します。削除前の無効化期間やデータ引継ぎなど、必要な対応が完了していることを確認します。同じログイン名で新規作成してもSIDが変わるため、以前のアクセス権は自動では復旧しません。</p>
 <p><a href="https://learn.microsoft.com/en-us/windows-server/identity/ad-ds/manage/understand-security-identifiers">セキュリティ識別子（SID）</a></p>
 </div>
-<ol class="step-list">
+<ol>
 <li>対象ディレクトリの「ユーザー」タブを開きます。</li>
 <li><code class="inline-code">samplework</code>を検索し、削除対象ユーザーだけを選択します。</li>
 </ol>
@@ -821,7 +821,7 @@
 </div>
 <h4 id="5-パスワードポリシーを設定する-必要時">5. パスワードポリシーを設定する（必要時）</h4>
 <p>この操作は、ドメイン既定のパスワードポリシーとは異なる設定が必要な場合に実施します。掲載画像のユーザー作成・グループ操作に必須の作業ではありません。</p>
-<ol class="step-list">
+<ol>
 <li>ドメイン参加済みの管理用EC2へ、必要なAD管理権限を持つユーザーでサインインします。</li>
 <li>AD管理ツールが未導入の場合は、管理者権限のPowerShellで次のコマンドを実行します。</li>
 </ol>
@@ -840,7 +840,7 @@
 <h3 id="作業後確認">作業後確認</h3>
 <h4 id="ユーザーとグループの状態を確認する">ユーザーとグループの状態を確認する</h4>
 <p>作業依頼で指定された操作の結果を確認します。本手順の掲載例を順に実施した場合は、次の最終状態を確認します。</p>
-<ol class="step-list">
+<ol>
 <li>ディレクトリの詳細で、「ユーザーとグループの管理」が「有効」になっていることを確認します。</li>
 <li>「ユーザー」タブで<code class="inline-code">sampleadmin</code>が「有効」と表示されることを確認します。</li>
 <li><code class="inline-code">AWS Delegated FSx Administrators</code>のメンバーに、<code class="inline-code">Admin</code>と<code class="inline-code">sampleadmin</code>が表示されることを確認します。</li>
@@ -848,7 +848,7 @@
 <li>「ユーザー」タブで<code class="inline-code">samplework</code>を検索し、一覧に表示されないことを確認します。</li>
 </ol>
 <h4 id="パスワードポリシーの適用結果を確認する-変更時のみ">パスワードポリシーの適用結果を確認する（変更時のみ）</h4>
-<ol class="step-list">
+<ol>
 <li>管理用EC2のPowerShellで、対象ユーザーの実効PSOを確認します。<code class="inline-code">&lt;ユーザー名&gt;</code>は確認対象のログイン名へ置き換えます。</li>
 </ol>
 <div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>Get-ADUserResultantPasswordPolicy -Identity '&lt;ユーザー名&gt;'</code></pre></div>

@@ -84,7 +84,7 @@
 
 <section id="cloudWatchEc2" class="procedure-document">
 
-<h2 id="17-amazon-cloudwatch-ec2-windows-os監視とアラーム設定手順書">⑰[Amazon CloudWatch] EC2・Windows OS監視とアラーム設定手順書</h2>
+<h2 id="17-amazon-cloudwatch-ec2-windows-os監視とアラーム設定手順書">[Amazon CloudWatch] EC2・Windows OS監視とアラーム設定手順書</h2>
 <h3 id="仕様">仕様</h3>
 <h4 id="構成-動作">構成・動作</h4>
 <figure class="screenshot-wide"><figcaption>図1　CloudWatch監視構成</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cloudwatch-monitoring/001-cloudwatch監視構成.png" alt="CloudWatch監視構成" width="1800" height="900" loading="lazy"></div></figure>
@@ -122,7 +122,7 @@
 </tr>
 </tbody></table>
 <h4 id="管理範囲">管理範囲</h4>
-<p>CloudWatch agentの設定はSystems ManagerのRun CommandとParameter Storeで管理します。WorkSpacesの監視設定は⑱で実施し、通知先とダッシュボードを共用します。Windowsイベントログの収集は本書の設定に含みません。</p>
+<p>CloudWatch agentの設定はSystems ManagerのRun CommandとParameter Storeで管理します。WorkSpacesの監視設定は<a href="#cloudWatchWorkSpaces">WorkSpaces監視とアラーム設定手順</a>で実施し、通知先とダッシュボードを共用します。Windowsイベントログの収集は本書の設定に含みません。</p>
 <h4 id="制約事項">制約事項</h4>
 <ul class="check-list">
 <li><code class="inline-code">OK</code>は設定した評価条件を満たした状態です。業務機能の確認は、対象サービス・OS・認証の確認と合わせて実施します。</li>
@@ -132,7 +132,7 @@
 </ul>
 <h3 id="構築作業">構築作業</h3>
 <h4 id="1-snsトピックを作成する">1. SNSトピックを作成する</h4>
-<ol class="step-list">
+<ol>
 <li>AWSマネジメントコンソールへサインインし、東京リージョンでAmazon SNSを開きます。</li>
 <li>「トピック」で既存の通知先を確認します。同じ用途のトピックがある場合は、名前・ARN・通知先を照合して使用します。</li>
 <li>新規作成する場合は「トピックの作成」を選択します。</li>
@@ -160,7 +160,7 @@
 トピック作成時の画像ではサブスクリプションが0件です。次の登録・購読確認を実施して通知先を有効にします。</p>
 </div>
 <h4 id="2-emailサブスクリプションを登録する">2. Emailサブスクリプションを登録する</h4>
-<ol class="step-list">
+<ol>
 <li>作成したトピックの「サブスクリプション」タブで「サブスクリプションの作成」を選択します。</li>
 <li>次の値を設定します。</li>
 </ol>
@@ -193,7 +193,7 @@
 <li>一覧で対象の通知先と、購読確認待ち（<code class="inline-code">Pending confirmation</code>）の状態を確認します。</li>
 </ol>
 <h4 id="3-確認メールから購読を承認する">3. 確認メールから購読を承認する</h4>
-<ol class="step-list">
+<ol>
 <li>登録した通知先で、Amazon SNSから届いた購読確認メールを開きます。</li>
 <li>メール本文のトピックARNが今回の通知先トピックと一致することを確認します。</li>
 <li>「Confirm subscription」を選択します。</li>
@@ -207,7 +207,7 @@
 保管済み画像はトピック作成までです。登録画面、確認済みの一覧、テストメール受信画面は本作業で取得します。メールアドレスや購読確認用URLの取り扱いは、お客様の記録ルールに従います。</p>
 </div>
 <h4 id="4-snsのメール配信をテストする">4. SNSのメール配信をテストする</h4>
-<ol class="step-list">
+<ol>
 <li>通知先へテスト実施を周知します。</li>
 <li>SNSの対象トピックで「メッセージの発行」を選択します。</li>
 <li>件名へ「CloudWatch監視通知テスト」、本文へ対象環境とテスト実施日時を入力します。</li>
@@ -219,7 +219,7 @@
 <h5 id="作成前のアラームを確認する">作成前のアラームを確認する</h5>
 <p>CloudWatchで<strong>アラーム</strong>－<strong>すべてのアラーム</strong>を開き、同じインスタンス・メトリクスのアラームがないことを確認してから、<strong>アラームの作成</strong>を選択します。</p>
 <h5 id="statuscheckfailedを選択する"><code class="inline-code">StatusCheckFailed</code>を選択する</h5>
-<ol class="step-list">
+<ol>
 <li><strong>メトリクスの選択</strong>を選択します。</li>
 <li><code class="inline-code">AWS/EC2</code>－<strong>インスタンス別メトリクス</strong>を開きます。</li>
 <li>インスタンスID<code class="inline-code">i-05914a8b6088a3a42</code>、メトリクス名<code class="inline-code">StatusCheckFailed</code>の行を選択します。</li>
@@ -269,7 +269,7 @@
 <code class="inline-code">StatusCheckFailed</code>は、インスタンスまたは基盤側のステータスチェックに失敗した場合に<code class="inline-code">1</code>となります。停止済みインスタンスではメトリクスが途切れ、設定により<code class="inline-code">INSUFFICIENT_DATA</code>となる場合があります。停止の検知が必要な場合は、EC2の状態変更も監視対象にします。</p>
 </div>
 <h5 id="sns通知を設定する">SNS通知を設定する</h5>
-<ol class="step-list">
+<ol>
 <li>アラーム状態トリガーで<strong>アラーム状態</strong>を選択します。</li>
 <li><strong>既存のSNSトピックを選択</strong>を選択します。</li>
 <li><code class="inline-code">sample-sns-cloudwatch-alerts</code>を選択します。</li>
@@ -380,7 +380,7 @@
 <div class="callout callout-warning"><p><strong>⚠️ 注意：CloudWatch agent用IAM権限</strong><br><code class="inline-code">AmazonSSMManagedInstanceCore</code>だけでは、CloudWatch Agentによるメトリクス送信に必要な権限を満たしません。Agentを導入する前に、対象EC2のインスタンスロールへ<code class="inline-code">CloudWatchAgentServerPolicy</code>が付与されていることを確認します。</p>
 </div>
 <h5 id="cloudwatch-agentを導入する">CloudWatch agentを導入する</h5>
-<ol class="step-list">
+<ol>
 <li>既存設定を上書きしないよう、最初にSystems Managerの<code class="inline-code">AmazonCloudWatch-ManageAgent</code>を<code class="inline-code">Action=status</code>で実行し、agentの導入・稼働状態を確認します。</li>
 <li>既にagentを利用している場合は、<code class="inline-code">C:\ProgramData\Amazon\AmazonCloudWatchAgent</code>配下の設定と、既存のログ収集設定を確認・退避します。新しい設定は既存設定とマージしてから適用します。</li>
 <li>未導入の場合はAWS Systems Managerの<strong>Run Command</strong>を開き、AWS管理ドキュメント<code class="inline-code">AWS-ConfigureAWSPackage</code>を選択します。</li>
@@ -479,7 +479,7 @@
   }
 }</code></pre></div>
 <h5 id="parameter-storeへ収集設定を保存する">Parameter Storeへ収集設定を保存する</h5>
-<ol class="step-list">
+<ol>
 <li>Systems Managerの<strong>Parameter Store</strong>を開き、<strong>パラメータの作成</strong>を選択します。</li>
 <li>名前を<code class="inline-code">AmazonCloudWatch-sample-windows-basic-v1</code>、階層を<code class="inline-code">Standard</code>、タイプを<code class="inline-code">String</code>にします。</li>
 <li>値に前項のJSONを貼り付けて保存します。</li>
@@ -494,7 +494,7 @@
 <code class="inline-code">CloudWatchAgentServerPolicy</code>が取得できる標準的な接頭辞に合わせ、本例では<code class="inline-code">AmazonCloudWatch-</code>から始まる名前を使用します。既存の同名パラメータがある場合は上書きせず、内容を確認してバージョン名を変更してください。</p>
 </div>
 <h5 id="設定を適用し-メトリクスを確認する">設定を適用し、メトリクスを確認する</h5>
-<ol class="step-list">
+<ol>
 <li>Systems Managerの<strong>Run Command</strong>で<code class="inline-code">AmazonCloudWatch-ManageAgent</code>を選択します。</li>
 <li><code class="inline-code">Action=configure</code>、<code class="inline-code">Mode=ec2</code>、<code class="inline-code">Optional Configuration Source=ssm</code>、<code class="inline-code">Optional Configuration Location=AmazonCloudWatch-sample-windows-basic-v1</code>、<code class="inline-code">Optional Restart=yes</code>を指定し、対象EC2へ実行します。</li>
 <li>Run Commandが<code class="inline-code">Success</code>となり、<code class="inline-code">AmazonCloudWatch-ManageAgent</code>の<code class="inline-code">Action=status</code>でAgentが<code class="inline-code">running</code>かつ<code class="inline-code">configstatus</code>が<code class="inline-code">configured</code>となることを確認します。</li>
@@ -659,7 +659,7 @@
 </tbody></table>
 <p>メトリクスが出力されない場合は、agentログに加えて、対象EC2から<code class="inline-code">monitoring.ap-northeast-1.amazonaws.com</code>およびSystems Manager関連エンドポイントへTCP/443で到達できること、VPCエンドポイントのセキュリティグループとプライベートDNS、プロキシ設定を確認します。</p>
 <h4 id="9-ダッシュボードへec2-windows-osメトリクスを追加する">9. ダッシュボードへEC2・Windows OSメトリクスを追加する</h4>
-<ol class="step-list">
+<ol>
 <li>CloudWatchの「ダッシュボード」で<code class="inline-code">sample-cw-monitoring-dashboard</code>を開きます。未作成の場合は「ダッシュボードの作成」から作成します。</li>
 <li>「ウィジェットの追加」で折れ線グラフを選択し、対象EC2の<code class="inline-code">CPUUtilization</code>と<code class="inline-code">StatusCheckFailed</code>を追加します。</li>
 <li><code class="inline-code">CWAgent</code>から対象EC2のディスク空き容量（<code class="inline-code">instance=C:</code>）とメモリコミット率を追加します。</li>
@@ -672,7 +672,7 @@ CloudWatch agentの稼働とWindows OSメトリクスの出力は掲載画像で
 </div>
 <h3 id="通知試験と運用確認">通知試験と運用確認</h3>
 <h4 id="1-テスト用アラームで通知経路を確認する">1. テスト用アラームで通知経路を確認する</h4>
-<ol class="step-list">
+<ol>
 <li>通知担当者と試験時間・通知先・テスト名を共有します。</li>
 <li>継続してデータが取得できる検証用EC2のメトリクスを選び、専用のテスト用アラームを作成します。</li>
 <li>現在値でALARMとなるしきい値を設定し、SNS通知先を指定します。EC2停止・再起動などのアクションは設定しません。</li>
@@ -753,10 +753,10 @@ CloudWatch agentの稼働とWindows OSメトリクスの出力は掲載画像で
 
 <section id="cloudWatchWorkSpaces" class="procedure-document">
 
-<h2 id="18-amazon-cloudwatch-workspaces監視とアラーム設定手順書">⑱[Amazon CloudWatch] WorkSpaces監視とアラーム設定手順書</h2>
+<h2 id="18-amazon-cloudwatch-workspaces監視とアラーム設定手順書">[Amazon CloudWatch] WorkSpaces監視とアラーム設定手順書</h2>
 <h3 id="仕様-2">仕様</h3>
 <h4 id="構成-動作-2">構成・動作</h4>
-<p><code class="inline-code">AWS/WorkSpaces</code>のメトリクスをCloudWatchで評価し、ALARMへの状態変更時にSNSでメール通知します。通知先トピックとEmail購読は⑰のSNS設定で準備します。</p>
+<p><code class="inline-code">AWS/WorkSpaces</code>のメトリクスをCloudWatchで評価し、ALARMへの状態変更時にSNSでメール通知します。通知先トピックとEmail購読は<a href="#cloudWatchEc2">EC2・Windows OS監視とアラーム設定手順</a>のSNS設定で準備します。</p>
 <h4 id="管理範囲-2">管理範囲</h4>
 <p>基本監視は<code class="inline-code">Unhealthy</code>と<code class="inline-code">ConnectionFailure</code>の2アラームです。<code class="inline-code">UserConnected</code>は接続状況の表示に使用します。CPU・メモリ・ボリューム・接続品質の監視は運用要件に応じた追加候補です。</p>
 <h4 id="制約事項-2">制約事項</h4>
@@ -767,7 +767,7 @@ CloudWatch agentの稼働とWindows OSメトリクスの出力は掲載画像で
 </ul>
 <h3 id="構築作業-2">構築作業</h3>
 <h4 id="1-unhealthyアラームを作成する">1. Unhealthyアラームを作成する</h4>
-<ol class="step-list">
+<ol>
 <li>CloudWatchで<strong>アラーム</strong>－<strong>すべてのアラーム</strong>－<strong>アラームの作成</strong>を選択します。</li>
 <li><strong>メトリクスの選択</strong>から<code class="inline-code">AWS/WorkSpaces</code>を開きます。</li>
 <li><code class="inline-code">WorkspaceId=ws-jkxz7js0s</code>、メトリクス<code class="inline-code">Unhealthy</code>を選択します。</li>
@@ -819,7 +819,7 @@ CloudWatch agentの稼働とWindows OSメトリクスの出力は掲載画像で
 <li>名前と説明を入力し、設定内容を確認して「アラームの作成」を選択します。</li>
 </ol>
 <h4 id="2-connectionfailureアラームを作成する">2. ConnectionFailureアラームを作成する</h4>
-<ol class="step-list">
+<ol>
 <li><code class="inline-code">AWS/WorkSpaces</code>から対象WorkSpaceの<code class="inline-code">ConnectionFailure</code>を選択します。</li>
 <li>次の条件を設定します。</li>
 </ol>
@@ -876,7 +876,7 @@ CloudWatch agentの稼働とWindows OSメトリクスの出力は掲載画像で
 </div>
 <h4 id="3-userconnectedをダッシュボードへ追加する">3. UserConnectedをダッシュボードへ追加する</h4>
 <p><code class="inline-code">UserConnected</code>は利用状況の可視化に使用し、本手順では固定しきい値アラームを作成しません。</p>
-<ol class="step-list">
+<ol>
 <li>CloudWatchで<strong>ダッシュボード</strong>を開き、<code class="inline-code">sample-cw-monitoring-dashboard</code>を選択します。未作成の場合は同名で作成します。</li>
 <li>折れ線または数値ウィジェットを追加します。</li>
 <li><code class="inline-code">AWS/WorkSpaces</code>－<code class="inline-code">UserConnected</code>を選択します。</li>
@@ -909,7 +909,7 @@ CloudWatch agentの稼働とWindows OSメトリクスの出力は掲載画像で
 </tr>
 </tbody></table>
 <h5 id="手順">手順</h5>
-<ol class="step-list">
+<ol>
 <li>CloudWatchで<strong>ダッシュボード</strong>を開きます。</li>
 <li><code class="inline-code">sample-cw-monitoring-dashboard</code>を開きます。未作成の場合だけ<strong>ダッシュボードの作成</strong>で同名のダッシュボードを作成します。</li>
 <li>次のウィジェットを配置します。検証環境では「今回配置済み」の項目まで作成し、画面表示を確認済みです。</li>
@@ -974,7 +974,7 @@ CloudWatch agentの稼働とWindows OSメトリクスの出力は掲載画像で
 
 
 
-<div class="callout callout-info"><p><strong>ℹ️ 情報：ダッシュボード画像の確認範囲</strong><br>ダッシュボード本体、EC2 CPU、WorkSpaces 3指標、作成済みアラームの配置は確認済みです。Windows OSメトリクスの出力は後続の取得画像で確認でき、⑰に掲載しています。このダッシュボード画像はWindows OSウィジェット追加前の記録です。表の「追加予定」は、要件に合わせて追加し、表示結果を確認します。</p>
+<div class="callout callout-info"><p><strong>ℹ️ 情報：ダッシュボード画像の確認範囲</strong><br>ダッシュボード本体、EC2 CPU、WorkSpaces 3指標、作成済みアラームの配置は確認済みです。Windows OSメトリクスの出力は後続の取得画像で確認でき、<a href="#cloudWatchEc2">EC2・Windows OS監視とアラーム設定手順</a>に掲載しています。このダッシュボード画像はWindows OSウィジェット追加前の記録です。表の「追加予定」は、要件に合わせて追加し、表示結果を確認します。</p>
 </div>
 <h4 id="5-アラームと通知を確認する">5. アラームと通知を確認する</h4>
 <p>CloudWatchで<strong>アラーム</strong>－<strong>すべてのアラーム</strong>を開き、検索欄へ<code class="inline-code">sample-cw-</code>を入力します。</p>
@@ -1013,7 +1013,7 @@ CloudWatch agentの稼働とWindows OSメトリクスの出力は掲載画像で
 </tr>
 </tbody></table>
 <p>確認項目：</p>
-<ol class="step-list">
+<ol>
 <li>アラーム名が命名規則に一致することを確認します。</li>
 <li>対象リソースID、メトリクス、統計、期間、しきい値が設計値と一致することを確認します。</li>
 <li>通知先が<code class="inline-code">sample-sns-cloudwatch-alerts</code>に設定されていることを確認します。</li>
@@ -1023,12 +1023,12 @@ CloudWatch agentの稼働とWindows OSメトリクスの出力は掲載画像で
 作成直後は評価に必要なデータポイントがそろわず、<code class="inline-code">INSUFFICIENT_DATA</code>になる場合があります。評価期間分待ってから最終状態を確認します。</p>
 </div>
 <ol start="5">
-<li>⑰の「通知試験と運用確認」に従い、専用のテスト用アラームで同じSNSトピックへの通知を確認します。</li>
+<li><a href="#cloudWatchEc2">EC2・Windows OS監視とアラーム設定手順</a>の「通知試験と運用確認」に従い、専用のテスト用アラームで同じSNSトピックへの通知を確認します。</li>
 <li>WorkSpacesの2アラームについて、正しいメトリクス・対象ID・SNSトピックが設定されていることを確認します。</li>
 </ol>
 <h3 id="運用確認">運用確認</h3>
 <h4 id="障害時の確認">障害時の確認</h4>
-<ol class="step-list">
+<ol>
 <li>アラーム一覧で作成した2アラームの状態が取得データと評価条件に一致し、アクションが有効となっていることを確認します。</li>
 <li><code class="inline-code">Unhealthy</code>が<code class="inline-code">ALARM</code>の場合、WorkSpacesコンソールで対象IDの状態、ヘルスチェック、再起動・再構築履歴を確認します。</li>
 <li><code class="inline-code">ConnectionFailure</code>が<code class="inline-code">ALARM</code>の場合、同時刻のクライアントエラー、ネットワーク経路、Directory Service、セキュリティグループ、証明書・プロキシ設定を確認します。</li>
@@ -1151,7 +1151,7 @@ CloudWatch agentの稼働とWindows OSメトリクスの出力は掲載画像で
 <td>停止、削除、agent停止、リージョン、メンテナンスを確認する</td>
 </tr>
 </tbody></table>
-<ol class="step-list">
+<ol>
 <li>アラーム詳細のグラフで、状態変更前後の値を確認します。</li>
 <li><strong>履歴</strong>で、状態変更時刻、理由、通知アクションの成否を確認します。</li>
 <li>SNS通知の受信時刻とアラーム履歴を照合します。</li>

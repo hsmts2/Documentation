@@ -84,7 +84,7 @@
 
 <section id="systemsManagerBuild" class="procedure-document">
 
-<h2 id="10-systems-manager-systems-manager環境構築手順書">⑩[Systems Manager] Systems Manager環境構築手順書</h2>
+<h2 id="10-systems-manager-systems-manager環境構築手順書">[Systems Manager] Systems Manager環境構築手順書</h2>
 <h3 id="仕様">仕様</h3>
 <h4 id="構成-動作">構成・動作</h4>
 <p>EC2インスタンスプロファイルへAmazonSSMManagedInstanceCoreと用途別の権限を付与します。S3出力権限は出力先に合わせて別途確認します。</p>
@@ -151,7 +151,7 @@
 <p>AWSでは、組織の運用方式に適合する場合はDefault Host Management Configurationの利用を推奨しています。本手順では、本番環境の既存設計を再現する場合にも使用できるよう、EC2インスタンスプロファイルを個別に割り当てる構成を扱います。個別ロールを作成する場合は、信頼されたエンティティのユースケースに「EC2」を選び、基本ポリシーとして<code class="inline-code">AmazonSSMManagedInstanceCore</code>を付与します。旧ユースケース<code class="inline-code">EC2 Role for AWS Systems Manager</code>は新規構築で選択しません。</p>
 <p><a href="https://docs.aws.amazon.com/systems-manager/latest/userguide/setup-instance-permissions.html">Configure instance permissions required for Systems Manager</a></p>
 <h5 id="操作">操作</h5>
-<ol class="step-list">
+<ol>
 <li>IAMコンソールで「ロール」－「ロールを作成」を選択します。</li>
 <li>「信頼されたエンティティタイプ」で「AWSのサービス」を選択します。</li>
 <li>ユースケースで「EC2」を選択します。</li>
@@ -237,7 +237,7 @@
 <div class="callout callout-warning"><p><strong>⚠️ 注意：S3書き込み権限の確認</strong><br>CloudTrail用の既存バケットポリシーが設定されていても、それだけではPatch Manager／Run Commandの書き込み権限を満たしません。S3出力を有効にする場合は、対象ノードへ割り当てたEC2インスタンスプロファイルが、指定プレフィックスへ出力を書き込めることを確認します。</p>
 </div>
 <h5 id="操作-2">操作</h5>
-<ol class="step-list">
+<ol>
 <li>S3コンソールで既存バケット<code class="inline-code">sample-mw-bucket</code>を開きます。</li>
 <li><code class="inline-code">patchmanager/</code>プレフィックスが存在し、過去の実行ログが保存されていることを確認します。</li>
 <li>「パブリックアクセスをすべてブロック」、サーバー側暗号化、ライフサイクルルールおよび保存期間を確認します。</li>
@@ -268,7 +268,7 @@
 <li>セキュリティグループ：SSM利用だけを目的とする場合、受信ポートは不要</li>
 </ul>
 <h5 id="windows-server-2022日本語amiを検索する">Windows Server 2022日本語AMIを検索する</h5>
-<ol class="step-list">
+<ol>
 <li>EC2コンソールの「インスタンスを起動」で、「その他のAMIを閲覧する」を選択します。</li>
 <li>右上のリージョンが「アジアパシフィック（東京）」となっていることを確認します。</li>
 <li>「コミュニティAMI」を開き、検索欄へ<code class="inline-code">Windows_Server-2022-Japanese-Full-Base</code>を入力します。</li>
@@ -287,7 +287,7 @@
 <p><a href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/finding-an-ami-parameter-store.html">Find the latest AMIs using Systems Manager parameters</a></p>
 <p>AMI IDはリージョンごとに異なり、同じ製品でもリリースごとに更新されます。したがって、手順書には検索文字列だけでなく、検証で使用したAMI名とAMI IDの両方を記録します。</p>
 <h5 id="操作-3">操作</h5>
-<ol class="step-list">
+<ol>
 <li>EC2コンソールで「インスタンスを起動」を選択します。</li>
 <li>名前、AMI、インスタンスタイプ、キーペア、VPC、サブネットおよびセキュリティグループを指定します。</li>
 <li>「高度な詳細」で作成したIAMインスタンスプロフィールを選択します。</li>
@@ -332,7 +332,7 @@ Get-CimInstance Win32_Service -Filter &quot;Name='AmazonSSMAgent'&quot; |
 <p>SSM Agentがない状態ではFleet Manager、Session Manager、Run Commandからインストールできません。</p>
 <h5 id="ssm-agentが未導入の場合">SSM Agentが未導入の場合</h5>
 <p>Amazon提供のWindows Server 2022 AMIには、通常SSM Agentがプレインストールされています。<code class="inline-code">Get-Service AmazonSSMAgent</code>でサービスが見つからない場合だけ、次の手順を実施します。SSM Agentが未導入または停止している状態では、Session Manager、Fleet ManagerおよびRun Commandをインストール経路として使用できないため、RDP、踏み台、EC2 Serial Console、User Dataなど、Systems Manager以外の承認済み管理経路を使用します。</p>
-<ol class="step-list">
+<ol>
 <li>Windows Serverへ管理者権限で接続します。</li>
 <li>Windows PowerShell 3.0以降が利用できることを確認します。</li>
 <li>管理者権限のPowerShellで、東京リージョンの64-bit版インストーラーをダウンロードしてサイレントインストールします。</li>
@@ -359,7 +359,7 @@ Get-CimInstance Win32_Service -Filter &quot;Name='AmazonSSMAgent'&quot; |
 <p><code class="inline-code">Running</code>にならない場合は、<code class="inline-code">C:\ProgramData\Amazon\SSM\Logs\amazon-ssm-agent.log</code>、IAMインスタンスプロフィール、DNS、プロキシおよびTCP/443の通信経路を確認します。</p>
 <p><a href="https://docs.aws.amazon.com/systems-manager/latest/userguide/manually-install-ssm-agent-windows.html">Manually installing and uninstalling SSM Agent on EC2 instances for Windows Server</a></p>
 <h5 id="fleet-managerで確認する">Fleet Managerで確認する</h5>
-<ol class="step-list">
+<ol>
 <li>Systems Managerの「フリートマネージャー」を開きます。</li>
 <li>対象EC2のノード状態が「実行中」、Ping statusが「オンライン」となっていることを確認します。</li>
 <li>OS、AMI、SSM Agentバージョン、IAMロールを記録します。</li>
@@ -379,7 +379,7 @@ Get-CimInstance Win32_Service -Filter &quot;Name='AmazonSSMAgent'&quot; |
 
 <section id="patchSettings" class="procedure-document">
 
-<h2 id="11-systems-manager-patch-manager設定手順書">⑪[Systems Manager] Patch Manager設定手順書</h2>
+<h2 id="11-systems-manager-patch-manager設定手順書">[Systems Manager] Patch Manager設定手順書</h2>
 <h3 id="仕様-2">仕様</h3>
 <h4 id="構成-動作-2">構成・動作</h4>
 <p>Patch Groupは適用ベースラインの選択に使用します。Maintenance Windowのターゲット登録とベースラインへの関連付けをそれぞれ行います。</p>
@@ -389,7 +389,7 @@ Get-CimInstance Win32_Service -Filter &quot;Name='AmazonSSMAgent'&quot; |
 <p>スケジュール登録後は指定日時にタスクが起動します。運用開始前はウィンドウを無効化し、対象とパラメータの確認後に有効化します。</p>
 <h3 id="構築作業-2">構築作業</h3>
 <h4 id="1-windows用パッチベースラインを決定する">1. Windows用パッチベースラインを決定する</h4>
-<ol class="step-list">
+<ol>
 <li>Systems Manager－「パッチマネージャー」－「パッチベースライン」を開きます。</li>
 <li>Windows Server用のAWS定義済みパッチベースラインについて、製品、分類、重要度、承認ルールが要件を満たすか確認します。</li>
 <li>AWS定義済みベースラインで要件を満たす場合は、そのベースラインを使用します。</li>
@@ -399,7 +399,7 @@ Get-CimInstance Win32_Service -Filter &quot;Name='AmazonSSMAgent'&quot; |
 <p>今回はAWS定義済みパッチベースラインの一覧まで確認しましたが、使用するWindowsベースラインと<code class="inline-code">sample-window</code>の関連付けを直接示す照会結果は取得していません。この確認が終わるまで、関連付けを完了扱いにしません。</p>
 <h5 id="windows用カスタムパッチベースラインを作成する場合">Windows用カスタムパッチベースラインを作成する場合</h5>
 <p>今回確認した<code class="inline-code">AWS-DefaultPatchBaseline</code>で要件を満たす場合、カスタムパッチベースラインの作成は不要です。承認待機日数、対象分類、重要度、Microsoft製アプリケーション、個別の承認／拒否KBなどを変更する場合だけ、次の手順で作成します。</p>
-<ol class="step-list">
+<ol>
 <li><p>Systems Managerコンソールで「パッチマネージャー」－「パッチベースライン」を開きます。</p>
 </li>
 <li><p>「パッチベースラインを作成する」を選択します。</p>
@@ -433,12 +433,12 @@ Get-CimInstance Win32_Service -Filter &quot;Name='AmazonSSMAgent'&quot; |
 <h4 id="2-patch-groupをパッチベースラインへ関連付ける">2. Patch Groupをパッチベースラインへ関連付ける</h4>
 <p>今回のPatch Group値は<code class="inline-code">sample-window</code>です。</p>
 <p><code class="inline-code">Patch Group</code>タグには次の2つの役割があります。</p>
-<ol class="step-list">
+<ol>
 <li>Maintenance Windowが実行対象EC2を選ぶためのタグ条件</li>
 <li>Patch Managerが、そのEC2へどのパッチベースラインを適用するか選ぶための関連付けキー</li>
 </ol>
 <p>Maintenance Windowのターゲット登録だけでは、2つ目の「どのベースラインを使うか」は設定されません。そのため、<code class="inline-code">Patch Group=sample-window</code>を使う構成では、<code class="inline-code">sample-window</code>を使用するWindowsパッチベースラインへ登録します。</p>
-<ol class="step-list">
+<ol>
 <li>使用するWindowsパッチベースラインの詳細を開きます。</li>
 <li>Patch Groupの変更／登録操作を選択します。</li>
 <li>Patch Group値へ<code class="inline-code">sample-window</code>を入力して登録します。</li>
@@ -466,7 +466,7 @@ aws ssm register-patch-baseline-for-patch-group `
 <p>Patch Groupによるベースライン切り替えが不要で、単にMaintenance Windowの対象を選びたいだけであれば、予約された<code class="inline-code">Patch Group</code>キーではなく、<code class="inline-code">MaintenanceWindow=sample-window</code>などの通常タグをターゲット条件に使用できます。この構成ではPatch Groupとベースラインの関連付け手順を省略します。</p>
 <p><a href="https://docs.aws.amazon.com/systems-manager/latest/userguide/patch-manager-tag-a-patch-group.html">Create a patch group</a>／<a href="https://docs.aws.amazon.com/systems-manager/latest/userguide/patch-manager-patch-groups.html">How patch groups work</a></p>
 <h4 id="3-maintenance-windowを作成する">3. Maintenance Windowを作成する</h4>
-<ol class="step-list">
+<ol>
 <li>Systems Manager－「メンテナンスウィンドウ」を開きます。</li>
 <li>「メンテナンスウィンドウの作成」を選択します。</li>
 <li>名前、スケジュール、Duration、Cutoffおよびタイムゾーンを入力します。</li>
@@ -523,7 +523,7 @@ aws ssm register-patch-baseline-for-patch-group `
 <div class="callout callout-warning"><p><strong>⚠️ 注意：UTCとJST</strong><br>上記cronは毎月第4木曜17:00 UTC、すなわち日本時間では翌金曜02:00 JSTに実行されます。お客様要件が「第4木曜17:00 JST」の場合はこの設定ではないため、タイムゾーンまたはcronを修正します。</p>
 </div>
 <h4 id="4-maintenance-windowのターゲットを登録する">4. Maintenance Windowのターゲットを登録する</h4>
-<ol class="step-list">
+<ol>
 <li>作成したMaintenance Windowを開き、「ターゲット」タブを選択します。</li>
 <li>「ターゲットの登録」を選択します。</li>
 <li>ターゲット名へ<code class="inline-code">PatchingTarget</code>を入力します。</li>
@@ -549,7 +549,7 @@ aws ssm register-patch-baseline-for-patch-group `
 
 
 <h4 id="5-ec2へpatch-groupタグを付与する">5. EC2へPatch Groupタグを付与する</h4>
-<ol class="step-list">
+<ol>
 <li>EC2コンソールでパイロットインスタンス<code class="inline-code">Sample-mng-001</code>を選択します。</li>
 <li>「タグを管理」を開きます。</li>
 <li>キー<code class="inline-code">Patch Group</code>、値<code class="inline-code">sample-window</code>を追加します。</li>
@@ -567,7 +567,7 @@ aws ssm register-patch-baseline-for-patch-group `
 
 <p>保存完了メッセージと、EC2タグ一覧の<code class="inline-code">Patch Group=sample-window</code>を確認しました。</p>
 <h4 id="6-run-commandタスクを登録する">6. Run Commandタスクを登録する</h4>
-<ol class="step-list">
+<ol>
 <li>Maintenance Windowの「タスク」タブで「タスクの登録」－「Run Commandタスクの登録」を選択します。</li>
 <li>タスク名を入力します。</li>
 <li>コマンドドキュメント<code class="inline-code">AWS-RunPatchBaseline</code>を選択します。</li>
@@ -599,7 +599,7 @@ aws ssm register-patch-baseline-for-patch-group `
 <h4 id="7-sns通知を設定する-任意">7. SNS通知を設定する（任意）</h4>
 <p>SNSはMaintenance Windowsの必須要素ではありません。今回の設定画面では「SNS通知の有効化」が未選択のため、本手順の必須作業には含めません。</p>
 <p>実行失敗、タイムアウトまたは完了をメール等で通知する要件がある場合のみ、次の設定を追加します。</p>
-<ol class="step-list">
+<ol>
 <li>StandardタイプのSNSトピックを作成します。FIFOトピックは使用しません。</li>
 <li>メール等のサブスクリプションを作成し、受信者が購読確認を行います。</li>
 <li>Systems ManagerがSNSへ通知するためのIAMロールを作成します。</li>
@@ -613,7 +613,7 @@ aws ssm register-patch-baseline-for-patch-group `
 
 <section id="patchOperations" class="procedure-document">
 
-<h2 id="12-systems-manager-patch-manager実行-結果確認-運用手順書">⑫[Systems Manager] Patch Manager実行・結果確認・運用手順書</h2>
+<h2 id="12-systems-manager-patch-manager実行-結果確認-運用手順書">[Systems Manager] Patch Manager実行・結果確認・運用手順書</h2>
 <h3 id="仕様-3">仕様</h3>
 <h4 id="構成-動作-3">構成・動作</h4>
 <p>Scanで不足パッチを検出し、変更承認後にInstallを実行します。コマンドの成功、準拠状況、新規適用KB、業務復旧をそれぞれ確認します。</p>
@@ -638,7 +638,7 @@ aws ssm register-patch-baseline-for-patch-group `
 <li><input disabled="" type="checkbox"> 本番Installの場合、バックアップ、再起動、業務停止および確認担当の承認がある</li>
 </ul>
 <h4 id="2-scanテストと成功判定">2. Scanテストと成功判定</h4>
-<ol class="step-list">
+<ol>
 <li>対象Maintenance Windowのタスクで<code class="inline-code">Operation=Scan</code>、<code class="inline-code">RebootOption=NoReboot</code>、登録済みターゲットとS3出力先を確認します。</li>
 <li>メンテナンスウィンドウの次回実行日時を確認し、承認済み時間帯に有効化します。検証用の日時へ変更する場合は元のスケジュールを記録します。実行開始後、「履歴」で実行IDと開始時刻を記録します。</li>
 <li>Maintenance Window、タスク、Run Commandおよびノード別結果を確認します。</li>
@@ -672,7 +672,7 @@ aws ssm register-patch-baseline-for-patch-group `
 <li>再Scan後、意図したベースライン内で<code class="inline-code">MISSING=0</code>、<code class="inline-code">FAILED=0</code>、<code class="inline-code">INSTALLED_PENDING_REBOOT=0</code></li>
 </ul>
 <h5 id="install前にwindowsとawsの状態を記録する">Install前にWindowsとAWSの状態を記録する</h5>
-<ol class="step-list">
+<ol>
 <li>Windowsへ管理者権限で接続します。</li>
 <li><code class="inline-code">winver</code>を開き、Windows ServerのバージョンとOSビルドを記録します。</li>
 <li>「設定」－「更新とセキュリティ」－「Windows Update」を開き、利用可能な更新、再起動待ちおよび管理ポリシーの表示を記録します。</li>
@@ -706,7 +706,7 @@ aws ssm register-patch-baseline-for-patch-group `
 
 <p><a href="https://docs.aws.amazon.com/systems-manager/latest/userguide/patch-manager-aws-runpatchbaseline.html">AWS-RunPatchBaseline command document</a></p>
 <h5 id="awsコンソールでinstallの成功を確認する">AWSコンソールでInstallの成功を確認する</h5>
-<ol class="step-list">
+<ol>
 <li>Maintenance Windowの「履歴」を開きます。</li>
 <li>Install実行のステータスが「成功」となっていることを確認し、開始時刻と終了時刻を記録します。</li>
 <li>実行IDを選択し、Execution Tasksとタスク呼び出しが「成功／Success」となっていることを確認します。</li>
@@ -800,7 +800,7 @@ aws ssm register-patch-baseline-for-patch-group `
 <p><code class="inline-code">Success</code>は、指定したベースラインに基づく処理がエラーなく完了したことを示します。今回のように新規適用対象が0件の場合も<code class="inline-code">Success</code>となります。実際に更新されたKBを確認する場合は、Run Command出力末尾の<code class="inline-code">KbArticleId / Installed / Message</code>一覧、Windowsの更新履歴およびOSビルドを実行前後で比較します。</p>
 <p>今回のS3出力では、<code class="inline-code">InstalledCount=3</code>、<code class="inline-code">InstalledOtherCount=6</code>ですが、実行末尾の<code class="inline-code">KbArticleId / Installed / Message</code>一覧は空でした。このため、3件と6件はスキャン時点で既にインストール済みと分類された件数です。今回新規に9件を適用した意味ではありません。<code class="inline-code">rebootCount=0</code>、<code class="inline-code">InstalledPendingRebootCount=0</code>のため、今回の実行で再起動は発生しておらず、再起動待ちもありません。</p>
 <h5 id="s3でinstall実行ログを確認する">S3でInstall実行ログを確認する</h5>
-<ol class="step-list">
+<ol>
 <li>S3コンソールで、Run Commandタスクに指定したバケットを開きます。</li>
 <li>キープレフィックス<code class="inline-code">patchmanager/</code>を開きます。</li>
 <li>対象コマンドID、対象ノードID、プラグイン名<code class="inline-code">awsrunPowerShellScript</code>、ステップ名<code class="inline-code">PatchWindows</code>の順に開きます。</li>
@@ -816,7 +816,7 @@ aws ssm register-patch-baseline-for-patch-group `
 
 
 <h5 id="windows-server内でinstall後の状態を確認する">Windows Server内でInstall後の状態を確認する</h5>
-<ol class="step-list">
+<ol>
 <li>再起動が発生した場合は、RDPまたは承認済み運用経路で再接続できることを確認します。</li>
 <li><code class="inline-code">winver</code>を開き、Install前に記録したWindowsバージョンとOSビルドから変化したか比較します。</li>
 <li>「コントロールパネル」－「プログラム」－「プログラムと機能」－「インストールされた更新プログラムを表示」を開きます。</li>
@@ -852,7 +852,7 @@ aws ssm register-patch-baseline-for-patch-group `
 <li><a href="https://learn.microsoft.com/en-us/defender-endpoint/microsoft-defender-antivirus-updates">Microsoft Defender Antivirus security intelligence and product updates</a></li>
 </ul>
 <h4 id="5-失敗時の対応と切り戻し">5. 失敗時の対応と切り戻し</h4>
-<ol class="step-list">
+<ol>
 <li>対象ウィンドウを無効化して次回実行を停止し、コマンドID、対象ノード、エラー出力を記録します。無効化だけでは進行中の処理は停止しません。</li>
 <li>SSM接続、更新元への通信、WindowsイベントログとRun Command出力を確認します。</li>
 <li>再実行または復元が必要な場合は、影響範囲を確認し、事前に準備した復元手順に従います。更新プログラムの削除可否はKBごとに確認します。</li>

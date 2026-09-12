@@ -116,7 +116,13 @@ const transform = (source, index) => {
     html = html.replace(/(<nav class="breadcrumb" aria-label="Breadcrumb">[\s\S]*?<\/nav>)/, `$1\n      <h1>${pageTitle}</h1>`);
   }
   html = html.replace(/<div class="code" data-prompt="\$"><div class="code-header"><span>PowerShell<\/span>/gi, '<div class="code"><div class="code-header"><span>PowerShell</span>');
-  html = html.replace(/<ol(?![^>]*\bclass=)>/g, '<ol class="step-list">');
+  html = html.replace(/<ol class="step-list">/g, '<ol>');
+  // Keep anchor IDs stable while removing document sequence numbers from labels.
+  html = html.replace(/(<h[1-6]\b[^>]*>)\s*[①-⑳]\s*/g, '$1');
+  if (file === "workspaces-cloudwatch-monitoring.html") {
+    html = html.replaceAll("⑰", '<a href="#cloudWatchEc2">EC2・Windows OS監視とアラーム設定手順</a>')
+      .replaceAll("⑱", '<a href="#cloudWatchWorkSpaces">WorkSpaces監視とアラーム設定手順</a>');
+  }
   html = html.replace(/<ul class="contains-task-list">/g, '<ul class="check-list">');
   html = html.replace(/<ul(?![^>]*\bclass=)>([\s\S]*?)<\/ul>/g, (all, inner) => {
     const items = [...inner.matchAll(/<li[^>]*>([\s\S]*?)<\/li>/g)];
