@@ -115,7 +115,7 @@
 </thead>
 <tbody><tr>
 <td><code class="inline-code">Admin</code>ユーザー</td>
-<td>ディレクトリ管理者として、NetBIOS名と同名のOU配下にある<code class="inline-code">Users</code>へ作成されます。本環境では<code class="inline-code">ad\Users</code>です。</td>
+<td>ディレクトリ管理者として、NetBIOS名と同名のOU配下にある<code class="inline-code">Users</code>へ作成されます。本環境では<code class="inline-code">p-pm\Users</code>です。</td>
 </tr>
 <tr>
 <td><code class="inline-code">AWS Delegated Groups</code> OU</td>
@@ -126,7 +126,7 @@
 <td>AWSが使用するサービス管理アカウントが格納されます。お客様が管理対象として使用する領域ではありません。</td>
 </tr>
 <tr>
-<td><code class="inline-code">ad</code> OU</td>
+<td><code class="inline-code">p-pm</code> OU</td>
 <td>ディレクトリ作成時に指定したNetBIOS名に基づく管理用OUです。配下に<code class="inline-code">Computers</code>と<code class="inline-code">Users</code>が作成され、お客様が管理するコンピューターとユーザーを配置します。</td>
 </tr>
 </tbody></table></div>
@@ -222,11 +222,11 @@
 </tr>
 <tr>
 <td>ディレクトリのDNS名</td>
-<td><code class="inline-code">ad.example.com</code></td>
+<td><code class="inline-code">p-pm.example.com</code></td>
 </tr>
 <tr>
 <td>ディレクトリのNetBIOS名</td>
-<td><code class="inline-code">ad</code></td>
+<td><code class="inline-code">p-pm</code></td>
 </tr>
 <tr>
 <td>ディレクトリの説明</td>
@@ -235,8 +235,8 @@
 </tbody></table></div>
 <ol>
 <li>エディションで「Standard Edition」を選択します。</li>
-<li>ディレクトリのDNS名に<code class="inline-code">ad.example.com</code>を入力します。</li>
-<li>ディレクトリのNetBIOS名に<code class="inline-code">ad</code>を入力します。</li>
+<li>ディレクトリのDNS名に<code class="inline-code">p-pm.example.com</code>を入力します。</li>
+<li>ディレクトリのNetBIOS名に<code class="inline-code">p-pm</code>を入力します。</li>
 <li>ディレクトリの説明は未入力とします。</li>
 <li>続けて、次の「Adminパスワードを入力する」でパスワードを設定します。</li>
 </ol>
@@ -278,7 +278,7 @@
 </thead>
 <tbody><tr>
 <td>VPC</td>
-<td><code class="inline-code">ad-vpc-002</code>（<code class="inline-code">192.168.225.0/24</code>）</td>
+<td><code class="inline-code">p-pm-vpc-002</code>（<code class="inline-code">192.168.225.0/24</code>）</td>
 </tr>
 <tr>
 <td>ネットワークタイプ</td>
@@ -286,11 +286,11 @@
 </tr>
 <tr>
 <td>サブネット1</td>
-<td><code class="inline-code">ad-pri-sub-002-002a</code>（<code class="inline-code">192.168.225.64/27</code>、<code class="inline-code">ap-northeast-1a</code>）</td>
+<td><code class="inline-code">p-pm-pri-sub-002-002a</code>（<code class="inline-code">192.168.225.64/27</code>、<code class="inline-code">ap-northeast-1a</code>）</td>
 </tr>
 <tr>
 <td>サブネット2</td>
-<td><code class="inline-code">ad-pri-sub-002-002c</code>（<code class="inline-code">192.168.225.96/27</code>、<code class="inline-code">ap-northeast-1c</code>）</td>
+<td><code class="inline-code">p-pm-pri-sub-002-002c</code>（<code class="inline-code">192.168.225.96/27</code>、<code class="inline-code">ap-northeast-1c</code>）</td>
 </tr>
 <tr>
 <td>初期ADサイト名</td>
@@ -301,10 +301,10 @@
 <p>サブネット1が<code class="inline-code">ap-northeast-1a</code>、サブネット2が<code class="inline-code">ap-northeast-1c</code>に属していることを確認してから「次へ」を選択します。</p>
 </div>
 <ol>
-<li>VPCで<code class="inline-code">ad-vpc-002</code>を選択します。</li>
+<li>VPCで<code class="inline-code">p-pm-vpc-002</code>を選択します。</li>
 <li>ネットワークタイプで「IPv4のみ」を選択します。</li>
-<li>サブネット1で<code class="inline-code">ad-pri-sub-002-002a</code>を選択します。</li>
-<li>サブネット2で<code class="inline-code">ad-pri-sub-002-002c</code>を選択します。</li>
+<li>サブネット1で<code class="inline-code">p-pm-pri-sub-002-002a</code>を選択します。</li>
+<li>サブネット2で<code class="inline-code">p-pm-pri-sub-002-002c</code>を選択します。</li>
 <li>選択した2つのサブネットが、それぞれ<code class="inline-code">ap-northeast-1a</code>と<code class="inline-code">ap-northeast-1c</code>に属していることを確認します。</li>
 <li>「次へ」を選択します。</li>
 </ol>
@@ -317,9 +317,9 @@
 <ul>
 <li>ディレクトリタイプ：「Microsoft AD」</li>
 <li>エディション：「Standard」</li>
-<li>DNS名：<code class="inline-code">ad.example.com</code></li>
-<li>NetBIOS名：<code class="inline-code">ad</code></li>
-<li>VPC：<code class="inline-code">ad-vpc-002</code>／サブネットCIDR：<code class="inline-code">192.168.225.64/27</code>、<code class="inline-code">192.168.225.96/27</code></li>
+<li>DNS名：<code class="inline-code">p-pm.example.com</code></li>
+<li>NetBIOS名：<code class="inline-code">p-pm</code></li>
+<li>VPC：<code class="inline-code">p-pm-vpc-002</code>／サブネットCIDR：<code class="inline-code">192.168.225.64/27</code>、<code class="inline-code">192.168.225.96/27</code></li>
 </ul>
 <div class="callout callout-warning"><p><strong>⚠️ 注意：ディレクトリの作成後は構成変更に制約がある</strong></p>
 <p>DNS名、VPCおよびサブネットの誤りがないことを確認してから作成します。入力値に誤りがある場合は「ディレクトリの作成」を選択せず、該当画面へ戻って修正します。</p>

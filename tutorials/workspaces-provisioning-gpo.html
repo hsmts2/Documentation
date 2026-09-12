@@ -81,15 +81,15 @@
 </tr>
 <tr>
 <td>お客様管理領域</td>
-<td><code class="inline-code">ad</code>配下の<code class="inline-code">Computers</code>と<code class="inline-code">Users</code>を使用します。</td>
+<td><code class="inline-code">p-pm</code>配下の<code class="inline-code">Computers</code>と<code class="inline-code">Users</code>を使用します。</td>
 </tr>
 <tr>
 <td>WorkSpaces用OU</td>
-<td><code class="inline-code">ad\Computers\WorkSpaces</code>を作成し、コンピューターアカウントを配置します。</td>
+<td><code class="inline-code">p-pm\Computers\WorkSpaces</code>を作成し、コンピューターアカウントを配置します。</td>
 </tr>
 <tr>
 <td>サービスアカウント</td>
-<td><code class="inline-code">ad\Users</code>の<code class="inline-code">ADConnectorService</code>を<code class="inline-code">Connectors</code>へ追加し、同グループへWorkSpaces OUの権限を委任します。</td>
+<td><code class="inline-code">p-pm\Users</code>の<code class="inline-code">ADConnectorService</code>を<code class="inline-code">Connectors</code>へ追加し、同グループへWorkSpaces OUの権限を委任します。</td>
 </tr>
 <tr>
 <td>ターゲットOU</td>
@@ -100,7 +100,7 @@
 <td>お客様作成の<code class="inline-code">Amazon WorkSpaces DCV Policy</code>をWorkSpaces OUへ直接リンクします。</td>
 </tr>
 </tbody></table></div>
-<p>ドメイン直下の<code class="inline-code">Computers</code>コンテナーと、<code class="inline-code">ad\Computers</code> OUは別の管理領域です。ユーザーは<code class="inline-code">ad\Users</code>に配置し、WorkSpaces専用OUにはコンピューターアカウントを配置します。</p>
+<p>ドメイン直下の<code class="inline-code">Computers</code>コンテナーと、<code class="inline-code">p-pm\Computers</code> OUは別の管理領域です。ユーザーは<code class="inline-code">p-pm\Users</code>に配置し、WorkSpaces専用OUにはコンピューターアカウントを配置します。</p>
 <figure class="screenshot-wide"><figcaption>構成図1　WorkSpaces用OU・GPOの関係</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/001-workspaces用ou-gpo構成.png" alt="WorkSpaces用OU・GPO構成" width="3840" height="2160" loading="lazy"></div></figure>
 
 
@@ -222,7 +222,7 @@
 <h3 id="4-ou所属とクライアント接続を確認する">4. OU所属とクライアント接続を確認する</h3>
 <h4 id="active-directory">Active Directory</h4>
 <ol>
-<li>ADUCで<code class="inline-code">ad\Computers\WorkSpaces</code>を開き、新しいコンピューターオブジェクトを確認します。</li>
+<li>ADUCで<code class="inline-code">p-pm\Computers\WorkSpaces</code>を開き、新しいコンピューターオブジェクトを確認します。</li>
 <li>コンピューター名がWorkSpacesコンソールの値と一致することを確認します。</li>
 <li>⑧を実施済みの場合は、<code class="inline-code">gpresult /scope computer /r</code>で<code class="inline-code">Amazon WorkSpaces DCV Policy</code>の適用を確認します。初回構築で⑧が未実施の場合は、接続確認後に⑧へ進みます。</li>
 </ol>
@@ -257,8 +257,8 @@
 <p><code class="inline-code">LDAP unavailable (TCP port 389)</code>または<code class="inline-code">Kerberos/authentication unavailable (TCP port 88)</code>が表示された場合は、AD ConnectorからドメインコントローラーへのTCP／UDP 88（Kerberos）とTCP／UDP 389（LDAP）を確認します。片方のドメインコントローラーだけでなく、両方へ到達できることを確認します。</p>
 <h4 id="srv-record"><code class="inline-code">SRV record</code></h4>
 <p>AD Connectorは、指定DNSサーバーから<code class="inline-code">_ldap._tcp.&lt;DNSドメイン名&gt;</code>と<code class="inline-code">_kerberos._tcp.&lt;DNSドメイン名&gt;</code>のSRVレコードを取得する必要があります。次のコマンドで両レコードを確認し、対象ドメインコントローラーが返ることを確認します。</p>
-<div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>Resolve-DnsName -Type SRV '_ldap._tcp.ad.example.com'
-Resolve-DnsName -Type SRV '_kerberos._tcp.ad.example.com'</code></pre></div>
+<div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>Resolve-DnsName -Type SRV '_ldap._tcp.p-pm.example.com'
+Resolve-DnsName -Type SRV '_kerberos._tcp.p-pm.example.com'</code></pre></div>
 <p>最後の3件はAD Connectorの作成・接続診断でも発生します。WorkSpace作成を繰り返す前に、AD Connector側のネットワークとDNSを解消します。</p>
 <h3 id="2-作成に失敗した場合">2. 作成に失敗した場合</h3>
 <ol>

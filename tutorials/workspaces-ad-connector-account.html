@@ -84,11 +84,11 @@
 <td>権限委任に使用するグローバル／セキュリティグループです。サービスアカウントをメンバーとして追加します。</td>
 </tr>
 <tr>
-<td><code class="inline-code">ad\Users</code></td>
+<td><code class="inline-code">p-pm\Users</code></td>
 <td>サービスアカウントと委任用グループを配置します。</td>
 </tr>
 <tr>
-<td><code class="inline-code">ad\Computers\WorkSpaces</code></td>
+<td><code class="inline-code">p-pm\Computers\WorkSpaces</code></td>
 <td>WorkSpacesのコンピューターオブジェクトを配置し、<code class="inline-code">Connectors</code>へ必要な権限を委任します。</td>
 </tr>
 </tbody></table></div>
@@ -97,7 +97,7 @@
 <h3 id="管理範囲">管理範囲</h3>
 <p>本手順では、お客様管理OU内のサービスアカウント、グループおよびWorkSpaces専用OUを管理します。専用OUは自動作成されないため、未作成の場合は本手順で作成します。WorkSpacesの「ターゲットドメインと組織単位」には、権限委任先と同じOUを指定します。</p>
 <div class="callout callout-warning"><p><strong>⚠️ 注意：アカウントの配置先と権限委任先を分ける</strong></p>
-<p><code class="inline-code">Connectors</code>と<code class="inline-code">ADConnectorService</code>の配置先は<code class="inline-code">ad\Users</code>です。権限委任先は<code class="inline-code">ad\Computers\WorkSpaces</code>です。アカウントの配置先だけを見て、<code class="inline-code">Users</code>へ委任しないでください。</p>
+<p><code class="inline-code">Connectors</code>と<code class="inline-code">ADConnectorService</code>の配置先は<code class="inline-code">p-pm\Users</code>です。権限委任先は<code class="inline-code">p-pm\Computers\WorkSpaces</code>です。アカウントの配置先だけを見て、<code class="inline-code">Users</code>へ委任しないでください。</p>
 </div>
 <h3 id="制約事項">制約事項</h3>
 <ul>
@@ -111,7 +111,7 @@
 <p>サービスアカウントへ権限を直接付与せず、委任用グループを介して管理できるようにします。</p>
 <ol>
 <li>ADUCを対象ドメインの管理資格情報で起動します。</li>
-<li><code class="inline-code">ad.example.com</code>を展開し、<code class="inline-code">ad</code>、<code class="inline-code">Users</code>の順に選択します。</li>
+<li><code class="inline-code">p-pm.example.com</code>を展開し、<code class="inline-code">p-pm</code>、<code class="inline-code">Users</code>の順に選択します。</li>
 <li><code class="inline-code">Users</code>を右クリックし、「新規作成」から「グループ」を選択します。</li>
 </ol>
 <figure class="screenshot-wide"><figcaption>図1　Connectorsグループ作成メニューの選択</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-ad-connector/001-connectorsグループ作成メニューの選択.png" alt="Connectorsグループ作成メニューの選択" width="1329" height="872" loading="lazy"></div></figure>
@@ -185,7 +185,7 @@
 </tr>
 </tbody></table></div>
 <ol>
-<li><code class="inline-code">ad\Users</code>を選択し、ツールバーの「現在のコンテナーに新しいユーザーを作成」を選択します。</li>
+<li><code class="inline-code">p-pm\Users</code>を選択し、ツールバーの「現在のコンテナーに新しいユーザーを作成」を選択します。</li>
 </ol>
 <figure class="screenshot-wide"><figcaption>図4　AD Connector用サービスアカウントの作成開始</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-ad-connector/004-ad-connector用サービスアカウントの作成開始.png" alt="AD Connector用サービスアカウントの作成開始" width="1324" height="725" loading="lazy"></div></figure>
 
@@ -223,7 +223,7 @@
 </tr>
 </tbody></table></div>
 <ol start="3">
-<li>UPNが<code class="inline-code">ADConnectorService@ad.example.com</code>となり、個人ユーザーと誤認しない表示名になっていることを確認します。</li>
+<li>UPNが<code class="inline-code">ADConnectorService@p-pm.example.com</code>となり、個人ユーザーと誤認しない表示名になっていることを確認します。</li>
 </ol>
 <figure class="screenshot-wide"><figcaption>図5　サービスアカウントのユーザー情報入力</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-ad-connector/005-サービスアカウントのユーザー情報入力.png" alt="サービスアカウントのユーザー情報入力" width="507" height="430" loading="lazy"></div></figure>
 
@@ -244,7 +244,7 @@
 </div>
 <ol start="8">
 <li>フルネーム、ユーザーログオン名およびパスワード設定を確認します。</li>
-<li>「完了」を選択し、<code class="inline-code">ad\Users</code>の一覧に<code class="inline-code">ADConnectorService</code>が作成されたことを確認します。</li>
+<li>「完了」を選択し、<code class="inline-code">p-pm\Users</code>の一覧に<code class="inline-code">ADConnectorService</code>が作成されたことを確認します。</li>
 </ol>
 <figure class="screenshot-wide"><figcaption>図7　サービスアカウント作成内容の確認</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-ad-connector/007-サービスアカウント作成内容の確認.png" alt="サービスアカウント作成内容の確認" width="511" height="431" loading="lazy"></div></figure>
 
@@ -253,7 +253,7 @@
 <p>AD Connector作成前に誤りを発見した場合は、使用されていないことを確認してアカウントを無効化し、正しいアカウントを作成します。AD Connector作成後は、先にアカウントを無効化または削除しないでください。</p>
 <h3 id="3-サービスアカウントをconnectorsへ追加する">3. サービスアカウントを<code class="inline-code">Connectors</code>へ追加する</h3>
 <ol>
-<li><p><code class="inline-code">ad\Users</code>で、作成したサービスアカウントのプロパティを開きます。</p>
+<li><p><code class="inline-code">p-pm\Users</code>で、作成したサービスアカウントのプロパティを開きます。</p>
 </li>
 <li><p>「所属するグループ」タブを選択します。</p>
 </li>
@@ -282,7 +282,7 @@
 <p>この節と次の権限委任は、WorkSpaces側のOU手順を未実施の場合だけ行います。「Amazon WorkSpaces用OU作成・権限委任・ターゲットOU設定手順」で同じOUと<code class="inline-code">Connectors</code>への委任を完了済みの場合は、OUと詳細ACLが本節の要件を満たすことだけを確認し、ウィザードを再実行しません。</p>
 <ol>
 <li>承認済みのOU設計を確認します。</li>
-<li>専用OUを作成する場合は、<code class="inline-code">ad\Computers</code>を右クリックし、「新規作成」から「組織単位（OU）」を選択します。</li>
+<li>専用OUを作成する場合は、<code class="inline-code">p-pm\Computers</code>を右クリックし、「新規作成」から「組織単位（OU）」を選択します。</li>
 </ol>
 <figure class="screenshot-wide"><figcaption>図7-2　WorkSpaces用OUの作成メニュー</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-ad-connector/009-workspaces用ouの作成メニュー.png" alt="WorkSpaces用OUの作成メニュー" width="1170" height="724" loading="lazy"></div></figure>
 
@@ -297,7 +297,7 @@
 
 
 <ol start="5">
-<li><code class="inline-code">ad\Computers</code>の配下に<code class="inline-code">WorkSpaces</code> OUが表示されることを確認します。</li>
+<li><code class="inline-code">p-pm\Computers</code>の配下に<code class="inline-code">WorkSpaces</code> OUが表示されることを確認します。</li>
 </ol>
 <figure class="screenshot-wide"><figcaption>図7-4　WorkSpaces用OUの作成完了</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-ad-connector/011-workspaces用ouの作成完了.png" alt="WorkSpaces用OUの作成完了" width="1172" height="725" loading="lazy"></div></figure>
 
@@ -309,10 +309,10 @@
 <div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>Get-ADOrganizationalUnit -Filter * |
     Select-Object Name, DistinguishedName</code></pre></div>
 <h3 id="5-workspaces用コンピューターouへ権限を委任する">5. WorkSpaces用コンピューターOUへ権限を委任する</h3>
-<p>本環境では<code class="inline-code">ad\Computers\WorkSpaces</code>をコンピューター専用OUとして使用します。OU作成とWorkSpaces側のターゲットOU設定は、「Amazon WorkSpaces用OU作成・権限委任・ターゲットOU設定手順」を参照してください。本手順では、<code class="inline-code">Connectors</code>へ<strong>コンピューターオブジェクト</strong>の作成、削除、読み取りおよび書き込みだけを委任します。</p>
+<p>本環境では<code class="inline-code">p-pm\Computers\WorkSpaces</code>をコンピューター専用OUとして使用します。OU作成とWorkSpaces側のターゲットOU設定は、「Amazon WorkSpaces用OU作成・権限委任・ターゲットOU設定手順」を参照してください。本手順では、<code class="inline-code">Connectors</code>へ<strong>コンピューターオブジェクト</strong>の作成、削除、読み取りおよび書き込みだけを委任します。</p>
 <p>既存ACLに同じ<code class="inline-code">Connectors</code>のアクセス許可エントリがある場合は、対象オブジェクト、権限および適用先を詳細ACLで照合します。要件を満たしていれば委任ウィザードを再実行せず、重複ACEを作成しません。</p>
-<p>AWS公式の汎用例ではコンピューターオブジェクトとユーザーオブジェクトの両方を選択する場合がありますが、ユーザーを格納しない本環境のWorkSpaces専用OUへ、ユーザーオブジェクトの作成・削除・書き込み権限は追加しません。ユーザー検索に必要な読み取りは<code class="inline-code">ad\Users</code>側で維持し、AD Connectorが「アクティブ」でWorkSpacesコンソールから対象ユーザーを検索できることで確認します。</p>
-<p>権限の範囲を広げないため、委任開始時に<code class="inline-code">ad\Computers\WorkSpaces</code>を選択したことを確認します。AWS Managed Microsoft ADでは、ドメインルート、<code class="inline-code">AWS Reserved</code>および<code class="inline-code">Domain Controllers</code>から開始しません。</p>
+<p>AWS公式の汎用例ではコンピューターオブジェクトとユーザーオブジェクトの両方を選択する場合がありますが、ユーザーを格納しない本環境のWorkSpaces専用OUへ、ユーザーオブジェクトの作成・削除・書き込み権限は追加しません。ユーザー検索に必要な読み取りは<code class="inline-code">p-pm\Users</code>側で維持し、AD Connectorが「アクティブ」でWorkSpacesコンソールから対象ユーザーを検索できることで確認します。</p>
+<p>権限の範囲を広げないため、委任開始時に<code class="inline-code">p-pm\Computers\WorkSpaces</code>を選択したことを確認します。AWS Managed Microsoft ADでは、ドメインルート、<code class="inline-code">AWS Reserved</code>および<code class="inline-code">Domain Controllers</code>から開始しません。</p>
 <ol>
 <li><p>ADUCで、承認済みのWorkSpacesコンピューター格納先OUを選択します。</p>
 </li>
@@ -384,7 +384,7 @@
 <p><code class="inline-code">PasswordNeverExpires=True</code>の場合、サービスアカウントのパスワード有効期限は無期限です。PSOの適用状況は次のコマンドで確認します。</p>
 <div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>Get-ADUserResultantPasswordPolicy -Identity 'ADConnectorService'</code></pre></div>
 <p>PSOが返されない場合は、ドメイン既定のパスワードポリシーを確認します。</p>
-<div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>Get-ADDefaultDomainPasswordPolicy -Identity 'ad.example.com'</code></pre></div>
+<div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>Get-ADDefaultDomainPasswordPolicy -Identity 'p-pm.example.com'</code></pre></div>
 <p><a href="https://docs.aws.amazon.com/ja_jp/directoryservice/latest/admin-guide/ms_ad_password_policies.html">AWS Managed Microsoft ADのパスワードポリシー</a></p>
 <p><strong>更新手順</strong></p>
 <ol>
@@ -426,7 +426,7 @@
 </ol>
 <p><code class="inline-code">Connectors</code>の委任設定は、新アカウントも使用します。アカウント切り替えだけを理由に削除しません。</p>
 <p>委任設定が不要になり、削除する場合は、対象OUの詳細なセキュリティ設定で<code class="inline-code">Connectors</code>に対する明示的なアクセス制御エントリだけを削除します。継承された権限や、他のユーザー・グループの権限を変更しません。</p>
-<p>既存の<code class="inline-code">ad\Users</code>への委任が適切かは、WorkSpacesのターゲットOUと継承設計を確認して判断します。対象外OUへの不要な明示的委任と確認できた場合に限り、正しいOUへの委任と動作確認が完了してから、<code class="inline-code">Users</code> OU上の<code class="inline-code">Connectors</code>に対する明示的な権限だけを削除します。</p>
+<p>既存の<code class="inline-code">p-pm\Users</code>への委任が適切かは、WorkSpacesのターゲットOUと継承設計を確認して判断します。対象外OUへの不要な明示的委任と確認できた場合に限り、正しいOUへの委任と動作確認が完了してから、<code class="inline-code">Users</code> OU上の<code class="inline-code">Connectors</code>に対する明示的な権限だけを削除します。</p>
 <h2 id="作業後確認">作業後確認</h2>
 <h3 id="adオブジェクトの確認">ADオブジェクトの確認</h3>
 <p>対象ドメインの管理資格情報でPowerShellを起動して実行します。本手順では<code class="inline-code">ADConnectorService</code>を確認します。</p>
@@ -454,9 +454,9 @@ Get-ADPrincipalGroupMembership 'ADConnectorService' |
 <p><code class="inline-code">Connectors</code>がグローバル／セキュリティグループになっていることも確認します。OUの委任内容は、承認済みのDNへ読み替えて確認し、<code class="inline-code">Connectors</code>に対するコンピューターオブジェクトの作成・削除・読み取り・書き込み権限と適用先を照合します。</p>
 <div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>dsacls '&lt;WorkSpacesコンピューターOUのDN&gt;'</code></pre></div>
 <p><strong>本手順のOUを指定するコマンド例</strong></p>
-<p><code class="inline-code">ad.example.com</code>の<code class="inline-code">ad\Computers\WorkSpaces</code> OUを確認する場合は、次のように指定します。DNは、対象OUから親OU、ドメインの順に記述します。</p>
-<div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>dsacls 'OU=WorkSpaces,OU=Computers,OU=ad,DC=ad,DC=example,DC=com'</code></pre></div>
-<p>このコマンドは対象OUのアクセス許可を表示します。出力内の<code class="inline-code">ad\Connectors</code>について、コンピューターオブジェクトの作成・削除権限、子コンピューターに適用する読み取り・書き込み権限および継承範囲を確認します。上記は実行するコマンドの例で、実環境の実行結果は掲載していません。</p>
+<p><code class="inline-code">p-pm.example.com</code>の<code class="inline-code">p-pm\Computers\WorkSpaces</code> OUを確認する場合は、次のように指定します。DNは、対象OUから親OU、ドメインの順に記述します。</p>
+<div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>dsacls 'OU=WorkSpaces,OU=Computers,OU=p-pm,DC=p-pm,DC=example,DC=com'</code></pre></div>
+<p>このコマンドは対象OUのアクセス許可を表示します。出力内の<code class="inline-code">p-pm\Connectors</code>について、コンピューターオブジェクトの作成・削除権限、子コンピューターに適用する読み取り・書き込み権限および継承範囲を確認します。上記は実行するコマンドの例で、実環境の実行結果は掲載していません。</p>
 <p><a href="https://learn.microsoft.com/en-us/previous-versions/windows/it-pro/windows-server-2012-r2-and-2012/cc771151(v=ws.11)">Dsaclsの使用方法</a></p>
 <h3 id="ad-connectorおよびworkspacesの確認">AD ConnectorおよびWorkSpacesの確認</h3>
 <p>次の項目は、後続のAD Connector・WorkSpaces構築時、または既存環境の認証情報を更新した後に確認します。初回のサービスアカウント作成時点では未実施の項目です。再構築・削除の検証には、業務利用中のWorkSpaceを使用しません。</p>

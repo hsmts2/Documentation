@@ -163,8 +163,8 @@ const sanitizeMarkdown = (input) => {
   const sourceAccountAlias = process.env.SOURCE_ACCOUNT_ALIAS;
   const sourceDirectoryDomain = process.env.SOURCE_DIRECTORY_DOMAIN;
   const sourceEnvironmentPrefix = process.env.SOURCE_ENVIRONMENT_PREFIX;
-  const publicEnvironmentPrefix = process.env.PUBLIC_ENVIRONMENT_PREFIX || "ad";
-  const publicDirectoryDomain = process.env.PUBLIC_DIRECTORY_DOMAIN || "ad.example.com";
+  const publicEnvironmentPrefix = process.env.PUBLIC_ENVIRONMENT_PREFIX || "p-pm";
+  const publicDirectoryDomain = process.env.PUBLIC_DIRECTORY_DOMAIN || "p-pm.example.com";
   if (sourceAccountAlias) value = value.replaceAll(sourceAccountAlias, "t_hashimoto");
   if (sourceDirectoryDomain) {
     value = value.replaceAll(sourceDirectoryDomain, publicDirectoryDomain);
@@ -412,8 +412,8 @@ const copyPublishedImage = async (sourceImage, destination, awsConsole, metadata
     let svg = fs.readFileSync(sourceSvg, "utf8");
     const sourceDirectoryDomain = process.env.SOURCE_DIRECTORY_DOMAIN;
     const sourceEnvironmentPrefix = process.env.SOURCE_ENVIRONMENT_PREFIX;
-    const publicEnvironmentPrefix = process.env.PUBLIC_ENVIRONMENT_PREFIX || "ad";
-    const publicDirectoryDomain = process.env.PUBLIC_DIRECTORY_DOMAIN || "ad.example.com";
+    const publicEnvironmentPrefix = process.env.PUBLIC_ENVIRONMENT_PREFIX || "p-pm";
+    const publicDirectoryDomain = process.env.PUBLIC_DIRECTORY_DOMAIN || "p-pm.example.com";
     if (sourceDirectoryDomain) svg = svg.replaceAll(sourceDirectoryDomain, publicDirectoryDomain);
     if (sourceEnvironmentPrefix) svg = svg.replaceAll(sourceEnvironmentPrefix, publicEnvironmentPrefix);
 
@@ -650,13 +650,13 @@ for (const page of pageSpecs) {
       <tbody>
         <tr><td>オンプレミス拠点</td><td>利用者・管理者の接続元、既存ネットワークとの連携</td></tr>
         <tr><td>Direct Connect</td><td>オンプレミス拠点とAWS Cloud間の閉域接続</td></tr>
-        <tr><td><code>ad-vpc-001</code></td><td>運用・中継用リソースを配置するネットワーク</td></tr>
-        <tr><td><code>ad-vpc-002</code></td><td>AWS Managed Microsoft AD、管理用EC2、FSxおよびCost Optimizerを配置する管理・認証ネットワーク</td></tr>
-        <tr><td><code>ad-vpc-003</code></td><td>AD ConnectorとAmazon WorkSpacesを配置するVDIネットワーク</td></tr>
-        <tr><td><code>ad-vpc-004</code></td><td>追加のAD ConnectorとAmazon WorkSpacesを配置するVDIネットワーク</td></tr>
+        <tr><td><code>p-pm-vpc-001</code></td><td>運用・中継用リソースを配置するネットワーク</td></tr>
+        <tr><td><code>p-pm-vpc-002</code></td><td>AWS Managed Microsoft AD、管理用EC2、FSxおよびCost Optimizerを配置する管理・認証ネットワーク</td></tr>
+        <tr><td><code>p-pm-vpc-003</code></td><td>AD ConnectorとAmazon WorkSpacesを配置するVDIネットワーク</td></tr>
+        <tr><td><code>p-pm-vpc-004</code></td><td>追加のAD ConnectorとAmazon WorkSpacesを配置するVDIネットワーク</td></tr>
       </tbody>
     </table>
-    <p>掲載内容では、ディレクトリの完全修飾ドメイン名を<code>ad.example.com</code>、環境固有のリソース名を<code>ad-</code>で始まる名称へ一般化している</p>
+    <p>掲載内容では、検証環境のドメイン名に<code>p-pm.example.com</code>、NetBIOS名に<code>p-pm</code>を使用しています</p>
     <hr>\n${body}`;
   }
   body = body.replace(/である(?=。|<\/|\n)/g, "です");

@@ -246,7 +246,7 @@
 <ol>
 <li>AWSマネジメントコンソールへサインインし、プライマリリージョンのアジアパシフィック（東京）を選択します。</li>
 <li>Directory Serviceの「ディレクトリ」を開きます。</li>
-<li>ディレクトリID、DNS名<code class="inline-code">ad.example.com</code>、ディレクトリタイプ「Microsoft AD」およびステータス「アクティブ」を照合します。</li>
+<li>ディレクトリID、DNS名<code class="inline-code">p-pm.example.com</code>、ディレクトリタイプ「Microsoft AD」およびステータス「アクティブ」を照合します。</li>
 <li>対象ディレクトリIDのリンクを選択し、詳細画面を開きます。</li>
 </ol>
 <figure class="screenshot-wide aws-console-identity"><figcaption>図1　対象のAWS Managed Microsoft ADを選択</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-managed-ad/012-対象のaws-managed-microsoft-adを選択.png" alt="対象のAWS Managed Microsoft ADを選択" width="1616" height="1304" loading="lazy"></div></figure>
@@ -565,7 +565,7 @@
 <li>想定した<code class="inline-code">CustomerPSO-0x</code>と設定値が返されることを確認します。</li>
 <li>PSOを割り当てていないユーザーについてドメイン既定値を確認する場合は、次のコマンドを使用します。</li>
 </ol>
-<div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>Get-ADDefaultDomainPasswordPolicy -Identity 'ad.example.com'</code></pre></div>
+<div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>Get-ADDefaultDomainPasswordPolicy -Identity 'p-pm.example.com'</code></pre></div>
 <p><code class="inline-code">Get-ADUserResultantPasswordPolicy</code>は、<code class="inline-code">Default Domain Policy</code>自体の内容を表示するコマンドではありません。実効ポリシーの確認に<code class="inline-code">net user</code>は使用しません。</p>
 <p><a href="https://docs.aws.amazon.com/ja_jp/directoryservice/latest/admin-guide/assignpasswordpolicies.html">パスワードポリシーの割り当てと確認</a>／<a href="https://learn.microsoft.com/en-us/powershell/module/activedirectory/get-addefaultdomainpasswordpolicy">Get-ADDefaultDomainPasswordPolicy</a></p>
 </section></main>

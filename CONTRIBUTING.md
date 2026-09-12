@@ -232,3 +232,5 @@ CloudWatchコンソールで<code class="ui-value">メトリクス</code> ＞ <c
 
 - `build-workspaces-skill-transfer.mjs` は原稿を生成し、共通テンプレートを適用してから `split-workspaces-pages.mjs` で18手順へ分割する。分割定義は `workspaces-page-manifest.json` へ出力する。
 - 表の列幅は内容に合わせ、設定値は左揃えにする。編集用PowerPointのダウンロードリンクは本文に掲載しない。旧ページの見出しリンクは分割先へ転送する。
+
+- WorkSpaces手順の検証用ドメインは `p-pm.example.com`、NetBIOS名は `p-pm` を使用する（2026年9月12日承認）。本文の整合性を修正する際に画像を再加工しない。アカウント識別情報のマスキングは維持する。
