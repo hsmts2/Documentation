@@ -64,7 +64,7 @@ const enhancePageSummaries = () => {
 
 enhancePageSummaries();
 
-const pageUserValues = (document.body.dataset.userValues || "")
+let pageUserValues = (document.body.dataset.userValues || "")
   .split(",")
   .map((value) => value.trim())
   .filter(Boolean)
@@ -72,7 +72,7 @@ const pageUserValues = (document.body.dataset.userValues || "")
 
 const escapeRegExp = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
-const userValuePatterns = [
+let userValuePatterns = [
   { pattern: /<[A-Z][A-Z0-9_:-]*>/g, group: 0 },
   { pattern: /\{[A-Z][A-Z0-9_:-]*\}/g, group: 0 },
   { pattern: /[:/]role\/([A-Za-z0-9+=,.@_-]+)/g, group: 1 },
@@ -241,7 +241,7 @@ document.addEventListener("click", async (event) => {
   }, 1400);
 });
 
-document.querySelectorAll("[data-tabs]").forEach((group) => {
+const initializeTabs = () => document.querySelectorAll("main [data-tabs]").forEach((group) => {
   const tabs = group.querySelectorAll("[role='tab']");
   const panels = group.querySelectorAll("[role='tabpanel']");
 
@@ -260,3 +260,122 @@ document.querySelectorAll("[data-tabs]").forEach((group) => {
     });
   });
 });
+
+initializeTabs();
+
+const initializeMain = () => {
+  removePageToc();
+  enhancePageSummaries();
+  pageUserValues = (document.body.dataset.userValues || "").split(",").map(v => v.trim()).filter(Boolean).sort((a, b) => b.length - a.length);
+  userValuePatterns = [
+    { pattern: /<[A-Z][A-Z0-9_:-]*>/g, group: 0 },
+    { pattern: /\{[A-Z][A-Z0-9_:-]*\}/g, group: 0 },
+    { pattern: /[:/]role\/([A-Za-z0-9+=,.@_-]+)/g, group: 1 },
+    ...pageUserValues.map(value => ({ pattern: new RegExp(escapeRegExp(value), "g"), group: 0 })),
+  ];
+  addCodeLineNumbers();
+  if (document.body.dataset.userValueHighlighting !== "off") highlightUserValues();
+  initializeTabs();
+};
+
+// Keep the header and navigation DOM alive across internal page changes.
+if (document.querySelector("#site-sidebar") && document.querySelector("main.content")) {
+  const pageKey = url => new URL(url, location.href).pathname.replace(/\.html$/, "").replace(/\/$/, "");
+  const sidebar = document.querySelector("#site-sidebar");
+  // Relative sidebar URLs must retain their meaning when switching directory depth.
+  sidebar.querySelectorAll("a[href]").forEach(a => a.setAttribute("href", a.href));
+  document.querySelectorAll("header a[href]").forEach(a => a.setAttribute("href", a.href));
+  document.querySelectorAll("header img[src]").forEach(img => img.setAttribute("src", img.src));
+  history.replaceState({ ...history.state, contentNavigation: true, scrollY: window.scrollY }, "");
+  history.scrollRestoration = "manual";
+  let controller;
+  let navigationId = 0;
+  let transitioning = false;
+  let scrollFrame;
+  window.addEventListener("scroll", () => {
+    cancelAnimationFrame(scrollFrame);
+    scrollFrame = requestAnimationFrame(() => {
+      if (!transitioning) history.replaceState({ ...history.state, contentNavigation: true, scrollY: window.scrollY }, "");
+    });
+  }, { passive: true });
+
+  const navigate = async (target, { pop = false, restoreY = 0 } = {}) => {
+    const id = ++navigationId;
+    transitioning = true;
+    controller?.abort();
+    controller = new AbortController();
+    const currentMain = document.querySelector("main.content");
+    currentMain.setAttribute("aria-busy", "true");
+    try {
+      const response = await fetch(target.href, { signal: controller.signal, credentials: "same-origin" });
+      if (!response.ok || new URL(response.url).origin !== location.origin || !response.headers.get("content-type")?.includes("text/html")) throw new Error("Page unavailable");
+      const incoming = new DOMParser().parseFromString(await response.text(), "text/html");
+      const nextMain = incoming.querySelector("main.content");
+      if (!nextMain || !incoming.querySelector("#site-sidebar")) throw new Error("Page requires full navigation");
+      // Unknown scripts and legacy anchor redirects retain ordinary navigation.
+      if ([...incoming.scripts].some(script => !script.src || !/\/(app|workspaces-legacy-routes)\.js(?:\?|$)/.test(script.getAttribute("src")))) throw new Error("Page has a dedicated initializer");
+      const anchor = target.hash ? decodeURIComponent(target.hash.slice(1)) : "";
+      if (anchor && !incoming.getElementById(anchor)) throw new Error("Legacy anchor needs full navigation");
+      const base = response.url;
+      nextMain.querySelectorAll("[href], [src], [poster], [action]").forEach(element => {
+        for (const attribute of ["href", "src", "poster", "action"]) {
+          if (element.hasAttribute(attribute)) element.setAttribute(attribute, new URL(element.getAttribute(attribute), base).href);
+        }
+      });
+      for (const link of incoming.querySelectorAll('link[rel="stylesheet"]')) {
+        const href = new URL(link.getAttribute("href"), base).href;
+        if (![...document.querySelectorAll('link[rel="stylesheet"]')].some(existing => new URL(existing.href).pathname === new URL(href).pathname)) {
+          const sheet = document.createElement("link");
+          sheet.rel = "stylesheet";
+          sheet.href = href;
+          await new Promise((resolve, reject) => { sheet.onload = resolve; sheet.onerror = reject; document.head.append(sheet); });
+        }
+      }
+      if (id !== navigationId) return;
+      if (!pop) {
+        history.replaceState({ ...history.state, contentNavigation: true, scrollY: window.scrollY }, "");
+        history.pushState({ contentNavigation: true, scrollY: 0 }, "", target.href);
+      }
+      const sidebarScroll = sidebar.scrollTop;
+      document.title = incoming.title;
+      for (const key of Object.keys(document.body.dataset)) delete document.body.dataset[key];
+      Object.assign(document.body.dataset, incoming.body.dataset);
+      document.querySelector(".layout").className = incoming.querySelector(".layout").className;
+      currentMain.replaceWith(nextMain);
+      initializeMain();
+      sidebar.querySelectorAll("a[href]").forEach(a => {
+        const active = pageKey(a.href) === pageKey(target.href);
+        a.classList.toggle("active", active);
+        if (active) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current");
+      });
+      sidebar.scrollTop = sidebarScroll;
+      const focus = nextMain.querySelector("h1") || nextMain;
+      focus.setAttribute("tabindex", "-1");
+      focus.focus({ preventScroll: true });
+      if (pop) window.scrollTo({ top: restoreY, behavior: "instant" });
+      else if (anchor) document.getElementById(anchor).scrollIntoView();
+      else window.scrollTo({ top: 0, behavior: "instant" });
+    } catch (error) {
+      if (id === navigationId && error.name !== "AbortError") location.assign(target.href);
+    } finally {
+      if (id === navigationId) {
+        transitioning = false;
+        document.querySelector("main.content")?.removeAttribute("aria-busy");
+      }
+    }
+  };
+
+  document.addEventListener("click", event => {
+    const link = event.target instanceof Element ? event.target.closest("a[href]") : null;
+    if (!link || event.defaultPrevented || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey || link.hasAttribute("download") || (link.target && link.target !== "_self")) return;
+    const target = new URL(link.href);
+    if (target.origin !== location.origin || !/^https?:$/.test(target.protocol) || /\.[^/]+$/.test(target.pathname) && !target.pathname.endsWith(".html")) return;
+    if (target.pathname === location.pathname && target.search === location.search) return;
+    event.preventDefault();
+    navigate(target);
+  });
+  window.addEventListener("popstate", event => {
+    if (event.state?.contentNavigation) navigate(new URL(location.href), { pop: true, restoreY: event.state.scrollY || 0 });
+    else location.reload();
+  });
+}

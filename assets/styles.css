@@ -2029,3 +2029,8 @@ html { scrollbar-gutter: stable; }
   .layout.layout-wide, body.sidebar-collapsed .layout.layout-wide { width: calc(100% - 32px); }
   .sidebar, body.sidebar-collapsed .sidebar { top: 144px; left: 16px; max-height: calc(100dvh - 164px); }
 }
+
+@media (min-width: 981px) {
+  .sidebar { max-height: calc(100dvh - 112px); overflow-y: auto; overscroll-behavior: contain; }
+}
+main[aria-busy="true"] { cursor: progress; }
