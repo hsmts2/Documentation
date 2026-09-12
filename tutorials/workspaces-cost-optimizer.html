@@ -24,6 +24,55 @@
       <div class="sidebar-heading">
         <button class="icon-button sidebar-toggle sidebar-toggle-inline" type="button" aria-controls="site-sidebar" aria-expanded="true" title="ナビゲーションを閉じる" aria-label="ナビゲーションを閉じる">☰</button>
       </div>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">✎</span>記事</p>
+      <a href="cloudflare-private-site.html">Private GitHubリポジトリをCloudflare Workersで認証付き公開してみた</a>
+      <details class="sidebar-nested-menu" open>
+        <summary>マルチVPC・閉域VDI基盤案件（9ページ）</summary>
+        <div class="sidebar-subnav">
+          <a href="workspaces-skill-transfer.html">全体構築・運用順序</a>
+          <a href="workspaces-managed-ad.html">AWS Managed Microsoft AD 構築・管理</a>
+          <a href="workspaces-management-ec2.html">管理用EC2・Active Directory管理</a>
+          <a href="workspaces-ad-connector.html">AD Connector 構築・権限委任</a>
+          <a href="workspaces-provisioning-gpo.html">Amazon WorkSpaces 構築・OU・GPO</a>
+          <a href="workspaces-image-bundle.html">WorkSpaces カスタムイメージ・バンドル</a>
+          <a href="workspaces-patch-manager.html">Systems Manager Patch Manager</a>
+          <a href="workspaces-cost-optimizer.html" class="active" aria-current="page">Amazon WorkSpaces Cost Optimizer</a>
+          <a href="workspaces-cloudwatch-monitoring.html">CloudWatch・SNS 監視／通知</a>
+        </div>
+      </details>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">◈</span>Terraform</p>
+      <a href="terraform.html">Terraform 概要</a>
+      <a href="hcp-terraform.html">HCP Terraform（Terraform Cloud）</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">☁︎</span>AWS</p>
+      <a href="cloudformation.html">CloudFormation 運用手順集</a>
+      <a href="aws-cli.html">AWS CLI 特殊対応</a>
+      <a href="aws-cli-reference.html">AWS CLI コマンドリファレンス</a>
+      <a href="eventbridge-scheduler.html">EventBridge Scheduler</a>
+      <a href="aws-directory-service.html">AWS Directory Service 運用手順</a>
+      <a href="amazon-workspaces.html">Amazon WorkSpaces</a>
+      <a href="amazon-ses.html">Amazon SES SMTPリレー</a>
+      <a href="amazon-ses-monitoring.html">Amazon SES 配信監視</a>
+      <a href="amazon-rds-blue-green.html">Amazon RDS Blue/Green Deployments</a>
+      <a href="apache-acm-certificate-update.html">証明書更新（ACMエクスポート）</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">⚙︎</span>OS／ミドルウェア</p>
+      <a href="rhel9.html">Red Hat Enterprise Linux 9</a>
+      <a href="rhel10.html">Red Hat Enterprise Linux 10</a>
+      <a href="amazon-linux-2023.html">Amazon Linux 2023</a>
+      <a href="windows-server-2022.html">Windows Server 2022</a>
+      <a href="windows-server-2025.html">Windows Server 2025</a>
+      <a href="windows-server-2016-upgrade.html">Windows Server 2016 インプレースアップグレード</a>
+      <a href="storage.html">ストレージ管理</a>
+      <a href="apache.html">Apache</a>
+      <a href="apache-self-signed-ssl-termination.html">Apache SSL終端（自己署名証明書）</a>
+      <a href="redis.html">Redis（KVS）</a>
+      <a href="nfs.html">NFS</a>
+      <a href="samba.html">Samba</a>
+      <a href="mariadb.html">MariaDB</a>
+      <a href="postgresql.html">PostgreSQL</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">▤</span>リファレンス</p>
+      <a href="../writing-style-guide.html">[GitHub Pages] 記法・テンプレート</a>
+      <a href="troubleshooting.html">障害切り分けチェックリスト</a>
+      <a href="eol.html">EOL / ライフサイクル一覧表</a>
     </aside>
     <main class="content workspaces-skill-transfer-guide">
       <nav class="breadcrumb" aria-label="Breadcrumb">
@@ -31,46 +80,11 @@
         <span>トピック</span>
       </nav>
       <h1>Amazon WorkSpaces Cost Optimizer</h1>
-      <div class="page-summary"><strong>⚡ このページの要約</strong><p class="lead">Amazon WorkSpaces Cost Optimizer v2.9.10をCloudFormationでデプロイし、課金モードの評価と変更結果を確認する<br>DryRun、料金しきい値、実行時刻、ECSタスク、CloudWatch Logs、S3レポートおよびダッシュボードの確認方法を整理する</p></div>
-      <nav class="section-links" aria-label="主要セクション">
-        <a href="#13-cost-optimizer-for-amazon-workspaces-構築-設定手順書">⑬[Cost Optimizer for Amazon WorkSpaces] 構築・設定手順書</a>
-        <a href="#14-cost-optimizer-for-amazon-workspaces-dry-run解除手順書">⑭[Cost Optimizer for Amazon WorkSpaces] Dry Run解除手順書</a>
-        <a href="#15-cost-optimizer-for-amazon-workspaces-実行時刻変更検証-変更方針">⑮[Cost Optimizer for Amazon WorkSpaces] 実行時刻変更検証・変更方針</a>
-        <a href="#16-cost-optimizer-for-amazon-workspaces-レポート-監視手順書">⑯[Cost Optimizer for Amazon WorkSpaces] レポート・監視手順書</a>
-        <a href="#参考-お客様環境-v2-8-1-と本手順書-v2-9-10-の差分">参考：お客様環境 v2.8.1 と本手順書 v2.9.10 の差分</a>
-        <a href="#付録-作成リソース一覧-v2-9-10">付録：作成リソース一覧（v2.9.10）</a>
-        <a href="#参考-説明用サンプル5台の見方と使用範囲">参考：説明用サンプル5台の見方と使用範囲</a>
-      </nav>
+
+
 <section id="costOptimizerDeploy" class="procedure-document">
 
-<h2 id="13-cost-optimizer-for-amazon-workspaces-構築-設定手順書">⑬[Cost Optimizer for Amazon WorkSpaces] 構築・設定手順書</h2><nav class="section-links document-toc" aria-label="この手順の目次"><a href="#概要">概要</a> <a href="#仕様">仕様</a> <a href="#前提条件">前提条件</a> <a href="#構築作業">構築作業</a> <a href="#参考資料">参考資料</a> <a href="#構築後確認">構築後確認</a></nav>
-<h3 id="概要">概要</h3>
-<table>
-<thead>
-<tr>
-<th>項目</th>
-<th>内容</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>目的</td>
-<td>東京リージョンへCost Optimizer for Amazon WorkSpaces v2.9.10を、単一アカウント・新規VPC・Dry Run有効の安全設定でデプロイします。スタック<code class="inline-code">sample-cfn-co-001</code>と41リソースの作成完了までを確認します。</td>
-</tr>
-<tr>
-<td>対象</td>
-<td>東京リージョン・単一アカウントの検証スタック<code class="inline-code">sample-cfn-co-001</code>（v2.9.10）</td>
-</tr>
-</tbody></table>
-<div class="callout callout-info"><p><strong>ℹ️ 情報：お客様環境と本手順書のバージョン差分</strong></p>
-<p>お客様環境で確認したバージョンは <strong>v2.8.1（2026年9月8日確認）</strong>、本手順書の構築・検証バージョンは <strong>v2.9.10</strong> です。作業開始時にCloudFormationの出力で現在の<code class="inline-code">SolutionVersion</code>を確認します。</p>
-<ul class="check-list">
-<li><strong>設定項目の追加</strong>：v2.9.10では、GeneralPurpose.4xlarge／8xlarge向けの料金しきい値<code class="inline-code">GeneralPurpose4xlargeLimit</code>と<code class="inline-code">GeneralPurpose8xlargeLimit</code>が追加されています。ハブテンプレートのパラメータ数は26個から28個に増えており、v2.8.1ではこの2項目は表示されません。</li>
-<li><strong>保守・セキュリティ更新</strong>：v2.9.10には、v2.8.1以降の不具合修正と依存ライブラリ・コンテナベースイメージの更新が含まれます。変更内容は<a href="https://github.com/aws-solutions/cost-optimizer-for-amazon-workspaces/blob/v2.9.10/CHANGELOG.md">リリース履歴</a>で確認します。</li>
-<li><strong>料金しきい値の扱い</strong>：既存26パラメータのテンプレート既定値は、比較した両バージョンで共通です。本書の設定例とお客様環境の値が異なる場合は、環境ごとの設定として照合します。既存スタックを更新する際は、引き継ぐ値と変更する値を確認します。</li>
-<li><strong>コンテナイメージの確認</strong>：イメージ自動更新が有効な場合、v2.8.1は<code class="inline-code">v2.8_stable</code>、v2.9.10は<code class="inline-code">v2.9_stable</code>を使用します。実行中のバージョンを確認する際は、<code class="inline-code">SolutionVersion</code>に加えてECSタスクのイメージURI・ダイジェストも確認します。</li>
-</ul>
-<p>詳細は<a href="workspaces-cost-optimizer.html#costOptimizerVersionDiff">お客様環境v2.8.1と本手順書v2.9.10の差分</a>を参照します。本書はv2.9.10の新規構築手順です。お客様環境を更新する場合は、既存設定の引き継ぎとCloudFormation変更セットによる影響確認を行います。</p>
-</div>
+<h2 id="13-cost-optimizer-for-amazon-workspaces-構築-設定手順書">⑬[Cost Optimizer for Amazon WorkSpaces] 構築・設定手順書</h2>
 <h3 id="仕様">仕様</h3>
 <h4 id="構成-動作">構成・動作</h4>
 <p>Cost Optimizer for Amazon WorkSpacesは、WorkSpaces本体の組み込み機能ではなく、AWS Solutions Libraryから提供されるCloudFormationテンプレートで構築するソリューションです。WorkSpacesの利用時間と料金しきい値を比較し、時間課金の<code class="inline-code">AUTO_STOP</code>と月額課金の<code class="inline-code">ALWAYS_ON</code>のどちらが適しているかを日次で判定します。</p>
@@ -152,47 +166,6 @@
 <p>設定値は取得時点の検証例です。実作業では承認済みパラメータと現在のAWS環境を確認します。</p>
 <h4 id="制約事項">制約事項</h4>
 <p>初期構築はDryRun=Yes、TerminateUnusedWorkspaces=No、TestEndOfMonth=Noを使用します。</p>
-<h3 id="前提条件">前提条件</h3>
-<h4 id="既存リソース-ネットワーク">既存リソース・ネットワーク</h4>
-<p>新規VPC・サブネット用CIDRが既存ネットワークと重複せず、必要なVPC・NAT Gateway・Elastic IPのクォータを確保していること。対象WorkSpacesと監視するリージョンを決定していること。</p>
-<h4 id="権限-接続環境">権限・接続環境</h4>
-<p>作業内容に応じたCloudFormation、IAM、ECS、EventBridge、WorkSpaces、S3、CloudWatch等の権限を持つIAMユーザーまたはロールを使用します。弊社で使用する<code class="inline-code">AdministratorAccess</code>付きのユーザーまたはロールでも対応できます。SCP、アクセス許可境界、明示的な拒否による制限を確認します。監視だけを行う担当者には必要な参照権限を付与します。</p>
-<h4 id="作業開始前の確認">作業開始前の確認</h4>
-<p>本手順は、Cost Optimizer for Amazon WorkSpacesを東京リージョンへ単一アカウント構成でデプロイする例です。</p>
-<ol class="step-list">
-<li>AWSマネジメントコンソール右上が「アジアパシフィック（東京）」となっていることを確認します。</li>
-<li>CloudFormation、IAM、ECS、VPC、S3、DynamoDB、CloudWatch、EventBridge、WorkSpacesに必要な権限があることを確認します。</li>
-<li>新規VPC用CIDRが既存ネットワークと重複しないことを確認します。</li>
-<li>初回は必ず <code class="inline-code">DryRun=Yes</code>、<code class="inline-code">TerminateUnusedWorkspaces=No</code> とします。</li>
-<li>本手順書と同じ構成を再現する場合は、バージョンを固定したv2.9.10公式配布テンプレートを使用します。<code class="inline-code">latest</code> は将来別バージョンへ更新されるため、常用しません。</li>
-</ol>
-<h4 id="事前に準備する情報">事前に準備する情報</h4>
-<table>
-<thead>
-<tr>
-<th>項目</th>
-<th>設定値・確認内容</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>スタック名</td>
-<td><code class="inline-code">sample-cfn-co-001</code></td>
-</tr>
-<tr>
-<td>ソリューションバージョン</td>
-<td>v2.9.10</td>
-</tr>
-<tr>
-<td>VPC方式</td>
-<td>新規VPC</td>
-</tr>
-<tr>
-<td>Dry Run</td>
-<td><code class="inline-code">Yes</code>（初期構築時）</td>
-</tr>
-</tbody></table>
-<div class="callout callout-info"><p><strong>ℹ️ 情報：参照資料</strong><br><a href="https://docs.aws.amazon.com/solutions/latest/cost-optimizer-for-workspaces/launch-the-stack-hub-template.html">ハブスタックの起動</a>のパラメータと注意事項を作業前に確認します。</p>
-</div>
 <h3 id="構築作業">構築作業</h3>
 <h4 id="1-テンプレートを指定する">1. テンプレートを指定する</h4>
 <ol class="step-list">
@@ -456,36 +429,13 @@
 </tr>
 </tbody></table>
 <p>本手順書の実装を確認する場合は、<code class="inline-code">v2.9.10</code>に固定したソースコードを参照します。バージョンを更新する場合は、現在のバージョンから更新先までのリリースノートとCloudFormation変更セットを確認します。</p>
-<h3 id="構築後確認">構築後確認</h3>
-<ul class="check-list">
-<li><input disabled="" type="checkbox"> CloudFormationスタックが<code class="inline-code">CREATE_COMPLETE</code>となっていること。</li>
-<li><input disabled="" type="checkbox"> <code class="inline-code">SolutionVersion=v2.9.10</code>、<code class="inline-code">DryRun=Yes</code>および対象の料金しきい値を確認できること。</li>
-<li><input disabled="" type="checkbox"> 取得済み証跡の構成では41リソースが<code class="inline-code">CREATE_COMPLETE</code>となっていること。</li>
-</ul>
 </section>
 
 <hr>
 
 <section id="costOptimizerSettings" class="procedure-document">
 
-<h2 id="14-cost-optimizer-for-amazon-workspaces-dry-run解除手順書">⑭[Cost Optimizer for Amazon WorkSpaces] Dry Run解除手順書</h2><nav class="section-links document-toc" aria-label="この手順の目次"><a href="#概要-2">概要</a> <a href="#仕様-2">仕様</a> <a href="#前提条件-2">前提条件</a> <a href="#運用作業">運用作業</a> <a href="#変更後確認">変更後確認</a></nav>
-<h3 id="概要-2">概要</h3>
-<table>
-<thead>
-<tr>
-<th>項目</th>
-<th>内容</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>目的</td>
-<td>CloudFormationスタック<code class="inline-code">sample-cfn-co-001</code>の変更セットを使用し、<code class="inline-code">DryRun</code>を<code class="inline-code">Yes</code>から<code class="inline-code">No</code>へ変更します。変更対象と置換有無を確認して実行した後、CloudFormation、ECS、CloudWatch Logs、S3 CSVおよびWorkSpaces実行モードの順に確認し、設定更新と日次処理の成功可否を判定します。取得済み証跡ではCloudFormation更新まで完了しており、Dry Run解除後の初回日次処理と課金モード変更結果は未確認です。</td>
-</tr>
-<tr>
-<td>対象</td>
-<td>東京リージョン・単一アカウントの検証スタック<code class="inline-code">sample-cfn-co-001</code>（v2.9.10）</td>
-</tr>
-</tbody></table>
+<h2 id="14-cost-optimizer-for-amazon-workspaces-dry-run解除手順書">⑭[Cost Optimizer for Amazon WorkSpaces] Dry Run解除手順書</h2>
 <h3 id="仕様-2">仕様</h3>
 <h4 id="構成-動作-2">構成・動作</h4>
 <div class="callout callout-warning"><p><strong>⚠️ 注意：同一バージョンのパラメータ変更とバージョン更新を分ける</strong><br>v2.9.10の料金しきい値やDry Runだけを変更する場合は、現在のテンプレートを使用して変更セットを作成します。ソリューションのバージョンを更新する場合は、更新先バージョンの公式テンプレートを指定し、<a href="https://github.com/aws-solutions/cost-optimizer-for-amazon-workspaces/releases">リリースノート</a>、リソースの置換・削除、IAM差分および引き継ぐパラメータを確認します。
@@ -496,45 +446,6 @@
 <p>設定値は取得時点の検証例です。実作業では承認済みパラメータと現在のAWS環境を確認します。</p>
 <h4 id="制約事項-2">制約事項</h4>
 <p>設定更新と日次処理の完了を分けて確認します。取得時点ではDry Run解除後の本処理は未確認です。</p>
-<h3 id="前提条件-2">前提条件</h3>
-<h4 id="既存リソース-ネットワーク-2">既存リソース・ネットワーク</h4>
-<p>⑬のデプロイとDry Runレポートの確認が完了していること。</p>
-<h4 id="権限-接続環境-2">権限・接続環境</h4>
-<p>作業内容に応じたCloudFormation、IAM、ECS、EventBridge、WorkSpaces、S3、CloudWatch等の権限を持つIAMユーザーまたはロールを使用します。弊社で使用する<code class="inline-code">AdministratorAccess</code>付きのユーザーまたはロールでも対応できます。SCP、アクセス許可境界、明示的な拒否による制限を確認します。監視だけを行う担当者には必要な参照権限を付与します。</p>
-<h4 id="作業開始前の確認-2">作業開始前の確認</h4>
-<p><code class="inline-code">DryRun=No</code> にすると、以後の日次実行で判定条件を満たしたWorkSpaceの課金モード変更が実行されます。スタック更新直後に即時実行されるわけではありません。</p>
-<p>本番環境では次を満たしてから解除します。</p>
-<ul class="check-list">
-<li>DryRunの日次・月次レポートを十分な期間（推奨は数か月）確認済みです。</li>
-<li>料金しきい値と対象リージョンがお客様承認済みです。</li>
-<li>自動変更対象から除外するWorkSpaceに <code class="inline-code">Skip_Convert</code> タグを設定済みです。</li>
-<li><code class="inline-code">TerminateUnusedWorkspaces=No</code> を確認済みです。終了機能を利用する場合は別途承認します。</li>
-<li>次回自動実行時刻と、同一UTC日内に実行済みでないことを確認済みです。</li>
-<li>切り戻し手順と変更承認を確認済みです。</li>
-</ul>
-<h4 id="事前に準備する情報-2">事前に準備する情報</h4>
-<table>
-<thead>
-<tr>
-<th>項目</th>
-<th>設定値・確認内容</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>Dry Run</td>
-<td><code class="inline-code">Yes</code>から<code class="inline-code">No</code>へ更新済み（取得済み証跡）</td>
-</tr>
-<tr>
-<td>未使用WorkSpace終了</td>
-<td><code class="inline-code">No</code></td>
-</tr>
-<tr>
-<td>Dry Run解除後の実処理</td>
-<td>未確認</td>
-</tr>
-</tbody></table>
-<div class="callout callout-info"><p><strong>ℹ️ 情報：参照資料</strong><br><a href="https://docs.aws.amazon.com/solutions/latest/cost-optimizer-for-workspaces/update-the-solution.html">ソリューションの更新</a>を確認し、CloudFormation管理下のリソースを直接変更しません。</p>
-</div>
 <h3 id="運用作業">運用作業</h3>
 <h4 id="1-変更前の値を確認する">1. 変更前の値を確認する</h4>
 <ol class="step-list">
@@ -746,24 +657,7 @@
 
 <section id="costOptimizerSchedule" class="procedure-document">
 
-<h2 id="15-cost-optimizer-for-amazon-workspaces-実行時刻変更検証-変更方針">⑮[Cost Optimizer for Amazon WorkSpaces] 実行時刻変更検証・変更方針</h2><nav class="section-links document-toc" aria-label="この手順の目次"><a href="#概要-3">概要</a> <a href="#仕様-3">仕様</a> <a href="#前提条件-3">前提条件</a> <a href="#検証記録-変更方針">検証記録・変更方針</a> <a href="#変更後確認-2">変更後確認</a></nav>
-<h3 id="概要-3">概要</h3>
-<table>
-<thead>
-<tr>
-<th>項目</th>
-<th>内容</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>目的</td>
-<td>取得済み証跡に残るEventBridge実行時刻の一時変更を、検証記録として整理します。AWS公式はスケジュール変更と1日複数回実行を避けるよう案内しているため、本番標準手順ではなく例外時の判断材料として扱います。</td>
-</tr>
-<tr>
-<td>対象</td>
-<td>東京リージョン・単一アカウントの検証スタック<code class="inline-code">sample-cfn-co-001</code>（v2.9.10）</td>
-</tr>
-</tbody></table>
+<h2 id="15-cost-optimizer-for-amazon-workspaces-実行時刻変更検証-変更方針">⑮[Cost Optimizer for Amazon WorkSpaces] 実行時刻変更検証・変更方針</h2>
 <h3 id="仕様-3">仕様</h3>
 <h4 id="構成-動作-3">構成・動作</h4>
 <p>AWS公式ドキュメントでは、Cost OptimizerのEventBridgeルール設定を変更したり、ECSタスクを手動実行したりしないよう明記されています。1日複数回実行すると、請求対象時間および課金モード変換の判定が不正確になる可能性があるためです。</p>
@@ -776,30 +670,6 @@
 <p>設定値は取得時点の検証例です。実作業では承認済みパラメータと現在のAWS環境を確認します。</p>
 <h4 id="制約事項-3">制約事項</h4>
 <p>実行時刻の直接変更は過去の検証記録です。通常運用では既定スケジュールを維持します。</p>
-<h3 id="前提条件-3">前提条件</h3>
-<h4 id="既存リソース-ネットワーク-3">既存リソース・ネットワーク</h4>
-<p>対象スタック、EventBridgeルール、直近のECS実行履歴を参照できること。</p>
-<h4 id="権限-接続環境-3">権限・接続環境</h4>
-<p>作業内容に応じたCloudFormation、IAM、ECS、EventBridge、WorkSpaces、S3、CloudWatch等の権限を持つIAMユーザーまたはロールを使用します。弊社で使用する<code class="inline-code">AdministratorAccess</code>付きのユーザーまたはロールでも対応できます。SCP、アクセス許可境界、明示的な拒否による制限を確認します。監視だけを行う担当者には必要な参照権限を付与します。</p>
-<h4 id="事前に準備する情報-3">事前に準備する情報</h4>
-<table>
-<thead>
-<tr>
-<th>項目</th>
-<th>設定値・確認内容</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>日次実行時刻</td>
-<td>08:00 JST／<code class="inline-code">cron(0 23 * * ? *)</code>へ復元</td>
-</tr>
-<tr>
-<td>EventBridgeルール</td>
-<td>2026年9月8日の証跡取得時点では一時無効</td>
-</tr>
-</tbody></table>
-<div class="callout callout-info"><p><strong>ℹ️ 情報：参照資料</strong><br><a href="https://docs.aws.amazon.com/solutions/latest/cost-optimizer-for-workspaces/features-and-benefits.html">機能と利点</a>では、スケジュールを変更せず1日1回だけ実行するよう案内されています。</p>
-</div>
 <h3 id="検証記録-変更方針">検証記録・変更方針</h3>
 <h4 id="1-検証した時刻と最終状態">1. 検証した時刻と最終状態</h4>
 <p>EventBridgeのCron式はUTCで指定します。</p>
@@ -949,24 +819,7 @@
 
 <section id="costOptimizerReports" class="procedure-document">
 
-<h2 id="16-cost-optimizer-for-amazon-workspaces-レポート-監視手順書">⑯[Cost Optimizer for Amazon WorkSpaces] レポート・監視手順書</h2><nav class="section-links document-toc" aria-label="この手順の目次"><a href="#概要-4">概要</a> <a href="#仕様-4">仕様</a> <a href="#前提条件-4">前提条件</a> <a href="#運用作業-2">運用作業</a> <a href="#運用後確認">運用後確認</a></nav>
-<h3 id="概要-4">概要</h3>
-<table>
-<thead>
-<tr>
-<th>項目</th>
-<th>内容</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>目的</td>
-<td>Cost Optimizerの日次処理について、ECSタスク、CloudWatch Logs、S3 CSVおよびCloudWatchダッシュボードを順に確認します。取得済み証跡はDry Run有効時の1台分です。課金モードの実変更証跡ではありません。</td>
-</tr>
-<tr>
-<td>対象</td>
-<td>東京リージョン・単一アカウントの検証スタック<code class="inline-code">sample-cfn-co-001</code>（v2.9.10）</td>
-</tr>
-</tbody></table>
+<h2 id="16-cost-optimizer-for-amazon-workspaces-レポート-監視手順書">⑯[Cost Optimizer for Amazon WorkSpaces] レポート・監視手順書</h2>
 <h3 id="仕様-4">仕様</h3>
 <h4 id="構成-動作-4">構成・動作</h4>
 <p>日次実行のECSタスク、ログ、CSVとWorkSpaces実行モードを照合します。</p>
@@ -974,80 +827,6 @@
 <p>設定値は取得時点の検証例です。実作業では承認済みパラメータと現在のAWS環境を確認します。</p>
 <h4 id="制約事項-4">制約事項</h4>
 <p>取得済みのCSVと画面はDryRun=Yesの実測1台分です。説明用5台データは実測結果に含めません。</p>
-<h3 id="前提条件-4">前提条件</h3>
-<h4 id="既存リソース-ネットワーク-4">既存リソース・ネットワーク</h4>
-<p>対象スタック、ECSクラスター、CloudWatch Logs、レポート用S3バケットが存在すること。</p>
-<h4 id="権限-接続環境-4">権限・接続環境</h4>
-<p>作業内容に応じたCloudFormation、IAM、ECS、EventBridge、WorkSpaces、S3、CloudWatch等の権限を持つIAMユーザーまたはロールを使用します。弊社で使用する<code class="inline-code">AdministratorAccess</code>付きのユーザーまたはロールでも対応できます。SCP、アクセス許可境界、明示的な拒否による制限を確認します。監視だけを行う担当者には必要な参照権限を付与します。</p>
-<h4 id="事前に準備する情報-4">事前に準備する情報</h4>
-<table>
-<thead>
-<tr>
-<th>項目</th>
-<th>設定値・確認内容</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>確認対象スタック</td>
-<td><code class="inline-code">sample-cfn-co-001</code></td>
-</tr>
-<tr>
-<td>取得済みレポート</td>
-<td>Dry Run有効時・1台分</td>
-</tr>
-<tr>
-<td>Dry Run解除後の結果</td>
-<td>未確認</td>
-</tr>
-</tbody></table>
-<div class="callout callout-info"><p><strong>ℹ️ 情報：参照資料</strong><br><a href="https://docs.aws.amazon.com/solutions/latest/cost-optimizer-for-workspaces/troubleshooting.html">トラブルシューティング</a>では、S3レポートとECSログの確認方法が案内されています。</p>
-</div>
-<div class="callout callout-info"><p><strong>ℹ️ 情報：2026年9月8日の取得記録</strong></p>
-<p>旧総合手順書に記録されていた最終状態です。現在のAWS環境の状態は実作業前に再確認します。</p>
-</div>
-<p>次の表は2026年9月8日に取得した証跡の状態です。現在のAWS環境を示すものではないため、後続作業を開始する前にCloudFormation、EventBridgeおよびECSの状態を再確認します。</p>
-<table>
-<thead>
-<tr>
-<th>項目</th>
-<th>確認値</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>CloudFormation</td>
-<td><code class="inline-code">UPDATE_COMPLETE</code></td>
-</tr>
-<tr>
-<td>ソリューション</td>
-<td><code class="inline-code">v2.9.10</code></td>
-</tr>
-<tr>
-<td>DryRun</td>
-<td><code class="inline-code">No</code></td>
-</tr>
-<tr>
-<td>未使用WorkSpaceの終了</td>
-<td><code class="inline-code">No</code></td>
-</tr>
-<tr>
-<td>設定済みCron</td>
-<td><code class="inline-code">cron(0 23 * * ? *)</code>（08:00 JST）</td>
-</tr>
-<tr>
-<td>EventBridgeルール</td>
-<td><strong>一時的に無効</strong></td>
-</tr>
-<tr>
-<td>無効化理由</td>
-<td>2026年9月8日00:01 UTCに実行済みです。同日23:00 UTCの再実行を防止するため</td>
-</tr>
-<tr>
-<td>DryRun解除後の本処理</td>
-<td>未実行・未確認</td>
-</tr>
-</tbody></table>
-<div class="callout callout-warning"><p><strong>⚠️ 注意：EventBridgeを1日複数回実行しない</strong><br>AWS公式は、このソリューションを1日1回だけ実行し、EventBridgeスケジュールを変更しないよう案内しています。同一UTC日内の複数実行は請求対象時間や実行モード変換の判定を不正確にする可能性があります。ルールを再有効化する場合は、現在時刻、直近の実行履歴および次回トリガーを確認し、同一UTC日内に2回起動しないことを確認します。</p>
-</div>
 <h3 id="運用作業-2">運用作業</h3>
 <h4 id="1-確認対象">1. 確認対象</h4>
 <p>Cost Optimizerの1回の処理は、主に次の場所で確認します。</p>
@@ -1221,38 +1000,7 @@
 
 <section id="costOptimizerVersionDiff" class="procedure-document">
 
-<h2 id="参考-お客様環境-v2-8-1-と本手順書-v2-9-10-の差分">参考：お客様環境 v2.8.1 と本手順書 v2.9.10 の差分</h2><nav class="section-links document-toc" aria-label="この手順の目次"><a href="#概要-5">概要</a> <a href="#対象データ">対象データ</a> <a href="#差分の要約">差分の要約</a> <a href="#バージョン別の主な変更">バージョン別の主な変更</a> <a href="#cloudformationパラメータの差分">CloudFormationパラメータの差分</a> <a href="#リソース数の見方">リソース数の見方</a> <a href="#コンテナイメージ自動更新の注意">コンテナイメージ自動更新の注意</a> <a href="#更新時の確認事項">更新時の確認事項</a></nav>
-<h3 id="概要-5">概要</h3>
-<p>お客様環境で確認されたv2.8.1と、今回の手順・証跡で使用したv2.9.10について、テンプレート、料金しきい値、コンテナイメージおよび更新時の相違点を整理します。</p>
-<h4 id="本手順書で実施すること">本手順書で実施すること</h4>
-<ul class="check-list">
-<li>バージョン固有の差分と環境固有の設定値を分けて比較します。</li>
-<li>更新時に引き継ぐ値と再確認する値を明確にします。</li>
-</ul>
-<h4 id="確認事項">確認事項</h4>
-<ul class="check-list">
-<li><input disabled="" type="checkbox"> v2.8.1とv2.9.10の差分根拠を公式CHANGELOGまたは固定版テンプレートで確認できること。</li>
-<li><input disabled="" type="checkbox"> 今回の設定値とテンプレート既定値を混同していないこと。</li>
-</ul>
-<h4 id="設定値">設定値</h4>
-<table>
-<thead>
-<tr>
-<th>項目</th>
-<th>確認内容</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>ソリューションバージョン</td>
-<td>v2.9.10</td>
-</tr>
-<tr>
-<td>料金しきい値</td>
-<td>後掲のv2.9.10配布テンプレート値および現行ガイド掲載値を参照</td>
-</tr>
-</tbody></table>
-<div class="callout callout-info"><p><strong>ℹ️ 情報：参照資料</strong><br><a href="https://github.com/aws-solutions/cost-optimizer-for-amazon-workspaces/compare/v2.8.1...v2.9.10">v2.8.1とv2.9.10の比較</a>を差分根拠として使用します。</p>
-</div>
+<h2 id="参考-お客様環境-v2-8-1-と本手順書-v2-9-10-の差分">参考：お客様環境 v2.8.1 と本手順書 v2.9.10 の差分</h2>
 <h3 id="対象データ">対象データ</h3>
 <p>お客様環境で確認した <strong>Cost Optimizer for Amazon WorkSpaces v2.8.1</strong> と、本手順書で構築・検証した <strong>v2.9.10</strong> の差分を整理します。</p>
 <ul>
@@ -1498,43 +1246,7 @@
 
 <section id="costOptimizerResources" class="procedure-document">
 
-<h2 id="付録-作成リソース一覧-v2-9-10">付録：作成リソース一覧（v2.9.10）</h2><nav class="section-links document-toc" aria-label="この手順の目次"><a href="#概要-6">概要</a> <a href="#本付録の対象">本付録の対象</a> <a href="#カテゴリ別概要">カテゴリ別概要</a> <a href="#s3-レポート-監査リソース">S3・レポート／監査リソース</a> <a href="#dynamodbリソース">DynamoDBリソース</a> <a href="#vpc-通信-vpc-flow-logsリソース">VPC・通信・VPC Flow Logsリソース</a> <a href="#デプロイ補助リソース">デプロイ補助リソース</a> <a href="#ecs-実行権限-スケジュールリソース">ECS・実行権限・スケジュールリソース</a> <a href="#cloudwatchダッシュボード">CloudWatchダッシュボード</a> <a href="#公式テンプレートが48件-検証スタックが41件となる理由">公式テンプレートが48件、検証スタックが41件となる理由</a> <a href="#スタック削除時にも保持されるリソース">スタック削除時にも保持されるリソース</a></nav>
-<h3 id="概要-6">概要</h3>
-<p>v2.9.10のハブテンプレートを新規VPC・単一アカウント構成でデプロイした際に、取得済みCloudFormation証跡で確認した41リソースの役割を一覧化します。条件により作成されないリソースも分離します。</p>
-<h4 id="本手順書で実施すること-2">本手順書で実施すること</h4>
-<ul class="check-list">
-<li>論理ID、AWSリソースタイプおよび役割を確認します。</li>
-<li>Retain指定によりスタック削除後も残るリソースを確認します。</li>
-<li>環境条件によって作成件数が変わることを確認します。</li>
-</ul>
-<h4 id="完了条件">完了条件</h4>
-<ul class="check-list">
-<li><input disabled="" type="checkbox"> 取得済み証跡の41件と分類別合計が一致していること。</li>
-<li><input disabled="" type="checkbox"> 実環境ではCloudFormationのリソース一覧を正として再確認する旨が明記されていること。</li>
-</ul>
-<h4 id="設定値-2">設定値</h4>
-<table>
-<thead>
-<tr>
-<th>項目</th>
-<th>今回の設定値</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>ソリューションバージョン</td>
-<td>v2.9.10</td>
-</tr>
-<tr>
-<td>作成リソース数</td>
-<td>41件（取得済み証跡）</td>
-</tr>
-<tr>
-<td>VPC方式</td>
-<td>新規VPC</td>
-</tr>
-</tbody></table>
-<div class="callout callout-info"><p><strong>ℹ️ 情報：参照資料</strong><br><a href="https://solutions-reference.s3.amazonaws.com/cost-optimizer-for-amazon-workspaces/v2.9.10/cost-optimizer-for-amazon-workspaces.template">AWS公式v2.9.10テンプレート</a>とCloudFormation証跡を照合します。</p>
-</div>
+<h2 id="付録-作成リソース一覧-v2-9-10">付録：作成リソース一覧（v2.9.10）</h2>
 <h3 id="本付録の対象">本付録の対象</h3>
 <p>本付録は、Cost Optimizer for Amazon WorkSpaces v2.9.10を、今回のスタック<code class="inline-code">sample-cfn-co-001</code>として次の条件でデプロイした際に作成されたAWSリソースを整理したものです。</p>
 <ul>
@@ -2009,38 +1721,7 @@
 
 <section id="costOptimizerSample" class="procedure-document">
 
-<h2 id="参考-説明用サンプル5台の見方と使用範囲">参考：説明用サンプル5台の見方と使用範囲</h2><nav class="section-links document-toc" aria-label="この手順の目次"><a href="#概要-7">概要</a> <a href="#対象データ-2">対象データ</a> <a href="#ファイル一覧と用途">ファイル一覧と用途</a> <a href="#excelブックの見方">Excelブックの見方</a> <a href="#実行結果を確認する際の注意">実行結果を確認する際の注意</a></nav>
-<h3 id="概要-7">概要</h3>
-<p>Cost Optimizerが出力するCSVの列と複数台表示を説明するため、架空のWorkSpaces 5台を収録したCSV、ExcelおよびPNGの用途を整理します。実測1台の証跡とは分離して扱います。</p>
-<h4 id="本手順書で実施すること-3">本手順書で実施すること</h4>
-<ul class="check-list">
-<li>架空データと実測証跡を区別します。</li>
-<li>CSV列、料金しきい値および課金モード判定の読み方を確認します。</li>
-</ul>
-<h4 id="確認事項-2">確認事項</h4>
-<ul class="check-list">
-<li><input disabled="" type="checkbox"> 説明用資料が架空データとなっていることを明示していること。</li>
-<li><input disabled="" type="checkbox"> 説明用資料をAWS実環境の成功証跡や削減実績として扱わないこと。</li>
-</ul>
-<h4 id="設定値-3">設定値</h4>
-<table>
-<thead>
-<tr>
-<th>項目</th>
-<th>確認内容</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>データ種別</td>
-<td>架空5台</td>
-</tr>
-<tr>
-<td>実測証跡</td>
-<td>別フォルダのDry Run有効時・1台分</td>
-</tr>
-</tbody></table>
-<div class="callout callout-info"><p><strong>ℹ️ 情報：参照資料</strong><br><a href="https://docs.aws.amazon.com/solutions/latest/cost-optimizer-for-workspaces/troubleshooting.html">トラブルシューティング</a>のレポート確認方法と併せて使用します。</p>
-</div>
+<h2 id="参考-説明用サンプル5台の見方と使用範囲">参考：説明用サンプル5台の見方と使用範囲</h2>
 <h3 id="対象データ-2">対象データ</h3>
 <p>本資料は、Cost Optimizer for Amazon WorkSpacesが出力するCSVの項目と、複数台を並べた場合の見方を説明するための補助資料です。</p>
 <div class="callout callout-warning"><p><strong>⚠️ 注意：説明用5台データは架空値</strong></p>
@@ -2186,13 +1867,7 @@
 </ol>
 <p>CSVが作成されていても、各WorkSpaceの課金モードが変更されたとは限りません。<code class="inline-code">Change Reported</code>、<code class="inline-code">Initial Mode</code>、<code class="inline-code">New Mode</code>、および必要に応じてECSログを確認してください。変更失敗またはスキップがある場合は、日次レポートの結果とECSログの例外内容を照合します。</p>
 </section>
-      <h2 id="related-pages">関連ページ</h2>
-      <div class="page-link-grid">
-        <a class="page-link-card" href="workspaces-patch-manager.html"><strong>Systems Manager Patch Manager</strong><span>マルチVPC・閉域VDI基盤案件の関連手順</span></a>
-        <a class="page-link-card" href="workspaces-skill-transfer.html"><strong>全体構築・運用順序</strong><span>マルチVPC・閉域VDI基盤案件の関連手順</span></a>
-        <a class="page-link-card" href="workspaces-cloudwatch-monitoring.html"><strong>CloudWatch・SNS 監視／通知</strong><span>マルチVPC・閉域VDI基盤案件の関連手順</span></a>
-      </div>
-    </main>
+      </main>
   </div>
   <script src="../assets/app.js?v=20260908-skill-transfer1"></script>
 </body>

@@ -67,22 +67,32 @@ const classifyInlineCode = (html) => {
   return protectedCode.restore(result);
 };
 
-const buildSectionLinks = (html) => {
-  if (html.includes('class="section-links"')) return html;
-  const links = [...html.matchAll(/<h2 id="([^"]+)">([\s\S]*?)<\/h2>/g)]
-    .slice(0, 10)
-    .map((match) => `        <a href="#${match[1]}">${stripTags(match[2]).replace(/^\d+[.．]\s*/, "")}</a>`);
-  if (!links.length) return html;
-  const nav = `      <nav class="section-links" aria-label="主要セクション">\n${links.join("\n")}\n      </nav>\n`;
-  return html.replace(/(<div class="page-summary">[\s\S]*?<\/div>\s*)/, `$1${nav}`);
-};
-
-const buildRelatedPages = (index) => {
-  const links = [];
-  if (index > 0) links.push(pages[index - 1]);
-  if (index !== 0 && index !== 1) links.push(pages[0]);
-  if (index < pages.length - 1) links.push(pages[index + 1]);
-  return `      <h2 id="related-pages">関連ページ</h2>\n      <div class="page-link-grid">\n${links.map(([file, label]) => `        <a class="page-link-card" href="${file}"><strong>${label}</strong><span>${seriesTitle}の関連手順</span></a>`).join("\n")}\n      </div>\n`;
+// Keep the site navigation separate from the removed in-page navigation.
+const sidebar = fs.readFileSync(path.join(scriptDir, "workspaces-sidebar.html"), "utf8");
+const simplifyForPersonalUse = (html, file) => {
+  html = html.replace(/<aside\b[^>]*id="site-sidebar"[\s\S]*?<\/aside>/, sidebar.replace(`href="${file}"`, `href="${file}" class="active" aria-current="page"`));
+  html = html.replace(/<div class="page-summary">[\s\S]*?<\/div>/g, "")
+    .replace(/<p class="lead">[\s\S]*?<\/p>/g, "")
+    .replace(/<nav class="(?:section-links|skill-transfer-journey)[^"]*"[\s\S]*?<\/nav>/g, "")
+    .replace(/<h2 id="related-pages">[\s\S]*?(?=<\/main>)/, "");
+  html = html.replace(/<section id="managedAdArchitecture"[\s\S]*?<\/section>\s*<hr>/, "");
+  html = html.replace(/<section id="([^"]+)" class="procedure-document">([\s\S]*?)<\/section>/g, (all, id, inner) => {
+    const removed = id === "managementEc2" ? ["概要", "仕様", "前提条件", "構築後確認", "関連ページ"] : ["概要", "前提条件", "構築後確認", "関連ページ"];
+    inner = inner.replace(/<h3\b[^>]*>([\s\S]*?)<\/h3>[\s\S]*?(?=<h[23]\b|$)/g, (section, title) => removed.includes(stripTags(title)) ? "" : section);
+    if (id === "managementEc2") inner = inner.replace(/<h2\b[^>]*>[\s\S]*?<\/h2>/, "");
+    if (id === "overview") inner = inner.replace(/<table\b[^>]*>[\s\S]*?<\/table>/g, table => {
+      const heads = [...table.matchAll(/<th\b[^>]*>([\s\S]*?)<\/th>/g)];
+      const column = heads.findIndex(h => stripTags(h[1]) === "手順");
+      if (column < 0) return table;
+      return table.replace(/<tr>([\s\S]*?)<\/tr>/g, (row, cells) => {
+        let index = 0;
+        return `<tr>${cells.replace(/<t[hd]\b[^>]*>[\s\S]*?<\/t[hd]>/g, cell => index++ === column ? "" : cell)}</tr>`;
+      });
+    });
+    return `<section id="${id}" class="procedure-document">${inner}</section>`;
+  });
+  html = html.replace(/<p>[^<]*<a href="workspaces-managed-ad.html#managedAdArchitecture">[\s\S]*?<\/p>/g, "");
+  return html;
 };
 
 const transform = (source, index) => {
@@ -105,13 +115,6 @@ const transform = (source, index) => {
   if (!/<h1>/.test(html)) {
     html = html.replace(/(<nav class="breadcrumb" aria-label="Breadcrumb">[\s\S]*?<\/nav>)/, `$1\n      <h1>${pageTitle}</h1>`);
   }
-  if (!html.includes('class="page-summary"')) {
-    if (/<p class="lead">/.test(html)) {
-      html = html.replace(/<p class="lead">([\s\S]*?)<\/p>/, '<div class="page-summary"><strong>⚡ このページの要約</strong><p class="lead">$1</p></div>');
-    } else {
-      html = html.replace(/(<h1>[\s\S]*?<\/h1>)/, `$1\n      <div class="page-summary"><strong>⚡ このページの要約</strong><p class="lead">${pageLead}</p></div>`);
-    }
-  }
   html = html.replace(/<div class="code" data-prompt="\$"><div class="code-header"><span>PowerShell<\/span>/gi, '<div class="code"><div class="code-header"><span>PowerShell</span>');
   html = html.replace(/<ol(?![^>]*\bclass=)>/g, '<ol class="step-list">');
   html = html.replace(/<ul class="contains-task-list">/g, '<ul class="check-list">');
@@ -122,9 +125,8 @@ const transform = (source, index) => {
   });
   html = html.replace(/<table(?![^>]*\bclass=)>(\s*<thead>[\s\S]*?<\/thead>)/g, (all, head) => /パラメータ|必須/.test(stripTags(head)) ? `<table class="parameter-table">${head}` : all);
   html = classifyInlineCode(html);
-  html = buildSectionLinks(html);
-  if (!html.includes('id="related-pages"') && index > 0) html = html.replace(/\s*<\/main>/, `\n${buildRelatedPages(index)}    </main>`);
-  return html.replace(/\r?\n/g, "\r\n");
+  html = simplifyForPersonalUse(html, file);
+  return html.replace(/^[ \t]+(?=\r?$)/gm, "").replace(/\r?\n/g, "\r\n");
 };
 
 const errors = [];
@@ -137,9 +139,9 @@ for (let index = 0; index < pages.length; index += 1) {
   if (!checkOnly && output !== source) fs.writeFileSync(filePath, output, "utf8");
   const finalHtml = checkOnly ? source : output;
   for (const [pattern, message] of [
-    [/<div class="page-summary">/, "page summary missing"],
+    [/aria-current="page"/, "active sidebar link missing"],
     [/<h1>/, "page title missing"],
-    [/class="section-links"/, "section links missing"],
+
     [/<pre><code/, "code markup missing"],
   ]) {
     if (!pattern.test(finalHtml) && !(message === "code markup missing" && !source.includes("<pre><code"))) errors.push(`${file}: ${message}`);

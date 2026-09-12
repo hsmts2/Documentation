@@ -24,6 +24,55 @@
       <div class="sidebar-heading">
         <button class="icon-button sidebar-toggle sidebar-toggle-inline" type="button" aria-controls="site-sidebar" aria-expanded="true" title="ナビゲーションを閉じる" aria-label="ナビゲーションを閉じる">☰</button>
       </div>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">✎</span>記事</p>
+      <a href="cloudflare-private-site.html">Private GitHubリポジトリをCloudflare Workersで認証付き公開してみた</a>
+      <details class="sidebar-nested-menu" open>
+        <summary>マルチVPC・閉域VDI基盤案件（9ページ）</summary>
+        <div class="sidebar-subnav">
+          <a href="workspaces-skill-transfer.html">全体構築・運用順序</a>
+          <a href="workspaces-managed-ad.html">AWS Managed Microsoft AD 構築・管理</a>
+          <a href="workspaces-management-ec2.html">管理用EC2・Active Directory管理</a>
+          <a href="workspaces-ad-connector.html" class="active" aria-current="page">AD Connector 構築・権限委任</a>
+          <a href="workspaces-provisioning-gpo.html">Amazon WorkSpaces 構築・OU・GPO</a>
+          <a href="workspaces-image-bundle.html">WorkSpaces カスタムイメージ・バンドル</a>
+          <a href="workspaces-patch-manager.html">Systems Manager Patch Manager</a>
+          <a href="workspaces-cost-optimizer.html">Amazon WorkSpaces Cost Optimizer</a>
+          <a href="workspaces-cloudwatch-monitoring.html">CloudWatch・SNS 監視／通知</a>
+        </div>
+      </details>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">◈</span>Terraform</p>
+      <a href="terraform.html">Terraform 概要</a>
+      <a href="hcp-terraform.html">HCP Terraform（Terraform Cloud）</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">☁︎</span>AWS</p>
+      <a href="cloudformation.html">CloudFormation 運用手順集</a>
+      <a href="aws-cli.html">AWS CLI 特殊対応</a>
+      <a href="aws-cli-reference.html">AWS CLI コマンドリファレンス</a>
+      <a href="eventbridge-scheduler.html">EventBridge Scheduler</a>
+      <a href="aws-directory-service.html">AWS Directory Service 運用手順</a>
+      <a href="amazon-workspaces.html">Amazon WorkSpaces</a>
+      <a href="amazon-ses.html">Amazon SES SMTPリレー</a>
+      <a href="amazon-ses-monitoring.html">Amazon SES 配信監視</a>
+      <a href="amazon-rds-blue-green.html">Amazon RDS Blue/Green Deployments</a>
+      <a href="apache-acm-certificate-update.html">証明書更新（ACMエクスポート）</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">⚙︎</span>OS／ミドルウェア</p>
+      <a href="rhel9.html">Red Hat Enterprise Linux 9</a>
+      <a href="rhel10.html">Red Hat Enterprise Linux 10</a>
+      <a href="amazon-linux-2023.html">Amazon Linux 2023</a>
+      <a href="windows-server-2022.html">Windows Server 2022</a>
+      <a href="windows-server-2025.html">Windows Server 2025</a>
+      <a href="windows-server-2016-upgrade.html">Windows Server 2016 インプレースアップグレード</a>
+      <a href="storage.html">ストレージ管理</a>
+      <a href="apache.html">Apache</a>
+      <a href="apache-self-signed-ssl-termination.html">Apache SSL終端（自己署名証明書）</a>
+      <a href="redis.html">Redis（KVS）</a>
+      <a href="nfs.html">NFS</a>
+      <a href="samba.html">Samba</a>
+      <a href="mariadb.html">MariaDB</a>
+      <a href="postgresql.html">PostgreSQL</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">▤</span>リファレンス</p>
+      <a href="../writing-style-guide.html">[GitHub Pages] 記法・テンプレート</a>
+      <a href="troubleshooting.html">障害切り分けチェックリスト</a>
+      <a href="eol.html">EOL / ライフサイクル一覧表</a>
     </aside>
     <main class="content workspaces-skill-transfer-guide">
       <nav class="breadcrumb" aria-label="Breadcrumb">
@@ -31,40 +80,11 @@
         <span>トピック</span>
       </nav>
       <h1>AD Connector 構築・権限委任</h1>
-      <div class="page-summary"><strong>⚡ このページの要約</strong><p class="lead">AD Connector専用サービスアカウントと最小権限の委任を準備する<br>VPCピアリング、往復ルート、DC用Security GroupおよびAD Connector作成を依存順にまとめる</p></div>
-      <nav class="section-links" aria-label="主要セクション">
-        <a href="#ad-connector用サービスアカウントの作成-権限委任-運用手順">AD Connector用サービスアカウントの作成・権限委任・運用手順</a>
-        <a href="#vpcピアリング-dc用sg変更-ad-connector作成手順">VPCピアリング・DC用SG変更・AD Connector作成手順</a>
-      </nav>
+
+
 <section id="connectorDelegation" class="procedure-document">
 
-<h2 id="ad-connector用サービスアカウントの作成-権限委任-運用手順">AD Connector用サービスアカウントの作成・権限委任・運用手順</h2><nav class="section-links document-toc" aria-label="この手順の目次"><a href="#概要">概要</a> <a href="#仕様">仕様</a> <a href="#前提条件">前提条件</a> <a href="#構築作業">構築作業</a> <a href="#運用作業">運用作業</a> <a href="#作業後確認">作業後確認</a></nav>
-<h3 id="概要">概要</h3>
-<table>
-<thead>
-<tr>
-<th>項目</th>
-<th>内容</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>目的</td>
-<td>AD Connectorが使用する専用サービスアカウントを作成し、Amazon WorkSpacesの利用に必要な権限を委任します。</td>
-</tr>
-<tr>
-<td>作業対象</td>
-<td>AWS Managed Microsoft ADの<code class="inline-code">ad.example.com</code>を対象に、ドメイン参加済みのWindows管理端末から操作します。</td>
-</tr>
-<tr>
-<td>本手順で実施する作業</td>
-<td><code class="inline-code">Connectors</code>グループと<code class="inline-code">ADConnectorService</code>ユーザーの作成、グループへの追加、WorkSpaces用OUの作成・権限委任を実施します。作成後のパスワード更新、障害時の確認、アカウント切り替えも説明します。</td>
-</tr>
-<tr>
-<td>後続手順で実施する作業</td>
-<td>「VPCピアリング・DC用SG変更・AD Connector作成手順」でネットワーク設定とAD Connectorの作成を実施します。WorkSpaces側のターゲットOU設定と動作確認は、WorkSpacesの構築手順で実施します。</td>
-</tr>
-</tbody></table>
-<p>運用作業は、パスワード更新やアカウント切り替えが必要な場合に実施します。初回構築時に、すべての運用作業を実施する必要はありません。</p>
+<h2 id="ad-connector用サービスアカウントの作成-権限委任-運用手順">AD Connector用サービスアカウントの作成・権限委任・運用手順</h2>
 <h3 id="仕様">仕様</h3>
 <h4 id="構成-動作">構成・動作</h4>
 <table>
@@ -105,68 +125,6 @@
 <li>KerberosおよびLDAPによるネットワーク認証を妨げる設定を行いません。</li>
 <li>ドメインルート、<code class="inline-code">AWS Reserved</code>および<code class="inline-code">Domain Controllers</code>を本手順の委任先にしません。</li>
 </ul>
-<h3 id="前提条件">前提条件</h3>
-<h4 id="既存リソース-ネットワーク">既存リソース・ネットワーク</h4>
-<ul>
-<li>AWS Managed Microsoft ADの<code class="inline-code">ad.example.com</code>が利用できること。</li>
-<li>対象ドメインに参加したWindows管理端末から、対象ドメインの名前解決とAD管理に必要な通信ができること。</li>
-<li><code class="inline-code">ad\Users</code>と<code class="inline-code">ad\Computers</code>が存在し、WorkSpacesのコンピューターオブジェクト配置先が決定していること。</li>
-</ul>
-<h4 id="権限-接続環境">権限・接続環境</h4>
-<ul>
-<li>管理端末にActive Directoryユーザーとコンピューター（ADUC）と、確認コマンドで使用するActive Directory PowerShellモジュールがインストールされていること。</li>
-<li>お客様管理OU内でグループ、ユーザー、OUおよび委任設定を管理できるADユーザーを使用すること。</li>
-<li>運用時にAD Connectorの認証情報を更新する場合は、対象ディレクトリを参照・更新できるIAM権限を持つユーザーまたはロールを使用すること。</li>
-</ul>
-<div class="callout callout-info"><p><strong>ℹ️ 情報：IAM権限とActive Directoryの権限の違い</strong></p>
-<p><code class="inline-code">AdministratorAccess</code>を付与したIAMユーザーまたはロールは、SCP、アクセス許可の境界、明示的な拒否などで制限されていなければ、AWSコンソール上の認証情報更新に必要な権限を満たします。ADUCでの作成・権限委任には、別途AD内の管理権限が必要です。管理端末のローカル<code class="inline-code">Administrator</code>でサインインしただけではADの変更権限は付与されないため、ADUCとPowerShellは対象ドメインの管理資格情報で起動します。</p>
-<p><a href="https://docs.aws.amazon.com/aws-managed-policy/latest/reference/AdministratorAccess.html">AdministratorAccess</a></p>
-</div>
-<h4 id="事前に準備する情報">事前に準備する情報</h4>
-<table>
-<thead>
-<tr>
-<th>項目</th>
-<th>設定値</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>DNSドメイン</td>
-<td><code class="inline-code">ad.example.com</code></td>
-</tr>
-<tr>
-<td>NetBIOS名</td>
-<td><code class="inline-code">ad</code></td>
-</tr>
-<tr>
-<td>ユーザー・グループ配置先</td>
-<td><code class="inline-code">ad\Users</code></td>
-</tr>
-<tr>
-<td>WorkSpacesコンピューターOU</td>
-<td><code class="inline-code">ad\Computers\WorkSpaces</code></td>
-</tr>
-<tr>
-<td>委任用グループ</td>
-<td><code class="inline-code">Connectors</code></td>
-</tr>
-<tr>
-<td>サービスアカウント</td>
-<td><code class="inline-code">ADConnectorService</code></td>
-</tr>
-<tr>
-<td>UPN</td>
-<td><code class="inline-code">ADConnectorService@ad.example.com</code></td>
-</tr>
-</tbody></table>
-<p>アカウント名とOUが承認済みの設計と一致することを確認します。パスワードの保管先、更新担当者、更新周期および障害時の連絡先を事前に決定します。</p>
-<div class="callout callout-warning"><p><strong>⚠️ 注意：サービスアカウントのパスワードを作業記録や画面キャプチャへ残さない</strong></p>
-<p>パスワードは承認済みのシークレット保管先で管理し、手順書、作業チケット、チャット、コマンド履歴および画面キャプチャへ記録しません。</p>
-</div>
-<div class="callout callout-info"><p><strong>ℹ️ 情報：AD Connectorに登録するパスワードの要件</strong></p>
-<p>AD側の実効パスワードポリシーに加え、AD Connectorの要件も満たす値を準備します。長さは8～128文字で、英大文字・英小文字・数字・英数字以外の文字の4種類中3種類以上を含めます。</p>
-<p><a href="https://docs.aws.amazon.com/ja_jp/directoryservice/latest/admin-guide/ad_connector_getting_started.html">AD Connectorのサービスアカウント要件</a></p>
-</div>
 <h3 id="構築作業">構築作業</h3>
 <h4 id="1-connectorsグループを作成する">1. <code class="inline-code">Connectors</code>グループを作成する</h4>
 <p>サービスアカウントへ権限を直接付与せず、委任用グループを介して管理できるようにします。</p>
@@ -536,32 +494,7 @@ Get-ADPrincipalGroupMembership 'ADConnectorService' |
 
 <section id="connectorBuild" class="procedure-document">
 
-<h2 id="vpcピアリング-dc用sg変更-ad-connector作成手順">VPCピアリング・DC用SG変更・AD Connector作成手順</h2><nav class="section-links document-toc" aria-label="この手順の目次"><a href="#概要-2">概要</a> <a href="#仕様-2">仕様</a> <a href="#前提条件-2">前提条件</a> <a href="#構築作業-2">構築作業</a> <a href="#運用作業-2">運用作業</a> <a href="#構築後確認">構築後確認</a></nav>
-<h3 id="概要-2">概要</h3>
-<table>
-<thead>
-<tr>
-<th>項目</th>
-<th>内容</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>目的</td>
-<td>VPC間の通信を設定し、AD ConnectorからAWS Managed Microsoft ADへ接続できる状態を準備します。</td>
-</tr>
-<tr>
-<td>作業対象</td>
-<td>東京リージョンのManaged AD配置VPC002（<code class="inline-code">ad-vpc-002</code>）と、AD Connector・WorkSpaces配置VPC003（<code class="inline-code">ad-vpc-003</code>）です。</td>
-</tr>
-<tr>
-<td>本手順で実施する作業</td>
-<td>VPCピアリングの作成・承諾、往復ルートの追加、Managed ADのDC用SG変更、通信確認、SmallのAD Connector作成を実施します。</td>
-</tr>
-<tr>
-<td>後続手順で実施する作業</td>
-<td>WorkSpacesへのディレクトリ登録、WorkSpaces用サブネット・ターゲットOUの指定、WorkSpacesの作成およびGPO設定は各専用手順で実施します。</td>
-</tr>
-</tbody></table>
+<h2 id="vpcピアリング-dc用sg変更-ad-connector作成手順">VPCピアリング・DC用SG変更・AD Connector作成手順</h2>
 <h3 id="仕様-2">仕様</h3>
 <h4 id="構成-動作-2">構成・動作</h4>
 <table>
@@ -622,85 +555,6 @@ Get-ADPrincipalGroupMembership 'ADConnectorService' |
 </div>
 <div class="callout callout-warning"><p><strong>⚠️ 注意：Directory ServiceのENIを手動削除しない</strong></p>
 <p>AWSが作成したENIは、VPCとディレクトリ間の通信に使用します。利用終了時は、依存サービスを解除した後にDirectory Serviceからディレクトリを削除します。</p>
-</div>
-<h3 id="前提条件-2">前提条件</h3>
-<h4 id="既存リソース-ネットワーク-2">既存リソース・ネットワーク</h4>
-<ul>
-<li>Managed ADが作成済みで、ステータスが「アクティブ」になっていること。</li>
-<li>VPC002とVPC003が作成済みで、CIDRが重複していないこと。</li>
-<li>AD Connector用の2サブネットが同じVPC内の異なるAZに配置され、同じネットワークタイプを使用していること。</li>
-<li>VPCのハードウェアテナンシーが<code class="inline-code">default</code>になっていること。</li>
-<li>Managed AD用とAD Connector用の各サブネットに適用されるルートテーブル・ネットワークACLを特定していること。</li>
-<li>接続先ADのドメイン機能レベルがWindows Server 2003以上で、対象ユーザーのKerberos事前認証が有効になっていること。</li>
-<li>接続先DNSサーバーが、対象ドメインの<code class="inline-code">_ldap._tcp</code>と<code class="inline-code">_kerberos._tcp</code>のSRVレコードを保持し、両レコードに共通するDCが含まれていること。</li>
-<li>WorkSpacesを使用する場合は、DCの<code class="inline-code">DisableVLVSupportLDAP</code>が既定値<code class="inline-code">0</code>になっていること。変更実績がある場合はドメイン管理担当へ確認すること。</li>
-</ul>
-<h4 id="権限-接続環境-2">権限・接続環境</h4>
-<ul class="check-list">
-<li>作業対象のAWSアカウントと東京リージョンへサインインできること。</li>
-<li>VPCピアリングの作成・承諾、ルートの追加、SGルールの変更、Directory Serviceの作成・参照に必要なIAM権限が付与されていること。</li>
-<li>サービスアカウントの作成と<code class="inline-code">Connectors</code>への所属、対象OUへの権限委任を完了していること。アカウントが有効で、ロック・期限切れ・次回ログオン時のパスワード変更要求がないこと。</li>
-<li>各AD Connector用サブネットからの通信経路を確認できるWindows環境を準備していること。確認端末のSGとネットワークACLも必要な通信を許可していること。</li>
-</ul>
-<div class="callout callout-info"><p><strong>ℹ️ 情報：AdministratorAccessを使用する場合</strong></p>
-<p><code class="inline-code">AdministratorAccess</code>を持つIAMユーザーまたはロールは、SCP、アクセス許可の境界、明示的な拒否などで制限されていなければ、本手順のAWS操作に必要な権限を満たします。サービスアカウントのAD内の権限は、別途準備します。</p>
-<p><a href="https://docs.aws.amazon.com/aws-managed-policy/latest/reference/AdministratorAccess.html">AdministratorAccess</a></p>
-</div>
-<h4 id="事前に準備する情報-2">事前に準備する情報</h4>
-<table>
-<thead>
-<tr>
-<th>項目</th>
-<th>設定値</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>リージョン</td>
-<td>アジアパシフィック（東京）／<code class="inline-code">ap-northeast-1</code></td>
-</tr>
-<tr>
-<td>接続先DNSドメイン</td>
-<td><code class="inline-code">ad.example.com</code></td>
-</tr>
-<tr>
-<td>NetBIOS名</td>
-<td><code class="inline-code">ad</code></td>
-</tr>
-<tr>
-<td>Managed AD配置VPC</td>
-<td><code class="inline-code">ad-vpc-002</code>／<code class="inline-code">192.168.225.0/24</code></td>
-</tr>
-<tr>
-<td>AD Connector配置VPC</td>
-<td><code class="inline-code">ad-vpc-003</code>／<code class="inline-code">192.168.226.0/23</code></td>
-</tr>
-<tr>
-<td>接続先DNS／DC IP</td>
-<td><code class="inline-code">192.168.225.68</code>、<code class="inline-code">192.168.225.126</code></td>
-</tr>
-<tr>
-<td>AD Connector用サブネット1</td>
-<td><code class="inline-code">ad-pri-sub-003-002a</code>／<code class="inline-code">192.168.226.128/28</code>／<code class="inline-code">ap-northeast-1a</code></td>
-</tr>
-<tr>
-<td>AD Connector用サブネット2</td>
-<td><code class="inline-code">ad-pri-sub-003-002c</code>／<code class="inline-code">192.168.226.160/28</code>／<code class="inline-code">ap-northeast-1c</code></td>
-</tr>
-<tr>
-<td>AD Connectorサイズ</td>
-<td>Small</td>
-</tr>
-<tr>
-<td>サービスアカウント</td>
-<td><code class="inline-code">ADConnectorService</code></td>
-</tr>
-</tbody></table>
-<p>Directory ID、SG ID、VPC IDおよびサブネットIDは、作業時点のAWSコンソールで名前・CIDRと照合します。</p>
-<div class="callout callout-warning"><p><strong>⚠️ 注意：接続先DNS IPとAD Connector自身のIPを区別する</strong></p>
-<p>作成画面のDNS IPアドレス欄には、接続先Managed ADのDNS IPを入力します。AD Connector自身に割り当てられるIPアドレスは、作成後に確認します。</p>
-</div>
-<div class="callout callout-warning"><p><strong>⚠️ 注意：サービスアカウントのパスワードを記録しない</strong></p>
-<p>パスワードは承認済みの保管先から入力します。手順書、チケット、作業ログおよび画面キャプチャへ実値を記録しません。</p>
 </div>
 <h3 id="構築作業-2">構築作業</h3>
 <h4 id="1-接続先managed-adと変更対象sgを確認する">1. 接続先Managed ADと変更対象SGを確認する</h4>
@@ -1066,25 +920,8 @@ foreach ($dnsServer in $dnsServers) {
 <li>サービスアカウントは直ちに削除せず、観察期間後に無効化・削除します。</li>
 </ol>
 <p>VPCピアリングも廃止する場合は、両VPC間の他の通信で使用していないことを確認し、対象のピアリング経由ルートを双方から削除してから、ピアリング接続を削除します。</p>
-<h3 id="構築後確認">構築後確認</h3>
-<ol class="step-list">
-<li>VPCピアリング接続が「アクティブ」で、接続先の両VPCが設定値と一致していることを確認します。</li>
-<li>Managed AD用とAD Connector用の両サブネットに適用されるルートテーブルで、往復経路が保存され、対象ルートが「アクティブ」になっていることを確認します。</li>
-<li>Managed ADのDC用SGに<code class="inline-code">192.168.226.0/23</code>からの許可が追加され、既存ルールが保持されていることを確認します。</li>
-<li>両AD Connector用サブネットの経路から、2台の接続先DNS／DCへの必要な通信を確認します。</li>
-<li>AD Connectorのステータスが「アクティブ」、サイズが「Small」、接続先ドメインが<code class="inline-code">ad.example.com</code>になっていることを確認します。</li>
-<li>AD ConnectorのVPC、異なるAZの2サブネット、サービスアカウントおよび関連SGが設定値と一致していることを確認します。</li>
-<li>AD Connector自身に割り当てられたIPアドレスとDirectory IDをコンソールで確認し、運用台帳へ記録します。</li>
-</ol>
-<p>上記を確認してから、後続のWorkSpaces登録・作成手順へ進みます。</p>
 </section>
-      <h2 id="related-pages">関連ページ</h2>
-      <div class="page-link-grid">
-        <a class="page-link-card" href="workspaces-management-ec2.html"><strong>管理用EC2・Active Directory管理</strong><span>マルチVPC・閉域VDI基盤案件の関連手順</span></a>
-        <a class="page-link-card" href="workspaces-skill-transfer.html"><strong>全体構築・運用順序</strong><span>マルチVPC・閉域VDI基盤案件の関連手順</span></a>
-        <a class="page-link-card" href="workspaces-provisioning-gpo.html"><strong>Amazon WorkSpaces 構築・OU・GPO</strong><span>マルチVPC・閉域VDI基盤案件の関連手順</span></a>
-      </div>
-    </main>
+      </main>
   </div>
   <script src="../assets/app.js?v=20260908-skill-transfer1"></script>
 </body>

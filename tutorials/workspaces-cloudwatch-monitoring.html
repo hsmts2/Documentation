@@ -24,6 +24,55 @@
       <div class="sidebar-heading">
         <button class="icon-button sidebar-toggle sidebar-toggle-inline" type="button" aria-controls="site-sidebar" aria-expanded="true" title="ナビゲーションを閉じる" aria-label="ナビゲーションを閉じる">☰</button>
       </div>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">✎</span>記事</p>
+      <a href="cloudflare-private-site.html">Private GitHubリポジトリをCloudflare Workersで認証付き公開してみた</a>
+      <details class="sidebar-nested-menu" open>
+        <summary>マルチVPC・閉域VDI基盤案件（9ページ）</summary>
+        <div class="sidebar-subnav">
+          <a href="workspaces-skill-transfer.html">全体構築・運用順序</a>
+          <a href="workspaces-managed-ad.html">AWS Managed Microsoft AD 構築・管理</a>
+          <a href="workspaces-management-ec2.html">管理用EC2・Active Directory管理</a>
+          <a href="workspaces-ad-connector.html">AD Connector 構築・権限委任</a>
+          <a href="workspaces-provisioning-gpo.html">Amazon WorkSpaces 構築・OU・GPO</a>
+          <a href="workspaces-image-bundle.html">WorkSpaces カスタムイメージ・バンドル</a>
+          <a href="workspaces-patch-manager.html">Systems Manager Patch Manager</a>
+          <a href="workspaces-cost-optimizer.html">Amazon WorkSpaces Cost Optimizer</a>
+          <a href="workspaces-cloudwatch-monitoring.html" class="active" aria-current="page">CloudWatch・SNS 監視／通知</a>
+        </div>
+      </details>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">◈</span>Terraform</p>
+      <a href="terraform.html">Terraform 概要</a>
+      <a href="hcp-terraform.html">HCP Terraform（Terraform Cloud）</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">☁︎</span>AWS</p>
+      <a href="cloudformation.html">CloudFormation 運用手順集</a>
+      <a href="aws-cli.html">AWS CLI 特殊対応</a>
+      <a href="aws-cli-reference.html">AWS CLI コマンドリファレンス</a>
+      <a href="eventbridge-scheduler.html">EventBridge Scheduler</a>
+      <a href="aws-directory-service.html">AWS Directory Service 運用手順</a>
+      <a href="amazon-workspaces.html">Amazon WorkSpaces</a>
+      <a href="amazon-ses.html">Amazon SES SMTPリレー</a>
+      <a href="amazon-ses-monitoring.html">Amazon SES 配信監視</a>
+      <a href="amazon-rds-blue-green.html">Amazon RDS Blue/Green Deployments</a>
+      <a href="apache-acm-certificate-update.html">証明書更新（ACMエクスポート）</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">⚙︎</span>OS／ミドルウェア</p>
+      <a href="rhel9.html">Red Hat Enterprise Linux 9</a>
+      <a href="rhel10.html">Red Hat Enterprise Linux 10</a>
+      <a href="amazon-linux-2023.html">Amazon Linux 2023</a>
+      <a href="windows-server-2022.html">Windows Server 2022</a>
+      <a href="windows-server-2025.html">Windows Server 2025</a>
+      <a href="windows-server-2016-upgrade.html">Windows Server 2016 インプレースアップグレード</a>
+      <a href="storage.html">ストレージ管理</a>
+      <a href="apache.html">Apache</a>
+      <a href="apache-self-signed-ssl-termination.html">Apache SSL終端（自己署名証明書）</a>
+      <a href="redis.html">Redis（KVS）</a>
+      <a href="nfs.html">NFS</a>
+      <a href="samba.html">Samba</a>
+      <a href="mariadb.html">MariaDB</a>
+      <a href="postgresql.html">PostgreSQL</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">▤</span>リファレンス</p>
+      <a href="../writing-style-guide.html">[GitHub Pages] 記法・テンプレート</a>
+      <a href="troubleshooting.html">障害切り分けチェックリスト</a>
+      <a href="eol.html">EOL / ライフサイクル一覧表</a>
     </aside>
     <main class="content workspaces-skill-transfer-guide">
       <nav class="breadcrumb" aria-label="Breadcrumb">
@@ -31,39 +80,11 @@
         <span>トピック</span>
       </nav>
       <h1>CloudWatch・SNS 監視／通知</h1>
-      <div class="page-summary"><strong>⚡ このページの要約</strong><p class="lead">Amazon EC2、Windows OSおよびAmazon WorkSpacesのメトリクスをCloudWatchへ集約する<br>SNS通知、アラーム、ダッシュボードおよび監視動作の確認手順を整理する</p></div>
-      <nav class="section-links" aria-label="主要セクション">
-        <a href="#17-amazon-cloudwatch-ec2-windows-os監視とアラーム設定手順書">⑰[Amazon CloudWatch] EC2・Windows OS監視とアラーム設定手順書</a>
-        <a href="#18-amazon-cloudwatch-workspaces監視とアラーム設定手順書">⑱[Amazon CloudWatch] WorkSpaces監視とアラーム設定手順書</a>
-      </nav>
+
+
 <section id="cloudWatchEc2" class="procedure-document">
 
-<h2 id="17-amazon-cloudwatch-ec2-windows-os監視とアラーム設定手順書">⑰[Amazon CloudWatch] EC2・Windows OS監視とアラーム設定手順書</h2><nav class="section-links document-toc" aria-label="この手順の目次"><a href="#概要">概要</a> <a href="#仕様">仕様</a> <a href="#前提条件">前提条件</a> <a href="#構築作業">構築作業</a> <a href="#通知試験と運用確認">通知試験と運用確認</a> <a href="#参考資料">参考資料</a> <a href="#構築後確認">構築後確認</a></nav>
-<h3 id="概要">概要</h3>
-<table>
-<thead>
-<tr>
-<th>項目</th>
-<th>内容</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>目的</td>
-<td>EC2のステータスチェック・CPU負荷、Windows OSの容量・メモリを監視し、異常時に運用通知先へ通知します。</td>
-</tr>
-<tr>
-<td>作業範囲</td>
-<td>SNS通知先の作成、EC2アラーム、CloudWatch agent設定、Windows OSアラーム、ダッシュボード、通知試験</td>
-</tr>
-<tr>
-<td>対象リージョン</td>
-<td>アジアパシフィック（東京）<code class="inline-code">ap-northeast-1</code></td>
-</tr>
-<tr>
-<td>設定値の扱い</td>
-<td>本書のリソース名・ID・しきい値は掲載画像の検証環境に合わせた値です。お客様環境では承認済みパラメータに置き換えます。</td>
-</tr>
-</tbody></table>
+<h2 id="17-amazon-cloudwatch-ec2-windows-os監視とアラーム設定手順書">⑰[Amazon CloudWatch] EC2・Windows OS監視とアラーム設定手順書</h2>
 <h3 id="仕様">仕様</h3>
 <h4 id="構成-動作">構成・動作</h4>
 <figure class="screenshot-wide"><figcaption>図1　CloudWatch監視構成</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cloudwatch-monitoring/001-cloudwatch監視構成.png" alt="CloudWatch監視構成" width="1800" height="900" loading="lazy"></div></figure>
@@ -109,78 +130,6 @@
 <li><code class="inline-code">Memory % Committed Bytes In Use</code>はコミット上限に対する使用率です。物理メモリ使用率とは計算対象が異なります。</li>
 <li>しきい値は検証環境の初期値です。通常時の負荷と業務要件に合わせて確定します。</li>
 </ul>
-<h3 id="前提条件">前提条件</h3>
-<h4 id="既存リソース-ネットワーク">既存リソース・ネットワーク</h4>
-<ul>
-<li>対象Windows EC2が起動し、Systems Managerのマネージドノードとしてオンラインとなっていること。</li>
-<li>EC2からSystems Manager・Parameter Store・CloudWatchへTCP/443で到達できること。NAT、プロキシ、または対応VPCエンドポイントを使用します。</li>
-<li>通知先メールアドレスが確定し、購読確認メールを受信できること。</li>
-</ul>
-<h4 id="権限-接続環境">権限・接続環境</h4>
-<p>作業者はCloudWatchアラーム・ダッシュボードの管理、SNSのトピック・購読・テスト発行、および対象リソースの参照が可能なIAMユーザーまたはロールを使用します。<code class="inline-code">AdministratorAccess</code>が付与された作業者でも対応できます。ただし、SCP・アクセス許可の境界などによる制限がないことを確認します。</p>
-<p><code class="inline-code">CloudWatchAgentAdminPolicy</code>は設定をParameter Storeへ保存する管理用途の権限を含みます。通常のメトリクス送信用EC2には<code class="inline-code">CloudWatchAgentServerPolicy</code>を使用します。</p>
-<p>さらに、EC2インスタンスロールの設定、Run Command実行、Parameter Storeへの設定保存に必要な権限を確認します。EC2側の送信用ロールには<code class="inline-code">AmazonSSMManagedInstanceCore</code>と<code class="inline-code">CloudWatchAgentServerPolicy</code>を使用します。作業者の管理権限とEC2の実行権限は別に設定します。</p>
-<h4 id="事前に準備する情報">事前に準備する情報</h4>
-<table>
-<thead>
-<tr>
-<th>項目</th>
-<th>値</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>検証用EC2</td>
-<td><code class="inline-code">i-05914a8b6088a3a42</code></td>
-</tr>
-<tr>
-<td>EC2名</td>
-<td><code class="inline-code">Sample-mng-001</code></td>
-</tr>
-<tr>
-<td>EC2インスタンスロール</td>
-<td><code class="inline-code">Sample_EC2Role</code></td>
-</tr>
-<tr>
-<td>SNSトピック</td>
-<td><code class="inline-code">sample-sns-cloudwatch-alerts</code></td>
-</tr>
-<tr>
-<td>リージョン</td>
-<td>アジアパシフィック（東京）<code class="inline-code">ap-northeast-1</code></td>
-</tr>
-<tr>
-<td>インスタンス用IAMポリシー</td>
-<td><code class="inline-code">AmazonSSMManagedInstanceCore</code>、<code class="inline-code">CloudWatchAgentServerPolicy</code>（Windows OSメトリクス収集時）</td>
-</tr>
-<tr>
-<td>ネットワーク</td>
-<td>対象EC2からTCP/443でSystems Manager、Parameter Store、CloudWatchの各サービスエンドポイントへ到達できること。インターネットへ直接公開する必要はなく、NAT／プロキシまたは対応VPCエンドポイントを使用可能</td>
-</tr>
-</tbody></table>
-<table>
-<thead>
-<tr>
-<th>項目</th>
-<th>設定値</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>SNSタイプ</td>
-<td>スタンダード</td>
-</tr>
-<tr>
-<td>通知先</td>
-<td>承認済みの運用通知先メールアドレス</td>
-</tr>
-<tr>
-<td>Parameter Store名</td>
-<td><code class="inline-code">AmazonCloudWatch-sample-windows-basic-v1</code></td>
-</tr>
-<tr>
-<td>ダッシュボード名</td>
-<td><code class="inline-code">sample-cw-monitoring-dashboard</code></td>
-</tr>
-</tbody></table>
 <h3 id="構築作業">構築作業</h3>
 <h4 id="1-snsトピックを作成する">1. SNSトピックを作成する</h4>
 <ol class="step-list">
@@ -798,89 +747,13 @@ CloudWatch agentの稼働とWindows OSメトリクスの出力は掲載画像で
 <li><p><a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/create_dashboard.html">CloudWatchダッシュボードの作成</a></p>
 </li>
 </ul>
-<h3 id="構築後確認">構築後確認</h3>
-<table>
-<thead>
-<tr>
-<th>チェック</th>
-<th>確認項目</th>
-<th>完了条件</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>□</td>
-<td>SNS購読</td>
-<td>正しい通知先で購読確認が完了している</td>
-</tr>
-<tr>
-<td>□</td>
-<td>SNS単体テスト</td>
-<td>件名・本文・受信日時を照合できる</td>
-</tr>
-<tr>
-<td>□</td>
-<td>EC2アラーム</td>
-<td>対象・条件・SNSアクションが設計と一致する</td>
-</tr>
-<tr>
-<td>□</td>
-<td>CloudWatch agent</td>
-<td>running・configuredとなり、最新メトリクスを取得できる</td>
-</tr>
-<tr>
-<td>□</td>
-<td>Windows OSアラーム</td>
-<td>対象ドライブ・メモリカウンター・単位・評価条件が設計と一致する</td>
-</tr>
-<tr>
-<td>□</td>
-<td>ダッシュボード</td>
-<td>対象メトリクスとアラーム状態を表示できる</td>
-</tr>
-<tr>
-<td>□</td>
-<td>アラーム経由の通知</td>
-<td>状態変更履歴と受信メールを照合できる</td>
-</tr>
-<tr>
-<td>□</td>
-<td>試験後の設定</td>
-<td>テスト用アラームを削除し、運用設定を確認している</td>
-</tr>
-</tbody></table>
-<p>全項目を確認した時点で、本作業を完了とします。掲載済み画像だけで未取得項目を確認済みとせず、実施結果を記録します。</p>
 </section>
 
 <hr>
 
 <section id="cloudWatchWorkSpaces" class="procedure-document">
 
-<h2 id="18-amazon-cloudwatch-workspaces監視とアラーム設定手順書">⑱[Amazon CloudWatch] WorkSpaces監視とアラーム設定手順書</h2><nav class="section-links document-toc" aria-label="この手順の目次"><a href="#概要-2">概要</a> <a href="#仕様-2">仕様</a> <a href="#前提条件-2">前提条件</a> <a href="#構築作業-2">構築作業</a> <a href="#運用確認">運用確認</a> <a href="#参考資料-2">参考資料</a> <a href="#構築後確認-2">構築後確認</a></nav>
-<h3 id="概要-2">概要</h3>
-<table>
-<thead>
-<tr>
-<th>項目</th>
-<th>内容</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>目的</td>
-<td>WorkSpacesの異常状態・接続失敗を検知し、利用状況をダッシュボードで確認します。</td>
-</tr>
-<tr>
-<td>作業範囲</td>
-<td>Unhealthy・ConnectionFailureアラーム、UserConnectedの可視化、追加監視候補、通知・運用確認</td>
-</tr>
-<tr>
-<td>対象リージョン</td>
-<td>アジアパシフィック（東京）<code class="inline-code">ap-northeast-1</code></td>
-</tr>
-<tr>
-<td>設定値の扱い</td>
-<td>本書のリソース名・ID・しきい値は掲載画像の検証環境に合わせた値です。お客様環境では承認済みパラメータに置き換えます。</td>
-</tr>
-</tbody></table>
+<h2 id="18-amazon-cloudwatch-workspaces監視とアラーム設定手順書">⑱[Amazon CloudWatch] WorkSpaces監視とアラーム設定手順書</h2>
 <h3 id="仕様-2">仕様</h3>
 <h4 id="構成-動作-2">構成・動作</h4>
 <p><code class="inline-code">AWS/WorkSpaces</code>のメトリクスをCloudWatchで評価し、ALARMへの状態変更時にSNSでメール通知します。通知先トピックとEmail購読は⑰のSNS設定で準備します。</p>
@@ -892,41 +765,6 @@ CloudWatch agentの稼働とWindows OSメトリクスの出力は掲載画像で
 <li>AutoStopや未使用時の欠落データは正常扱いとする初期設定です。最新データ時刻とWorkSpacesの状態も確認します。</li>
 <li>メトリクスの提供範囲はプロトコルなどによって異なります。追加時は対象で取得できる系列を確認します。</li>
 </ul>
-<h3 id="前提条件-2">前提条件</h3>
-<h4 id="既存リソース-ネットワーク-2">既存リソース・ネットワーク</h4>
-<ul class="check-list">
-<li>対象WorkSpaceが作成済みで、監視対象のID・ディレクトリ・実行モードが確定していること。</li>
-<li>通知用SNSトピックと確認済みEmail購読が準備されていること。</li>
-<li>WorkSpacesのメトリクス送信に必要な通信を許可していること。AWSの要件に従い、<code class="inline-code">us-east-1</code>の<code class="inline-code">AMAZON</code>範囲へのTCP/443を含む通信要件を確認します。<a href="https://docs.aws.amazon.com/workspaces/latest/adminguide/cloudwatch-metrics.html">WorkSpacesのCloudWatchメトリクス</a></li>
-</ul>
-<h4 id="権限-接続環境-2">権限・接続環境</h4>
-<p>作業者はCloudWatchアラーム・ダッシュボードの管理、SNSのトピック・購読・テスト発行、および対象リソースの参照が可能なIAMユーザーまたはロールを使用します。<code class="inline-code">AdministratorAccess</code>が付与された作業者でも対応できます。ただし、SCP・アクセス許可の境界などによる制限がないことを確認します。</p>
-<p>WorkSpacesリソースの参照権限も確認します。本書の監視設定にWorkSpace側へのCloudWatch agent導入は含みません。</p>
-<h4 id="事前に準備する情報-2">事前に準備する情報</h4>
-<table>
-<thead>
-<tr>
-<th>項目</th>
-<th>値</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>検証用WorkSpace ID</td>
-<td><code class="inline-code">ws-jkxz7js0s</code></td>
-</tr>
-<tr>
-<td>SNSトピック</td>
-<td><code class="inline-code">sample-sns-cloudwatch-alerts</code></td>
-</tr>
-<tr>
-<td>リージョン</td>
-<td>アジアパシフィック（東京）<code class="inline-code">ap-northeast-1</code></td>
-</tr>
-</tbody></table>
-<figure class="screenshot-wide aws-console-identity"><figcaption>図1　WorkSpaces監視対象一覧</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cloudwatch-monitoring/019-workspaces監視対象一覧.png" alt="WorkSpaces監視対象一覧" width="1540" height="650" loading="lazy"></div></figure>
-
-
-
 <h3 id="構築作業-2">構築作業</h3>
 <h4 id="1-unhealthyアラームを作成する">1. Unhealthyアラームを作成する</h4>
 <ol class="step-list">
@@ -1342,59 +1180,8 @@ CloudWatch agentの稼働とWindows OSメトリクスの出力は掲載画像で
 <li><a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Notify_Users_Alarm_Changes.html">アラーム状態変更をユーザーへ通知する</a></li>
 <li><a href="https://docs.aws.amazon.com/sns/latest/dg/sns-email-notifications.html">Amazon SNSのメール通知</a></li>
 </ul>
-<h3 id="構築後確認-2">構築後確認</h3>
-<table>
-<thead>
-<tr>
-<th>チェック</th>
-<th>確認項目</th>
-<th>完了条件</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>□</td>
-<td>対象</td>
-<td>WorkSpace ID・リージョン・名前空間が設計と一致する</td>
-</tr>
-<tr>
-<td>□</td>
-<td>アラーム</td>
-<td>2アラームの統計・期間・しきい値・評価・欠落データ設定が一致する</td>
-</tr>
-<tr>
-<td>□</td>
-<td>状態と時刻</td>
-<td>アラーム状態が取得データと評価条件に一致し、最新時刻を確認している</td>
-</tr>
-<tr>
-<td>□</td>
-<td>SNS通知</td>
-<td>アクションが有効で、確認済みの購読先へテスト通知を受信できる</td>
-</tr>
-<tr>
-<td>□</td>
-<td>ダッシュボード</td>
-<td>対象メトリクスとアラーム状態を表示・保存できる</td>
-</tr>
-<tr>
-<td>□</td>
-<td>追加監視</td>
-<td>採用した項目と未採用の項目を区別して記録している</td>
-</tr>
-<tr>
-<td>□</td>
-<td>試験後</td>
-<td>テスト用アラームを削除し、運用設定を確認している</td>
-</tr>
-</tbody></table>
-<p>全項目を確認した時点で、本作業を完了とします。既存の検証記録ではSNS購読・メール受信と追加監視は未確認のため、本作業で確認します。</p>
 </section>
-      <h2 id="related-pages">関連ページ</h2>
-      <div class="page-link-grid">
-        <a class="page-link-card" href="workspaces-cost-optimizer.html"><strong>Amazon WorkSpaces Cost Optimizer</strong><span>マルチVPC・閉域VDI基盤案件の関連手順</span></a>
-        <a class="page-link-card" href="workspaces-skill-transfer.html"><strong>全体構築・運用順序</strong><span>マルチVPC・閉域VDI基盤案件の関連手順</span></a>
-      </div>
-    </main>
+      </main>
   </div>
   <script src="../assets/app.js?v=20260908-skill-transfer1"></script>
 </body>

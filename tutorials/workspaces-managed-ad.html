@@ -24,6 +24,55 @@
       <div class="sidebar-heading">
         <button class="icon-button sidebar-toggle sidebar-toggle-inline" type="button" aria-controls="site-sidebar" aria-expanded="true" title="ナビゲーションを閉じる" aria-label="ナビゲーションを閉じる">☰</button>
       </div>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">✎</span>記事</p>
+      <a href="cloudflare-private-site.html">Private GitHubリポジトリをCloudflare Workersで認証付き公開してみた</a>
+      <details class="sidebar-nested-menu" open>
+        <summary>マルチVPC・閉域VDI基盤案件（9ページ）</summary>
+        <div class="sidebar-subnav">
+          <a href="workspaces-skill-transfer.html">全体構築・運用順序</a>
+          <a href="workspaces-managed-ad.html" class="active" aria-current="page">AWS Managed Microsoft AD 構築・管理</a>
+          <a href="workspaces-management-ec2.html">管理用EC2・Active Directory管理</a>
+          <a href="workspaces-ad-connector.html">AD Connector 構築・権限委任</a>
+          <a href="workspaces-provisioning-gpo.html">Amazon WorkSpaces 構築・OU・GPO</a>
+          <a href="workspaces-image-bundle.html">WorkSpaces カスタムイメージ・バンドル</a>
+          <a href="workspaces-patch-manager.html">Systems Manager Patch Manager</a>
+          <a href="workspaces-cost-optimizer.html">Amazon WorkSpaces Cost Optimizer</a>
+          <a href="workspaces-cloudwatch-monitoring.html">CloudWatch・SNS 監視／通知</a>
+        </div>
+      </details>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">◈</span>Terraform</p>
+      <a href="terraform.html">Terraform 概要</a>
+      <a href="hcp-terraform.html">HCP Terraform（Terraform Cloud）</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">☁︎</span>AWS</p>
+      <a href="cloudformation.html">CloudFormation 運用手順集</a>
+      <a href="aws-cli.html">AWS CLI 特殊対応</a>
+      <a href="aws-cli-reference.html">AWS CLI コマンドリファレンス</a>
+      <a href="eventbridge-scheduler.html">EventBridge Scheduler</a>
+      <a href="aws-directory-service.html">AWS Directory Service 運用手順</a>
+      <a href="amazon-workspaces.html">Amazon WorkSpaces</a>
+      <a href="amazon-ses.html">Amazon SES SMTPリレー</a>
+      <a href="amazon-ses-monitoring.html">Amazon SES 配信監視</a>
+      <a href="amazon-rds-blue-green.html">Amazon RDS Blue/Green Deployments</a>
+      <a href="apache-acm-certificate-update.html">証明書更新（ACMエクスポート）</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">⚙︎</span>OS／ミドルウェア</p>
+      <a href="rhel9.html">Red Hat Enterprise Linux 9</a>
+      <a href="rhel10.html">Red Hat Enterprise Linux 10</a>
+      <a href="amazon-linux-2023.html">Amazon Linux 2023</a>
+      <a href="windows-server-2022.html">Windows Server 2022</a>
+      <a href="windows-server-2025.html">Windows Server 2025</a>
+      <a href="windows-server-2016-upgrade.html">Windows Server 2016 インプレースアップグレード</a>
+      <a href="storage.html">ストレージ管理</a>
+      <a href="apache.html">Apache</a>
+      <a href="apache-self-signed-ssl-termination.html">Apache SSL終端（自己署名証明書）</a>
+      <a href="redis.html">Redis（KVS）</a>
+      <a href="nfs.html">NFS</a>
+      <a href="samba.html">Samba</a>
+      <a href="mariadb.html">MariaDB</a>
+      <a href="postgresql.html">PostgreSQL</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">▤</span>リファレンス</p>
+      <a href="../writing-style-guide.html">[GitHub Pages] 記法・テンプレート</a>
+      <a href="troubleshooting.html">障害切り分けチェックリスト</a>
+      <a href="eol.html">EOL / ライフサイクル一覧表</a>
     </aside>
     <main class="content workspaces-skill-transfer-guide">
       <nav class="breadcrumb" aria-label="Breadcrumb">
@@ -31,232 +80,13 @@
         <span>トピック</span>
       </nav>
       <h1>AWS Managed Microsoft AD 構築・管理</h1>
-      <div class="page-summary"><strong>⚡ このページの要約</strong><p class="lead">2つのAvailability Zoneへ配置するAWS Managed Microsoft ADの構成と作成手順をまとめる<br>ディレクトリ作成後のユーザー、グループ、パスワードおよび可用性確認まで整理する</p></div>
-      <nav class="section-links" aria-label="主要セクション">
-        <a href="#仕様">仕様</a>
-        <a href="#aws-managed-microsoft-ad構築手順">AWS Managed Microsoft AD構築手順</a>
-        <a href="#aws-directory-serviceによるユーザーおよびグループメンバーシップ管理手順">AWS Directory Serviceによるユーザーおよびグループメンバーシップ管理手順</a>
-      </nav>
-<section id="managedAdArchitecture" class="procedure-document">
-
-<h2 id="仕様">仕様</h2><nav class="section-links document-toc" aria-label="この手順の目次"><a href="#ドメインコントローラーの構成">ドメインコントローラーの構成</a> <a href="#処理方式とpdc-emulator">処理方式とPDC Emulator</a> <a href="#クライアントによるdcの選択">クライアントによるDCの選択</a> <a href="#レプリケーションと障害時の動作">レプリケーションと障害時の動作</a> <a href="#パラメータ">パラメータ</a> <a href="#awsとお客様の管理責任">AWSとお客様の管理責任</a> <a href="#お客様説明時の回答例">お客様説明時の回答例</a> <a href="#運用確認に使用できるコマンド">運用確認に使用できるコマンド</a></nav>
-<p>AWS Managed Microsoft ADは、異なるアベイラビリティーゾーンへ2台の書き込み可能なドメインコントローラーを配置する</p>
-<p>2台とも通常時から認証、DNS、Kerberos、LDAP、グループポリシーを提供するため、主系／待機系の構成として扱わない</p>
-<h3 id="ドメインコントローラーの構成">ドメインコントローラーの構成</h3>
-<p>ディレクトリ作成時の2台は、可用性を確保するために削除できない <strong>Required DC</strong> として異なるアベイラビリティーゾーンへ配置される</p>
-<p>可用性、耐障害性または認証処理性能をさらに高める場合は <strong>Additional DC</strong> を追加できる</p>
-<table>
-<thead>
-<tr>
-<th>AWSコンソール上の区分</th>
-<th>仕様</th>
-<th>削除・縮退</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>Required DC</td>
-<td>ディレクトリ作成時にAWSが作成する初期2台</td>
-<td>2台未満にはできない</td>
-</tr>
-<tr>
-<td>Additional DC</td>
-<td>必要に応じて追加する書き込み可能なDC</td>
-<td>合計2台を下限として削減可能</td>
-</tr>
-</tbody></table>
-<p>AWS公式資料で初期2台を「primary and secondary domain controllers」と表現する場合がありますが、Active Directoryの処理方式が主系／待機系であることを示すものではない</p>
-<p>本資料では、誤解を避けるため <strong>Required DC-1／Required DC-2</strong> と表記する</p>
-<a class="external-item source-preview-card source-preview-aws" href="https://docs.aws.amazon.com/ja_jp/directoryservice/latest/admin-guide/ms_ad_getting_started_what_gets_created.html" target="_blank" rel="noopener noreferrer"><span class="source-preview-copy"><span class="source-preview-title-row"><span class="source-preview-favicon source-preview-favicon-aws" aria-hidden="true">◇</span><strong>AWS Managed Microsoft AD で作成される内容</strong></span><span class="source-preview-description">ディレクトリ作成時にプロビジョニングされるドメインコントローラー、ネットワークインターフェイス、セキュリティグループおよび管理用オブジェクトを説明します。</span><span class="source-preview-footer"><span class="source-preview-favicon source-preview-favicon-aws" aria-hidden="true">◇</span>AWS Directory Service</span></span><span class="source-preview-art" aria-hidden="true"><span class="source-preview-aws-lockup"><strong>aws</strong><i aria-hidden="true"></i></span></span></a>
-<a class="external-item source-preview-card source-preview-aws" href="https://docs.aws.amazon.com/ja_jp/directoryservice/latest/admin-guide/ms_ad_deploy_additional_dcs.html" target="_blank" rel="noopener noreferrer"><span class="source-preview-copy"><span class="source-preview-title-row"><span class="source-preview-favicon source-preview-favicon-aws" aria-hidden="true">◇</span><strong>AWS Managed Microsoft AD 用の追加のドメインコントローラーのデプロイ</strong></span><span class="source-preview-description">可用性とパフォーマンスを高める追加ドメインコントローラーの配置、追加および削減方法を説明します。</span><span class="source-preview-footer"><span class="source-preview-favicon source-preview-favicon-aws" aria-hidden="true">◇</span>AWS Directory Service</span></span><span class="source-preview-art" aria-hidden="true"><span class="source-preview-aws-lockup"><strong>aws</strong><i aria-hidden="true"></i></span></span></a>
-<h3 id="処理方式とpdc-emulator">処理方式とPDC Emulator</h3>
-<p>AWS Managed Microsoft ADはマルチマスター方式で動作し、すべてのDCが書き込み可能です。ユーザーやコンピューターなどの変更は、DC間で相互にレプリケーションされる</p>
-<p>FSMOロールは競合を避ける必要がある一部処理を1台へ割り当てる仕組みです。PDC Emulatorを保持するDCが認証全体の主系になるわけではない</p>
-<table>
-<thead>
-<tr>
-<th>PDC Emulatorの主な役割</th>
-<th>仕様</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>パスワード変更</td>
-<td>最近変更されたパスワード情報を優先的にレプリケーションし、別DCで不一致となった場合の照会先になる</td>
-</tr>
-<tr>
-<td>アカウントロックアウト</td>
-<td>ロックアウト関連処理の中心的な役割を持つ</td>
-</tr>
-<tr>
-<td>時刻同期</td>
-<td>フォレストルートドメインの時刻基準になる</td>
-</tr>
-<tr>
-<td>GPO編集</td>
-<td>既定のGPO変更先として使用される</td>
-</tr>
-</tbody></table>
-<p>DCのOS管理、FSMOロールの割り当ておよび障害時の復旧はAWSが管理するため、お客様がPDC Emulatorを主系として指定したり、通常運用でFSMOロールを移行したりしない</p>
-<a class="external-item source-preview-card source-preview-aws" href="https://docs.aws.amazon.com/whitepapers/latest/active-directory-domain-services/other-considerations.html" target="_blank" rel="noopener noreferrer"><span class="source-preview-copy"><span class="source-preview-title-row"><span class="source-preview-favicon source-preview-favicon-aws" aria-hidden="true">◇</span><strong>Other considerations - Active Directory Domain Services on AWS</strong></span><span class="source-preview-description">Cloud is now the center of most enterprise IT strategies. Many enterprises find that a well-planned move to the cloud results in an immediate business payoff.</span><span class="source-preview-footer"><span class="source-preview-favicon source-preview-favicon-aws" aria-hidden="true">◇</span>Active Directory on AWS</span></span><span class="source-preview-art" aria-hidden="true"><span class="source-preview-aws-lockup"><strong>aws</strong><i aria-hidden="true"></i></span></span></a>
-<a class="external-item source-preview-card source-preview-microsoft" href="https://learn.microsoft.com/ja-jp/windows-server/identity/ad-ds/manage/understand-fsmo-roles" target="_blank" rel="noopener noreferrer"><span class="source-preview-copy"><span class="source-preview-title-row"><span class="source-preview-favicon source-preview-favicon-microsoft" aria-hidden="true"></span><strong>Windows Server における操作マスター役割</strong></span><span class="source-preview-author"><span class="source-preview-avatar" aria-hidden="true">♙</span><span>作成元: Orin-Thomas</span></span><span class="source-preview-description">Active Directory Domain Services（AD DS）における操作マスター（FSMO）役割とその適切な配置方法について説明します。</span><span class="source-preview-footer"><span class="source-preview-favicon source-preview-favicon-microsoft" aria-hidden="true"></span>Microsoft Learn</span></span><span class="source-preview-art" aria-hidden="true"><span class="source-preview-microsoft-lockup"><span class="source-preview-microsoft-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span><strong>Microsoft Learn</strong></span></span></a>
-<h3 id="クライアントによるdcの選択">クライアントによるDCの選択</h3>
-<p>WindowsクライアントやActive Directory対応アプリケーションは、次の流れで接続先DCを選択する</p>
-<ol class="step-list">
-<li>DNSに登録されたLDAP、Kerberos、グローバルカタログおよびサイトのSRVレコードを照会</li>
-<li>候補DCの応答とサイト／サブネット情報を基に、利用可能なDCを選択</li>
-<li>選択結果を一定時間キャッシュし、応答しない場合は別のDCを再探索</li>
-</ol>
-<p>毎回2台へ単純にラウンドロビンする動作でも、DNSアドレスの1番目だけを常に使用する動作でもない</p>
-<p>アプリケーションから特定DCのホスト名やIPアドレスを固定せず、Windows DC Locatorを利用する</p>
-<a class="external-item source-preview-card source-preview-microsoft" href="https://learn.microsoft.com/ja-jp/windows-server/identity/ad-ds/manage/dc-locator" target="_blank" rel="noopener noreferrer"><span class="source-preview-copy"><span class="source-preview-title-row"><span class="source-preview-favicon source-preview-favicon-microsoft" aria-hidden="true"></span><strong>WindowsおよびWindows Serverでドメインコントローラーを検索する</strong></span><span class="source-preview-description">クライアントがDNS、LDAP pingおよびサイト情報を使用して適切なドメインコントローラーを検出する流れを説明します。</span><span class="source-preview-footer"><span class="source-preview-favicon source-preview-favicon-microsoft" aria-hidden="true"></span>Microsoft Learn</span></span><span class="source-preview-art" aria-hidden="true"><span class="source-preview-microsoft-lockup"><span class="source-preview-microsoft-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span><strong>Microsoft Learn</strong></span></span></a>
-<h3 id="レプリケーションと障害時の動作">レプリケーションと障害時の動作</h3>
-<p>DC間では、Active Directoryオブジェクト、パスワードやグループメンバーシップ、Active Directory統合DNS、GPOおよびSYSVOL上のファイルをレプリケーションする</p>
-<table>
-<thead>
-<tr>
-<th>項目</th>
-<th>仕様</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>クライアント接続</td>
-<td>選択中のDCが応答しない場合、DC Locatorが別の利用可能なDCを再探索する</td>
-</tr>
-<tr>
-<td>認証・名前解決</td>
-<td>ネットワークからもう1台へ到達できる場合、通常処理を継続できる構成となる</td>
-</tr>
-<tr>
-<td>AWSのメンテナンス</td>
-<td>必要な稼働DC数を同時に失わないよう、DCのパッチ適用をAWSが管理する</td>
-</tr>
-<tr>
-<td>DC障害</td>
-<td>AWSが障害DCを同じアベイラビリティーゾーン内で同じIPアドレスを使用して自動的に置き換える</td>
-</tr>
-<tr>
-<td>FSMO依存処理</td>
-<td>特定ロールへ依存する一部処理では、一時的な遅延または制限が生じる可能性がある</td>
-</tr>
-</tbody></table>
-<p>アプリケーション側のDNSキャッシュ、DC選択のキャッシュ、接続タイムアウト、ネットワーク到達性によっては、一時的な遅延や再試行が発生するため、1台の障害時も必ず無瞬断・無影響とは限らない</p>
-<a class="external-item source-preview-card source-preview-aws" href="https://docs.aws.amazon.com/ja_jp/directoryservice/latest/admin-guide/ms_ad_key_concepts.html" target="_blank" rel="noopener noreferrer"><span class="source-preview-copy"><span class="source-preview-title-row"><span class="source-preview-favicon source-preview-favicon-aws" aria-hidden="true">◇</span><strong>AWS Managed Microsoft ADの主要概念</strong></span><span class="source-preview-description">ドメインコントローラー、サイト、パッチ適用および障害時の自動復旧など、サービス運用の主要概念を説明します。</span><span class="source-preview-footer"><span class="source-preview-favicon source-preview-favicon-aws" aria-hidden="true">◇</span>AWS Directory Service</span></span><span class="source-preview-art" aria-hidden="true"><span class="source-preview-aws-lockup"><strong>aws</strong><i aria-hidden="true"></i></span></span></a>
-<h3 id="パラメータ">パラメータ</h3>
-<table class="parameter-table">
-<thead>
-<tr>
-<th>パラメータ</th>
-<th>説明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>アベイラビリティーゾーン</td>
-<td><code class="inline-code">ap-northeast-1a</code>と<code class="inline-code">ap-northeast-1c</code>へDCを1台ずつ配置</td>
-</tr>
-<tr>
-<td>DNS IPv4アドレス</td>
-<td><code class="inline-code">192.168.225.68</code>と<code class="inline-code">192.168.225.126</code>をディレクトリDNSとして使用</td>
-</tr>
-</tbody></table>
-<figure class="screenshot-wide aws-console-identity"><figcaption>ディレクトリの2つのAZとDNSアドレス</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-managed-ad/004-ディレクトリの2つのazとdnsアドレス.png" alt="ディレクトリの2つのAZとDNSアドレス" width="1616" height="1304" loading="lazy"></div></figure>
 
 
 
-
-
-<p>この画面だけでは、各DNS IPと各AZの1対1の対応は表示されない</p>
-<p>対応関係を確認する場合は、Directory Serviceの <strong>スケールと共有</strong> にあるドメインコントローラー一覧、またはAWS CLIの取得結果を使用する</p>
-<h3 id="awsとお客様の管理責任">AWSとお客様の管理責任</h3>
-<table>
-<thead>
-<tr>
-<th>AWSが管理するもの</th>
-<th>お客様が確認・管理するもの</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>DCのプロビジョニング、OS、パッチ適用</td>
-<td>VPC、サブネット、ルート、NACL、セキュリティグループの到達性</td>
-</tr>
-<tr>
-<td>DC、DNS、ADレプリケーションの監視</td>
-<td>DHCPオプションセットまたはクライアントDNS設定で2つのDNS IPを利用できること</td>
-</tr>
-<tr>
-<td>日次バックアップ、DC障害時の自動置換</td>
-<td>アプリケーションが特定のDC/IPへ固定接続していないこと</td>
-</tr>
-<tr>
-<td>FSMOロールの割り当てと管理</td>
-<td>ユーザー、グループ、OU、委任、GPOなど許可された範囲のディレクトリ管理</td>
-</tr>
-<tr>
-<td>AWS管理領域のセキュリティと復旧</td>
-<td>2台のDCを経由した認証・DNS・GPO適用の業務試験</td>
-</tr>
-</tbody></table>
-<p><a href="https://docs.aws.amazon.com/ja_jp/directoryservice/latest/admin-guide/ms_ad_best_practices.html">AWS Managed Microsoft ADのベストプラクティス</a></p>
-<h3 id="お客様説明時の回答例">お客様説明時の回答例</h3>
-<h4 id="q1-どちらがメインのドメインコントローラーですか">Q1. どちらがメインのドメインコントローラーですか</h4>
-<p>どちらか一方を通常処理のメインとして固定する構成ではありません。2台とも書き込み可能な稼働DCです。特定のDCがPDC EmulatorなどのFSMOロールを保持しますが、これは一部処理の役割分担です。認証全体の主系という意味ではありません。</p>
-<h4 id="q2-もう1台は待機系ですか">Q2. もう1台は待機系ですか</h4>
-<p>待機専用ではありません。通常時から認証、DNS、LDAP、Kerberos、グローバルカタログなどを提供し、もう1台とディレクトリ情報をレプリケーションしています。</p>
-<h4 id="q3-コンソールの2つのdns-ipはプライマリとセカンダリですか">Q3. コンソールの2つのDNS IPはプライマリとセカンダリですか</h4>
-<p>2つのIPは、別々のAZに配置された2台のDC兼DNSサーバーのアドレスです。DNSクライアント側で表示順はありますが、Active DirectoryのDC選択はDNS SRVレコードとDC Locatorによって行われるため、1番目のIPが認証処理全体の主系という意味ではありません。</p>
-<h4 id="q4-片方が停止したら自動的に切り替わりますか">Q4. 片方が停止したら自動的に切り替わりますか</h4>
-<p>Windowsクライアントは、利用中のDCが応答しない場合に別の利用可能なDCを再探索します。AWSは障害DCを同じAZ・同じIPで自動置換します。ただし、キャッシュや接続タイムアウトにより一時的な遅延が生じる可能性があるため、無瞬断とは説明しません。</p>
-<h4 id="q5-2台より増やせますか">Q5. 2台より増やせますか</h4>
-<p>増やせます。認証要求が多い場合や、可用性をさらに高めたい場合はAdditional DCを追加できます。追加したDCも、ディレクトリが使用する既存のAZとサブネットへ分散されます。</p>
-<h3 id="運用確認に使用できるコマンド">運用確認に使用できるコマンド</h3>
-<p>管理用EC2またはドメイン参加済み端末で、必要に応じて次を実行します。いずれも確認用の読み取り操作です。</p>
-<div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>## 現在のログオンで使用したDC
-$env:LOGONSERVER
-
-## ドメイン内で検出できるDC
-nltest /dclist:ad.example.com
-
-## DC LocatorによるDCの再検出
-nltest /dsgetdc:ad.example.com /force
-
-## DC、IP、サイト、Global Catalogの確認
-Get-ADDomainController -Filter * |
-    Select-Object HostName, IPv4Address, Site, IsGlobalCatalog
-
-## 現在のFSMOロール保持先
-Get-ADDomain |
-    Select-Object PDCEmulator, RIDMaster, InfrastructureMaster</code></pre></div>
-<p>コマンド結果は確認時点の状態です。特定DCを通常接続先として固定する目的には使用しません。</p>
-</section>
-
-<hr>
 
 <section id="managedAdBuild" class="procedure-document">
 
-<h2 id="aws-managed-microsoft-ad構築手順">AWS Managed Microsoft AD構築手順</h2><nav class="section-links document-toc" aria-label="この手順の目次"><a href="#概要">概要</a> <a href="#仕様-2">仕様</a> <a href="#前提条件">前提条件</a> <a href="#構築作業">構築作業</a> <a href="#構築後確認">構築後確認</a></nav>
-<h3 id="概要">概要</h3>
-<table>
-<thead>
-<tr>
-<th>項目</th>
-<th>内容</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>目的</td>
-<td>AWS Managed Microsoft ADを構築し、ユーザー管理やAmazon WorkSpaces連携に使用するディレクトリを準備します。</td>
-</tr>
-<tr>
-<td>作業対象</td>
-<td>アジアパシフィック（東京）リージョンの既存VPC<code class="inline-code">ad-vpc-002</code>。Standard Editionのディレクトリを1つ作成し、DNS名を<code class="inline-code">ad.example.com</code>、NetBIOS名を<code class="inline-code">ad</code>とします。</td>
-</tr>
-<tr>
-<td>本手順で実施する作業</td>
-<td>ディレクトリ情報とAdminパスワードを設定し、異なるアベイラビリティーゾーンの作成済みプライベートサブネットを2つ指定してディレクトリを作成します。構築後にディレクトリのステータスが「アクティブ」になったことを確認します。</td>
-</tr>
-<tr>
-<td>後続手順で実施する作業</td>
-<td><a href="workspaces-managed-ad.html#managedAdUsers">ユーザーおよびグループメンバーシップ管理手順</a>で管理機能を有効化し、<a href="workspaces-management-ec2.html#managementEc2">管理用EC2起動・接続・AD管理開始手順</a>で管理用EC2の準備とドメイン参加を進めます。管理用EC2などのDNS設定は後続手順で実施します。</td>
-</tr>
-</tbody></table>
+<h2 id="aws-managed-microsoft-ad構築手順">AWS Managed Microsoft AD構築手順</h2>
 <h3 id="仕様-2">仕様</h3>
 <h4 id="構成-動作">構成・動作</h4>
 <p>AWS Managed Microsoft ADを作成すると、AWSが高可用性に必要な基盤と、ディレクトリ管理に使用するActive Directoryオブジェクトを自動で構成します。</p>
@@ -294,7 +124,7 @@ Get-ADDomain |
 <p>AWSが自動作成したディレクトリ用ENIは、VPCとドメインコントローラー間の通信に必要なため、手動で削除しません。説明欄の<code class="inline-code">AWS created network interface for directory &lt;directory-id&gt;</code>で識別できます。</p>
 <p><a href="https://docs.aws.amazon.com/ja_jp/directoryservice/latest/admin-guide/ms_ad_getting_started_what_gets_created.html">AWS Managed Microsoft ADで作成される内容</a></p>
 </div>
-<p>2台のドメインコントローラーの役割、PDC Emulatorとの違い、接続先の選択および障害時の動作は、<a href="workspaces-managed-ad.html#managedAdArchitecture">AWS Managed Microsoft ADの2台ドメインコントローラー構成・役割</a>を参照してください。</p>
+
 <h4 id="管理範囲">管理範囲</h4>
 <p><strong>Active Directory内に作成される管理領域</strong></p>
 <table>
@@ -365,61 +195,6 @@ Get-ADDomain |
 <div class="callout callout-info"><p><strong>ℹ️ 情報：ドメインコントローラーの管理方法</strong></p>
 <p>ドメインコントローラー本体へ、RDPやPowerShell Remotingで直接ログオンすることはできません。AD管理ツールを使用する作業は、ドメイン参加済みの管理用EC2から実施します。管理用EC2の準備と接続方法は、<a href="workspaces-management-ec2.html#managementEc2">管理用EC2起動・接続・AD管理開始手順</a>を参照してください。</p>
 <p><a href="https://aws.amazon.com/directoryservice/faqs/">Directory Serviceのよくある質問</a>／<a href="https://docs.aws.amazon.com/directoryservice/latest/admin-guide/ms_ad_manage_users_groups_ec2.html">EC2インスタンスによるユーザーとグループの管理</a></p>
-</div>
-<h3 id="前提条件">前提条件</h3>
-<p>作業を開始する前に、次の条件を満たしていることを確認します。</p>
-<h4 id="既存リソース-ネットワーク">既存リソース・ネットワーク</h4>
-<ul>
-<li>作成先VPCが事前に作成され、利用できること。</li>
-<li>同一VPC内に、異なるアベイラビリティーゾーンへ配置されたサブネットが2つ以上作成されており、使用する2つのサブネットに同じネットワークタイプが設定されていること。</li>
-<li>VPCのハードウェアテナンシーが「デフォルト」に設定されていること。</li>
-<li>VPCで<code class="inline-code">198.18.0.0/15</code>のアドレス空間を使用していないこと。</li>
-</ul>
-<p><a href="https://docs.aws.amazon.com/ja_jp/directoryservice/latest/admin-guide/ms_ad_getting_started.html#ms_ad_getting_started_prereqs">AWS Managed Microsoft ADの前提条件</a></p>
-<p>本環境では、VPC<code class="inline-code">ad-vpc-002</code>のDNS解決とDNSホスト名が有効になっていることと、次の2つのプライベートサブネットを利用できることを確認します。</p>
-<table>
-<thead>
-<tr>
-<th>用途</th>
-<th>サブネット名</th>
-<th>CIDR</th>
-<th>アベイラビリティーゾーン</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>Directory Service用（1台目）</td>
-<td><code class="inline-code">ad-pri-sub-002-002a</code></td>
-<td><code class="inline-code">192.168.225.64/27</code></td>
-<td><code class="inline-code">ap-northeast-1a</code></td>
-</tr>
-<tr>
-<td>Directory Service用（2台目）</td>
-<td><code class="inline-code">ad-pri-sub-002-002c</code></td>
-<td><code class="inline-code">192.168.225.96/27</code></td>
-<td><code class="inline-code">ap-northeast-1c</code></td>
-</tr>
-</tbody></table>
-<h4 id="権限-接続環境">権限・接続環境</h4>
-<ul>
-<li>作業対象のAWSアカウントで、AWSマネジメントコンソールへサインインできること。</li>
-<li>操作リージョンとしてアジアパシフィック（東京）<code class="inline-code">ap-northeast-1</code>を選択していること。</li>
-<li>作業者のIAM IDに<code class="inline-code">ds:CreateMicrosoftAD</code>と、VPC・サブネットの参照、セキュリティグループおよびENIの作成・設定に必要なEC2権限が付与されていること。</li>
-<li>作成後の状態確認に必要な<code class="inline-code">ds:DescribeDirectories</code>権限が付与されていること。</li>
-</ul>
-<p><a href="https://docs.aws.amazon.com/directoryservice/latest/admin-guide/UsingWithDS_IAM_ResourcePermissions.html">Directory Service APIと必要な権限</a></p>
-<div class="callout callout-info"><p><strong>ℹ️ 情報：AdministratorAccessを使用する場合</strong></p>
-<p>AWS管理ポリシー<code class="inline-code">AdministratorAccess</code>を持つIAMユーザーまたはIAMロールで作業する場合、本手順の作成・確認に必要なDirectory ServiceおよびEC2の権限を満たすため、個別の許可追加は不要です。</p>
-<p>ただし、AWS Organizationsのサービスコントロールポリシー（SCP）、アクセス許可の境界、明示的な拒否などによる制限がある場合は、その制限が適用されます。</p>
-<p><a href="https://docs.aws.amazon.com/aws-managed-policy/latest/reference/AdministratorAccess.html">AdministratorAccess</a>／<a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_evaluation-logic.html">IAMポリシーの評価</a></p>
-</div>
-<h4 id="事前に準備する情報">事前に準備する情報</h4>
-<ul>
-<li>エディション、ディレクトリのDNS名、NetBIOS名、VPCおよびサブネットの設定値を確認していること。設定値は「構築作業」の各設定表を参照します。</li>
-<li>ディレクトリのDNS名が、既存のAmazon Route 53プライベートホストゾーンなどのDNS名前空間と重複していないこと。</li>
-<li><code class="inline-code">Admin</code>ユーザーに設定するパスワードを準備していること。パスワード要件は「Adminパスワードを入力する」を参照します。</li>
-</ul>
-<div class="callout callout-warning"><p><strong>⚠️ 注意：Adminパスワードを作業記録や画面キャプチャへ残さない</strong></p>
-<p>Adminパスワードは、手順書、チケット、作業ログおよび画面キャプチャへ記録しません。AWSコンソールで入力したパスワードは再表示できません。</p>
 </div>
 <h3 id="構築作業">構築作業</h3>
 <h4 id="1-directory-serviceのセットアップを開始する">1. Directory Serviceのセットアップを開始する</h4>
@@ -575,54 +350,13 @@ Get-ADDomain |
 
 
 
-<h3 id="構築後確認">構築後確認</h3>
-<h4 id="ディレクトリの状態を確認する">ディレクトリの状態を確認する</h4>
-<ol class="step-list">
-<li>ディレクトリ一覧で、作成したディレクトリのステータスを確認します。</li>
-<li>ステータスが「リクエスト済み」から「作成中」へ遷移することを確認します。</li>
-<li>ステータスが「アクティブ」になるまで待機します。</li>
-</ol>
-<div class="callout callout-info"><p><strong>ℹ️ 情報：ディレクトリの作成所要時間</strong></p>
-<p>作成所要時間の目安は20～40分です。</p>
-<p><a href="https://docs.aws.amazon.com/ja_jp/directoryservice/latest/admin-guide/ms_ad_getting_started.html#ms_ad_getting_started_create_directory">AWS Managed Microsoft ADの作成</a></p>
-</div>
-<figure class="screenshot-wide"><figcaption>図7　ディレクトリのアクティブ状態</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-managed-ad/011-ディレクトリのアクティブ状態.png" alt="ディレクトリのアクティブ状態" width="1622" height="292" loading="lazy"></div></figure>
-
-
-
 </section>
 
 <hr>
 
 <section id="managedAdUsers" class="procedure-document">
 
-<h2 id="aws-directory-serviceによるユーザーおよびグループメンバーシップ管理手順">AWS Directory Serviceによるユーザーおよびグループメンバーシップ管理手順</h2><nav class="section-links document-toc" aria-label="この手順の目次"><a href="#概要-2">概要</a> <a href="#仕様-3">仕様</a> <a href="#前提条件-2">前提条件</a> <a href="#構築作業-2">構築作業</a> <a href="#運用作業">運用作業</a> <a href="#作業後確認">作業後確認</a></nav>
-<h3 id="概要-2">概要</h3>
-<table>
-<thead>
-<tr>
-<th>項目</th>
-<th>内容</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>目的</td>
-<td>AWS Managed Microsoft ADのユーザーと所属グループを管理し、業務に必要なアクセス権を設定します。</td>
-</tr>
-<tr>
-<td>作業対象</td>
-<td>アジアパシフィック（東京）リージョンのAWS Managed Microsoft AD <code class="inline-code">ad.example.com</code>を対象とします。AWS Directory Service Dataに対応する操作は、AWSマネジメントコンソールから実施します。</td>
-</tr>
-<tr>
-<td>本手順で実施する作業</td>
-<td>初回の管理機能の有効化、<code class="inline-code">sampleadmin</code>の作成、<code class="inline-code">Admin</code>と<code class="inline-code">sampleadmin</code>の<code class="inline-code">AWS Delegated FSx Administrators</code>への追加、<code class="inline-code">sampleadmin</code>の<code class="inline-code">AWS Delegated Administrators</code>からの削除、<code class="inline-code">samplework</code>のアカウント削除を説明します。必要に応じて実施するパスワードポリシーの設定方法も記載します。</td>
-</tr>
-<tr>
-<td>後続手順で実施する作業</td>
-<td>WorkSpacesやFSxなど、利用するサービスでアクセス権と利用可否を確認します。管理用EC2の準備・ドメイン参加が必要な場合は、「管理用EC2起動・接続・AD管理開始手順」を参照します。</td>
-</tr>
-</tbody></table>
-<p>運用作業は、作業依頼に該当する操作を実施します。ユーザーの作成から削除までを毎回すべて実施する必要はありません。</p>
+<h2 id="aws-directory-serviceによるユーザーおよびグループメンバーシップ管理手順">AWS Directory Serviceによるユーザーおよびグループメンバーシップ管理手順</h2>
 <h3 id="仕様-3">仕様</h3>
 <h4 id="構成-動作-2">構成・動作</h4>
 <p>AWS Directory Service Dataは、AWS Managed Microsoft ADのユーザー、グループおよびグループメンバーシップを管理する機能です。「ユーザーとグループの管理」を有効化すると、AWSマネジメントコンソールから対応する操作を実施できます。</p>
@@ -797,88 +531,6 @@ Get-ADDomain |
 <div class="callout callout-info"><p><strong>ℹ️ 情報：パスワードリセット後のアカウント状態</strong></p>
 <p><code class="inline-code">Admin</code>などのパスワードは後から取得できません。Directory Serviceのパスワードリセットでは、対象アカウントが無効の場合も有効化されるため、実施後にアカウント状態を確認します。</p>
 <p><a href="https://docs.aws.amazon.com/directoryservice/latest/devguide/API_ResetUserPassword.html">ResetUserPassword</a></p>
-</div>
-<h3 id="前提条件-2">前提条件</h3>
-<h4 id="既存リソース-ネットワーク-2">既存リソース・ネットワーク</h4>
-<ul>
-<li>AWS Managed Microsoft AD <code class="inline-code">ad.example.com</code>の作成が完了し、ステータスが「アクティブ」になっていること。</li>
-<li>作業対象のユーザーとグループが、実施する操作の前提に合っていること。新規作成する<code class="inline-code">sampleadmin</code>は未作成、削除する<code class="inline-code">samplework</code>は作成済みの状態で操作します。</li>
-<li>AD管理ツールを使用する場合は、管理用Windows Server EC2がドメインへ参加済みで、対象ディレクトリの名前解決と通信ができること。</li>
-</ul>
-<p>ディレクトリの作成は「AWS Managed Microsoft AD構築手順」、管理用EC2の準備は「管理用EC2起動・接続・AD管理開始手順」を参照します。</p>
-<h4 id="権限-接続環境-2">権限・接続環境</h4>
-<ul>
-<li>作業対象のAWSアカウントで、AWSマネジメントコンソールへサインインできること。</li>
-<li>プライマリリージョンとしてアジアパシフィック（東京）<code class="inline-code">ap-northeast-1</code>を選択していること。</li>
-<li>作業者のIAMユーザーまたはIAMロールに、実施するDirectory Service・Directory Service Dataの操作に必要な権限が付与されていること。</li>
-<li>PSOを設定する場合は、AD管理ツールで使用するユーザーが<code class="inline-code">AWS Delegated Fine Grained Password Policy Administrators</code>のメンバーになっていること。</li>
-</ul>
-<p><strong>操作に使用する主なIAMアクション</strong></p>
-<table>
-<thead>
-<tr>
-<th>操作</th>
-<th>主なアクション</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>ディレクトリと管理機能の状態確認</td>
-<td><code class="inline-code">ds:DescribeDirectories</code>、<code class="inline-code">ds:DescribeDirectoryDataAccess</code></td>
-</tr>
-<tr>
-<td>管理機能の有効化</td>
-<td><code class="inline-code">ds:EnableDirectoryDataAccess</code></td>
-</tr>
-<tr>
-<td>Directory Service Dataへのアクセス</td>
-<td><code class="inline-code">ds:AccessDSData</code></td>
-</tr>
-<tr>
-<td>ユーザーの参照・検索</td>
-<td><code class="inline-code">ds-data:ListUsers</code>、<code class="inline-code">ds-data:DescribeUser</code>、<code class="inline-code">ds-data:SearchUsers</code></td>
-</tr>
-<tr>
-<td>ユーザーの作成</td>
-<td><code class="inline-code">ds-data:CreateUser</code></td>
-</tr>
-<tr>
-<td>パスワードの設定・リセット</td>
-<td><code class="inline-code">ds:ResetUserPassword</code></td>
-</tr>
-<tr>
-<td>グループと所属の参照・検索</td>
-<td><code class="inline-code">ds-data:ListGroups</code>、<code class="inline-code">ds-data:DescribeGroup</code>、<code class="inline-code">ds-data:SearchGroups</code>、<code class="inline-code">ds-data:ListGroupMembers</code>、<code class="inline-code">ds-data:ListGroupsForMember</code></td>
-</tr>
-<tr>
-<td>グループメンバーの追加・削除</td>
-<td><code class="inline-code">ds-data:AddGroupMember</code>、<code class="inline-code">ds-data:RemoveGroupMember</code></td>
-</tr>
-<tr>
-<td>ユーザーアカウントの削除</td>
-<td><code class="inline-code">ds-data:DeleteUser</code></td>
-</tr>
-<tr>
-<td>管理機能の無効化（必要時）</td>
-<td><code class="inline-code">ds:DisableDirectoryDataAccess</code></td>
-</tr>
-</tbody></table>
-<p><a href="https://docs.aws.amazon.com/service-authorization/latest/reference/list_ds.html">Directory Serviceのアクションとリソース</a>／<a href="https://docs.aws.amazon.com/service-authorization/latest/reference/list_ds-data.html">Directory Service Dataのアクションとリソース</a></p>
-<p>個別のIAMポリシーを使用する場合は、実施する操作に必要なアクションを許可します。リソース単位の制御に対応するアクションは対象ディレクトリARNへ限定し、<code class="inline-code">ds:DescribeDirectories</code>など非対応のアクションには<code class="inline-code">Resource: &quot;*&quot;</code>を指定します。日常運用の作成・参照権限と、削除権限を分けて管理することも検討します。</p>
-<div class="callout callout-info"><p><strong>ℹ️ 情報：AdministratorAccessを使用する場合</strong></p>
-<p>AWS管理ポリシー<code class="inline-code">AdministratorAccess</code>を持つIAMユーザーまたはIAMロールで作業する場合、本手順のAWSコンソール操作に必要な権限を満たすため、個別の許可追加は不要です。ただし、SCP、アクセス許可の境界、明示的な拒否などによる制限がある場合は、その制限が適用されます。</p>
-<p><code class="inline-code">AWSDirectoryServiceDataFullAccess</code>だけを使用する場合は、管理機能の有効化、ディレクトリ一覧の参照、パスワードの設定・リセットに必要なDirectory Serviceの権限を別途確認します。</p>
-<p><a href="https://docs.aws.amazon.com/aws-managed-policy/latest/reference/AdministratorAccess.html">AdministratorAccess</a>／<a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_evaluation-logic.html">IAMポリシーの評価</a>／<a href="https://docs.aws.amazon.com/aws-managed-policy/latest/reference/AWSDirectoryServiceDataFullAccess.html">AWSDirectoryServiceDataFullAccess</a></p>
-</div>
-<h4 id="事前に準備する情報-2">事前に準備する情報</h4>
-<ul class="check-list">
-<li>ディレクトリID、DNS名、リージョンおよび作業対象が、作業依頼と一致していること。</li>
-<li>作成するユーザーのログイン名、氏名、表示名、メールアドレスおよび所属グループを確認していること。ログイン名はディレクトリ内で一意の20文字以内とし、命名規則に合わせます。</li>
-<li>初期パスワードが対象ユーザーの実効パスワードポリシーを満たし、所定の方法で利用者へ受け渡せること。</li>
-<li>高権限グループへの追加やユーザー削除について、対象と実施内容が承認されていること。</li>
-<li>ユーザーアカウントを削除する場合は、関連サービスでの利用状況、無効化期間やデータ引継ぎの要否、実施日時を確認し、必要な対応が完了していること。</li>
-</ul>
-<div class="callout callout-warning"><p><strong>⚠️ 注意：パスワードを作業記録や画面キャプチャへ残さない</strong></p>
-<p>パスワードは、手順書、チケット、作業ログ、チャット、コマンド履歴および画面キャプチャへ記録しません。パスワード欄は伏字のまま操作します。</p>
 </div>
 <h3 id="構築作業-2">構築作業</h3>
 <h4 id="1-ユーザーとグループの管理機能を有効化する">1. ユーザーとグループの管理機能を有効化する</h4>
@@ -1208,12 +860,7 @@ Get-ADDomain |
 <p><code class="inline-code">Get-ADUserResultantPasswordPolicy</code>は、<code class="inline-code">Default Domain Policy</code>自体の内容を表示するコマンドではありません。実効ポリシーの確認に<code class="inline-code">net user</code>は使用しません。</p>
 <p><a href="https://docs.aws.amazon.com/ja_jp/directoryservice/latest/admin-guide/assignpasswordpolicies.html">パスワードポリシーの割り当てと確認</a>／<a href="https://learn.microsoft.com/en-us/powershell/module/activedirectory/get-addefaultdomainpasswordpolicy">Get-ADDefaultDomainPasswordPolicy</a></p>
 </section>
-      <h2 id="related-pages">関連ページ</h2>
-      <div class="page-link-grid">
-        <a class="page-link-card" href="workspaces-skill-transfer.html"><strong>全体構築・運用順序</strong><span>マルチVPC・閉域VDI基盤案件の関連手順</span></a>
-        <a class="page-link-card" href="workspaces-management-ec2.html"><strong>管理用EC2・Active Directory管理</strong><span>マルチVPC・閉域VDI基盤案件の関連手順</span></a>
-      </div>
-    </main>
+      </main>
   </div>
   <script src="../assets/app.js?v=20260908-skill-transfer1"></script>
 </body>

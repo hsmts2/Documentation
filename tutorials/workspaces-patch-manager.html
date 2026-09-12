@@ -24,6 +24,55 @@
       <div class="sidebar-heading">
         <button class="icon-button sidebar-toggle sidebar-toggle-inline" type="button" aria-controls="site-sidebar" aria-expanded="true" title="ナビゲーションを閉じる" aria-label="ナビゲーションを閉じる">☰</button>
       </div>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">✎</span>記事</p>
+      <a href="cloudflare-private-site.html">Private GitHubリポジトリをCloudflare Workersで認証付き公開してみた</a>
+      <details class="sidebar-nested-menu" open>
+        <summary>マルチVPC・閉域VDI基盤案件（9ページ）</summary>
+        <div class="sidebar-subnav">
+          <a href="workspaces-skill-transfer.html">全体構築・運用順序</a>
+          <a href="workspaces-managed-ad.html">AWS Managed Microsoft AD 構築・管理</a>
+          <a href="workspaces-management-ec2.html">管理用EC2・Active Directory管理</a>
+          <a href="workspaces-ad-connector.html">AD Connector 構築・権限委任</a>
+          <a href="workspaces-provisioning-gpo.html">Amazon WorkSpaces 構築・OU・GPO</a>
+          <a href="workspaces-image-bundle.html">WorkSpaces カスタムイメージ・バンドル</a>
+          <a href="workspaces-patch-manager.html" class="active" aria-current="page">Systems Manager Patch Manager</a>
+          <a href="workspaces-cost-optimizer.html">Amazon WorkSpaces Cost Optimizer</a>
+          <a href="workspaces-cloudwatch-monitoring.html">CloudWatch・SNS 監視／通知</a>
+        </div>
+      </details>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">◈</span>Terraform</p>
+      <a href="terraform.html">Terraform 概要</a>
+      <a href="hcp-terraform.html">HCP Terraform（Terraform Cloud）</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">☁︎</span>AWS</p>
+      <a href="cloudformation.html">CloudFormation 運用手順集</a>
+      <a href="aws-cli.html">AWS CLI 特殊対応</a>
+      <a href="aws-cli-reference.html">AWS CLI コマンドリファレンス</a>
+      <a href="eventbridge-scheduler.html">EventBridge Scheduler</a>
+      <a href="aws-directory-service.html">AWS Directory Service 運用手順</a>
+      <a href="amazon-workspaces.html">Amazon WorkSpaces</a>
+      <a href="amazon-ses.html">Amazon SES SMTPリレー</a>
+      <a href="amazon-ses-monitoring.html">Amazon SES 配信監視</a>
+      <a href="amazon-rds-blue-green.html">Amazon RDS Blue/Green Deployments</a>
+      <a href="apache-acm-certificate-update.html">証明書更新（ACMエクスポート）</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">⚙︎</span>OS／ミドルウェア</p>
+      <a href="rhel9.html">Red Hat Enterprise Linux 9</a>
+      <a href="rhel10.html">Red Hat Enterprise Linux 10</a>
+      <a href="amazon-linux-2023.html">Amazon Linux 2023</a>
+      <a href="windows-server-2022.html">Windows Server 2022</a>
+      <a href="windows-server-2025.html">Windows Server 2025</a>
+      <a href="windows-server-2016-upgrade.html">Windows Server 2016 インプレースアップグレード</a>
+      <a href="storage.html">ストレージ管理</a>
+      <a href="apache.html">Apache</a>
+      <a href="apache-self-signed-ssl-termination.html">Apache SSL終端（自己署名証明書）</a>
+      <a href="redis.html">Redis（KVS）</a>
+      <a href="nfs.html">NFS</a>
+      <a href="samba.html">Samba</a>
+      <a href="mariadb.html">MariaDB</a>
+      <a href="postgresql.html">PostgreSQL</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">▤</span>リファレンス</p>
+      <a href="../writing-style-guide.html">[GitHub Pages] 記法・テンプレート</a>
+      <a href="troubleshooting.html">障害切り分けチェックリスト</a>
+      <a href="eol.html">EOL / ライフサイクル一覧表</a>
     </aside>
     <main class="content workspaces-skill-transfer-guide">
       <nav class="breadcrumb" aria-label="Breadcrumb">
@@ -31,41 +80,11 @@
         <span>トピック</span>
       </nav>
       <h1>Systems Manager Patch Manager</h1>
-      <div class="page-summary"><strong>⚡ このページの要約</strong><p class="lead">Windows ServerをSystems Managerのマネージドノードとして登録する<br>Maintenance Window、Patch Group、Scan・Install、S3ログおよび適用後確認まで実機証跡で整理する</p></div>
-      <nav class="section-links" aria-label="主要セクション">
-        <a href="#10-systems-manager-systems-manager環境構築手順書">⑩[Systems Manager] Systems Manager環境構築手順書</a>
-        <a href="#11-systems-manager-patch-manager設定手順書">⑪[Systems Manager] Patch Manager設定手順書</a>
-        <a href="#12-systems-manager-patch-manager実行-結果確認-運用手順書">⑫[Systems Manager] Patch Manager実行・結果確認・運用手順書</a>
-      </nav>
+
+
 <section id="systemsManagerBuild" class="procedure-document">
 
-<h2 id="10-systems-manager-systems-manager環境構築手順書">⑩[Systems Manager] Systems Manager環境構築手順書</h2><nav class="section-links document-toc" aria-label="この手順の目次"><a href="#概要">概要</a> <a href="#仕様">仕様</a> <a href="#前提条件">前提条件</a> <a href="#構築作業">構築作業</a> <a href="#構築後確認">構築後確認</a></nav>
-<h3 id="概要">概要</h3>
-<table>
-<thead>
-<tr>
-<th>項目</th>
-<th>内容</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>目的</td>
-<td>Windows EC2をSystems Managerへ登録し、パッチ管理に必要な接続とログ出力権限を準備します。</td>
-</tr>
-<tr>
-<td>対象</td>
-<td>東京リージョンのWindows Server 2022 EC2（Sample-mng-001）</td>
-</tr>
-<tr>
-<td>実施内容</td>
-<td>EC2用IAMロールを作成する、既存のログ保存用S3バケットを使用する、検証用Windows EC2を作成する、SSM Agentとマネージドノードを確認する</td>
-</tr>
-</tbody></table>
-<p>関連手順書：</p>
-<ul class="check-list">
-<li><a href="workspaces-patch-manager.html#patchSettings">⑪ Patch Manager設定手順</a></li>
-<li><a href="workspaces-patch-manager.html#patchOperations">⑫ Patch Manager実行・結果確認・運用手順</a></li>
-</ul>
+<h2 id="10-systems-manager-systems-manager環境構築手順書">⑩[Systems Manager] Systems Manager環境構築手順書</h2>
 <h3 id="仕様">仕様</h3>
 <h4 id="構成-動作">構成・動作</h4>
 <p>EC2インスタンスプロファイルへAmazonSSMManagedInstanceCoreと用途別の権限を付与します。S3出力権限は出力先に合わせて別途確認します。</p>
@@ -123,47 +142,6 @@
 <tr>
 <td>Fleet Manager</td>
 <td>マネージドノードのOnline状態、OS、SSM Agentバージョンなどを確認する</td>
-</tr>
-</tbody></table>
-<h3 id="前提条件">前提条件</h3>
-<h4 id="既存リソース-ネットワーク">既存リソース・ネットワーク</h4>
-<ul class="check-list">
-<li>対象VPC、サブネット、セキュリティグループ、管理接続経路とログ保存用S3バケットを準備していること。</li>
-<li>Systems Manager、S3とWindows UpdateまたはWSUSへの名前解決・通信経路を確認していること。</li>
-</ul>
-<h4 id="権限-接続環境">権限・接続環境</h4>
-<p>AWSコンソールの作業には、対象サービスの操作権限と、必要なロールに対するiam:PassRoleを持つIAMユーザーまたはロールを使用します。弊社で使用するAdministratorAccess付きのユーザーまたはロールでも対応できます。SCP、アクセス許可境界、明示的な拒否による制限を確認します。操作ユーザーの権限とEC2インスタンスプロファイルの権限は、それぞれ確認します。</p>
-<h4 id="事前に準備する情報">事前に準備する情報</h4>
-<table>
-<thead>
-<tr>
-<th>項目</th>
-<th>設定値・確認内容</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>リージョン</td>
-<td>アジアパシフィック（東京）<code class="inline-code">ap-northeast-1</code></td>
-</tr>
-<tr>
-<td>EC2インスタンス</td>
-<td><code class="inline-code">Sample-mng-001</code></td>
-</tr>
-<tr>
-<td>AMI</td>
-<td><code class="inline-code">ami-0e951cd6c484ba795</code>／<code class="inline-code">Windows_Server-2022-Japanese-Full-Base-2026.08.12</code></td>
-</tr>
-<tr>
-<td>EC2用IAMロール</td>
-<td><code class="inline-code">Sample_EC2Role</code></td>
-</tr>
-<tr>
-<td>IAMポリシー</td>
-<td><code class="inline-code">AmazonSSMManagedInstanceCore</code></td>
-</tr>
-<tr>
-<td>S3出力先</td>
-<td><code class="inline-code">sample-mw-bucket/patchmanager/</code></td>
 </tr>
 </tbody></table>
 <h3 id="構築作業">構築作業</h3>
@@ -395,46 +373,13 @@ Get-CimInstance Win32_Service -Filter &quot;Name='AmazonSSMAgent'&quot; |
 
 
 <p>今回の検証では、<code class="inline-code">Sample-mng-001</code>がOnlineで、SSM Agentバージョン<code class="inline-code">3.3.4851.0</code>となっていることを確認しました。</p>
-<h3 id="構築後確認">構築後確認</h3>
-<ul class="check-list">
-<li><input disabled="" type="checkbox"> EC2の全ステータスチェックが合格している</li>
-<li><input disabled="" type="checkbox"> Fleet ManagerがOnlineで、AmazonSSMAgentがRunning</li>
-<li><input disabled="" type="checkbox"> EC2インスタンスプロファイルのSSM権限を確認している</li>
-<li><input disabled="" type="checkbox"> 指定S3プレフィックスへの書き込み権限と暗号化設定を確認している</li>
-</ul>
 </section>
 
 <hr>
 
 <section id="patchSettings" class="procedure-document">
 
-<h2 id="11-systems-manager-patch-manager設定手順書">⑪[Systems Manager] Patch Manager設定手順書</h2><nav class="section-links document-toc" aria-label="この手順の目次"><a href="#概要-2">概要</a> <a href="#仕様-2">仕様</a> <a href="#前提条件-2">前提条件</a> <a href="#構築作業-2">構築作業</a> <a href="#構築後確認-2">構築後確認</a></nav>
-<h3 id="概要-2">概要</h3>
-<table>
-<thead>
-<tr>
-<th>項目</th>
-<th>内容</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>目的</td>
-<td>パッチの承認条件・対象ノード・実行スケジュールとRun Commandタスクを設定します。</td>
-</tr>
-<tr>
-<td>対象</td>
-<td>東京リージョンのWindows Server 2022 EC2（Sample-mng-001）</td>
-</tr>
-<tr>
-<td>実施内容</td>
-<td>Windows用パッチベースラインを決定する、Patch Groupをパッチベースラインへ関連付ける、Maintenance Windowを作成する、Maintenance Windowのターゲットを登録する、EC2へPatch Groupタグを付与する、Run Commandタスクを登録する、SNS通知を設定する（任意）</td>
-</tr>
-</tbody></table>
-<p>関連手順書：</p>
-<ul class="check-list">
-<li><a href="workspaces-patch-manager.html#systemsManagerBuild">⑩ Systems Manager環境構築手順</a></li>
-<li><a href="workspaces-patch-manager.html#patchOperations">⑫ Patch Manager実行・結果確認・運用手順</a></li>
-</ul>
+<h2 id="11-systems-manager-patch-manager設定手順書">⑪[Systems Manager] Patch Manager設定手順書</h2>
 <h3 id="仕様-2">仕様</h3>
 <h4 id="構成-動作-2">構成・動作</h4>
 <p>Patch Groupは適用ベースラインの選択に使用します。Maintenance Windowのターゲット登録とベースラインへの関連付けをそれぞれ行います。</p>
@@ -442,67 +387,6 @@ Get-CimInstance Win32_Service -Filter &quot;Name='AmazonSSMAgent'&quot; |
 <p>本書の設定表と画像は検証環境の例です。実作業では承認済みパラメータシートの値を使用します。</p>
 <h4 id="制約事項-2">制約事項</h4>
 <p>スケジュール登録後は指定日時にタスクが起動します。運用開始前はウィンドウを無効化し、対象とパラメータの確認後に有効化します。</p>
-<h3 id="前提条件-2">前提条件</h3>
-<h4 id="既存リソース-ネットワーク-2">既存リソース・ネットワーク</h4>
-<h4 id="権限-接続環境-2">権限・接続環境</h4>
-<p>AWSコンソールの作業には、対象サービスの操作権限と、必要なロールに対するiam:PassRoleを持つIAMユーザーまたはロールを使用します。弊社で使用するAdministratorAccess付きのユーザーまたはロールでも対応できます。SCP、アクセス許可境界、明示的な拒否による制限を確認します。操作ユーザーの権限とEC2インスタンスプロファイルの権限は、それぞれ確認します。</p>
-<h4 id="事前に準備する情報-2">事前に準備する情報</h4>
-<table>
-<thead>
-<tr>
-<th>項目</th>
-<th>設定値・確認内容</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>リージョン</td>
-<td>アジアパシフィック（東京）<code class="inline-code">ap-northeast-1</code></td>
-</tr>
-<tr>
-<td>EC2インスタンス</td>
-<td><code class="inline-code">Sample-mng-001</code></td>
-</tr>
-<tr>
-<td>S3出力先</td>
-<td><code class="inline-code">sample-mw-bucket/patchmanager/</code></td>
-</tr>
-<tr>
-<td>パッチベースライン</td>
-<td>実行出力上は<code class="inline-code">AWS-DefaultPatchBaseline</code>／<code class="inline-code">pb-04ba050f612fba3a6</code>。Patch Groupとの直接照会は未実施</td>
-</tr>
-<tr>
-<td>Patch Group</td>
-<td><code class="inline-code">sample-window</code></td>
-</tr>
-<tr>
-<td>メンテナンスウィンドウ</td>
-<td><code class="inline-code">Sample-MW-WindowsUpdate</code></td>
-</tr>
-<tr>
-<td>ターゲット</td>
-<td><code class="inline-code">PatchingTarget</code>／<code class="inline-code">Patch Group=sample-window</code></td>
-</tr>
-<tr>
-<td>Run Commandタスク</td>
-<td><code class="inline-code">Sample-TASK-WindowsUpdate</code></td>
-</tr>
-<tr>
-<td>スケジュール</td>
-<td><code class="inline-code">cron(0 17 ? * THU#4 *)</code>／<code class="inline-code">UTC</code></td>
-</tr>
-<tr>
-<td>Duration／Cutoff</td>
-<td>1時間／0時間</td>
-</tr>
-<tr>
-<td>初回テスト</td>
-<td>手順上は<code class="inline-code">Scan/NoReboot</code>。実行証跡は未取得</td>
-</tr>
-<tr>
-<td>確認済みの実行</td>
-<td><code class="inline-code">Install/RebootIfNeeded</code>が<code class="inline-code">Success</code>。新規適用対象0件</td>
-</tr>
-</tbody></table>
 <h3 id="構築作業-2">構築作業</h3>
 <h4 id="1-windows用パッチベースラインを決定する">1. Windows用パッチベースラインを決定する</h4>
 <ol class="step-list">
@@ -723,46 +607,13 @@ aws ssm register-patch-baseline-for-patch-group `
 <li>Run CommandタスクでSNS通知、通知対象イベントおよびCommand／Invocation単位を設定します。</li>
 </ol>
 <p><a href="https://docs.aws.amazon.com/systems-manager/latest/userguide/monitoring-sns-notifications.html">Monitoring Systems Manager status changes using Amazon SNS notifications</a></p>
-<h3 id="構築後確認-2">構築後確認</h3>
-<ul class="check-list">
-<li><input disabled="" type="checkbox"> Patch Groupとベースラインの関連付けを直接照会している</li>
-<li><input disabled="" type="checkbox"> 対象タグが保存され、対象ノードが承認済みの範囲に限定されている</li>
-<li><input disabled="" type="checkbox"> 実行日時・タイムゾーン・Duration・Cutoffが設計と一致している</li>
-<li><input disabled="" type="checkbox"> 初回タスクがScan／NoRebootで、S3出力先が正しい</li>
-</ul>
 </section>
 
 <hr>
 
 <section id="patchOperations" class="procedure-document">
 
-<h2 id="12-systems-manager-patch-manager実行-結果確認-運用手順書">⑫[Systems Manager] Patch Manager実行・結果確認・運用手順書</h2><nav class="section-links document-toc" aria-label="この手順の目次"><a href="#概要-3">概要</a> <a href="#仕様-3">仕様</a> <a href="#前提条件-3">前提条件</a> <a href="#運用作業">運用作業</a> <a href="#運用後確認">運用後確認</a></nav>
-<h3 id="概要-3">概要</h3>
-<table>
-<thead>
-<tr>
-<th>項目</th>
-<th>内容</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>目的</td>
-<td>ScanとInstallを実行し、適用結果・再起動後の復旧・実行ログを確認します。</td>
-</tr>
-<tr>
-<td>対象</td>
-<td>東京リージョンのWindows Server 2022 EC2（Sample-mng-001）</td>
-</tr>
-<tr>
-<td>実施内容</td>
-<td>実行前チェック、Scanテストと成功判定、Installテストと成功判定、Systems Managerの成功とWindows Update表示の違い</td>
-</tr>
-</tbody></table>
-<p>関連手順書：</p>
-<ul>
-<li><a href="workspaces-patch-manager.html#systemsManagerBuild">⑩ Systems Manager環境構築手順</a></li>
-<li><a href="workspaces-patch-manager.html#patchSettings">⑪ Patch Manager設定手順</a></li>
-</ul>
+<h2 id="12-systems-manager-patch-manager実行-結果確認-運用手順書">⑫[Systems Manager] Patch Manager実行・結果確認・運用手順書</h2>
 <h3 id="仕様-3">仕様</h3>
 <h4 id="構成-動作-3">構成・動作</h4>
 <p>Scanで不足パッチを検出し、変更承認後にInstallを実行します。コマンドの成功、準拠状況、新規適用KB、業務復旧をそれぞれ確認します。</p>
@@ -770,70 +621,6 @@ aws ssm register-patch-baseline-for-patch-group `
 <p>本書の設定表と画像は検証環境の例です。実作業では承認済みパラメータシートの値を使用します。</p>
 <h4 id="制約事項-3">制約事項</h4>
 <p>取得済みのInstall結果では新規適用は0件でした。Scan単独実行と、不足パッチがある状態での適用・再起動・復旧確認は追加確認が必要です。</p>
-<h3 id="前提条件-3">前提条件</h3>
-<h4 id="既存リソース-ネットワーク-3">既存リソース・ネットワーク</h4>
-<ul class="check-list">
-<li>Install前にバックアップと復元方法、停止時間、再起動後の確認担当を決定していること。</li>
-</ul>
-<h4 id="権限-接続環境-3">権限・接続環境</h4>
-<p>AWSコンソールの作業には、対象サービスの操作権限と、必要なロールに対するiam:PassRoleを持つIAMユーザーまたはロールを使用します。弊社で使用するAdministratorAccess付きのユーザーまたはロールでも対応できます。SCP、アクセス許可境界、明示的な拒否による制限を確認します。操作ユーザーの権限とEC2インスタンスプロファイルの権限は、それぞれ確認します。</p>
-<h4 id="事前に準備する情報-3">事前に準備する情報</h4>
-<table>
-<thead>
-<tr>
-<th>項目</th>
-<th>設定値・確認内容</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>リージョン</td>
-<td>アジアパシフィック（東京）<code class="inline-code">ap-northeast-1</code></td>
-</tr>
-<tr>
-<td>EC2インスタンス</td>
-<td><code class="inline-code">Sample-mng-001</code></td>
-</tr>
-<tr>
-<td>S3出力先</td>
-<td><code class="inline-code">sample-mw-bucket/patchmanager/</code></td>
-</tr>
-<tr>
-<td>パッチベースライン</td>
-<td>実行出力上は<code class="inline-code">AWS-DefaultPatchBaseline</code>／<code class="inline-code">pb-04ba050f612fba3a6</code>。Patch Groupとの直接照会は未実施</td>
-</tr>
-<tr>
-<td>Patch Group</td>
-<td><code class="inline-code">sample-window</code></td>
-</tr>
-<tr>
-<td>メンテナンスウィンドウ</td>
-<td><code class="inline-code">Sample-MW-WindowsUpdate</code></td>
-</tr>
-<tr>
-<td>ターゲット</td>
-<td><code class="inline-code">PatchingTarget</code>／<code class="inline-code">Patch Group=sample-window</code></td>
-</tr>
-<tr>
-<td>Run Commandタスク</td>
-<td><code class="inline-code">Sample-TASK-WindowsUpdate</code></td>
-</tr>
-<tr>
-<td>スケジュール</td>
-<td><code class="inline-code">cron(0 17 ? * THU#4 *)</code>／<code class="inline-code">UTC</code></td>
-</tr>
-<tr>
-<td>Duration／Cutoff</td>
-<td>1時間／0時間</td>
-</tr>
-<tr>
-<td>初回テスト</td>
-<td>手順上は<code class="inline-code">Scan/NoReboot</code>。実行証跡は未取得</td>
-</tr>
-<tr>
-<td>確認済みの実行</td>
-<td><code class="inline-code">Install/RebootIfNeeded</code>が<code class="inline-code">Success</code>。新規適用対象0件</td>
-</tr>
-</tbody></table>
 <h3 id="運用作業">運用作業</h3>
 <h4 id="1-実行前チェック">1. 実行前チェック</h4>
 <p>次のすべてを満たすまでMaintenance Windowを実行しません。</p>
@@ -1080,13 +867,7 @@ aws ssm register-patch-baseline-for-patch-group `
 <li><input disabled="" type="checkbox"> コマンドID・ノードID・実行時刻とS3ログを照合している</li>
 </ul>
 </section>
-      <h2 id="related-pages">関連ページ</h2>
-      <div class="page-link-grid">
-        <a class="page-link-card" href="workspaces-image-bundle.html"><strong>WorkSpaces カスタムイメージ・バンドル</strong><span>マルチVPC・閉域VDI基盤案件の関連手順</span></a>
-        <a class="page-link-card" href="workspaces-skill-transfer.html"><strong>全体構築・運用順序</strong><span>マルチVPC・閉域VDI基盤案件の関連手順</span></a>
-        <a class="page-link-card" href="workspaces-cost-optimizer.html"><strong>Amazon WorkSpaces Cost Optimizer</strong><span>マルチVPC・閉域VDI基盤案件の関連手順</span></a>
-      </div>
-    </main>
+      </main>
   </div>
   <script src="../assets/app.js?v=20260908-skill-transfer1"></script>
 </body>

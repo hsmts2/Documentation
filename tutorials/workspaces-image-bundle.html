@@ -24,6 +24,55 @@
       <div class="sidebar-heading">
         <button class="icon-button sidebar-toggle sidebar-toggle-inline" type="button" aria-controls="site-sidebar" aria-expanded="true" title="ナビゲーションを閉じる" aria-label="ナビゲーションを閉じる">☰</button>
       </div>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">✎</span>記事</p>
+      <a href="cloudflare-private-site.html">Private GitHubリポジトリをCloudflare Workersで認証付き公開してみた</a>
+      <details class="sidebar-nested-menu" open>
+        <summary>マルチVPC・閉域VDI基盤案件（9ページ）</summary>
+        <div class="sidebar-subnav">
+          <a href="workspaces-skill-transfer.html">全体構築・運用順序</a>
+          <a href="workspaces-managed-ad.html">AWS Managed Microsoft AD 構築・管理</a>
+          <a href="workspaces-management-ec2.html">管理用EC2・Active Directory管理</a>
+          <a href="workspaces-ad-connector.html">AD Connector 構築・権限委任</a>
+          <a href="workspaces-provisioning-gpo.html">Amazon WorkSpaces 構築・OU・GPO</a>
+          <a href="workspaces-image-bundle.html" class="active" aria-current="page">WorkSpaces カスタムイメージ・バンドル</a>
+          <a href="workspaces-patch-manager.html">Systems Manager Patch Manager</a>
+          <a href="workspaces-cost-optimizer.html">Amazon WorkSpaces Cost Optimizer</a>
+          <a href="workspaces-cloudwatch-monitoring.html">CloudWatch・SNS 監視／通知</a>
+        </div>
+      </details>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">◈</span>Terraform</p>
+      <a href="terraform.html">Terraform 概要</a>
+      <a href="hcp-terraform.html">HCP Terraform（Terraform Cloud）</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">☁︎</span>AWS</p>
+      <a href="cloudformation.html">CloudFormation 運用手順集</a>
+      <a href="aws-cli.html">AWS CLI 特殊対応</a>
+      <a href="aws-cli-reference.html">AWS CLI コマンドリファレンス</a>
+      <a href="eventbridge-scheduler.html">EventBridge Scheduler</a>
+      <a href="aws-directory-service.html">AWS Directory Service 運用手順</a>
+      <a href="amazon-workspaces.html">Amazon WorkSpaces</a>
+      <a href="amazon-ses.html">Amazon SES SMTPリレー</a>
+      <a href="amazon-ses-monitoring.html">Amazon SES 配信監視</a>
+      <a href="amazon-rds-blue-green.html">Amazon RDS Blue/Green Deployments</a>
+      <a href="apache-acm-certificate-update.html">証明書更新（ACMエクスポート）</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">⚙︎</span>OS／ミドルウェア</p>
+      <a href="rhel9.html">Red Hat Enterprise Linux 9</a>
+      <a href="rhel10.html">Red Hat Enterprise Linux 10</a>
+      <a href="amazon-linux-2023.html">Amazon Linux 2023</a>
+      <a href="windows-server-2022.html">Windows Server 2022</a>
+      <a href="windows-server-2025.html">Windows Server 2025</a>
+      <a href="windows-server-2016-upgrade.html">Windows Server 2016 インプレースアップグレード</a>
+      <a href="storage.html">ストレージ管理</a>
+      <a href="apache.html">Apache</a>
+      <a href="apache-self-signed-ssl-termination.html">Apache SSL終端（自己署名証明書）</a>
+      <a href="redis.html">Redis（KVS）</a>
+      <a href="nfs.html">NFS</a>
+      <a href="samba.html">Samba</a>
+      <a href="mariadb.html">MariaDB</a>
+      <a href="postgresql.html">PostgreSQL</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">▤</span>リファレンス</p>
+      <a href="../writing-style-guide.html">[GitHub Pages] 記法・テンプレート</a>
+      <a href="troubleshooting.html">障害切り分けチェックリスト</a>
+      <a href="eol.html">EOL / ライフサイクル一覧表</a>
     </aside>
     <main class="content workspaces-skill-transfer-guide">
       <nav class="breadcrumb" aria-label="Breadcrumb">
@@ -31,38 +80,11 @@
         <span>トピック</span>
       </nav>
       <h1>WorkSpaces カスタムイメージ・バンドル</h1>
-      <div class="page-summary"><strong>⚡ このページの要約</strong><p class="lead">Image Checkerの合格後にカスタムイメージとバンドルを作成し、検証用WorkSpaceで確認する<br>別AWSアカウントへの共有・コピー・再作成と、RDPを使用する場合の制約をまとめる</p></div>
-      <nav class="section-links" aria-label="主要セクション">
-        <a href="#9-amazon-workspaces-カスタムイメージ-バンドル作成-共有手順書">⑨[Amazon WorkSpaces] カスタムイメージ・バンドル作成・共有手順書</a>
-      </nav>
+
+
 <section id="workspacesImage" class="procedure-document">
 
-<h2 id="9-amazon-workspaces-カスタムイメージ-バンドル作成-共有手順書">⑨[Amazon WorkSpaces] カスタムイメージ・バンドル作成・共有手順書</h2><nav class="section-links document-toc" aria-label="この手順の目次"><a href="#概要">概要</a> <a href="#仕様">仕様</a> <a href="#前提条件">前提条件</a> <a href="#構築作業">構築作業</a> <a href="#運用作業">運用作業</a> <a href="#構築後確認">構築後確認</a></nav>
-<h3 id="概要">概要</h3>
-<table>
-<thead>
-<tr>
-<th>項目</th>
-<th>内容</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>目的</td>
-<td>共通設定を含むカスタムイメージとバンドルを作成し、検証後に必要なAWSアカウントへ共有します。</td>
-</tr>
-<tr>
-<td>対象</td>
-<td>Windows Server 2022ベース・DCVの参照WorkSpace</td>
-</tr>
-<tr>
-<td>実施内容</td>
-<td>参照端末の準備、Image Checker、イメージ・バンドル作成、検証</td>
-</tr>
-<tr>
-<td>運用作業</td>
-<td>更新、展開対象管理、他アカウントへの共有・コピー、共有解除</td>
-</tr>
-</tbody></table>
+<h2 id="9-amazon-workspaces-カスタムイメージ-バンドル作成-共有手順書">⑨[Amazon WorkSpaces] カスタムイメージ・バンドル作成・共有手順書</h2>
 <h3 id="仕様">仕様</h3>
 <h4 id="構成-動作">構成・動作</h4>
 <table>
@@ -98,97 +120,6 @@
 <p>参照WorkSpaceのOS・共通アプリケーションをイメージで管理し、利用開始後のポリシー変更はGPOで管理します。共有は必要なAWSアカウントに限定します。</p>
 <h4 id="制約事項">制約事項</h4>
 <p>暗号化したWorkSpaceからカスタムイメージは作成できません。カスタムバンドルの容量は元イメージの容量以上が必要です。共有は同じリージョンのAWSアカウント間で行い、共有先はイメージをコピーしてから利用します。</p>
-<h3 id="前提条件">前提条件</h3>
-<h4 id="既存リソース-ネットワーク">既存リソース・ネットワーク</h4>
-<ul>
-<li>状態が<code class="inline-code">Available</code>、変更状態が<code class="inline-code">None</code>で、両ボリュームが暗号化されていないこと。</li>
-<li>必要なWindows更新・アプリケーションとImage Checkerを実行できること。</li>
-</ul>
-<h4 id="権限-接続環境">権限・接続環境</h4>
-<p>AWSコンソールの作業には、WorkSpacesと関連するDirectory Service・EC2・IAMリソースを操作できるIAMユーザーまたはロールを使用します。弊社で使用する<code class="inline-code">AdministratorAccess</code>付きのユーザーまたはロールでも対応できます。SCP、アクセス許可境界や明示的な拒否による制限がある場合は、別途確認します。IAM権限とActive Directory内の管理権限は、それぞれ用意します。詳細は<a href="https://docs.aws.amazon.com/aws-managed-policy/latest/reference/AdministratorAccess.html">AdministratorAccess</a>を参照してください。</p>
-<p>参照WorkSpaceのローカル管理権限と、共有先でのイメージコピー・バンドル作成権限を準備します。</p>
-<h4 id="事前に準備する情報">事前に準備する情報</h4>
-<table>
-<thead>
-<tr>
-<th>項目</th>
-<th>設定値</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>リージョン</td>
-<td>アジアパシフィック（東京）</td>
-</tr>
-<tr>
-<td>作成元Directory ID</td>
-<td>作成元WorkSpaceの詳細で確認した値</td>
-</tr>
-<tr>
-<td>参照WorkSpace ID</td>
-<td><code class="inline-code">ws-jkxz7js0s</code></td>
-</tr>
-<tr>
-<td>イメージ名</td>
-<td><code class="inline-code">WindowsServer2022-Japanese-DCV</code></td>
-</tr>
-<tr>
-<td>イメージの説明</td>
-<td><code class="inline-code">Source wsb-391xpys5j - Windows Server 2022 Desktop Experience - Japanese - TPM - DCV - Mozilla Firefox</code></td>
-</tr>
-<tr>
-<td>カスタムイメージID</td>
-<td><code class="inline-code">wsi-dvdtfbh29</code></td>
-</tr>
-<tr>
-<td>カスタムバンドル名</td>
-<td><code class="inline-code">WindowsServer2022-Japanese-DCV-PowerPro</code></td>
-</tr>
-<tr>
-<td>カスタムバンドルID</td>
-<td><code class="inline-code">wsb-757191hn0</code></td>
-</tr>
-<tr>
-<td>OS</td>
-<td>Windows Server 2022</td>
-</tr>
-<tr>
-<td>プロトコル</td>
-<td>DCV（旧WSP）</td>
-</tr>
-<tr>
-<td>コンピューティング</td>
-<td>PowerPro</td>
-</tr>
-<tr>
-<td>ルート／ユーザーボリューム</td>
-<td>設計値：80GB／50GB。作成元イメージとバンドルの実容量は作成前後に確認</td>
-</tr>
-<tr>
-<td>ボリューム暗号化</td>
-<td>イメージ作成元は暗号化なし</td>
-</tr>
-<tr>
-<td>共有先AWSアカウント</td>
-<td><code class="inline-code">7321********</code></td>
-</tr>
-</tbody></table>
-<p>イメージの説明には作成元バンドル、OS、言語、TPM、プロトコルおよび主要アプリケーションを記載します。作成日はAWSコンソールに表示されるため、説明へ重複して記載しません。</p>
-<div class="callout callout-info"><p><strong>ℹ️ 情報：取得時のIDと実作業の値</strong></p>
-<p>図4の参照WorkSpaceは<code class="inline-code">ws-jkxz7js0s</code>で、⑥の作成例とは別の端末です。表内のWorkSpace・イメージ・バンドルIDは取得時の例です。作成元Directory IDは画像から確認できないため、実作業ではWorkSpaceの詳細で確認します。</p>
-</div>
-<ul>
-<li>参照WorkSpaceが「利用可能」で、変更状態が「なし」こと。</li>
-<li>参照WorkSpaceのルート／ユーザーボリュームが暗号化されていない</li>
-<li>Cドライブに12GiBを超える空き容量がある</li>
-<li>イメージへ取り込むユーザープロファイルが10GiB未満こと。</li>
-<li>承認済みWindows更新とアプリケーションを適用済みこと。</li>
-<li>アプリケーションはCドライブへ導入し、Sysprepに対応している</li>
-<li>ドメインユーザーの資格情報で起動するサービスが残っていない</li>
-<li>WorkSpaces、DCV、RDP、WinRM、PowerShellおよびAWSドライバーを削除していない</li>
-<li>ネットワークアダプターがDHCPを使用し、意図しない追加ドライブがない</li>
-<li>共有元と共有先のAWSアカウントID、リージョン、IAM権限およびクォータを確認している</li>
-</ul>
-<p>暗号化されたWorkSpaceからカスタムイメージは作成できません。カスタムバンドルのボリュームは、作成元イメージで利用できるサイズとAWSの許容範囲に従います。作成画面と作成後のバンドル詳細で実値を確認します。</p>
 <h3 id="構築作業">構築作業</h3>
 <h4 id="1-参照workspaceを準備する">1. 参照WorkSpaceを準備する</h4>
 <ol class="step-list">
@@ -423,23 +354,8 @@ aws workspaces describe-workspace-bundles --bundle-ids $bundleId --region ap-nor
 <h4 id="5-切り戻しと削除を行う">5. 切り戻しと削除を行う</h4>
 <p>新しいイメージまたはバンドルに問題がある場合は展開を停止し、環境別対応表を直前の検証済みBundle IDへ戻します。問題のバンドルから作成したWorkSpaceを特定し、データと利用者影響を確認して再構築または再作成します。切り戻し完了まで旧イメージと旧バンドルを削除しません。</p>
 <p>カスタムイメージまたはバンドルを削除する場合は、<a href="https://docs.aws.amazon.com/ja_jp/workspaces/latest/adminguide/delete_bundle.html">カスタムバンドルとイメージを削除する</a>に従い、依存するWorkSpace、バンドル、共有先およびコピー処理がないことを確認します。</p>
-<h3 id="構築後確認">構築後確認</h3>
-<ul class="check-list">
-<li><input disabled="" type="checkbox"> 参照WorkSpaceのOS、アプリケーション、空き容量、プロファイルおよび暗号化状態を確認している</li>
-<li><input disabled="" type="checkbox"> AWS Image Checkerの全項目が<code class="inline-code">PASSED</code>で、<code class="inline-code">Validation successful</code>となっている</li>
-<li><input disabled="" type="checkbox"> カスタムイメージとカスタムバンドルが「利用可能」</li>
-<li><input disabled="" type="checkbox"> カスタムバンドルのPowerPro、承認済みのルート／ユーザー容量および元イメージIDを確認している</li>
-<li><input disabled="" type="checkbox"> カスタムバンドルから作成した検証用WorkSpaceでアプリケーション、DCV、OUおよびGPOを確認している</li>
-<li><input disabled="" type="checkbox"> 共有を実施した場合は、共有先でコピー・バンドル作成・WorkSpace接続を確認している</li>
-</ul>
 </section>
-      <h2 id="related-pages">関連ページ</h2>
-      <div class="page-link-grid">
-        <a class="page-link-card" href="workspaces-provisioning-gpo.html"><strong>Amazon WorkSpaces 構築・OU・GPO</strong><span>マルチVPC・閉域VDI基盤案件の関連手順</span></a>
-        <a class="page-link-card" href="workspaces-skill-transfer.html"><strong>全体構築・運用順序</strong><span>マルチVPC・閉域VDI基盤案件の関連手順</span></a>
-        <a class="page-link-card" href="workspaces-patch-manager.html"><strong>Systems Manager Patch Manager</strong><span>マルチVPC・閉域VDI基盤案件の関連手順</span></a>
-      </div>
-    </main>
+      </main>
   </div>
   <script src="../assets/app.js?v=20260908-skill-transfer1"></script>
 </body>
