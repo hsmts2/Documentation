@@ -1,0 +1,149 @@
+[
+  {
+    "file": "workspaces-managed-ad.html",
+    "title": "AWS Managed Microsoft ADの構築",
+    "source": "workspaces-managed-ad.html",
+    "keys": [
+      "managedAdBuild"
+    ]
+  },
+  {
+    "file": "workspaces-managed-ad-users.html",
+    "title": "AWS Managed Microsoft ADのユーザー・グループ管理",
+    "source": "workspaces-managed-ad.html",
+    "keys": [
+      "managedAdUsers"
+    ]
+  },
+  {
+    "file": "workspaces-management-ec2.html",
+    "title": "管理用EC2の起動・接続・AD管理",
+    "source": "workspaces-management-ec2.html",
+    "keys": [
+      "managementEc2"
+    ]
+  },
+  {
+    "file": "workspaces-ad-connector-account.html",
+    "title": "AD Connector用サービスアカウント・権限委任",
+    "source": "workspaces-ad-connector.html",
+    "keys": [
+      "connectorDelegation"
+    ]
+  },
+  {
+    "file": "workspaces-ad-connector.html",
+    "title": "AD ConnectorのVPCピアリング・SG設定・作成",
+    "source": "workspaces-ad-connector.html",
+    "keys": [
+      "connectorBuild"
+    ]
+  },
+  {
+    "file": "workspaces-provisioning-gpo.html",
+    "title": "WorkSpaces Personalの構築・接続",
+    "source": "workspaces-provisioning-gpo.html",
+    "keys": [
+      "workspacesBuild"
+    ]
+  },
+  {
+    "file": "workspaces-target-ou.html",
+    "title": "WorkSpaces用ターゲットOUの作成・権限委任",
+    "source": "workspaces-provisioning-gpo.html",
+    "keys": [
+      "workspacesOu"
+    ]
+  },
+  {
+    "file": "workspaces-gpo.html",
+    "title": "WorkSpaces用GPOの作成・適用・運用",
+    "source": "workspaces-provisioning-gpo.html",
+    "keys": [
+      "workspacesGpo"
+    ]
+  },
+  {
+    "file": "workspaces-image-bundle.html",
+    "title": "WorkSpacesカスタムイメージ・バンドルの作成・共有",
+    "source": "workspaces-image-bundle.html",
+    "keys": [
+      "workspacesImage"
+    ]
+  },
+  {
+    "file": "workspaces-systems-manager.html",
+    "title": "Systems Manager環境構築",
+    "source": "workspaces-patch-manager.html",
+    "keys": [
+      "systemsManagerBuild"
+    ]
+  },
+  {
+    "file": "workspaces-patch-manager.html",
+    "title": "Patch Managerの設定",
+    "source": "workspaces-patch-manager.html",
+    "keys": [
+      "patchSettings"
+    ]
+  },
+  {
+    "file": "workspaces-patch-operations.html",
+    "title": "Patch Managerの実行・結果確認・運用",
+    "source": "workspaces-patch-manager.html",
+    "keys": [
+      "patchOperations"
+    ]
+  },
+  {
+    "file": "workspaces-cost-optimizer.html",
+    "title": "Cost Optimizerの構築・設定",
+    "source": "workspaces-cost-optimizer.html",
+    "keys": [
+      "costOptimizerDeploy",
+      "costOptimizerVersionDiff",
+      "costOptimizerResources"
+    ]
+  },
+  {
+    "file": "workspaces-cost-optimizer-dry-run.html",
+    "title": "Cost OptimizerのDry Run解除",
+    "source": "workspaces-cost-optimizer.html",
+    "keys": [
+      "costOptimizerSettings"
+    ]
+  },
+  {
+    "file": "workspaces-cost-optimizer-schedule.html",
+    "title": "Cost Optimizerの実行スケジュール設定・変更",
+    "source": "workspaces-cost-optimizer.html",
+    "keys": [
+      "costOptimizerSchedule"
+    ]
+  },
+  {
+    "file": "workspaces-cost-optimizer-reports.html",
+    "title": "Cost Optimizerのレポート・監視",
+    "source": "workspaces-cost-optimizer.html",
+    "keys": [
+      "costOptimizerReports",
+      "costOptimizerSample"
+    ]
+  },
+  {
+    "file": "workspaces-cloudwatch-monitoring.html",
+    "title": "CloudWatchのEC2・Windows OS監視とSNS通知",
+    "source": "workspaces-cloudwatch-monitoring.html",
+    "keys": [
+      "cloudWatchEc2"
+    ]
+  },
+  {
+    "file": "workspaces-cloudwatch-workspaces.html",
+    "title": "CloudWatchのWorkSpaces監視・ダッシュボード",
+    "source": "workspaces-cloudwatch-monitoring.html",
+    "keys": [
+      "cloudWatchWorkSpaces"
+    ]
+  }
+]

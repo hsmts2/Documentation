@@ -3,9 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>管理用EC2・Active Directory管理 | Documentation</title>
-  <meta name="description" content="Directory Service管理用EC2の起動、接続、ドメイン参加、ADUC・GPMCの利用手順">
+  <title>管理用EC2の起動・接続・AD管理 | Documentation</title>
+  <meta name="description" content="管理用EC2の起動・接続・AD管理の操作手順と設定例">
   <link rel="stylesheet" href="../assets/styles.css?v=20260908-skill-transfer1">
+<link rel="stylesheet" href="../assets/workspaces-guides.css?v=20260912-split">
+<script src="../assets/workspaces-legacy-routes.js?v=20260912-split"></script>
 </head>
 <body>
   <header class="site-header">
@@ -26,20 +28,7 @@
       </div>
       <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">✎</span>記事</p>
       <a href="cloudflare-private-site.html">Private GitHubリポジトリをCloudflare Workersで認証付き公開してみた</a>
-      <details class="sidebar-nested-menu" open>
-        <summary>マルチVPC・閉域VDI基盤案件（9ページ）</summary>
-        <div class="sidebar-subnav">
-          <a href="workspaces-skill-transfer.html">全体構築・運用順序</a>
-          <a href="workspaces-managed-ad.html">AWS Managed Microsoft AD 構築・管理</a>
-          <a href="workspaces-management-ec2.html" class="active" aria-current="page">管理用EC2・Active Directory管理</a>
-          <a href="workspaces-ad-connector.html">AD Connector 構築・権限委任</a>
-          <a href="workspaces-provisioning-gpo.html">Amazon WorkSpaces 構築・OU・GPO</a>
-          <a href="workspaces-image-bundle.html">WorkSpaces カスタムイメージ・バンドル</a>
-          <a href="workspaces-patch-manager.html">Systems Manager Patch Manager</a>
-          <a href="workspaces-cost-optimizer.html">Amazon WorkSpaces Cost Optimizer</a>
-          <a href="workspaces-cloudwatch-monitoring.html">CloudWatch・SNS 監視／通知</a>
-        </div>
-      </details>
+      <details class="sidebar-nested-menu" open><summary>マルチVPC・閉域VDI基盤案件</summary><div class="sidebar-subnav"><a href="workspaces-skill-transfer.html">全体構築・運用順序</a><a href="workspaces-managed-ad.html">AWS Managed Microsoft ADの構築</a><a href="workspaces-managed-ad-users.html">AWS Managed Microsoft ADのユーザー・グループ管理</a><a href="workspaces-management-ec2.html" class="active" aria-current="page">管理用EC2の起動・接続・AD管理</a><a href="workspaces-ad-connector-account.html">AD Connector用サービスアカウント・権限委任</a><a href="workspaces-ad-connector.html">AD ConnectorのVPCピアリング・SG設定・作成</a><a href="workspaces-provisioning-gpo.html">WorkSpaces Personalの構築・接続</a><a href="workspaces-target-ou.html">WorkSpaces用ターゲットOUの作成・権限委任</a><a href="workspaces-gpo.html">WorkSpaces用GPOの作成・適用・運用</a><a href="workspaces-image-bundle.html">WorkSpacesカスタムイメージ・バンドルの作成・共有</a><a href="workspaces-systems-manager.html">Systems Manager環境構築</a><a href="workspaces-patch-manager.html">Patch Managerの設定</a><a href="workspaces-patch-operations.html">Patch Managerの実行・結果確認・運用</a><a href="workspaces-cost-optimizer.html">Cost Optimizerの構築・設定</a><a href="workspaces-cost-optimizer-dry-run.html">Cost OptimizerのDry Run解除</a><a href="workspaces-cost-optimizer-schedule.html">Cost Optimizerの実行スケジュール設定・変更</a><a href="workspaces-cost-optimizer-reports.html">Cost Optimizerのレポート・監視</a><a href="workspaces-cloudwatch-monitoring.html">CloudWatchのEC2・Windows OS監視とSNS通知</a><a href="workspaces-cloudwatch-workspaces.html">CloudWatchのWorkSpaces監視・ダッシュボード</a></div></details>
       <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">◈</span>Terraform</p>
       <a href="terraform.html">Terraform 概要</a>
       <a href="hcp-terraform.html">HCP Terraform（Terraform Cloud）</a>
@@ -74,19 +63,11 @@
       <a href="troubleshooting.html">障害切り分けチェックリスト</a>
       <a href="eol.html">EOL / ライフサイクル一覧表</a>
     </aside>
-    <main class="content workspaces-skill-transfer-guide">
-      <nav class="breadcrumb" aria-label="Breadcrumb">
-        <a href="../"><span class="nav-icon" aria-hidden="true">⌂</span>Home</a>
-        <span>トピック</span>
-      </nav>
-      <h1>管理用EC2・Active Directory管理</h1>
+    <main class="content workspaces-skill-transfer-guide"><nav class="breadcrumb" aria-label="Breadcrumb"><a href="../">Home</a><span>トピック</span></nav><h1>管理用EC2の起動・接続・AD管理</h1><section id="managementEc2" class="procedure-document">
 
 
-<section id="managementEc2" class="procedure-document">
-
-
-<h3 id="構築作業">構築作業</h3>
-<h4 id="1-directory-serviceから管理用ec2の起動画面を開く">1. Directory Serviceから管理用EC2の起動画面を開く</h4>
+<h2 id="構築作業">構築作業</h2>
+<h3 id="1-directory-serviceから管理用ec2の起動画面を開く">1. Directory Serviceから管理用EC2の起動画面を開く</h3>
 <ol>
 <li>AWSマネジメントコンソールへサインインします。</li>
 <li>リージョンが「アジアパシフィック（東京）」になっていることを確認します。</li>
@@ -98,10 +79,10 @@
 
 
 
-<h4 id="2-起動条件を確認し-aws-cliで管理用ec2を起動する">2. 起動条件を確認し、AWS CLIで管理用EC2を起動する</h4>
+<h3 id="2-起動条件を確認し-aws-cliで管理用ec2を起動する">2. 起動条件を確認し、AWS CLIで管理用EC2を起動する</h3>
 <p>本作業で画面へ入力した項目は、キーペア名とAMI IDです。AMIの検索が完了しなかったため、画面から取得したAWS CLIコマンドをCloudShellで実行しました。</p>
 <p>以下は、実行コマンドの設定値です。画面で入力した2項目に加え、IAMインスタンスプロファイル、SG、インスタンスタイプ、リモートアクセスCIDRおよびメタデータオプションもコマンドに含まれています。</p>
-<table>
+<div class="guide-table-scroll"><table class="guide-table"><colgroup><col style="width:24%"><col style="width:38%"><col style="width:38%"></colgroup>
 <thead>
 <tr>
 <th>項目</th>
@@ -149,7 +130,7 @@
 <td><code class="inline-code">{&quot;HttpEndpoint&quot;:&quot;enabled&quot;,&quot;HttpTokens&quot;:&quot;required&quot;}</code></td>
 <td>任意。メタデータへのアクセスを有効にし、IMDSv2のトークンを必須にします。本作業では画面から取得したCLIコマンドにこの値が含まれています。起動後の設定も確認します。</td>
 </tr>
-</tbody></table>
+</tbody></table></div>
 <div class="callout callout-info"><p><strong>ℹ️ 情報：任意項目と省略時の動作</strong></p>
 <p>キーペア名とAMI IDを含め、下図の入力パラメータは任意項目です。本手順では、使用するキーペアとWindows Server 2022日本語版のAMIを明示します。その他の項目も、入力を省略すると既定値や既存リソースが使われる場合があります。メタデータオプションがEC2起動時にも指定されない場合は、アカウント・AMIなどの設定に従って値が決まります。起動後はEC2の詳細でIMDSv2の設定を確認します。</p>
 <p><a href="https://docs.aws.amazon.com/systems-manager-automation-runbooks/latest/userguide/automation-awssupport-create-ds-management-instance.html">AWS-CreateDSManagementInstanceのパラメータ</a>／<a href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/configuring-instance-metadata-options.html">インスタンスメタデータオプション</a></p>
@@ -197,7 +178,7 @@
 <div class="callout callout-error"><p><strong>❌ エラー：Automationが失敗した場合</strong></p>
 <p>実行履歴で失敗ステップとエラーメッセージを確認します。再実行前に、IAM権限、VPC・サブネット、SG、AMIおよびサービスエンドポイントへの到達性を確認し、作成途中のリソースが残っていないか調べます。</p>
 </div>
-<h4 id="3-管理用ec2の稼働状態を確認する">3. 管理用EC2の稼働状態を確認する</h4>
+<h3 id="3-管理用ec2の稼働状態を確認する">3. 管理用EC2の稼働状態を確認する</h3>
 <ol>
 <li>EC2コンソールの「インスタンス」を開き、Automationで作成されたインスタンスIDを選択します。</li>
 <li>状態が「実行中」になり、すべてのステータスチェックに合格するまで待ちます。図3では「3/3 のチェックに合格しました」と表示されています。</li>
@@ -208,7 +189,7 @@
 
 
 
-<h4 id="4-fleet-managerから管理用ec2へ接続する">4. Fleet Managerから管理用EC2へ接続する</h4>
+<h3 id="4-fleet-managerから管理用ec2へ接続する">4. Fleet Managerから管理用EC2へ接続する</h3>
 <div class="callout callout-info"><p><strong>ℹ️ 情報：Fleet Managerの補足画像について</strong></p>
 <p>図3-1・3-2は、別インスタンス<code class="inline-code">Sample-mng-001</code>で取得した操作例です。本作業では、手順3で確認した管理用EC2のインスタンスIDを選択します。図4は本手順の管理用EC2への接続完了画面です。</p>
 </div>
@@ -240,7 +221,7 @@
 <p>Fleet Managerのリモートデスクトップ接続では、SGのインバウンドポートを明示的に開く必要はありません。Windows側のRemote Desktop Servicesはポート3389で接続を受け付けます。直接RDP接続も許可する場合は、承認済みの接続元だけをSGで許可します。</p>
 <p><a href="https://docs.aws.amazon.com/systems-manager/latest/userguide/fleet-manager-remote-desktop-connections.html">Fleet ManagerからWindows Serverへ接続する</a></p>
 </div>
-<h4 id="5-管理用ec2のドメイン参加を確認する">5. 管理用EC2のドメイン参加を確認する</h4>
+<h3 id="5-管理用ec2のドメイン参加を確認する">5. 管理用EC2のドメイン参加を確認する</h3>
 <ol>
 <li>「サーバー マネージャー」を開き、「ローカル サーバー」を選択します。</li>
 <li>「ドメイン」に<code class="inline-code">ad.example.com</code>が表示されることを確認します。</li>
@@ -250,7 +231,7 @@
 
 
 <p>ドメインが表示されない場合は、対象Directory ID、VPC、DNS、IAMインスタンスプロファイルおよびAutomationの実行結果を確認します。ドメイン参加が完了してから、AD管理ツールの確認へ進みます。</p>
-<h4 id="6-ドメイン資格情報でgpmcを起動する">6. ドメイン資格情報でGPMCを起動する</h4>
+<h3 id="6-ドメイン資格情報でgpmcを起動する">6. ドメイン資格情報でGPMCを起動する</h3>
 <ol>
 <li>Windowsの検索欄で「グループ ポリシーの管理」を検索します。</li>
 <li>検索結果を右クリックし、「別のユーザーとして実行」を選択します。</li>
@@ -273,7 +254,7 @@
 <div class="callout callout-warning"><p><strong>⚠️ 注意：AD管理には必要な権限を持つドメインユーザーを使用する</strong></p>
 <p>Fleet Managerへの接続に使用したローカル<code class="inline-code">Administrator</code>と、AD管理に使用するドメインユーザーを区別します。サービスアカウントを人の管理作業に共用せず、担当作業に必要な委任権限を持つユーザーを使用します。</p>
 </div>
-<h4 id="7-gpo一覧とdefault-domain-policyを確認する">7. GPO一覧とDefault Domain Policyを確認する</h4>
+<h3 id="7-gpo一覧とdefault-domain-policyを確認する">7. GPO一覧とDefault Domain Policyを確認する</h3>
 <ol>
 <li>GPMCで対象フォレスト、ドメイン、<code class="inline-code">ad.example.com</code>の順に展開します。</li>
 <li>「グループ ポリシー オブジェクト」を選択し、GPO一覧が表示されることを確認します。</li>
@@ -293,7 +274,7 @@
 
 
 <p>図8の取得時点で確認できる値は次のとおりです。</p>
-<table>
+<div class="guide-table-scroll"><table class="guide-table"><colgroup><col style="width:24%"><col style="width:38%"><col style="width:38%"></colgroup>
 <thead>
 <tr>
 <th>分類</th>
@@ -361,7 +342,7 @@
 <td>ユーザーログオンの制限を強制する</td>
 <td>有効</td>
 </tr>
-</tbody></table>
+</tbody></table></div>
 <div class="callout callout-info"><p><strong>ℹ️ 情報：Default Domain Policyとユーザーに適用されるPSO</strong></p>
 <p>図8はドメイン既定ポリシーの設定です。ユーザーにPSO（きめ細かなパスワードポリシー）が割り当てられている場合は、そのPSOに従ってパスワードやロックアウトの設定が適用されます。対象ユーザーのPSOは次のコマンドで確認します。</p>
 </div>
@@ -369,9 +350,9 @@
 <p>PSOが返されない場合は、ドメイン既定のパスワードポリシーを確認します。</p>
 <div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>Get-ADDefaultDomainPasswordPolicy -Identity 'ad.example.com'</code></pre></div>
 <p><a href="https://docs.aws.amazon.com/directoryservice/latest/admin-guide/ms_ad_password_policies.html">AWS Managed Microsoft ADのパスワードポリシー</a></p>
-<h3 id="運用作業">運用作業</h3>
-<h4 id="1-接続できない場合の状態を確認する">1. 接続できない場合の状態を確認する</h4>
-<table>
+<h2 id="運用作業">運用作業</h2>
+<h3 id="1-接続できない場合の状態を確認する">1. 接続できない場合の状態を確認する</h3>
+<div class="guide-table-scroll"><table class="guide-table"><colgroup><col style="width:30%"><col style="width:70%"></colgroup>
 <thead>
 <tr>
 <th>発生状況</th>
@@ -390,8 +371,8 @@
 <td>GPMCに対象ドメインが表示されない</td>
 <td>ドメイン参加、起動ユーザーのドメイン資格情報、DNSとADのSRVレコードの名前解決、ドメインコントローラーへの必要通信を確認します。</td>
 </tr>
-</tbody></table>
-<h4 id="2-gpmcの参照先ドメインコントローラーを切り替えて確認する-異常時のみ">2. GPMCの参照先ドメインコントローラーを切り替えて確認する（異常時のみ）</h4>
+</tbody></table></div>
+<h3 id="2-gpmcの参照先ドメインコントローラーを切り替えて確認する-異常時のみ">2. GPMCの参照先ドメインコントローラーを切り替えて確認する（異常時のみ）</h3>
 <p>GPO、リンクまたは更新日時の表示に差異がある場合に、GPMCの問い合わせ先を切り替えて確認します。ドメインコントローラー自体の構成や稼働状態は、この操作では変わりません。</p>
 <ol>
 <li>GPMCで<code class="inline-code">ad.example.com</code>を右クリックし、「ドメイン コントローラーの変更」を選択します。</li>
@@ -415,7 +396,7 @@
 <div class="callout callout-info"><p><strong>ℹ️ 情報：参照先切り替えの用途</strong></p>
 <p>参照先の切り替えは、通常の構築作業には含めません。ドメインコントローラー間の表示差異を調査する際に使用します。レプリケーションの問題は、確認結果に基づいて別途対処します。</p>
 </div>
-<h4 id="3-管理用ec2の利用を終了する">3. 管理用EC2の利用を終了する</h4>
+<h3 id="3-管理用ec2の利用を終了する">3. 管理用EC2の利用を終了する</h3>
 <ol>
 <li>AD管理ツールでの作業を終了し、Fleet Managerの接続を終了します。</li>
 <li>常時稼働させない設計の場合は、承認済みの運用手順に従ってEC2を停止します。</li>
@@ -425,8 +406,7 @@
 <div class="callout callout-warning"><p><strong>⚠️ 注意：AWS Managed Microsoft ADの管理リソースを削除しない</strong></p>
 <p>管理用EC2の削除対象に、Managed ADのドメインコントローラー用SG、Directory ServiceのENIおよびAWS管理GPOを含めないでください。</p>
 </div>
-</section>
-      </main>
+</section></main>
   </div>
   <script src="../assets/app.js?v=20260908-skill-transfer1"></script>
 </body>

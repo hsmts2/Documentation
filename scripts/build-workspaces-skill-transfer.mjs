@@ -674,3 +674,7 @@ if (applyTemplate.status !== 0) {
 
 if (process.env.WORKSPACES_IMAGE_MANIFEST) fs.writeFileSync(process.env.WORKSPACES_IMAGE_MANIFEST, JSON.stringify(imageManifest, null, 2));
 console.log(JSON.stringify({ pages: pageSpecs.length, totalImages, awsConsoleImages }, null, 2));
+
+const splitPages = spawnSync(process.execPath, [path.join(scriptDir, "split-workspaces-pages.mjs")], { cwd: root, encoding: "utf8" });
+if (splitPages.status !== 0) throw new Error(splitPages.stderr || splitPages.stdout || "Failed to split procedure pages");
+console.log(splitPages.stdout.trim());

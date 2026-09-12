@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WorkSpaces用ターゲットOUの作成・権限委任 | Documentation</title>
+  <meta name="description" content="WorkSpaces用ターゲットOUの作成・権限委任の操作手順と設定例">
+  <link rel="stylesheet" href="../assets/styles.css?v=20260908-skill-transfer1">
+<link rel="stylesheet" href="../assets/workspaces-guides.css?v=20260912-split">
+<script src="../assets/workspaces-legacy-routes.js?v=20260912-split"></script>
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="../"><img src="../assets/icon.jpg" alt="Documentation icon"><span>Documentation</span></a>
+    <div class="header-actions">
+      <button class="icon-button theme-toggle" type="button" title="テーマを切り替え" aria-label="テーマを切り替え">☀</button>
+      <nav class="nav" aria-label="Global navigation">
+        <a href="../"><span class="nav-icon" aria-hidden="true">⌂</span>Home</a>
+        <a href="https://github.com/hsmts2"><span class="nav-icon" aria-hidden="true">▦</span>Repositories</a>
+        <a href="https://github.com/hsmts2/Documentation"><span class="nav-icon" aria-hidden="true">◆</span>GitHub</a>
+      </nav>
+    </div>
+  </header>
+  <div class="layout layout-wide">
+    <aside id="site-sidebar" class="sidebar" aria-label="Page list">
+      <div class="sidebar-heading">
+        <button class="icon-button sidebar-toggle sidebar-toggle-inline" type="button" aria-controls="site-sidebar" aria-expanded="true" title="ナビゲーションを閉じる" aria-label="ナビゲーションを閉じる">☰</button>
+      </div>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">✎</span>記事</p>
+      <a href="cloudflare-private-site.html">Private GitHubリポジトリをCloudflare Workersで認証付き公開してみた</a>
+      <details class="sidebar-nested-menu" open><summary>マルチVPC・閉域VDI基盤案件</summary><div class="sidebar-subnav"><a href="workspaces-skill-transfer.html">全体構築・運用順序</a><a href="workspaces-managed-ad.html">AWS Managed Microsoft ADの構築</a><a href="workspaces-managed-ad-users.html">AWS Managed Microsoft ADのユーザー・グループ管理</a><a href="workspaces-management-ec2.html">管理用EC2の起動・接続・AD管理</a><a href="workspaces-ad-connector-account.html">AD Connector用サービスアカウント・権限委任</a><a href="workspaces-ad-connector.html">AD ConnectorのVPCピアリング・SG設定・作成</a><a href="workspaces-provisioning-gpo.html">WorkSpaces Personalの構築・接続</a><a href="workspaces-target-ou.html" class="active" aria-current="page">WorkSpaces用ターゲットOUの作成・権限委任</a><a href="workspaces-gpo.html">WorkSpaces用GPOの作成・適用・運用</a><a href="workspaces-image-bundle.html">WorkSpacesカスタムイメージ・バンドルの作成・共有</a><a href="workspaces-systems-manager.html">Systems Manager環境構築</a><a href="workspaces-patch-manager.html">Patch Managerの設定</a><a href="workspaces-patch-operations.html">Patch Managerの実行・結果確認・運用</a><a href="workspaces-cost-optimizer.html">Cost Optimizerの構築・設定</a><a href="workspaces-cost-optimizer-dry-run.html">Cost OptimizerのDry Run解除</a><a href="workspaces-cost-optimizer-schedule.html">Cost Optimizerの実行スケジュール設定・変更</a><a href="workspaces-cost-optimizer-reports.html">Cost Optimizerのレポート・監視</a><a href="workspaces-cloudwatch-monitoring.html">CloudWatchのEC2・Windows OS監視とSNS通知</a><a href="workspaces-cloudwatch-workspaces.html">CloudWatchのWorkSpaces監視・ダッシュボード</a></div></details>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">◈</span>Terraform</p>
+      <a href="terraform.html">Terraform 概要</a>
+      <a href="hcp-terraform.html">HCP Terraform（Terraform Cloud）</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">☁︎</span>AWS</p>
+      <a href="cloudformation.html">CloudFormation 運用手順集</a>
+      <a href="aws-cli.html">AWS CLI 特殊対応</a>
+      <a href="aws-cli-reference.html">AWS CLI コマンドリファレンス</a>
+      <a href="eventbridge-scheduler.html">EventBridge Scheduler</a>
+      <a href="aws-directory-service.html">AWS Directory Service 運用手順</a>
+      <a href="amazon-workspaces.html">Amazon WorkSpaces</a>
+      <a href="amazon-ses.html">Amazon SES SMTPリレー</a>
+      <a href="amazon-ses-monitoring.html">Amazon SES 配信監視</a>
+      <a href="amazon-rds-blue-green.html">Amazon RDS Blue/Green Deployments</a>
+      <a href="apache-acm-certificate-update.html">証明書更新（ACMエクスポート）</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">⚙︎</span>OS／ミドルウェア</p>
+      <a href="rhel9.html">Red Hat Enterprise Linux 9</a>
+      <a href="rhel10.html">Red Hat Enterprise Linux 10</a>
+      <a href="amazon-linux-2023.html">Amazon Linux 2023</a>
+      <a href="windows-server-2022.html">Windows Server 2022</a>
+      <a href="windows-server-2025.html">Windows Server 2025</a>
+      <a href="windows-server-2016-upgrade.html">Windows Server 2016 インプレースアップグレード</a>
+      <a href="storage.html">ストレージ管理</a>
+      <a href="apache.html">Apache</a>
+      <a href="apache-self-signed-ssl-termination.html">Apache SSL終端（自己署名証明書）</a>
+      <a href="redis.html">Redis（KVS）</a>
+      <a href="nfs.html">NFS</a>
+      <a href="samba.html">Samba</a>
+      <a href="mariadb.html">MariaDB</a>
+      <a href="postgresql.html">PostgreSQL</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">▤</span>リファレンス</p>
+      <a href="../writing-style-guide.html">[GitHub Pages] 記法・テンプレート</a>
+      <a href="troubleshooting.html">障害切り分けチェックリスト</a>
+      <a href="eol.html">EOL / ライフサイクル一覧表</a>
+    </aside>
+    <main class="content workspaces-skill-transfer-guide"><nav class="breadcrumb" aria-label="Breadcrumb"><a href="../">Home</a><span>トピック</span></nav><h1>WorkSpaces用ターゲットOUの作成・権限委任</h1><section id="workspacesOu" class="procedure-document">
+
+<span id="7-amazon-workspaces-ターゲットou作成-権限委任手順書" class="legacy-heading-anchor" aria-hidden="true"></span>
+<h2 id="仕様-2">仕様</h2>
+<h3 id="構成-動作-2">構成・動作</h3>
+<div class="code"><div class="code-header"><span>text</span><button class="copy" type="button">Copy</button></div><pre><code>ad.example.com
+└─ ad
+   ├─ Computers
+   │  └─ WorkSpaces
+   └─ Users
+      ├─ ADConnectorService
+      ├─ Connectors
+      └─ WorkSpaces利用ユーザー</code></pre></div>
+<p><code class="inline-code">ADConnectorService</code>と<code class="inline-code">Connectors</code>の配置先は<code class="inline-code">ad\Users</code>です。権限を委任する場所は、WorkSpacesのコンピューターオブジェクトを作成する<code class="inline-code">ad\Computers\WorkSpaces</code>です。アカウントの配置先と権限の委任先を混同しません。</p>
+<p>ドメイン直下の組み込み<code class="inline-code">Computers</code>コンテナーと、お客様管理領域の<code class="inline-code">ad\Computers</code> OUは別の場所です。ADUCで完全なパスを確認してから操作します。</p>
+<div class="callout callout-warning"><p><strong>⚠️ 注意：同じ権限委任を二重に登録しない</strong></p>
+<p><a href="workspaces-ad-connector-account.html#connectorDelegation">AD Connector用サービスアカウント作成・権限委任・運用手順</a>で<code class="inline-code">ad\Computers\WorkSpaces</code>への委任を完了済みの場合は、詳細ACLを確認して本書の委任操作を省略します。同じ<code class="inline-code">Connectors</code>、対象オブジェクト、権限および適用先のACEを重複して追加しません。</p>
+</div>
+<h3 id="管理範囲-2">管理範囲</h3>
+<p>お客様管理OU配下を対象とし、<code class="inline-code">Connectors</code>へWorkSpacesコンピューターの管理に必要な権限を委任します。AWS管理領域の設定は変更しません。</p>
+<h3 id="制約事項-2">制約事項</h3>
+<p>ターゲットOUは登録済みディレクトリごとに1つ指定します。変更後の新規作成・再構築に適用され、既存オブジェクトは自動移動されません。</p>
+<h2 id="構築作業-2">構築作業</h2>
+<div class="callout callout-info"><p><strong>ℹ️ 情報：工程ごとに前提を確認する</strong></p>
+<p>OU作成と権限委任は、AD Connector作成前に管理用EC2から実施できます。④で同じOUとConnectorsへの委任を完了している場合は、設定内容を照合します。ターゲットOUの保存は、⑥でディレクトリを登録した後、新規WorkSpaceを作成する前に実施します。</p>
+</div>
+<h3 id="1-管理端末と既存workspaceを確認する">1. 管理端末と既存WorkSpaceを確認する</h3>
+<p>管理用EC2または既存の管理用WorkSpaceへ接続します。初回構築でWorkSpaceがない場合は、ドメイン参加済みの管理用EC2を使用します。図1と図2は管理用WorkSpaceでの確認例です。</p>
+<figure class="screenshot-wide"><figcaption>図1　WorkSpace接続完了</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/011-workspaceへの接続完了.png" alt="WorkSpaceへの接続完了" width="1920" height="1152" loading="lazy"></div></figure>
+
+
+
+<p>サーバーマネージャーの「ローカルサーバー」で、コンピューター名とドメイン名を確認します。</p>
+<figure class="screenshot-wide"><figcaption>図2　WorkSpaceドメイン参加確認</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/012-workspaceのドメイン参加確認.png" alt="WorkSpaceのドメイン参加確認" width="1920" height="1152" loading="lazy"></div></figure>
+
+
+
+<p>PowerShellで確認する場合は次を実行し、<code class="inline-code">PartOfDomain</code>が<code class="inline-code">True</code>、<code class="inline-code">Domain</code>が対象ドメインとなっていることを確認します。</p>
+<div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>Get-CimInstance Win32_ComputerSystem |
+    Select-Object Name, Domain, PartOfDomain</code></pre></div>
+<p>作成済みWorkSpaceがある場合は、ターゲットOUの変更前に現在の所属OUを確認します。初回構築でWorkSpaceがない場合は、この確認を省略します。</p>
+<div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>Get-ADComputer -Identity '&lt;WorkSpaceのコンピューター名&gt;' -Properties DistinguishedName |
+    Format-List Name, DistinguishedName</code></pre></div>
+<div class="callout callout-warning"><p><strong>⚠️ 注意：ターゲットOU変更は既存WorkSpaceを移動しない</strong></p>
+<p>ターゲットOUの変更は、変更後に新規作成または再構築したWorkSpaceへ反映されます。既存WorkSpaceのコンピューターオブジェクトは自動移動されません。</p>
+</div>
+<h3 id="2-workspaces-ouを作成する">2. WorkSpaces OUを作成する</h3>
+<p>同じDNのOUが存在する場合は、OUの配置先と誤削除防止を確認し、新規作成を省略します。</p>
+<h4 id="ouを新規作成する">OUを新規作成する</h4>
+<ol>
+<li>対象ドメインの管理資格情報でADUCを開きます。</li>
+<li><code class="inline-code">ad.example.com</code>、<code class="inline-code">ad</code>、<code class="inline-code">Computers</code>の順に展開します。</li>
+<li><code class="inline-code">ad\Computers</code>を右クリックし、「新規作成」から「組織単位」を選択します。</li>
+</ol>
+<figure class="screenshot-wide"><figcaption>図3　WorkSpaces_OU作成メニュー</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/013-workspaces-ou作成メニュー.png" alt="WorkSpaces OU作成メニュー" width="1170" height="724" loading="lazy"></div></figure>
+
+
+
+<ol start="4">
+<li>名前へ<code class="inline-code">WorkSpaces</code>を入力します。</li>
+<li>「コンテナーを誤って削除されないように保護する」を有効のままにします。</li>
+<li>「OK」を選択します。</li>
+</ol>
+<figure class="screenshot-wide"><figcaption>図4　WorkSpaces_OU名入力・誤削除防止</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/014-workspaces-ou名と誤削除防止.png" alt="WorkSpaces OU名と誤削除防止" width="509" height="433" loading="lazy"></div></figure>
+
+
+
+<ol start="7">
+<li>左ツリーと右ペインの両方で、<code class="inline-code">ad\Computers</code>配下に<code class="inline-code">WorkSpaces</code> OUが表示されることを確認します。</li>
+</ol>
+<figure class="screenshot-wide"><figcaption>図5　WorkSpaces_OU作成完了</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/015-workspaces-ou作成完了.png" alt="WorkSpaces OU作成完了" width="1172" height="725" loading="lazy"></div></figure>
+
+
+
+<h4 id="ouのdnを確認する">OUのDNを確認する</h4>
+<div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$workSpacesOuDn = 'OU=WorkSpaces,OU=Computers,OU=ad,DC=ad,DC=example,DC=com'
+
+Get-ADOrganizationalUnit -Identity $workSpacesOuDn -Properties ProtectedFromAccidentalDeletion |
+    Select-Object Name, DistinguishedName, ProtectedFromAccidentalDeletion</code></pre></div>
+<p><code class="inline-code">Name</code>が<code class="inline-code">WorkSpaces</code>、<code class="inline-code">DistinguishedName</code>が承認済みDN、<code class="inline-code">ProtectedFromAccidentalDeletion</code>が<code class="inline-code">True</code>となっていることを確認します。</p>
+<h3 id="3-connectorsへの権限委任を確認-設定する">3. Connectorsへの権限委任を確認・設定する</h3>
+<h4 id="委任内容">委任内容</h4>
+<div class="guide-table-scroll"><table class="guide-table"><colgroup><col style="width:30%"><col style="width:70%"></colgroup>
+<thead>
+<tr>
+<th>項目</th>
+<th>選択内容</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>委任先OU</td>
+<td><code class="inline-code">ad\Computers\WorkSpaces</code></td>
+</tr>
+<tr>
+<td>委任対象</td>
+<td><code class="inline-code">Connectors</code></td>
+</tr>
+<tr>
+<td>タスク</td>
+<td>委任するカスタムタスク</td>
+</tr>
+<tr>
+<td>オブジェクト種類</td>
+<td>コンピューターオブジェクト</td>
+</tr>
+<tr>
+<td>作成・削除</td>
+<td>選択したオブジェクトの作成、選択したオブジェクトの削除</td>
+</tr>
+<tr>
+<td>アクセス許可</td>
+<td>読み取り、書き込み</td>
+</tr>
+</tbody></table></div>
+<p>WorkSpaces専用OUにはユーザーを配置しないため、ユーザーオブジェクトの作成・削除・書き込み権限は追加しません。ユーザー検索に必要な既存の読み取り権限は維持し、WorkSpacesコンソールから対象ユーザーを検索できることを別途確認します。</p>
+<h4 id="委任ウィザードを実行する">委任ウィザードを実行する</h4>
+<ol>
+<li>ADUCで<code class="inline-code">ad\Computers\WorkSpaces</code>を右クリックし、「制御の委任」を選択します。</li>
+</ol>
+<figure class="screenshot-wide"><figcaption>図6　WorkSpaces_OU制御の委任</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/016-workspaces-ouの制御の委任.png" alt="WorkSpaces OUの制御の委任" width="1170" height="724" loading="lazy"></div></figure>
+
+
+
+<ol start="2">
+<li>ウィザードで「次へ」を選択し、「追加」から<code class="inline-code">Connectors</code>を指定します。</li>
+<li>「名前の確認」で対象ドメインの<code class="inline-code">Connectors</code>へ解決されたことを確認し、「OK」、「次へ」の順に選択します。</li>
+</ol>
+<figure class="screenshot-wide"><figcaption>図7　Connectors選択</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/017-connectorsグループの選択.png" alt="Connectorsグループの選択" width="581" height="436" loading="lazy"></div></figure>
+
+
+
+<ol start="4">
+<li>「委任するカスタムタスクを作成する」を選択して「次へ」を選択します。</li>
+</ol>
+<figure class="screenshot-wide"><figcaption>図8　カスタムタスク選択</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/018-カスタムタスクの選択.png" alt="カスタムタスクの選択" width="579" height="438" loading="lazy"></div></figure>
+
+
+
+<ol start="5">
+<li>「フォルダー内の次のオブジェクトのみ」を選択します。</li>
+<li>「コンピューター オブジェクト」と、選択したオブジェクトの作成・削除を選択して「次へ」を選択します。</li>
+</ol>
+<figure class="screenshot-wide"><figcaption>図9　コンピューターオブジェクトと作成削除</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/019-コンピューターオブジェクトと作成削除.png" alt="コンピューターオブジェクトと作成削除" width="577" height="436" loading="lazy"></div></figure>
+
+
+
+<ol start="7">
+<li>表示カテゴリで「全般」を選び、「読み取り」と「書き込み」を選択します。</li>
+<li>「次へ」を選択し、完了画面で委任内容を確認して「完了」を選択します。</li>
+</ol>
+<figure class="screenshot-wide"><figcaption>図10　読み取り・書き込み</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/020-読み取りと書き込みの選択.png" alt="読み取りと書き込みの選択" width="580" height="435" loading="lazy"></div></figure>
+
+
+
+<div class="callout callout-warning"><p><strong>⚠️ 注意：作成・削除と読み取り・書き込みを組み合わせる</strong></p>
+<p>図9の作成・削除と、図10の読み取り・書き込みを組み合わせて委任します。上部の「プロパティ固有」は表示カテゴリです。選択しただけでは権限は付与されません。</p>
+</div>
+<h4 id="詳細aclを確認する">詳細ACLを確認する</h4>
+<ol>
+<li>ADUCの「表示」から「拡張機能」を有効にします。</li>
+<li><code class="inline-code">WorkSpaces</code> OUの「プロパティ」、「セキュリティ」、「詳細設定」の順に開きます。</li>
+<li><code class="inline-code">Connectors</code>のアクセス許可エントリを確認します。</li>
+<li>OU自体にコンピューターオブジェクトの作成・削除、子コンピューターオブジェクトに読み取り・書き込みがあることを確認します。</li>
+<li>適用先が<code class="inline-code">WorkSpaces</code> OUまたは子コンピューターオブジェクトへ限定され、フルコントロールや親OU全体への権限がないことを確認します。</li>
+</ol>
+<p><code class="inline-code">ADConnectorService</code>を直接ACLへ追加せず、<code class="inline-code">Connectors</code>グループ経由で委任します。</p>
+<p>PowerShellでACLを参照する場合の実行例です。出力の<code class="inline-code">Connectors</code>に関するエントリと適用先を、上記の詳細設定画面と照合します。</p>
+<div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>dsacls &quot;OU=WorkSpaces,OU=Computers,OU=ad,DC=ad,DC=example,DC=com&quot;</code></pre></div>
+<h3 id="4-workspacesのターゲットouを設定する">4. WorkSpacesのターゲットOUを設定する</h3>
+<p>WorkSpaces Personalでは、登録済みディレクトリごとにコンピューターアカウントのターゲットOUを1つ指定します。設定方法は<a href="https://docs.aws.amazon.com/ja_jp/workspaces/latest/adminguide/select-ou.html">WorkSpacesディレクトリの管理</a>も参照してください。</p>
+<ol>
+<li>AWSマネジメントコンソールでAmazon WorkSpacesを開き、対象リージョンを確認します。</li>
+<li>「ディレクトリ」から対象AD Connectorを選択します。</li>
+<li>Directory ID、ドメイン、VPCおよびサブネットを作業申請と照合します。</li>
+<li>「ターゲットドメインと組織単位」で「編集」を選択します。</li>
+<li><code class="inline-code">WorkSpaces</code>を検索し、承認済みDNと一致するOUを選択します。</li>
+<li>候補に表示されない場合は、承認済みDNをカスタムOUとして入力します。</li>
+<li>「保存」を選択します。</li>
+</ol>
+<figure class="screenshot-wide aws-console-identity"><figcaption>図11　ターゲットOU編集</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/021-ターゲットouの編集.png" alt="ターゲットOUの編集" width="1715" height="746" loading="lazy"></div></figure>
+
+
+
+<ol start="8">
+<li>保存成功の通知と、保存後のOU共通名・OU識別名を確認します。</li>
+</ol>
+<figure class="screenshot-wide aws-console-identity"><figcaption>図12　ターゲットOU保存完了</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/022-ターゲットouの保存完了.png" alt="ターゲットOUの保存完了" width="1718" height="1304" loading="lazy"></div></figure>
+
+
+
+<h3 id="5-新規workspaceのou所属を確認する">5. 新規WorkSpaceのOU所属を確認する</h3>
+<ol>
+<li><a href="workspaces-provisioning-gpo.html#workspacesBuild">Amazon WorkSpaces作成・バンドル設定手順</a>に従い、未使用の検証用ドメインユーザーでWorkSpaceを1台新規作成します。</li>
+<li>作成前にDirectory IDとターゲットOUを再確認します。</li>
+<li>WorkSpaceが<code class="inline-code">AVAILABLE</code>になるまで待ちます。</li>
+<li>ADUCで<code class="inline-code">ad\Computers\WorkSpaces</code>を開き、新しいコンピューターオブジェクトを確認します。</li>
+<li>PowerShellでもDNを確認します。</li>
+</ol>
+<div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$workSpacesOu = 'OU=WorkSpaces,OU=Computers,OU=ad,DC=ad,DC=example,DC=com'
+
+Get-ADComputer -SearchBase $workSpacesOu -Filter * -Properties DistinguishedName,whenCreated |
+    Select-Object Name,DistinguishedName,whenCreated</code></pre></div>
+<p>対象1台だけを確認する場合は次を実行します。</p>
+<div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>Get-ADComputer -Identity '&lt;WorkSpaceのコンピューター名&gt;' -Properties DistinguishedName,whenCreated |
+    Format-List Name,DistinguishedName,whenCreated</code></pre></div>
+<p><code class="inline-code">DistinguishedName</code>が次の形式となっていることを確認します。</p>
+<div class="code"><div class="code-header"><span>text</span><button class="copy" type="button">Copy</button></div><pre><code>CN=&lt;コンピューター名&gt;,OU=WorkSpaces,OU=Computers,OU=ad,DC=ad,DC=example,DC=com</code></pre></div>
+<p>コンピューターオブジェクトを後から手動移動して成功扱いにしません。新規作成時点から指定OUへ配置されたことを確認します。</p>
+<h2 id="運用作業-2">運用作業</h2>
+<h3 id="1-設定を切り戻す">1. 設定を切り戻す</h3>
+<p>ターゲットOUを誤って設定した場合は、新規WorkSpaceの作成を停止し、WorkSpacesディレクトリのターゲットOUを変更前のDNへ戻します。誤ったOUにあるコンピューターオブジェクトは、対応するWorkSpaceを特定してから処置します。</p>
+<p>既存WorkSpaceの再構築は単なる再起動ではありません。ルートボリュームがバンドルの最新イメージから再作成され、ユーザーボリュームも最新スナップショットから再作成されます。OU反映だけを目的に安易に実行せず、バックアップ、スナップショット時刻、KMSキー、利用者影響および承認を確認した別作業として実施します。</p>
+</section></main>
+  </div>
+  <script src="../assets/app.js?v=20260908-skill-transfer1"></script>
+</body>
+</html>

@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WorkSpaces用GPOの作成・適用・運用 | Documentation</title>
+  <meta name="description" content="WorkSpaces用GPOの作成・適用・運用の操作手順と設定例">
+  <link rel="stylesheet" href="../assets/styles.css?v=20260908-skill-transfer1">
+<link rel="stylesheet" href="../assets/workspaces-guides.css?v=20260912-split">
+<script src="../assets/workspaces-legacy-routes.js?v=20260912-split"></script>
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="../"><img src="../assets/icon.jpg" alt="Documentation icon"><span>Documentation</span></a>
+    <div class="header-actions">
+      <button class="icon-button theme-toggle" type="button" title="テーマを切り替え" aria-label="テーマを切り替え">☀</button>
+      <nav class="nav" aria-label="Global navigation">
+        <a href="../"><span class="nav-icon" aria-hidden="true">⌂</span>Home</a>
+        <a href="https://github.com/hsmts2"><span class="nav-icon" aria-hidden="true">▦</span>Repositories</a>
+        <a href="https://github.com/hsmts2/Documentation"><span class="nav-icon" aria-hidden="true">◆</span>GitHub</a>
+      </nav>
+    </div>
+  </header>
+  <div class="layout layout-wide">
+    <aside id="site-sidebar" class="sidebar" aria-label="Page list">
+      <div class="sidebar-heading">
+        <button class="icon-button sidebar-toggle sidebar-toggle-inline" type="button" aria-controls="site-sidebar" aria-expanded="true" title="ナビゲーションを閉じる" aria-label="ナビゲーションを閉じる">☰</button>
+      </div>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">✎</span>記事</p>
+      <a href="cloudflare-private-site.html">Private GitHubリポジトリをCloudflare Workersで認証付き公開してみた</a>
+      <details class="sidebar-nested-menu" open><summary>マルチVPC・閉域VDI基盤案件</summary><div class="sidebar-subnav"><a href="workspaces-skill-transfer.html">全体構築・運用順序</a><a href="workspaces-managed-ad.html">AWS Managed Microsoft ADの構築</a><a href="workspaces-managed-ad-users.html">AWS Managed Microsoft ADのユーザー・グループ管理</a><a href="workspaces-management-ec2.html">管理用EC2の起動・接続・AD管理</a><a href="workspaces-ad-connector-account.html">AD Connector用サービスアカウント・権限委任</a><a href="workspaces-ad-connector.html">AD ConnectorのVPCピアリング・SG設定・作成</a><a href="workspaces-provisioning-gpo.html">WorkSpaces Personalの構築・接続</a><a href="workspaces-target-ou.html">WorkSpaces用ターゲットOUの作成・権限委任</a><a href="workspaces-gpo.html" class="active" aria-current="page">WorkSpaces用GPOの作成・適用・運用</a><a href="workspaces-image-bundle.html">WorkSpacesカスタムイメージ・バンドルの作成・共有</a><a href="workspaces-systems-manager.html">Systems Manager環境構築</a><a href="workspaces-patch-manager.html">Patch Managerの設定</a><a href="workspaces-patch-operations.html">Patch Managerの実行・結果確認・運用</a><a href="workspaces-cost-optimizer.html">Cost Optimizerの構築・設定</a><a href="workspaces-cost-optimizer-dry-run.html">Cost OptimizerのDry Run解除</a><a href="workspaces-cost-optimizer-schedule.html">Cost Optimizerの実行スケジュール設定・変更</a><a href="workspaces-cost-optimizer-reports.html">Cost Optimizerのレポート・監視</a><a href="workspaces-cloudwatch-monitoring.html">CloudWatchのEC2・Windows OS監視とSNS通知</a><a href="workspaces-cloudwatch-workspaces.html">CloudWatchのWorkSpaces監視・ダッシュボード</a></div></details>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">◈</span>Terraform</p>
+      <a href="terraform.html">Terraform 概要</a>
+      <a href="hcp-terraform.html">HCP Terraform（Terraform Cloud）</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">☁︎</span>AWS</p>
+      <a href="cloudformation.html">CloudFormation 運用手順集</a>
+      <a href="aws-cli.html">AWS CLI 特殊対応</a>
+      <a href="aws-cli-reference.html">AWS CLI コマンドリファレンス</a>
+      <a href="eventbridge-scheduler.html">EventBridge Scheduler</a>
+      <a href="aws-directory-service.html">AWS Directory Service 運用手順</a>
+      <a href="amazon-workspaces.html">Amazon WorkSpaces</a>
+      <a href="amazon-ses.html">Amazon SES SMTPリレー</a>
+      <a href="amazon-ses-monitoring.html">Amazon SES 配信監視</a>
+      <a href="amazon-rds-blue-green.html">Amazon RDS Blue/Green Deployments</a>
+      <a href="apache-acm-certificate-update.html">証明書更新（ACMエクスポート）</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">⚙︎</span>OS／ミドルウェア</p>
+      <a href="rhel9.html">Red Hat Enterprise Linux 9</a>
+      <a href="rhel10.html">Red Hat Enterprise Linux 10</a>
+      <a href="amazon-linux-2023.html">Amazon Linux 2023</a>
+      <a href="windows-server-2022.html">Windows Server 2022</a>
+      <a href="windows-server-2025.html">Windows Server 2025</a>
+      <a href="windows-server-2016-upgrade.html">Windows Server 2016 インプレースアップグレード</a>
+      <a href="storage.html">ストレージ管理</a>
+      <a href="apache.html">Apache</a>
+      <a href="apache-self-signed-ssl-termination.html">Apache SSL終端（自己署名証明書）</a>
+      <a href="redis.html">Redis（KVS）</a>
+      <a href="nfs.html">NFS</a>
+      <a href="samba.html">Samba</a>
+      <a href="mariadb.html">MariaDB</a>
+      <a href="postgresql.html">PostgreSQL</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">▤</span>リファレンス</p>
+      <a href="../writing-style-guide.html">[GitHub Pages] 記法・テンプレート</a>
+      <a href="troubleshooting.html">障害切り分けチェックリスト</a>
+      <a href="eol.html">EOL / ライフサイクル一覧表</a>
+    </aside>
+    <main class="content workspaces-skill-transfer-guide"><nav class="breadcrumb" aria-label="Breadcrumb"><a href="../">Home</a><span>トピック</span></nav><h1>WorkSpaces用GPOの作成・適用・運用</h1><section id="workspacesGpo" class="procedure-document">
+
+<span id="8-amazon-workspaces-gpo作成-適用-運用手順書" class="legacy-heading-anchor" aria-hidden="true"></span>
+<h2 id="仕様-3">仕様</h2>
+<h3 id="構成-動作-3">構成・動作</h3>
+<ul>
+<li>WorkSpaces固有設定を<code class="inline-code">Default Domain Policy</code>へ追加しない</li>
+<li>お客様管理OU<code class="inline-code">ad</code>配下に、お客様作成GPOをリンクする</li>
+<li>GPO本体の既存設定とリンク範囲を確認した後に対象OUへ直接リンクする</li>
+<li>適用だけを止める場合は、GPO本体を残してリンクを無効化または削除する</li>
+<li>GPO本体を削除する場合は、お客様作成GPOだけを対象にし、バックアップと全リンク先を確認する</li>
+<li>AWSが作成・管理するGPOを変更、削除またはリンク解除しない</li>
+</ul>
+<div class="guide-table-scroll"><table class="guide-table"><colgroup><col style="width:24%"><col style="width:38%"><col style="width:38%"></colgroup>
+<thead>
+<tr>
+<th>GPO</th>
+<th>用途</th>
+<th>最終状態</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code class="inline-code">Amazon WorkSpaces DCV Policy</code></td>
+<td>お客様が作成・管理するDCV固有設定</td>
+<td>WorkSpaces OUへ直接リンクして継続利用</td>
+</tr>
+<tr>
+<td><code class="inline-code">WorkSpaces-Computer-Policy</code></td>
+<td>GPO管理操作の確認</td>
+<td>リンク・順序変更・削除を確認後に削除</td>
+</tr>
+<tr>
+<td><code class="inline-code">WorkSpaces-User-Policy</code></td>
+<td>利用者向け設定</td>
+<td>ユーザーOUまたはループバック設計後に別途作成</td>
+</tr>
+</tbody></table></div>
+<p>Windows WorkSpacesの管理テンプレート、適用できる設定および注意事項は<a href="https://docs.aws.amazon.com/ja_jp/workspaces/latest/adminguide/group_policy.html">WorkSpaces PersonalでWindows WorkSpacesを管理する</a>を参照してください。</p>
+<p><code class="inline-code">Amazon WorkSpaces DCV Policy</code>はAWS Managed Microsoft ADの作成時に自動作成されるGPOではありません。本手順でお客様が作成し、管理するGPOです。既に存在する場合は新規作成せず、GPO名、設定、所有者、全リンク先および変更申請を照合してから使用します。</p>
+<h3 id="管理範囲-3">管理範囲</h3>
+<p>コンピューター設定はWorkSpaceのコンピューターオブジェクトが所属する<code class="inline-code">ad\Computers\WorkSpaces</code>へリンクします。ユーザー設定は利用者のユーザーオブジェクトが所属するOUへリンクします。WorkSpaces利用者だけに限定する場合は、専用ユーザーOU、セキュリティフィルター、または設計済みのループバック処理を使用します。</p>
+<p>WorkSpacesコンピューターOUへリンクするGPOは、ドメインユーザーのパスワード有効期限を変更するためのGPOではありません。ドメインの既定パスワードポリシーと、対象ユーザーへ割り当てたきめ細かなパスワードポリシーを別に管理します。</p>
+<h3 id="制約事項-3">制約事項</h3>
+<p>同じOUのリンク順序は1が最優先です。継承・強制・フィルターも適用結果に影響するため、代表WorkSpaceで確認します。検証用GPOの作成・順序変更・削除は任意の運用確認です。</p>
+<h2 id="構築作業-3">構築作業</h2>
+<h3 id="1-dcv管理テンプレートを中央ストアへ配置する">1. DCV管理テンプレートを中央ストアへ配置する</h3>
+<p>中央ストアは次のパスです。</p>
+<div class="code"><div class="code-header"><span>text</span><button class="copy" type="button">Copy</button></div><pre><code>\\ad.example.com\SYSVOL\ad.example.com\Policies\PolicyDefinitions</code></pre></div>
+<p>既に<code class="inline-code">PolicyDefinitions</code>がある場合は、フォルダー全体を作り直したり、ローカルのフォルダー一式で上書きしたりしません。対象ファイルだけを版管理して追加します。</p>
+<figure class="screenshot-wide aws-console-identity"><figcaption>図1　PolicyDefinitions存在確認</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/023-policydefinitions中央ストアの存在確認.png" alt="PolicyDefinitions中央ストアの存在確認" width="1920" height="1102" loading="lazy"></div></figure>
+
+
+
+<p>パイロットWorkSpaceから<code class="inline-code">wsp.admx</code>を次へコピーします。</p>
+<div class="code"><div class="code-header"><span>text</span><button class="copy" type="button">Copy</button></div><pre><code>コピー元：C:\Program Files\Amazon\WSP\wsp.admx
+コピー先：\\ad.example.com\SYSVOL\ad.example.com\Policies\PolicyDefinitions\wsp.admx</code></pre></div>
+<figure class="screenshot-wide aws-console-identity"><figcaption>図2　wsp_admx配置</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/024-wsp-admxの配置完了.png" alt="wsp.admxの配置完了" width="1920" height="1102" loading="lazy"></div></figure>
+
+
+
+<p><code class="inline-code">PolicyDefinitions</code>が未作成の場合は、中央ストアで使用するWindows用テンプレート一式を準備してから作成します。既存ストアがある場合は対象のDCVファイルだけを追加・更新します。</p>
+<p><code class="inline-code">PolicyDefinitions</code>配下に言語フォルダー<code class="inline-code">en-US</code>があることを確認します。存在しない場合は同名のフォルダーを作成します。</p>
+<figure class="screenshot-wide aws-console-identity"><figcaption>図3　en-USフォルダー存在確認</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/025-en-usフォルダーの存在確認.png" alt="en-USフォルダーの存在確認" width="1920" height="1102" loading="lazy"></div></figure>
+
+
+
+<p><code class="inline-code">wsp.adml</code>を次へコピーします。</p>
+<div class="code"><div class="code-header"><span>text</span><button class="copy" type="button">Copy</button></div><pre><code>コピー元：C:\Program Files\Amazon\WSP\wsp.adml
+コピー先：\\ad.example.com\SYSVOL\ad.example.com\Policies\PolicyDefinitions\en-US\wsp.adml</code></pre></div>
+<figure class="screenshot-wide aws-console-identity"><figcaption>図4　wsp_adml配置</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/026-wsp-admlの配置完了.png" alt="wsp.admlの配置完了" width="1920" height="1102" loading="lazy"></div></figure>
+
+
+
+<div class="callout callout-warning"><p><strong>⚠️ 注意：中央ストア全体を置換しない</strong></p>
+<p>中央ストアは同一ドメインのGPMC利用者が共有します。既存ファイルを削除せず、追加するファイルの取得元、更新日時およびバージョンを確認します。</p>
+</div>
+<p>中央ストアの準備は<a href="https://learn.microsoft.com/ja-jp/troubleshoot/windows-client/group-policy/create-and-manage-central-store">グループポリシー管理用テンプレートの中央ストア</a>を参照してください。</p>
+<h3 id="2-dcv用gpo本体を準備する">2. DCV用GPO本体を準備する</h3>
+<ol>
+<li>GPMCで対象ドメインの「グループポリシーオブジェクト」を開き、<code class="inline-code">Amazon WorkSpaces DCV Policy</code>の有無を確認します。</li>
+<li>既に存在する場合は、GPOの「スコープ」と「設定」を開き、全リンク先、セキュリティフィルター、WMIフィルターおよび既存設定を確認します。別用途の同名GPOやAWS管理GPOとして扱われている場合は操作を中止します。</li>
+<li>存在しない場合は「グループポリシーオブジェクト」を右クリックし、「新規」を選択します。</li>
+<li>名前へ<code class="inline-code">Amazon WorkSpaces DCV Policy</code>を入力し、「ソース スターターGPO」は「なし」のまま作成します。</li>
+</ol>
+<figure class="screenshot-wide"><figcaption>図5　DCV用GPO名の入力</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/027-dcv用gpo名の入力.png" alt="DCV用GPO名の入力" width="451" height="206" loading="lazy"></div></figure>
+
+
+
+<p>本図は名前を入力する画面です。直前の手順では「グループポリシーオブジェクト」から「新規」を選択し、GPO本体を作成します。</p>
+<ol start="5">
+<li>作成直後はリンク先がなく、設定が未構成となっていることを確認します。後続の「DCV用GPOをWorkSpaces OUへリンクする」でリンク先を設定し、「DCV設定を反映する」で設定します。</li>
+</ol>
+<div class="callout callout-warning"><p><strong>⚠️ 注意：既存の同名GPOを上書きしない</strong></p>
+<p>同名GPOが存在する場合は、そのGPOを本手順で新規作成しません。既存のリンク先や設定が本書と異なる場合は、影響範囲を確認して変更内容を再承認します。</p>
+</div>
+<h3 id="3-dcv管理テンプレートの表示を確認する">3. DCV管理テンプレートの表示を確認する</h3>
+<p><code class="inline-code">Amazon WorkSpaces DCV Policy</code>を編集し、次を展開します。</p>
+<div class="code"><div class="code-header"><span>text</span><button class="copy" type="button">Copy</button></div><pre><code>コンピューターの構成
+└─ ポリシー
+   └─ 管理用テンプレート
+      └─ Amazon
+         └─ WSP</code></pre></div>
+<p>AWS資料ではDCV、GPMCのテンプレート名ではWSPと表示される場合があります。<code class="inline-code">Amazon &gt; WSP</code>の設定一覧を確認します。</p>
+<figure class="screenshot-wide aws-console-identity"><figcaption>図6　DCVテンプレート表示確認</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/028-dcv管理テンプレートの表示確認.png" alt="DCV管理テンプレートの表示確認" width="1920" height="1102" loading="lazy"></div></figure>
+
+
+
+<p>図6の全項目が「未構成」の場合、この画面で確認できるのはテンプレートの読み込みまでです。設定値の反映は後続の図15～17で確認します。</p>
+<h3 id="4-dcv用gpoをworkspaces-ouへリンクする">4. DCV用GPOをWorkSpaces OUへリンクする</h3>
+<p>最初に<code class="inline-code">WorkSpaces</code> OUへ対象GPOを直接リンクし、リンクが有効となっていることを確認します。親OU<code class="inline-code">ad</code>側に同じGPOのリンクが存在する場合だけ、他の子OUへの影響を確認したうえで親OU側のリンクを削除します。</p>
+<h4 id="workspaces-ouへ直接リンクする">WorkSpaces OUへ直接リンクする</h4>
+<ol>
+<li>GPMCで<code class="inline-code">ad\Computers\WorkSpaces</code>を右クリックします。</li>
+<li>「既存のGPOのリンク」を選択します。</li>
+</ol>
+<figure class="screenshot-wide"><figcaption>図7　WorkSpaces_OU既存GPOリンクメニュー</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/029-workspaces-ouの既存gpoリンクメニュー.png" alt="WorkSpaces OUの既存GPOリンクメニュー" width="1362" height="718" loading="lazy"></div></figure>
+
+
+
+<ol start="3">
+<li><code class="inline-code">Amazon WorkSpaces DCV Policy</code>を選択して「OK」を選択します。</li>
+</ol>
+<figure class="screenshot-wide"><figcaption>図8　既存GPO選択</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/030-amazon-workspaces-dcv-policyの選択.png" alt="Amazon WorkSpaces DCV Policyの選択" width="526" height="470" loading="lazy"></div></figure>
+
+
+
+<ol start="4">
+<li>WorkSpaces OUのリンク一覧で、「リンクの有効化」が「はい」、「強制」が「いいえ」、WMIフィルターが「なし」となっていることを確認します。</li>
+<li>セキュリティフィルターは<code class="inline-code">Authenticated Users</code>とします。</li>
+</ol>
+<h4 id="親ouのリンクだけを削除する">親OUのリンクだけを削除する</h4>
+<ol>
+<li>WorkSpaces OU側の直接リンクが有効となっていることを確認します。</li>
+<li>親OU<code class="inline-code">ad</code>に同じGPOの直接リンクがあるかを確認します。リンクがない場合は削除操作を行わず、「GPO本体のスコープを確認する」へ進みます。</li>
+<li>親OUにリンクがある場合は、<code class="inline-code">ad</code>配下の子OUとコンピューターを確認し、WorkSpaces OU以外でこのGPOを継承している対象がないこと、または継承を止めても影響がないことを確認します。ほかの子OUや端末がこのGPOを必要としている場合は、親OUのリンクを削除せず、対象別のリンク設計を再検討します。</li>
+<li>影響がないことを確認できた場合だけ、親OU<code class="inline-code">ad</code>直下に表示される<code class="inline-code">Amazon WorkSpaces DCV Policy</code>のリンクを右クリックし、「削除」を選択します。</li>
+</ol>
+<figure class="screenshot-wide"><figcaption>図9　親OUリンク削除</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/031-親ou側gpoリンクの削除.png" alt="親OU側GPOリンクの削除" width="1358" height="721" loading="lazy"></div></figure>
+
+
+
+<ol start="5">
+<li>確認メッセージに「この操作ではGPO自体は削除されません」と表示されていることを確認して「OK」を選択します。</li>
+</ol>
+<figure class="screenshot-wide"><figcaption>図10　リンクのみ削除確認</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/032-gpo本体を削除しない確認.png" alt="GPO本体を削除しない確認" width="281" height="153" loading="lazy"></div></figure>
+
+
+
+<ol start="6">
+<li>GPO本体が残り、WorkSpaces OUに同GPOの直接リンクが1件あることを確認します。</li>
+</ol>
+<figure class="screenshot-wide"><figcaption>図11　WorkSpaces_OU直接リンク確認</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/033-workspaces-ouへの直接リンク確認.png" alt="WorkSpaces OUへの直接リンク確認" width="1359" height="725" loading="lazy"></div></figure>
+
+
+
+<p>「リンクの有効化」がチェック済みの場合は押し直しません。押すとリンクが無効になります。リンクの削除とGPO本体の削除は別の操作です。</p>
+<h4 id="gpo本体のスコープを確認する">GPO本体のスコープを確認する</h4>
+<ol>
+<li>「グループポリシーオブジェクト」配下の<code class="inline-code">Amazon WorkSpaces DCV Policy</code>を選択します。</li>
+<li>「スコープ」を開き、リンク先が次の1件だけとなっていることを確認します。</li>
+</ol>
+<div class="code"><div class="code-header"><span>text</span><button class="copy" type="button">Copy</button></div><pre><code>ad.example.com/ad/Computers/WorkSpaces</code></pre></div>
+<ol start="3">
+<li>強制なし、リンク有効、<code class="inline-code">Authenticated Users</code>、WMIフィルターなしを確認します。</li>
+</ol>
+<figure class="screenshot-wide"><figcaption>図12　専用GPOリンク範囲確認</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/034-専用gpoの最終リンク範囲.png" alt="専用GPOの最終リンク範囲" width="1364" height="724" loading="lazy"></div></figure>
+
+
+
+<p>詳細レポートでも、GPO本体、リンク先とセキュリティフィルターを照合できます。</p>
+<figure class="screenshot-wide"><figcaption>図13　DCV用GPO本体の詳細レポートでリンク先とフィルターを確認</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/035-図13-dcv用gpo本体の詳細レポートでリンク先とフィルターを確認.png" alt="図13 DCV用GPO本体の詳細レポートでリンク先とフィルターを確認" width="1409" height="1023" loading="lazy"></div></figure>
+
+
+
+<p>図14はドメインルートへ直接リンクされたGPOとリンク順序の確認例です。WorkSpaces専用GPOのリンク先は、WorkSpaces OUで確認します。</p>
+<figure class="screenshot-wide"><figcaption>図14　ドメインルートへ直接リンクされたGPOとリンク順序</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/036-図14-ドメインルートへ直接リンクされたgpoとリンク順序.png" alt="図14 ドメインルートへ直接リンクされたGPOとリンク順序" width="1363" height="713" loading="lazy"></div></figure>
+
+
+
+<p><code class="inline-code">Default Domain Policy</code>へ<code class="inline-code">Amazon\WSP</code>設定を追加していないことも確認します。</p>
+<h3 id="5-dcv設定を反映する">5. DCV設定を反映する</h3>
+<p><code class="inline-code">Amazon WorkSpaces DCV Policy</code>を編集し、<code class="inline-code">Computer Configuration\Policies\Administrative Templates\Amazon\WSP</code>の<code class="inline-code">Configure clipboard redirection</code>を開きます。</p>
+<ol>
+<li>「有効」を選択します。</li>
+<li>オプションを<code class="inline-code">Copy and Paste</code>にします。</li>
+<li>「適用」、「OK」の順に選択します。</li>
+</ol>
+<figure class="screenshot-wide"><figcaption>図15　クリップボードリダイレクト設定</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/037-クリップボードリダイレクト設定.png" alt="クリップボードリダイレクト設定" width="685" height="635" loading="lazy"></div></figure>
+
+
+
+<p>設定一覧で、<code class="inline-code">Configure clipboard redirection</code>だけが「有効」となっていることを確認します。</p>
+<figure class="screenshot-wide"><figcaption>図16　クリップボードリダイレクト有効確認</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/038-クリップボードリダイレクト有効化確認.png" alt="クリップボードリダイレクト有効化確認" width="1503" height="904" loading="lazy"></div></figure>
+
+
+
+<p>GPO本体の「設定」で、<code class="inline-code">Configure clipboard redirection</code>が「有効」、<code class="inline-code">Clipboard redirection option</code>が<code class="inline-code">Copy and Paste</code>となっていることを確認します。</p>
+<figure class="screenshot-wide"><figcaption>図17　GPO設定タブ・最終値確認</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/039-gpo設定タブの最終値確認.png" alt="GPO設定タブの最終値確認" width="1408" height="820" loading="lazy"></div></figure>
+
+
+
+<p><code class="inline-code">Copy and Paste</code>では双方向のコピー＆ペーストを許可します。GPMCの設定値、<code class="inline-code">gpresult</code>の適用GPO名と、接続後のコピー＆ペースト動作を確認します。</p>
+<h3 id="6-gpo適用結果を確認する">6. GPO適用結果を確認する</h3>
+<p>代表WorkSpaceで管理者PowerShellまたはコマンドプロンプトを開きます。</p>
+<div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>gpupdate /force
+gpresult /scope computer /r</code></pre></div>
+<p><code class="inline-code">gpupdate</code>でコンピューターとユーザーポリシーの更新成功を確認します。図18では、コンピューターのOUが<code class="inline-code">ad\Computers\WorkSpaces</code>で、適用GPOに<code class="inline-code">Amazon WorkSpaces DCV Policy</code>があり、検証用の<code class="inline-code">WorkSpaces-Computer-Policy</code>がないことを確認します。</p>
+<figure class="screenshot-wide"><figcaption>図18　gpresultによるGPO適用確認</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/040-gpresultによるgpo適用確認.png" alt="gpresultによるGPO適用確認" width="1040" height="893" loading="lazy"></div></figure>
+
+
+
+<p>適用されない場合は、<code class="inline-code">gpresult</code>の拒否理由とイベントビューアーの<code class="inline-code">Microsoft\Windows\GroupPolicy\Operational</code>を確認します。Active DirectoryとSYSVOLのレプリケーション待ち、セキュリティフィルター、WMIフィルター、空のGPOおよびアクセス拒否を切り分けます。</p>
+<p>多数のWorkSpacesは、通常のグループポリシー更新で順次反映されます。<code class="inline-code">gpupdate /force</code>は代表端末での即時確認や障害調査に使用し、全台へ手動で繰り返し実行しません。</p>
+<p>DCV設定の動作確認はポリシー更新後にセッションを終了して再接続してから行います。必要に応じて作業時間内にWorkSpaceを再起動します。</p>
+<h2 id="運用作業-3">運用作業</h2>
+<h3 id="1-検証用gpoで管理操作を確認する-任意">1. 検証用GPOで管理操作を確認する（任意）</h3>
+<div class="callout callout-info"><p><strong>ℹ️ 情報：検証用GPOを使用する場合</strong></p>
+<p>以下はGPO管理操作を確認する場合だけ実施します。空の<code class="inline-code">WorkSpaces-Computer-Policy</code>を作成し、リンク・順序変更・削除まで完了します。通常のDCV用GPO構築だけの場合は省略できます。</p>
+</div>
+<h4 id="検証用gpo本体の作成">検証用GPO本体の作成</h4>
+<p><code class="inline-code">WorkSpaces-Computer-Policy</code>は、GPO本体の作成、リンク、リンク順序変更、リンク解除および削除という管理操作を確認するための一時GPOです。設定値は追加しないため、ポリシーの機能適用を検証するGPOではありません。承認済みの作業時間内だけ使用し、本書の削除手順まで同じ作業で完了します。</p>
+<ol>
+<li><code class="inline-code">gpmc.msc</code>を起動します。</li>
+<li>対象ドメインの「グループポリシーオブジェクト」を右クリックし、「新規」を選択します。</li>
+</ol>
+<figure class="screenshot-wide"><figcaption>図19　GPO本体の新規作成メニュー</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/041-gpo本体の新規作成メニュー.png" alt="GPO本体の新規作成メニュー" width="1452" height="724" loading="lazy"></div></figure>
+
+
+
+<ol start="3">
+<li>GPO名へ<code class="inline-code">WorkSpaces-Computer-Policy</code>を入力します。</li>
+<li>「ソース スターターGPO」は「なし」のまま「OK」を選択します。</li>
+</ol>
+<figure class="screenshot-wide"><figcaption>図20　GPO名入力</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/042-gpo名の入力.png" alt="GPO名の入力" width="448" height="202" loading="lazy"></div></figure>
+
+
+
+<ol start="5">
+<li>GPO本体が作成され、「スコープ」のリンク一覧が空となっていることを確認します。</li>
+</ol>
+<figure class="screenshot-wide"><figcaption>図21　GPO本体作成完了</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/043-gpo本体の作成完了.png" alt="GPO本体の作成完了" width="1455" height="722" loading="lazy"></div></figure>
+
+
+
+<p>本体作成時は「グループポリシーオブジェクト」から「新規」を使用します。GPOの作成とOUへのリンクを分け、後続手順でリンク先を明示的に選択します。</p>
+<h4 id="検証用gpoのリンク">検証用GPOのリンク</h4>
+<ol>
+<li><code class="inline-code">WorkSpaces</code> OUを右クリックし、「既存のGPOのリンク」を選択します。</li>
+</ol>
+<figure class="screenshot-wide"><figcaption>図22　WorkSpaces-Computer-Policyリンクメニュー</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/044-検証用gpoのリンクメニュー.png" alt="検証用GPOのリンクメニュー" width="1360" height="722" loading="lazy"></div></figure>
+
+
+
+<ol start="2">
+<li><code class="inline-code">WorkSpaces-Computer-Policy</code>を選択して「OK」を選択します。</li>
+</ol>
+<figure class="screenshot-wide"><figcaption>図23　WorkSpaces-Computer-Policyリンク対象選択</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/045-検証用gpoの選択.png" alt="検証用GPOの選択" width="525" height="469" loading="lazy"></div></figure>
+
+
+
+<h4 id="gpoの適用順序変更">GPOの適用順序変更</h4>
+<p>同じOUに複数GPOをリンクした場合は、競合する設定がないことを確認してから順序を変更します。</p>
+<ol>
+<li><code class="inline-code">WorkSpaces</code> OUのリンク一覧で、<code class="inline-code">Amazon WorkSpaces DCV Policy</code>が順序1、<code class="inline-code">WorkSpaces-Computer-Policy</code>が順序2となっていることを確認します。</li>
+</ol>
+<figure class="screenshot-wide"><figcaption>図24　GPOリンク完了・適用順序変更前</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/046-gpo適用順序の変更前.png" alt="GPO適用順序の変更前" width="1596" height="713" loading="lazy"></div></figure>
+
+
+
+<ol start="2">
+<li><code class="inline-code">WorkSpaces-Computer-Policy</code>を選択し、「リンクを上に移動」を選択します。</li>
+</ol>
+<figure class="screenshot-wide"><figcaption>図25　GPO適用順序変更操作</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/047-gpo適用順序の変更操作.png" alt="GPO適用順序の変更操作" width="1596" height="712" loading="lazy"></div></figure>
+
+
+
+<ol start="3">
+<li><code class="inline-code">WorkSpaces-Computer-Policy</code>が順序1、<code class="inline-code">Amazon WorkSpaces DCV Policy</code>が順序2になったことを確認します。</li>
+</ol>
+<figure class="screenshot-wide"><figcaption>図26　GPO適用順序変更完了</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/048-gpo適用順序の変更完了.png" alt="GPO適用順序の変更完了" width="1595" height="714" loading="lazy"></div></figure>
+
+
+
+<p>同じコンテナーにリンクされたGPOは、リンク順序1が最も高い優先度です。ただし、実効値はサイト、ドメイン、OU、継承、強制、セキュリティフィルターおよびWMIフィルターの影響を受けるため、代表端末の<code class="inline-code">gpresult</code>で確認します。</p>
+<h4 id="検証用gpoの削除">検証用GPOの削除</h4>
+<p>本節で削除するのは<code class="inline-code">WorkSpaces-Computer-Policy</code>だけです。AWSが作成・管理するGPOと、継続利用する<code class="inline-code">Amazon WorkSpaces DCV Policy</code>は削除しません。</p>
+<ol>
+<li><code class="inline-code">WorkSpaces-Computer-Policy</code>の全リンク先とセキュリティフィルターを確認します。</li>
+<li>必要な保持期間に従ってGPOをバックアップします。</li>
+<li>GPO本体を右クリックして「削除」を選択します。</li>
+</ol>
+<figure class="screenshot-wide"><figcaption>図27　GPO本体削除メニュー</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/049-gpo本体の削除メニュー.png" alt="GPO本体の削除メニュー" width="1599" height="814" loading="lazy"></div></figure>
+
+
+
+<ol start="4">
+<li>確認メッセージに、GPO本体とドメイン内のリンクが削除される旨が表示されていることを確認し、「はい」を選択します。</li>
+</ol>
+<figure class="screenshot-wide"><figcaption>図28　GPO本体・ドメイン内リンク削除確認</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/050-gpo本体とリンクの削除確認.png" alt="GPO本体とリンクの削除確認" width="353" height="146" loading="lazy"></div></figure>
+
+
+
+<ol start="5">
+<li>「グループポリシーオブジェクト」一覧から検証用GPOが消えたことを確認します。</li>
+</ol>
+<figure class="screenshot-wide"><figcaption>図29　GPO本体削除完了</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/051-gpo本体の削除完了.png" alt="GPO本体の削除完了" width="1599" height="714" loading="lazy"></div></figure>
+
+
+
+<ol start="6">
+<li>WorkSpaces OUのリンク一覧に<code class="inline-code">Amazon WorkSpaces DCV Policy</code>だけが残っていることを確認します。</li>
+</ol>
+<figure class="screenshot-wide"><figcaption>図30　GPO削除後リンク確認</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/052-gpo削除後のリンク確認.png" alt="GPO削除後のリンク確認" width="1360" height="711" loading="lazy"></div></figure>
+
+
+
+<p>特定OUへの適用だけを止める場合は、GPO本体を削除せずリンクを削除します。GPO本体を誤って削除した場合は追加変更を停止し、バックアップから復元して必要なOUへ再リンクします。</p>
+<h3 id="2-既定gpoのスコープと継承を参照する">2. 既定GPOのスコープと継承を参照する</h3>
+<p>GPMCで<code class="inline-code">Default Domain Policy</code>を選択し、「スコープ」を開きます。リンク先、リンクの有効化、強制、セキュリティフィルターおよびWMIフィルターを参照します。AWSが管理するGPOの設定やリンクは変更しません。</p>
+<figure class="screenshot-wide"><figcaption>図31　Default Domain Policyのスコープ確認</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/053-default-domain-policyのスコープ確認.png" alt="Default Domain Policyのスコープ確認" width="1920" height="1152" loading="lazy"></div></figure>
+
+
+
+<p>取得時の画面では、ドメインと<code class="inline-code">AWS Reserved</code>へのリンク、<code class="inline-code">Authenticated Users</code>のセキュリティフィルター、WMIフィルター「なし」が表示されています。これはスコープの確認例です。個々の端末への適用結果は、前節の<code class="inline-code">gpresult</code>で確認します。</p>
+<p>GPMCで<code class="inline-code">Domain Controllers</code>を選択すると、AWS管理GPOと時刻同期GPOを参照できます。設定やリンクは変更しません。</p>
+<figure class="screenshot-wide"><figcaption>図32　DC用OUにリンクされたGPO</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/054-dc用ouのgpo.png" alt="DC用OUのGPO" width="1920" height="1152" loading="lazy"></div></figure>
+
+
+
+<p><code class="inline-code">ad</code>の「グループポリシーの継承」では、<code class="inline-code">Default Domain Policy</code>と<code class="inline-code">ServerAdmins</code>の継承を確認できます。WorkSpacesの実効設定はWorkSpaces OUと対象端末で確認します。</p>
+<figure class="screenshot-wide"><figcaption>図33　管理対象OUのGPO継承</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/055-管理対象ouのgpo継承.png" alt="管理対象OUのGPO継承" width="1920" height="1152" loading="lazy"></div></figure>
+
+
+
+<h3 id="3-設定を切り戻す">3. 設定を切り戻す</h3>
+<p>新規に追加した設定値だけを戻す場合は、対象設定を「未構成」へ戻し、GPMCの「設定」、<code class="inline-code">gpupdate</code>および<code class="inline-code">gpresult</code>で反映を確認します。変更前に設定値が存在した場合は、その値へ戻します。適用だけを止める場合は、WorkSpaces OUのリンクを無効化または削除し、GPO本体を保持します。</p>
+</section></main>
+  </div>
+  <script src="../assets/app.js?v=20260908-skill-transfer1"></script>
+</body>
+</html>

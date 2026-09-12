@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AD Connector用サービスアカウント・権限委任 | Documentation</title>
+  <meta name="description" content="AD Connector用サービスアカウント・権限委任の操作手順と設定例">
+  <link rel="stylesheet" href="../assets/styles.css?v=20260908-skill-transfer1">
+<link rel="stylesheet" href="../assets/workspaces-guides.css?v=20260912-split">
+<script src="../assets/workspaces-legacy-routes.js?v=20260912-split"></script>
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="../"><img src="../assets/icon.jpg" alt="Documentation icon"><span>Documentation</span></a>
+    <div class="header-actions">
+      <button class="icon-button theme-toggle" type="button" title="テーマを切り替え" aria-label="テーマを切り替え">☀</button>
+      <nav class="nav" aria-label="Global navigation">
+        <a href="../"><span class="nav-icon" aria-hidden="true">⌂</span>Home</a>
+        <a href="https://github.com/hsmts2"><span class="nav-icon" aria-hidden="true">▦</span>Repositories</a>
+        <a href="https://github.com/hsmts2/Documentation"><span class="nav-icon" aria-hidden="true">◆</span>GitHub</a>
+      </nav>
+    </div>
+  </header>
+  <div class="layout layout-wide">
+    <aside id="site-sidebar" class="sidebar" aria-label="Page list">
+      <div class="sidebar-heading">
+        <button class="icon-button sidebar-toggle sidebar-toggle-inline" type="button" aria-controls="site-sidebar" aria-expanded="true" title="ナビゲーションを閉じる" aria-label="ナビゲーションを閉じる">☰</button>
+      </div>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">✎</span>記事</p>
+      <a href="cloudflare-private-site.html">Private GitHubリポジトリをCloudflare Workersで認証付き公開してみた</a>
+      <details class="sidebar-nested-menu" open><summary>マルチVPC・閉域VDI基盤案件</summary><div class="sidebar-subnav"><a href="workspaces-skill-transfer.html">全体構築・運用順序</a><a href="workspaces-managed-ad.html">AWS Managed Microsoft ADの構築</a><a href="workspaces-managed-ad-users.html">AWS Managed Microsoft ADのユーザー・グループ管理</a><a href="workspaces-management-ec2.html">管理用EC2の起動・接続・AD管理</a><a href="workspaces-ad-connector-account.html" class="active" aria-current="page">AD Connector用サービスアカウント・権限委任</a><a href="workspaces-ad-connector.html">AD ConnectorのVPCピアリング・SG設定・作成</a><a href="workspaces-provisioning-gpo.html">WorkSpaces Personalの構築・接続</a><a href="workspaces-target-ou.html">WorkSpaces用ターゲットOUの作成・権限委任</a><a href="workspaces-gpo.html">WorkSpaces用GPOの作成・適用・運用</a><a href="workspaces-image-bundle.html">WorkSpacesカスタムイメージ・バンドルの作成・共有</a><a href="workspaces-systems-manager.html">Systems Manager環境構築</a><a href="workspaces-patch-manager.html">Patch Managerの設定</a><a href="workspaces-patch-operations.html">Patch Managerの実行・結果確認・運用</a><a href="workspaces-cost-optimizer.html">Cost Optimizerの構築・設定</a><a href="workspaces-cost-optimizer-dry-run.html">Cost OptimizerのDry Run解除</a><a href="workspaces-cost-optimizer-schedule.html">Cost Optimizerの実行スケジュール設定・変更</a><a href="workspaces-cost-optimizer-reports.html">Cost Optimizerのレポート・監視</a><a href="workspaces-cloudwatch-monitoring.html">CloudWatchのEC2・Windows OS監視とSNS通知</a><a href="workspaces-cloudwatch-workspaces.html">CloudWatchのWorkSpaces監視・ダッシュボード</a></div></details>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">◈</span>Terraform</p>
+      <a href="terraform.html">Terraform 概要</a>
+      <a href="hcp-terraform.html">HCP Terraform（Terraform Cloud）</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">☁︎</span>AWS</p>
+      <a href="cloudformation.html">CloudFormation 運用手順集</a>
+      <a href="aws-cli.html">AWS CLI 特殊対応</a>
+      <a href="aws-cli-reference.html">AWS CLI コマンドリファレンス</a>
+      <a href="eventbridge-scheduler.html">EventBridge Scheduler</a>
+      <a href="aws-directory-service.html">AWS Directory Service 運用手順</a>
+      <a href="amazon-workspaces.html">Amazon WorkSpaces</a>
+      <a href="amazon-ses.html">Amazon SES SMTPリレー</a>
+      <a href="amazon-ses-monitoring.html">Amazon SES 配信監視</a>
+      <a href="amazon-rds-blue-green.html">Amazon RDS Blue/Green Deployments</a>
+      <a href="apache-acm-certificate-update.html">証明書更新（ACMエクスポート）</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">⚙︎</span>OS／ミドルウェア</p>
+      <a href="rhel9.html">Red Hat Enterprise Linux 9</a>
+      <a href="rhel10.html">Red Hat Enterprise Linux 10</a>
+      <a href="amazon-linux-2023.html">Amazon Linux 2023</a>
+      <a href="windows-server-2022.html">Windows Server 2022</a>
+      <a href="windows-server-2025.html">Windows Server 2025</a>
+      <a href="windows-server-2016-upgrade.html">Windows Server 2016 インプレースアップグレード</a>
+      <a href="storage.html">ストレージ管理</a>
+      <a href="apache.html">Apache</a>
+      <a href="apache-self-signed-ssl-termination.html">Apache SSL終端（自己署名証明書）</a>
+      <a href="redis.html">Redis（KVS）</a>
+      <a href="nfs.html">NFS</a>
+      <a href="samba.html">Samba</a>
+      <a href="mariadb.html">MariaDB</a>
+      <a href="postgresql.html">PostgreSQL</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">▤</span>リファレンス</p>
+      <a href="../writing-style-guide.html">[GitHub Pages] 記法・テンプレート</a>
+      <a href="troubleshooting.html">障害切り分けチェックリスト</a>
+      <a href="eol.html">EOL / ライフサイクル一覧表</a>
+    </aside>
+    <main class="content workspaces-skill-transfer-guide"><nav class="breadcrumb" aria-label="Breadcrumb"><a href="../">Home</a><span>トピック</span></nav><h1>AD Connector用サービスアカウント・権限委任</h1><section id="connectorDelegation" class="procedure-document">
+
+<span id="ad-connector用サービスアカウントの作成-権限委任-運用手順" class="legacy-heading-anchor" aria-hidden="true"></span>
+<h2 id="仕様">仕様</h2>
+<h3 id="構成-動作">構成・動作</h3>
+<div class="guide-table-scroll"><table class="guide-table"><colgroup><col style="width:30%"><col style="width:70%"></colgroup>
+<thead>
+<tr>
+<th>管理対象</th>
+<th>役割・運用上の扱い</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code class="inline-code">ADConnectorService</code></td>
+<td>AD Connectorへ登録する専用のADドメインユーザーです。人が通常作業で使用するユーザーとは分けます。</td>
+</tr>
+<tr>
+<td><code class="inline-code">Connectors</code></td>
+<td>権限委任に使用するグローバル／セキュリティグループです。サービスアカウントをメンバーとして追加します。</td>
+</tr>
+<tr>
+<td><code class="inline-code">ad\Users</code></td>
+<td>サービスアカウントと委任用グループを配置します。</td>
+</tr>
+<tr>
+<td><code class="inline-code">ad\Computers\WorkSpaces</code></td>
+<td>WorkSpacesのコンピューターオブジェクトを配置し、<code class="inline-code">Connectors</code>へ必要な権限を委任します。</td>
+</tr>
+</tbody></table></div>
+<p>AD Connectorは、登録したサービスアカウントを使用してユーザーとグループを読み取ります。WorkSpacesの利用には、コンピューターのドメイン参加とコンピューターオブジェクトの作成権限も必要です。本手順では、ユーザー名とパスワードを登録する専用の通常ユーザーを使用します。</p>
+<p><a href="https://docs.aws.amazon.com/ja_jp/directoryservice/latest/admin-guide/ad_connector_getting_started.html">AD Connectorの前提条件とサービスアカウントへの権限委任</a></p>
+<h3 id="管理範囲">管理範囲</h3>
+<p>本手順では、お客様管理OU内のサービスアカウント、グループおよびWorkSpaces専用OUを管理します。専用OUは自動作成されないため、未作成の場合は本手順で作成します。WorkSpacesの「ターゲットドメインと組織単位」には、権限委任先と同じOUを指定します。</p>
+<div class="callout callout-warning"><p><strong>⚠️ 注意：アカウントの配置先と権限委任先を分ける</strong></p>
+<p><code class="inline-code">Connectors</code>と<code class="inline-code">ADConnectorService</code>の配置先は<code class="inline-code">ad\Users</code>です。権限委任先は<code class="inline-code">ad\Computers\WorkSpaces</code>です。アカウントの配置先だけを見て、<code class="inline-code">Users</code>へ委任しないでください。</p>
+</div>
+<h3 id="制約事項">制約事項</h3>
+<ul>
+<li>サービスアカウントは、<code class="inline-code">Domain Users</code>と承認済みの<code class="inline-code">Connectors</code>へ所属させます。<code class="inline-code">Domain Admins</code>、<code class="inline-code">Enterprise Admins</code>、<code class="inline-code">AWS Delegated Administrators</code>などの高権限グループへ追加しません。</li>
+<li>サービスアカウントは有効かつ未ロックの状態を維持し、初回ログオン時のパスワード変更を要求しない設定にします。</li>
+<li>KerberosおよびLDAPによるネットワーク認証を妨げる設定を行いません。</li>
+<li>ドメインルート、<code class="inline-code">AWS Reserved</code>および<code class="inline-code">Domain Controllers</code>を本手順の委任先にしません。</li>
+</ul>
+<h2 id="構築作業">構築作業</h2>
+<h3 id="1-connectorsグループを作成する">1. <code class="inline-code">Connectors</code>グループを作成する</h3>
+<p>サービスアカウントへ権限を直接付与せず、委任用グループを介して管理できるようにします。</p>
+<ol>
+<li>ADUCを対象ドメインの管理資格情報で起動します。</li>
+<li><code class="inline-code">ad.example.com</code>を展開し、<code class="inline-code">ad</code>、<code class="inline-code">Users</code>の順に選択します。</li>
+<li><code class="inline-code">Users</code>を右クリックし、「新規作成」から「グループ」を選択します。</li>
+</ol>
+<figure class="screenshot-wide"><figcaption>図1　Connectorsグループ作成メニューの選択</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-ad-connector/001-connectorsグループ作成メニューの選択.png" alt="Connectorsグループ作成メニューの選択" width="1329" height="872" loading="lazy"></div></figure>
+
+
+
+<ol start="4">
+<li>次の値を入力します。</li>
+</ol>
+<div class="guide-table-scroll"><table class="guide-table"><colgroup><col style="width:30%"><col style="width:70%"></colgroup>
+<thead>
+<tr>
+<th>項目</th>
+<th>設定値</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>グループ名</td>
+<td><code class="inline-code">Connectors</code></td>
+</tr>
+<tr>
+<td>グループのスコープ</td>
+<td>グローバル</td>
+</tr>
+<tr>
+<td>グループの種類</td>
+<td>セキュリティ</td>
+</tr>
+</tbody></table></div>
+<figure class="screenshot-wide"><figcaption>図2　Connectorsグループの作成設定</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-ad-connector/002-connectorsグループの作成設定.png" alt="Connectorsグループの作成設定" width="509" height="432" loading="lazy"></div></figure>
+
+
+
+<ol start="5">
+<li>「OK」を選択します。</li>
+<li><code class="inline-code">Users</code>の一覧に、種類「セキュリティ グループ - グローバル」の<code class="inline-code">Connectors</code>が1件表示されることを確認します。</li>
+</ol>
+<figure class="screenshot-wide"><figcaption>図3　Connectorsグループの作成完了</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-ad-connector/003-connectorsグループの作成完了.png" alt="Connectorsグループの作成完了" width="1335" height="875" loading="lazy"></div></figure>
+
+
+
+<p>既存の同名グループがある場合は新規作成せず、スコープ、種類、用途および既存メンバーを確認します。誤って作成した場合は、メンバー、委任およびAD Connectorから使用されていないことを確認してから削除します。</p>
+<h3 id="2-サービスアカウントを作成する">2. サービスアカウントを作成する</h3>
+<p><strong>作成前の確認</strong></p>
+<div class="guide-table-scroll"><table class="guide-table"><colgroup><col style="width:30%"><col style="width:70%"></colgroup>
+<thead>
+<tr>
+<th>項目</th>
+<th>確認内容</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>ログオン名</td>
+<td>ディレクトリ内で一意で、命名規則に合致すること</td>
+</tr>
+<tr>
+<td>用途</td>
+<td>対象AD ConnectorとWorkSpacesの専用アカウントとして使用すること</td>
+</tr>
+<tr>
+<td>初期パスワード</td>
+<td>実効パスワードポリシーを満たすこと</td>
+</tr>
+<tr>
+<td>保管</td>
+<td>承認済みのシークレット保管先と管理者が決まっていること</td>
+</tr>
+<tr>
+<td>更新</td>
+<td>期限前の更新日、担当者および障害時の更新手順が決まっていること</td>
+</tr>
+</tbody></table></div>
+<ol>
+<li><code class="inline-code">ad\Users</code>を選択し、ツールバーの「現在のコンテナーに新しいユーザーを作成」を選択します。</li>
+</ol>
+<figure class="screenshot-wide"><figcaption>図4　AD Connector用サービスアカウントの作成開始</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-ad-connector/004-ad-connector用サービスアカウントの作成開始.png" alt="AD Connector用サービスアカウントの作成開始" width="1324" height="725" loading="lazy"></div></figure>
+
+
+
+<ol start="2">
+<li>次の値を入力します。</li>
+</ol>
+<div class="guide-table-scroll"><table class="guide-table"><colgroup><col style="width:30%"><col style="width:70%"></colgroup>
+<thead>
+<tr>
+<th>項目</th>
+<th>設定値</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>姓</td>
+<td><code class="inline-code">ADConnectorService</code></td>
+</tr>
+<tr>
+<td>名</td>
+<td><code class="inline-code">Service</code></td>
+</tr>
+<tr>
+<td>フルネーム</td>
+<td><code class="inline-code">ADConnectorService</code></td>
+</tr>
+<tr>
+<td>ユーザーログオン名</td>
+<td><code class="inline-code">ADConnectorService</code></td>
+</tr>
+<tr>
+<td>ユーザーログオン名（Windows 2000より前）</td>
+<td><code class="inline-code">ADConnectorService</code></td>
+</tr>
+</tbody></table></div>
+<ol start="3">
+<li>UPNが<code class="inline-code">ADConnectorService@ad.example.com</code>となり、個人ユーザーと誤認しない表示名になっていることを確認します。</li>
+</ol>
+<figure class="screenshot-wide"><figcaption>図5　サービスアカウントのユーザー情報入力</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-ad-connector/005-サービスアカウントのユーザー情報入力.png" alt="サービスアカウントのユーザー情報入力" width="507" height="430" loading="lazy"></div></figure>
+
+
+
+<ol start="4">
+<li>「次へ」を選択し、初期パスワードと確認用パスワードを入力します。</li>
+<li>「ユーザーは次回ログオン時にパスワード変更が必要」をオフにします。</li>
+<li>アカウントを無効にする設定がオフになっていることを確認します。</li>
+<li>「パスワードを無期限にする」は承認済みの運用方式に従って設定し、「次へ」を選択します。</li>
+</ol>
+<figure class="screenshot-wide"><figcaption>図6　サービスアカウントのパスワード設定</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-ad-connector/006-サービスアカウントのパスワード設定.png" alt="サービスアカウントのパスワード設定" width="508" height="428" loading="lazy"></div></figure>
+
+
+
+<div class="callout callout-warning"><p><strong>⚠️ 注意：パスワード無期限はアカウント単位の例外設定</strong></p>
+<p>今回の画像では「パスワードを無期限にする」が有効です。この設定により、サービスアカウントのパスワード有効期限を無期限にします。承認済みのパスワード運用に従って設定し、PSO（きめ細かなパスワードポリシー）の適用状況は<code class="inline-code">Get-ADUserResultantPasswordPolicy</code>で確認します。</p>
+</div>
+<ol start="8">
+<li>フルネーム、ユーザーログオン名およびパスワード設定を確認します。</li>
+<li>「完了」を選択し、<code class="inline-code">ad\Users</code>の一覧に<code class="inline-code">ADConnectorService</code>が作成されたことを確認します。</li>
+</ol>
+<figure class="screenshot-wide"><figcaption>図7　サービスアカウント作成内容の確認</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-ad-connector/007-サービスアカウント作成内容の確認.png" alt="サービスアカウント作成内容の確認" width="511" height="431" loading="lazy"></div></figure>
+
+
+
+<p>AD Connector作成前に誤りを発見した場合は、使用されていないことを確認してアカウントを無効化し、正しいアカウントを作成します。AD Connector作成後は、先にアカウントを無効化または削除しないでください。</p>
+<h3 id="3-サービスアカウントをconnectorsへ追加する">3. サービスアカウントを<code class="inline-code">Connectors</code>へ追加する</h3>
+<ol>
+<li><p><code class="inline-code">ad\Users</code>で、作成したサービスアカウントのプロパティを開きます。</p>
+</li>
+<li><p>「所属するグループ」タブを選択します。</p>
+</li>
+<li><p>既定の<code class="inline-code">Domain Users</code>以外に、意図しない高権限グループが表示されていないことを確認します。</p>
+</li>
+<li><p>「追加」を選択します。</p>
+</li>
+<li><p>オブジェクト名へ<code class="inline-code">Connectors</code>を入力します。</p>
+</li>
+</ol>
+<figure class="screenshot-wide"><figcaption>図7-1　サービスアカウントの所属グループ追加（Connectorsを入力）</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-ad-connector/008-サービスアカウントの所属グループ追加-connectorsを入力.png" alt="サービスアカウントの所属グループ追加（Connectorsを入力）" width="1074" height="630" loading="lazy"></div></figure>
+
+
+
+<ol start="6">
+<li><p>「名前の確認」を選択し、対象ドメインの<code class="inline-code">Connectors</code>へ解決されることを確認します。</p>
+</li>
+<li><p>「OK」を選択します。</p>
+</li>
+<li><p>「所属するグループ」に<code class="inline-code">Domain Users</code>と<code class="inline-code">Connectors</code>が表示されることを確認します。</p>
+</li>
+<li><p>「適用」、「OK」の順に選択します。</p>
+</li>
+</ol>
+<h3 id="4-workspaces用コンピューターouを決定または作成する">4. WorkSpaces用コンピューターOUを決定または作成する</h3>
+<p>この節と次の権限委任は、WorkSpaces側のOU手順を未実施の場合だけ行います。「Amazon WorkSpaces用OU作成・権限委任・ターゲットOU設定手順」で同じOUと<code class="inline-code">Connectors</code>への委任を完了済みの場合は、OUと詳細ACLが本節の要件を満たすことだけを確認し、ウィザードを再実行しません。</p>
+<ol>
+<li>承認済みのOU設計を確認します。</li>
+<li>専用OUを作成する場合は、<code class="inline-code">ad\Computers</code>を右クリックし、「新規作成」から「組織単位（OU）」を選択します。</li>
+</ol>
+<figure class="screenshot-wide"><figcaption>図7-2　WorkSpaces用OUの作成メニュー</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-ad-connector/009-workspaces用ouの作成メニュー.png" alt="WorkSpaces用OUの作成メニュー" width="1170" height="724" loading="lazy"></div></figure>
+
+
+
+<ol start="3">
+<li>OU名に<code class="inline-code">WorkSpaces</code>を入力します。</li>
+<li>「間違って削除されないようにコンテナーを保護する」をオンにし、「OK」を選択します。</li>
+</ol>
+<figure class="screenshot-wide"><figcaption>図7-3　WorkSpaces用OUの名前と誤削除防止設定</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-ad-connector/010-workspaces用ouの名前と誤削除防止設定.png" alt="WorkSpaces用OUの名前と誤削除防止設定" width="509" height="433" loading="lazy"></div></figure>
+
+
+
+<ol start="5">
+<li><code class="inline-code">ad\Computers</code>の配下に<code class="inline-code">WorkSpaces</code> OUが表示されることを確認します。</li>
+</ol>
+<figure class="screenshot-wide"><figcaption>図7-4　WorkSpaces用OUの作成完了</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-ad-connector/011-workspaces用ouの作成完了.png" alt="WorkSpaces用OUの作成完了" width="1172" height="725" loading="lazy"></div></figure>
+
+
+
+<ol start="6">
+<li>OUのプロパティまたはPowerShellで識別名（DN）を確認し、運用台帳へ記録します。</li>
+</ol>
+<div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>Get-ADOrganizationalUnit -Filter * |
+    Select-Object Name, DistinguishedName</code></pre></div>
+<h3 id="5-workspaces用コンピューターouへ権限を委任する">5. WorkSpaces用コンピューターOUへ権限を委任する</h3>
+<p>本環境では<code class="inline-code">ad\Computers\WorkSpaces</code>をコンピューター専用OUとして使用します。OU作成とWorkSpaces側のターゲットOU設定は、「Amazon WorkSpaces用OU作成・権限委任・ターゲットOU設定手順」を参照してください。本手順では、<code class="inline-code">Connectors</code>へ<strong>コンピューターオブジェクト</strong>の作成、削除、読み取りおよび書き込みだけを委任します。</p>
+<p>既存ACLに同じ<code class="inline-code">Connectors</code>のアクセス許可エントリがある場合は、対象オブジェクト、権限および適用先を詳細ACLで照合します。要件を満たしていれば委任ウィザードを再実行せず、重複ACEを作成しません。</p>
+<p>AWS公式の汎用例ではコンピューターオブジェクトとユーザーオブジェクトの両方を選択する場合がありますが、ユーザーを格納しない本環境のWorkSpaces専用OUへ、ユーザーオブジェクトの作成・削除・書き込み権限は追加しません。ユーザー検索に必要な読み取りは<code class="inline-code">ad\Users</code>側で維持し、AD Connectorが「アクティブ」でWorkSpacesコンソールから対象ユーザーを検索できることで確認します。</p>
+<p>権限の範囲を広げないため、委任開始時に<code class="inline-code">ad\Computers\WorkSpaces</code>を選択したことを確認します。AWS Managed Microsoft ADでは、ドメインルート、<code class="inline-code">AWS Reserved</code>および<code class="inline-code">Domain Controllers</code>から開始しません。</p>
+<ol>
+<li><p>ADUCで、承認済みのWorkSpacesコンピューター格納先OUを選択します。</p>
+</li>
+<li><p>対象OUを右クリックし、「制御の委任」を選択します。</p>
+</li>
+<li><p>「オブジェクト制御の委任ウィザードの開始」が表示されたことを確認し、「次へ」を選択します。この開始画面自体には対象OUは表示されません。</p>
+</li>
+</ol>
+<figure class="screenshot-wide"><figcaption>図8　オブジェクト制御の委任ウィザード開始</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-ad-connector/012-オブジェクト制御の委任ウィザード開始.png" alt="オブジェクト制御の委任ウィザード開始" width="579" height="437" loading="lazy"></div></figure>
+
+
+
+<ol start="4">
+<li>「選択されたユーザーとグループ」で「追加」を選択します。</li>
+<li>検索場所が対象ドメインになっていることを確認し、オブジェクト名へ<code class="inline-code">Connectors</code>を入力して、「名前の確認」を選択します。</li>
+<li>対象ドメインの<code class="inline-code">Connectors</code>へ解決されたことを確認し、「OK」を選択します。</li>
+</ol>
+<figure class="screenshot-wide"><figcaption>図9　委任対象としてConnectorsグループを選択</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-ad-connector/013-委任対象としてconnectorsグループを選択.png" alt="委任対象としてConnectorsグループを選択" width="546" height="287" loading="lazy"></div></figure>
+
+
+
+<ol start="7">
+<li>「選択されたユーザーとグループ」に<code class="inline-code">Connectors</code>だけが表示されていることを確認し、「次へ」を選択します。</li>
+</ol>
+<figure class="screenshot-wide"><figcaption>図10　委任対象グループConnectorsの確認</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-ad-connector/014-委任対象グループconnectorsの確認.png" alt="委任対象グループConnectorsの確認" width="579" height="436" loading="lazy"></div></figure>
+
+
+
+<ol start="8">
+<li>「委任するタスク」で「委任するカスタムタスクを作成する」を選択し、「次へ」を選択します。</li>
+</ol>
+<figure class="screenshot-wide"><figcaption>図11　委任するカスタムタスクの選択</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-ad-connector/015-委任するカスタムタスクの選択.png" alt="委任するカスタムタスクの選択" width="580" height="439" loading="lazy"></div></figure>
+
+
+
+<ol start="9">
+<li>「Active Directoryオブジェクトの種類」で「フォルダー内の次のオブジェクトのみ」を選択します。</li>
+<li>「コンピューター オブジェクト」を選択します。本環境のWorkSpaces専用OUでは「ユーザー オブジェクト」を選択しないでください。</li>
+<li>同じ画面で次の項目を選択し、「次へ」を選択します。</li>
+</ol>
+<ul>
+<li>このフォルダーに選択したオブジェクトを作成する</li>
+<li>このフォルダー内の選択したオブジェクトを削除する</li>
+</ul>
+<figure class="screenshot-wide"><figcaption>図12　コンピューターオブジェクトと作成削除</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-ad-connector/016-workspaces専用ouのコンピューターオブジェクト委任.png" alt="WorkSpaces専用OUのコンピューターオブジェクト委任" width="577" height="436" loading="lazy"></div></figure>
+
+
+
+<ol start="12">
+<li>「これらのアクセス許可を表示します」で「全般」と「プロパティ固有」が選択され、「特定の子オブジェクトの作成または削除」が未選択になっていることを確認します。</li>
+<li>「アクセス許可」で「読み取り」を選択し、WorkSpaces利用のため「書き込み」も選択して「次へ」を選択します。</li>
+</ol>
+<figure class="screenshot-wide"><figcaption>図13　読み取りと書き込み権限の選択</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-ad-connector/017-読み取りと書き込み権限の選択.png" alt="読み取りと書き込み権限の選択" width="580" height="435" loading="lazy"></div></figure>
+
+
+
+<ol start="14">
+<li>「オブジェクト制御の委任ウィザードの完了」で、委任先OU、対象グループ、対象オブジェクトおよび権限を確認します。</li>
+<li>内容に問題がなければ「完了」を選択します。</li>
+</ol>
+<div class="callout callout-info"><p><strong>ℹ️ 情報：WorkSpaces利用時は書き込み権限も選択する</strong></p>
+<p>基本例では「読み取り」のみを選択しますが、シームレスなドメイン参加またはWorkSpacesを使用する場合は「書き込み」も有効にします。本環境ではWorkSpacesを使用するため、図13の「読み取り」と「書き込み」の両方を選択した状態が正しい設定です。</p>
+</div>
+<p><a href="https://docs.aws.amazon.com/ja_jp/directoryservice/latest/admin-guide/ad_connector_getting_started.html">AD Connectorのサービスアカウントへ権限を委任する</a></p>
+<h2 id="運用作業">運用作業</h2>
+<h3 id="1-サービスアカウントのパスワードを更新する">1. サービスアカウントのパスワードを更新する</h3>
+<p>AWS Managed Microsoft ADの既定ドメインポリシーでは、パスワードの最大有効期間は42日です。Fine-Grained Password Policy（FGPP）または承認済みのアカウント例外がない場合、サービスアカウントにも適用されます。</p>
+<p>期限切れ、ロック、無効化、または「次回ログオン時にパスワード変更」が有効になると、AD Connectorのユーザー検索およびWorkSpacesのドメイン参加が失敗する可能性があります。</p>
+<p><code class="inline-code">PasswordNeverExpires=True</code>の場合、サービスアカウントのパスワード有効期限は無期限です。PSOの適用状況は次のコマンドで確認します。</p>
+<div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>Get-ADUserResultantPasswordPolicy -Identity 'ADConnectorService'</code></pre></div>
+<p>PSOが返されない場合は、ドメイン既定のパスワードポリシーを確認します。</p>
+<div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>Get-ADDefaultDomainPasswordPolicy -Identity 'ad.example.com'</code></pre></div>
+<p><a href="https://docs.aws.amazon.com/ja_jp/directoryservice/latest/admin-guide/ms_ad_password_policies.html">AWS Managed Microsoft ADのパスワードポリシー</a></p>
+<p><strong>更新手順</strong></p>
+<ol>
+<li>変更日時、担当者、対象AD Connector、影響確認項目および切り戻し担当者を確定します。</li>
+<li>AD側でサービスアカウントのパスワードを変更します。</li>
+<li>直後にDirectory Serviceのディレクトリ一覧から、対象AD ConnectorのディレクトリIDを選択します。「サービスアカウントの認証情報」で「更新」を選択し、サービスアカウント名、新パスワード、確認用パスワードを入力して更新します。</li>
+<li>AD Connectorのステータスが「アクティブ」になっていることを確認します。</li>
+<li>WorkSpacesからADユーザーを検索できることを確認します。</li>
+<li>必要に応じて検証用WorkSpaceの作成またはドメイン接続を確認します。</li>
+<li>次回更新日と結果を運用台帳へ記録します。</li>
+</ol>
+<div class="callout callout-warning"><p><strong>⚠️ 注意：パスワード変更はAD側から実施する</strong></p>
+<p>変更順序は、必ず「AD側」から「AD Connector側」とします。AD側で変更した直後に、AD Connectorへ保存されている認証情報を同じ新パスワードへ更新してください。AD Connector側だけを更新しても、Active Directory側のパスワードは変更されません。</p>
+</div>
+<p>42日の既定ポリシーを使用する場合は、組織で承認された更新周期に従い、有効期限より前に変更を完了します。</p>
+<p><a href="https://docs.aws.amazon.com/ja_jp/directoryservice/latest/admin-guide/ad_connector_update_creds.html">AD Connectorのサービスアカウント認証情報の更新</a></p>
+<h3 id="2-認証エラー発生時の状態を確認する">2. 認証エラー発生時の状態を確認する</h3>
+<div class="callout callout-error"><p><strong>❌ エラー：ユーザー検索やドメイン参加に失敗する場合</strong></p>
+<p>次の項目を確認し、期限切れや登録情報の不一致がある場合は、AD側とAD Connector側の認証情報を更新します。権限不足の場合は、対象OUと既存の委任内容を確認してから修正します。</p>
+</div>
+<ul>
+<li>アカウントが有効になっていること</li>
+<li>アカウントがロックされていないこと</li>
+<li>パスワードが期限切れでないこと</li>
+<li>次回ログオン時の変更が要求されていないこと</li>
+<li>Directory Serviceへ登録された認証情報がAD側の現在値と一致していること</li>
+<li>対象OUに、承認済みの委任が残っていること</li>
+</ul>
+<h3 id="3-サービスアカウントを切り替え-旧アカウントを無効化-削除する">3. サービスアカウントを切り替え、旧アカウントを無効化・削除する</h3>
+<p>AD Connectorが使用中のサービスアカウントを先に無効化、削除または<code class="inline-code">Connectors</code>から除外してはいけません。</p>
+<p>安全に切り替える場合は、次の順序で実施します。</p>
+<ol>
+<li>新しい専用サービスアカウントを作成し、<code class="inline-code">Connectors</code>へ追加します。</li>
+<li>AD Connectorの認証情報を新アカウントへ更新します。</li>
+<li>AD Connectorの「アクティブ」、ユーザー検索および検証用WorkSpace作成を確認します。</li>
+<li>問題がある場合は、AD Connectorを旧アカウントへ戻します。</li>
+<li>正常確認後に旧アカウントを無効化します。</li>
+<li>定められた観察期間後に、旧アカウントを<code class="inline-code">Connectors</code>から除外して削除します。</li>
+</ol>
+<p><code class="inline-code">Connectors</code>の委任設定は、新アカウントも使用します。アカウント切り替えだけを理由に削除しません。</p>
+<p>委任設定が不要になり、削除する場合は、対象OUの詳細なセキュリティ設定で<code class="inline-code">Connectors</code>に対する明示的なアクセス制御エントリだけを削除します。継承された権限や、他のユーザー・グループの権限を変更しません。</p>
+<p>既存の<code class="inline-code">ad\Users</code>への委任が適切かは、WorkSpacesのターゲットOUと継承設計を確認して判断します。対象外OUへの不要な明示的委任と確認できた場合に限り、正しいOUへの委任と動作確認が完了してから、<code class="inline-code">Users</code> OU上の<code class="inline-code">Connectors</code>に対する明示的な権限だけを削除します。</p>
+<h2 id="作業後確認">作業後確認</h2>
+<h3 id="adオブジェクトの確認">ADオブジェクトの確認</h3>
+<p>対象ドメインの管理資格情報でPowerShellを起動して実行します。本手順では<code class="inline-code">ADConnectorService</code>を確認します。</p>
+<div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>Get-ADUser -Identity 'ADConnectorService' `
+    -Properties Enabled,LockedOut,PasswordExpired,PasswordNeverExpires,PasswordLastSet,pwdLastSet |
+    Select-Object SamAccountName,
+                  Enabled,
+                  LockedOut,
+                  PasswordExpired,
+                  PasswordNeverExpires,
+                  PasswordLastSet,
+                  pwdLastSet
+
+Get-ADPrincipalGroupMembership 'ADConnectorService' |
+    Select-Object Name, GroupScope, GroupCategory</code></pre></div>
+<p>次を確認します。</p>
+<ul>
+<li><code class="inline-code">Enabled</code>が<code class="inline-code">True</code>になっていること</li>
+<li><code class="inline-code">LockedOut</code>と<code class="inline-code">PasswordExpired</code>が<code class="inline-code">False</code>になっていること</li>
+<li><code class="inline-code">pwdLastSet</code>が<code class="inline-code">0</code>ではなく、次回ログオン時のパスワード変更が要求されていないこと</li>
+<li><code class="inline-code">PasswordNeverExpires</code>が承認済みの運用方式と一致していること</li>
+<li><code class="inline-code">Connectors</code>へ所属していること</li>
+<li>申請されていない高権限グループへ所属していないこと</li>
+</ul>
+<p><code class="inline-code">Connectors</code>がグローバル／セキュリティグループになっていることも確認します。OUの委任内容は、承認済みのDNへ読み替えて確認し、<code class="inline-code">Connectors</code>に対するコンピューターオブジェクトの作成・削除・読み取り・書き込み権限と適用先を照合します。</p>
+<div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>dsacls '&lt;WorkSpacesコンピューターOUのDN&gt;'</code></pre></div>
+<p><strong>本手順のOUを指定するコマンド例</strong></p>
+<p><code class="inline-code">ad.example.com</code>の<code class="inline-code">ad\Computers\WorkSpaces</code> OUを確認する場合は、次のように指定します。DNは、対象OUから親OU、ドメインの順に記述します。</p>
+<div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>dsacls 'OU=WorkSpaces,OU=Computers,OU=ad,DC=ad,DC=example,DC=com'</code></pre></div>
+<p>このコマンドは対象OUのアクセス許可を表示します。出力内の<code class="inline-code">ad\Connectors</code>について、コンピューターオブジェクトの作成・削除権限、子コンピューターに適用する読み取り・書き込み権限および継承範囲を確認します。上記は実行するコマンドの例で、実環境の実行結果は掲載していません。</p>
+<p><a href="https://learn.microsoft.com/en-us/previous-versions/windows/it-pro/windows-server-2012-r2-and-2012/cc771151(v=ws.11)">Dsaclsの使用方法</a></p>
+<h3 id="ad-connectorおよびworkspacesの確認">AD ConnectorおよびWorkSpacesの確認</h3>
+<p>次の項目は、後続のAD Connector・WorkSpaces構築時、または既存環境の認証情報を更新した後に確認します。初回のサービスアカウント作成時点では未実施の項目です。再構築・削除の検証には、業務利用中のWorkSpaceを使用しません。</p>
+<ol>
+<li>Directory ServiceでAD Connectorのステータスが「アクティブ」になっていることを確認します。</li>
+<li>WorkSpacesから対象ディレクトリのADユーザーを検索できることを確認します。</li>
+<li>検証用WorkSpaceを1台作成できることを確認します。</li>
+<li>コンピューターオブジェクトが承認済みのWorkSpaces OUへ作成されることを確認します。</li>
+<li>検証ユーザーがWorkSpaceへサインインできることを確認します。</li>
+<li>再構築および削除の検証で、OU権限エラーが発生しないことを確認します。</li>
+</ol>
+<p>ネットワーク接続テストだけでは、OUへのコンピューターオブジェクト作成権限まで確認できません。最終確認には新しい検証用WorkSpaceの作成が必要です。</p>
+</section></main>
+  </div>
+  <script src="../assets/app.js?v=20260908-skill-transfer1"></script>
+</body>
+</html>

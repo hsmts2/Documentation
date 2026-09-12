@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cost Optimizerの実行スケジュール設定・変更 | Documentation</title>
+  <meta name="description" content="Cost Optimizerの実行スケジュール設定・変更の操作手順と設定例">
+  <link rel="stylesheet" href="../assets/styles.css?v=20260908-skill-transfer1">
+<link rel="stylesheet" href="../assets/workspaces-guides.css?v=20260912-split">
+<script src="../assets/workspaces-legacy-routes.js?v=20260912-split"></script>
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="../"><img src="../assets/icon.jpg" alt="Documentation icon"><span>Documentation</span></a>
+    <div class="header-actions">
+      <button class="icon-button theme-toggle" type="button" title="テーマを切り替え" aria-label="テーマを切り替え">☀</button>
+      <nav class="nav" aria-label="Global navigation">
+        <a href="../"><span class="nav-icon" aria-hidden="true">⌂</span>Home</a>
+        <a href="https://github.com/hsmts2"><span class="nav-icon" aria-hidden="true">▦</span>Repositories</a>
+        <a href="https://github.com/hsmts2/Documentation"><span class="nav-icon" aria-hidden="true">◆</span>GitHub</a>
+      </nav>
+    </div>
+  </header>
+  <div class="layout layout-wide">
+    <aside id="site-sidebar" class="sidebar" aria-label="Page list">
+      <div class="sidebar-heading">
+        <button class="icon-button sidebar-toggle sidebar-toggle-inline" type="button" aria-controls="site-sidebar" aria-expanded="true" title="ナビゲーションを閉じる" aria-label="ナビゲーションを閉じる">☰</button>
+      </div>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">✎</span>記事</p>
+      <a href="cloudflare-private-site.html">Private GitHubリポジトリをCloudflare Workersで認証付き公開してみた</a>
+      <details class="sidebar-nested-menu" open><summary>マルチVPC・閉域VDI基盤案件</summary><div class="sidebar-subnav"><a href="workspaces-skill-transfer.html">全体構築・運用順序</a><a href="workspaces-managed-ad.html">AWS Managed Microsoft ADの構築</a><a href="workspaces-managed-ad-users.html">AWS Managed Microsoft ADのユーザー・グループ管理</a><a href="workspaces-management-ec2.html">管理用EC2の起動・接続・AD管理</a><a href="workspaces-ad-connector-account.html">AD Connector用サービスアカウント・権限委任</a><a href="workspaces-ad-connector.html">AD ConnectorのVPCピアリング・SG設定・作成</a><a href="workspaces-provisioning-gpo.html">WorkSpaces Personalの構築・接続</a><a href="workspaces-target-ou.html">WorkSpaces用ターゲットOUの作成・権限委任</a><a href="workspaces-gpo.html">WorkSpaces用GPOの作成・適用・運用</a><a href="workspaces-image-bundle.html">WorkSpacesカスタムイメージ・バンドルの作成・共有</a><a href="workspaces-systems-manager.html">Systems Manager環境構築</a><a href="workspaces-patch-manager.html">Patch Managerの設定</a><a href="workspaces-patch-operations.html">Patch Managerの実行・結果確認・運用</a><a href="workspaces-cost-optimizer.html">Cost Optimizerの構築・設定</a><a href="workspaces-cost-optimizer-dry-run.html">Cost OptimizerのDry Run解除</a><a href="workspaces-cost-optimizer-schedule.html" class="active" aria-current="page">Cost Optimizerの実行スケジュール設定・変更</a><a href="workspaces-cost-optimizer-reports.html">Cost Optimizerのレポート・監視</a><a href="workspaces-cloudwatch-monitoring.html">CloudWatchのEC2・Windows OS監視とSNS通知</a><a href="workspaces-cloudwatch-workspaces.html">CloudWatchのWorkSpaces監視・ダッシュボード</a></div></details>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">◈</span>Terraform</p>
+      <a href="terraform.html">Terraform 概要</a>
+      <a href="hcp-terraform.html">HCP Terraform（Terraform Cloud）</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">☁︎</span>AWS</p>
+      <a href="cloudformation.html">CloudFormation 運用手順集</a>
+      <a href="aws-cli.html">AWS CLI 特殊対応</a>
+      <a href="aws-cli-reference.html">AWS CLI コマンドリファレンス</a>
+      <a href="eventbridge-scheduler.html">EventBridge Scheduler</a>
+      <a href="aws-directory-service.html">AWS Directory Service 運用手順</a>
+      <a href="amazon-workspaces.html">Amazon WorkSpaces</a>
+      <a href="amazon-ses.html">Amazon SES SMTPリレー</a>
+      <a href="amazon-ses-monitoring.html">Amazon SES 配信監視</a>
+      <a href="amazon-rds-blue-green.html">Amazon RDS Blue/Green Deployments</a>
+      <a href="apache-acm-certificate-update.html">証明書更新（ACMエクスポート）</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">⚙︎</span>OS／ミドルウェア</p>
+      <a href="rhel9.html">Red Hat Enterprise Linux 9</a>
+      <a href="rhel10.html">Red Hat Enterprise Linux 10</a>
+      <a href="amazon-linux-2023.html">Amazon Linux 2023</a>
+      <a href="windows-server-2022.html">Windows Server 2022</a>
+      <a href="windows-server-2025.html">Windows Server 2025</a>
+      <a href="windows-server-2016-upgrade.html">Windows Server 2016 インプレースアップグレード</a>
+      <a href="storage.html">ストレージ管理</a>
+      <a href="apache.html">Apache</a>
+      <a href="apache-self-signed-ssl-termination.html">Apache SSL終端（自己署名証明書）</a>
+      <a href="redis.html">Redis（KVS）</a>
+      <a href="nfs.html">NFS</a>
+      <a href="samba.html">Samba</a>
+      <a href="mariadb.html">MariaDB</a>
+      <a href="postgresql.html">PostgreSQL</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">▤</span>リファレンス</p>
+      <a href="../writing-style-guide.html">[GitHub Pages] 記法・テンプレート</a>
+      <a href="troubleshooting.html">障害切り分けチェックリスト</a>
+      <a href="eol.html">EOL / ライフサイクル一覧表</a>
+    </aside>
+    <main class="content workspaces-skill-transfer-guide"><nav class="breadcrumb" aria-label="Breadcrumb"><a href="../">Home</a><span>トピック</span></nav><h1>Cost Optimizerの実行スケジュール設定・変更</h1><section id="costOptimizerSchedule" class="procedure-document">
+
+<span id="15-cost-optimizer-for-amazon-workspaces-実行時刻変更検証-変更方針" class="legacy-heading-anchor" aria-hidden="true"></span>
+<h2 id="仕様-3">仕様</h2>
+<h3 id="構成-動作-3">構成・動作</h3>
+<p>AWS公式ドキュメントでは、Cost OptimizerのEventBridgeルール設定を変更したり、ECSタスクを手動実行したりしないよう明記されています。1日複数回実行すると、請求対象時間および課金モード変換の判定が不正確になる可能性があるためです。</p>
+<ul>
+<li><a href="https://docs.aws.amazon.com/solutions/latest/cost-optimizer-for-workspaces/features-and-benefits.html">Features and benefits</a></li>
+</ul>
+<p>本章のEventBridge直接編集は、画面および動作を確認するために今回一時的に実施した記録です。本番環境の標準手順として実施してはいけません。</p>
+<p>本番環境で例外的な時刻変更が不可欠な場合は、まずAWS Supportへ仕様影響を確認し、お客様のリスク承認を取得します。承認後はCloudFormationテンプレート内の<code class="inline-code">ScheduleExpression</code>を修正し、CloudFormation変更セットを使用して反映します。これにより、テンプレートと実リソースの差分（ドリフト）を防止します。</p>
+<h3 id="管理範囲-3">管理範囲</h3>
+<p>設定値は取得時点の検証例です。実作業では承認済みパラメータと現在のAWS環境を確認します。</p>
+<h3 id="制約事項-3">制約事項</h3>
+<p>実行時刻の直接変更は過去の検証記録です。通常運用では既定スケジュールを維持します。</p>
+<h2 id="検証記録-変更方針">検証記録・変更方針</h2>
+<h3 id="1-検証した時刻と最終状態">1. 検証した時刻と最終状態</h3>
+<p>EventBridgeのCron式はUTCで指定します。</p>
+<div class="guide-table-scroll"><table class="guide-table">
+<thead>
+<tr>
+<th>時系列</th>
+<th>用途</th>
+<th align="right">日本時間</th>
+<th align="right">UTC</th>
+<th>Cron式</th>
+<th>結果</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>検証開始時の設定</td>
+<td align="right">毎日09:00</td>
+<td align="right">毎日00:00</td>
+<td><code class="inline-code">cron(0 0 * * ? *)</code></td>
+<td>変更前の状態を確認</td>
+</tr>
+<tr>
+<td>2</td>
+<td>お客様環境の設定値</td>
+<td align="right">毎日06:00</td>
+<td align="right">毎日21:00</td>
+<td><code class="inline-code">cron(0 21 * * ? *)</code></td>
+<td>入力・更新・反映を確認</td>
+</tr>
+<tr>
+<td>3</td>
+<td>今回の復元先</td>
+<td align="right">毎日08:00</td>
+<td align="right">毎日23:00</td>
+<td><code class="inline-code">cron(0 23 * * ? *)</code></td>
+<td>入力・更新・反映を確認</td>
+</tr>
+<tr>
+<td>4</td>
+<td>二重実行回避</td>
+<td align="right">-</td>
+<td align="right">-</td>
+<td><code class="inline-code">cron(0 23 * * ? *)</code>を保持</td>
+<td>ルールを一時的に無効化</td>
+</tr>
+</tbody></table></div>
+<p>2026年9月8日時点の最終状態は、Cron式が<code class="inline-code">cron(0 23 * * ? *)</code>、EventBridgeルールが「無効」、CloudFormationパラメータが<code class="inline-code">DryRun=No</code>です。Cron式は今回の復元先へ戻っていますが、ルールを再有効化するまでスケジュール実行は開始されません。</p>
+<h3 id="2-取得済みの直接編集記録">2. 取得済みの直接編集記録</h3>
+<div class="callout callout-info"><p><strong>ℹ️ 情報：以下は実施済みの検証操作の記録</strong></p>
+<p>通常運用で繰り返す操作ではありません。実環境の変更が必要な場合は、後述の「例外的カスタマイズとして変更する場合」を確認します。</p>
+</div>
+<h4 id="検証開始時の確認">検証開始時の確認</h4>
+<p>検証開始時は<code class="inline-code">cron(0 0 * * ? *)</code>です。00:00 UTC、すなわち09:00 JSTの設定でした。これは今回の復元先の08:00 JSTとは異なります。</p>
+<figure class="screenshot-wide aws-console-identity"><figcaption>図1　EventBridge_検証開始時09時_設定確認</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/020-図1-eventbridge-検証開始時09時-設定確認.png" alt="図1_EventBridge_検証開始時09時_設定確認" width="1889" height="1333" loading="lazy"></div></figure>
+
+
+
+<h4 id="お客様環境の06-00-jstを検証">お客様環境の06:00 JSTを検証</h4>
+<p>「特定の時刻」を選択し、時間へ<code class="inline-code">21</code>を入力します。画面上のCron式が<code class="inline-code">0 21 * * ? *</code>、次回トリガーが21:00 UTCとなっていることを確認して「次へ」を選択します。</p>
+<figure class="screenshot-wide aws-console-identity"><figcaption>図2　EventBridge_お客様時刻06時_UTC21時入力</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/021-図2-eventbridge-お客様時刻06時-utc21時入力.png" alt="図2_EventBridge_お客様時刻06時_UTC21時入力" width="1889" height="1333" loading="lazy"></div></figure>
+
+
+
+<p>ターゲットがECSタスク、クラスターが<code class="inline-code">cost-optimizer-cluster</code>、タスク定義が<code class="inline-code">wco-task</code>、リビジョンが<code class="inline-code">4</code>となっていることを確認します。時刻以外の設定は変更しません。</p>
+<figure class="screenshot-wide aws-console-identity"><figcaption>図3　EventBridge_ターゲット_ECSタスク定義4確認</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/022-図3-eventbridge-ターゲット-ecsタスク定義4確認.png" alt="図3_EventBridge_ターゲット_ECSタスク定義4確認" width="1889" height="1333" loading="lazy"></div></figure>
+
+
+
+<p>確認画面でCron式とターゲットを再確認します。</p>
+<figure class="screenshot-wide aws-console-identity"><figcaption>図4　EventBridge_お客様時刻06時_更新確認</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/023-図4-eventbridge-お客様時刻06時-更新確認.png" alt="図4_EventBridge_お客様時刻06時_更新確認" width="1889" height="1333" loading="lazy"></div></figure>
+
+
+
+<p>確認後、画面下部までスクロールし、「ルールの更新」を選択します。</p>
+<p>更新成功メッセージ、<code class="inline-code">0 21 * * ? *</code>および21:00 UTCの次回トリガー一覧を確認しました。</p>
+<figure class="screenshot-wide aws-console-identity"><figcaption>図5　EventBridge_お客様時刻06時_反映確認</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/024-図5-eventbridge-お客様時刻06時-反映確認.png" alt="図5_EventBridge_お客様時刻06時_反映確認" width="1889" height="1333" loading="lazy"></div></figure>
+
+
+
+<h4 id="今回の復元先の08-00-jstへ戻す">今回の復元先の08:00 JSTへ戻す</h4>
+<p>時間を<code class="inline-code">23</code>へ変更し、Cron式が<code class="inline-code">0 23 * * ? *</code>、次回トリガーが23:00 UTCとなっていることを確認します。</p>
+<figure class="screenshot-wide aws-console-identity"><figcaption>図6　EventBridge_復元先08時_UTC23時入力</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/025-図6-eventbridge-復元先08時-utc23時入力.png" alt="図6_EventBridge_復元先08時_UTC23時入力" width="1889" height="1333" loading="lazy"></div></figure>
+
+
+
+<p>確認画面でCron式とターゲットを再確認します。</p>
+<figure class="screenshot-wide aws-console-identity"><figcaption>図7　EventBridge_復元先08時_更新確認</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/026-図7-eventbridge-復元先08時-更新確認.png" alt="図7_EventBridge_復元先08時_更新確認" width="1889" height="1333" loading="lazy"></div></figure>
+
+
+
+<p>確認後、画面下部までスクロールし、「ルールの更新」を選択します。</p>
+<p>更新成功メッセージ、<code class="inline-code">0 23 * * ? *</code>および23:00 UTCの次回トリガー一覧を確認しました。</p>
+<figure class="screenshot-wide aws-console-identity"><figcaption>図8　EventBridge_復元先08時_最終反映確認</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/027-図8-eventbridge-復元先08時-最終反映確認.png" alt="図8_EventBridge_復元先08時_最終反映確認" width="1889" height="1333" loading="lazy"></div></figure>
+
+
+
+<h4 id="utc同日内の二重実行を回避">UTC同日内の二重実行を回避</h4>
+<p>検証当日は実行時刻を複数回変更したため、同一UTC日内に複数回起動しないようEventBridgeルールを一時的に無効化しました。無効化後もCron式は<code class="inline-code">0 23 * * ? *</code>のまま保持されています。</p>
+<figure class="screenshot-wide aws-console-identity"><figcaption>図9　EventBridge_二重実行回避_ルール無効化</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/028-図9-eventbridge-二重実行回避-ルール無効化.png" alt="図9_EventBridge_二重実行回避_ルール無効化" width="1918" height="1540" loading="lazy"></div></figure>
+
+
+
+<h3 id="3-再有効化と初回実行確認">3. 再有効化と初回実行確認</h3>
+<p>EventBridgeルールは、前回実行と次回実行が同一UTC日にならない時刻に再有効化します。再有効化後は、次回トリガーのUTCとJSTを換算し、想定した日付・時刻となっていることを確認してください。</p>
+<ol>
+<li>Amazon EventBridgeの「スケジュールされたルール（レガシー）」を開きます。</li>
+<li><code class="inline-code">sample-cfn-co-001-ScheduleRule-</code>で始まる対象ルールを選択します。</li>
+<li>Cron式が<code class="inline-code">0 23 * * ? *</code>となっていることを確認します。</li>
+<li>「有効化」を選択します。</li>
+<li>ステータスが「有効」になったことを確認します。</li>
+<li>次回トリガーのUTCとJSTを換算し、想定した日付・時刻となっていることを確認します。</li>
+<li>追加の手動実行は行わず、初回スケジュール実行を待ちます。</li>
+<li>実行後、ECSタスク、CloudWatch Logs、S3レポートおよびCloudWatchダッシュボードを確認します。</li>
+</ol>
+<h3 id="4-例外的カスタマイズとして変更する場合">4. 例外的カスタマイズとして変更する場合</h3>
+<p>AWS Supportの確認とお客様承認を得て本番時刻を例外的に変更する場合は、EventBridgeルールを直接編集せず、次の手順で変更します。</p>
+<ol>
+<li>AWS Supportの回答、変更理由、想定影響およびお客様承認を記録します。</li>
+<li>対象スタックと使用中のCloudFormationテンプレートのバージョンを確認します。</li>
+<li>テンプレート内の<code class="inline-code">ScheduleExpression</code>だけを目的のCron式へ変更します。</li>
+<li>対象スタックの更新画面で変更後テンプレートを指定し、変更セットを作成します。</li>
+<li>変更セットを確認し、EventBridgeルールの予定した変更以外に、削除、置換または意図しない変更がないことを確認します。</li>
+<li>作業承認後に変更セットを実行します。</li>
+<li>スタックが<code class="inline-code">UPDATE_COMPLETE</code>になったことを確認します。</li>
+<li>EventBridgeルールのCron式、有効状態および次回トリガーを確認します。</li>
+<li>初回実行後、ECSタスク、CloudWatch Logs、S3レポートおよびCloudWatchダッシュボードを確認します。</li>
+</ol>
+<p>時刻を元に戻す場合も、<code class="inline-code">ScheduleExpression</code>を戻したテンプレートから変更セットを作成し、同じ確認手順で反映します。</p>
+<h3 id="5-運用上の注意">5. 運用上の注意</h3>
+<ul>
+<li>Cost Optimizerは1日1回の実行を前提とします。</li>
+<li>同一UTC日内にスケジュール実行と手動実行を重複させません。</li>
+<li>時刻変更の動作確認を目的としてECSタスクを手動実行しません。</li>
+<li>時刻を前後させる場合は、変更前後の次回トリガーを比較し、同一UTC日内に2回実行されない切替日時を選定します。</li>
+<li><code class="inline-code">DryRun=No</code>では実際の課金モード変更が発生し得るため、再有効化前に対象WorkSpaces、料金閾値および除外タグを確認します。</li>
+</ul>
+<h2 id="変更後確認-2">変更後確認</h2>
+<ul class="check-list">
+<li><input disabled="" type="checkbox"> UTCとJSTの変換、Cron式および次回トリガーを作業直前に確認すること。</li>
+<li><input disabled="" type="checkbox"> 同一UTC日内の重複実行を発生させないこと。</li>
+<li><input disabled="" type="checkbox"> AWS Support確認とお客様承認なしに本番時刻を変更しないこと。</li>
+</ul>
+</section></main>
+  </div>
+  <script src="../assets/app.js?v=20260908-skill-transfer1"></script>
+</body>
+</html>

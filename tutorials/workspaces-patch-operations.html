@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Patch Managerの実行・結果確認・運用 | Documentation</title>
+  <meta name="description" content="Patch Managerの実行・結果確認・運用の操作手順と設定例">
+  <link rel="stylesheet" href="../assets/styles.css?v=20260908-skill-transfer1">
+<link rel="stylesheet" href="../assets/workspaces-guides.css?v=20260912-split">
+<script src="../assets/workspaces-legacy-routes.js?v=20260912-split"></script>
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="../"><img src="../assets/icon.jpg" alt="Documentation icon"><span>Documentation</span></a>
+    <div class="header-actions">
+      <button class="icon-button theme-toggle" type="button" title="テーマを切り替え" aria-label="テーマを切り替え">☀</button>
+      <nav class="nav" aria-label="Global navigation">
+        <a href="../"><span class="nav-icon" aria-hidden="true">⌂</span>Home</a>
+        <a href="https://github.com/hsmts2"><span class="nav-icon" aria-hidden="true">▦</span>Repositories</a>
+        <a href="https://github.com/hsmts2/Documentation"><span class="nav-icon" aria-hidden="true">◆</span>GitHub</a>
+      </nav>
+    </div>
+  </header>
+  <div class="layout layout-wide">
+    <aside id="site-sidebar" class="sidebar" aria-label="Page list">
+      <div class="sidebar-heading">
+        <button class="icon-button sidebar-toggle sidebar-toggle-inline" type="button" aria-controls="site-sidebar" aria-expanded="true" title="ナビゲーションを閉じる" aria-label="ナビゲーションを閉じる">☰</button>
+      </div>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">✎</span>記事</p>
+      <a href="cloudflare-private-site.html">Private GitHubリポジトリをCloudflare Workersで認証付き公開してみた</a>
+      <details class="sidebar-nested-menu" open><summary>マルチVPC・閉域VDI基盤案件</summary><div class="sidebar-subnav"><a href="workspaces-skill-transfer.html">全体構築・運用順序</a><a href="workspaces-managed-ad.html">AWS Managed Microsoft ADの構築</a><a href="workspaces-managed-ad-users.html">AWS Managed Microsoft ADのユーザー・グループ管理</a><a href="workspaces-management-ec2.html">管理用EC2の起動・接続・AD管理</a><a href="workspaces-ad-connector-account.html">AD Connector用サービスアカウント・権限委任</a><a href="workspaces-ad-connector.html">AD ConnectorのVPCピアリング・SG設定・作成</a><a href="workspaces-provisioning-gpo.html">WorkSpaces Personalの構築・接続</a><a href="workspaces-target-ou.html">WorkSpaces用ターゲットOUの作成・権限委任</a><a href="workspaces-gpo.html">WorkSpaces用GPOの作成・適用・運用</a><a href="workspaces-image-bundle.html">WorkSpacesカスタムイメージ・バンドルの作成・共有</a><a href="workspaces-systems-manager.html">Systems Manager環境構築</a><a href="workspaces-patch-manager.html">Patch Managerの設定</a><a href="workspaces-patch-operations.html" class="active" aria-current="page">Patch Managerの実行・結果確認・運用</a><a href="workspaces-cost-optimizer.html">Cost Optimizerの構築・設定</a><a href="workspaces-cost-optimizer-dry-run.html">Cost OptimizerのDry Run解除</a><a href="workspaces-cost-optimizer-schedule.html">Cost Optimizerの実行スケジュール設定・変更</a><a href="workspaces-cost-optimizer-reports.html">Cost Optimizerのレポート・監視</a><a href="workspaces-cloudwatch-monitoring.html">CloudWatchのEC2・Windows OS監視とSNS通知</a><a href="workspaces-cloudwatch-workspaces.html">CloudWatchのWorkSpaces監視・ダッシュボード</a></div></details>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">◈</span>Terraform</p>
+      <a href="terraform.html">Terraform 概要</a>
+      <a href="hcp-terraform.html">HCP Terraform（Terraform Cloud）</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">☁︎</span>AWS</p>
+      <a href="cloudformation.html">CloudFormation 運用手順集</a>
+      <a href="aws-cli.html">AWS CLI 特殊対応</a>
+      <a href="aws-cli-reference.html">AWS CLI コマンドリファレンス</a>
+      <a href="eventbridge-scheduler.html">EventBridge Scheduler</a>
+      <a href="aws-directory-service.html">AWS Directory Service 運用手順</a>
+      <a href="amazon-workspaces.html">Amazon WorkSpaces</a>
+      <a href="amazon-ses.html">Amazon SES SMTPリレー</a>
+      <a href="amazon-ses-monitoring.html">Amazon SES 配信監視</a>
+      <a href="amazon-rds-blue-green.html">Amazon RDS Blue/Green Deployments</a>
+      <a href="apache-acm-certificate-update.html">証明書更新（ACMエクスポート）</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">⚙︎</span>OS／ミドルウェア</p>
+      <a href="rhel9.html">Red Hat Enterprise Linux 9</a>
+      <a href="rhel10.html">Red Hat Enterprise Linux 10</a>
+      <a href="amazon-linux-2023.html">Amazon Linux 2023</a>
+      <a href="windows-server-2022.html">Windows Server 2022</a>
+      <a href="windows-server-2025.html">Windows Server 2025</a>
+      <a href="windows-server-2016-upgrade.html">Windows Server 2016 インプレースアップグレード</a>
+      <a href="storage.html">ストレージ管理</a>
+      <a href="apache.html">Apache</a>
+      <a href="apache-self-signed-ssl-termination.html">Apache SSL終端（自己署名証明書）</a>
+      <a href="redis.html">Redis（KVS）</a>
+      <a href="nfs.html">NFS</a>
+      <a href="samba.html">Samba</a>
+      <a href="mariadb.html">MariaDB</a>
+      <a href="postgresql.html">PostgreSQL</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">▤</span>リファレンス</p>
+      <a href="../writing-style-guide.html">[GitHub Pages] 記法・テンプレート</a>
+      <a href="troubleshooting.html">障害切り分けチェックリスト</a>
+      <a href="eol.html">EOL / ライフサイクル一覧表</a>
+    </aside>
+    <main class="content workspaces-skill-transfer-guide"><nav class="breadcrumb" aria-label="Breadcrumb"><a href="../">Home</a><span>トピック</span></nav><h1>Patch Managerの実行・結果確認・運用</h1><section id="patchOperations" class="procedure-document">
+
+<span id="12-systems-manager-patch-manager実行-結果確認-運用手順書" class="legacy-heading-anchor" aria-hidden="true"></span>
+<h2 id="仕様-3">仕様</h2>
+<h3 id="構成-動作-3">構成・動作</h3>
+<p>Scanで不足パッチを検出し、変更承認後にInstallを実行します。コマンドの成功、準拠状況、新規適用KB、業務復旧をそれぞれ確認します。</p>
+<h3 id="管理範囲-3">管理範囲</h3>
+<p>本書の設定表と画像は検証環境の例です。実作業では承認済みパラメータシートの値を使用します。</p>
+<h3 id="制約事項-3">制約事項</h3>
+<p>取得済みのInstall結果では新規適用は0件でした。Scan単独実行と、不足パッチがある状態での適用・再起動・復旧確認は追加確認が必要です。</p>
+<h2 id="運用作業">運用作業</h2>
+<h3 id="1-実行前チェック">1. 実行前チェック</h3>
+<p>次のすべてを満たすまでMaintenance Windowを実行しません。</p>
+<ul>
+<li><input disabled="" type="checkbox"> EC2が実行中で、全ステータスチェックが合格です</li>
+<li><input disabled="" type="checkbox"> Fleet ManagerのPing statusがOnlineです</li>
+<li><input disabled="" type="checkbox"> <code class="inline-code">AmazonSSMAgent</code>がRunningです</li>
+<li><input disabled="" type="checkbox"> EC2 IAMロールに必要なSSM権限がある</li>
+<li><input disabled="" type="checkbox"> EC2 IAMロールで<code class="inline-code">sample-mw-bucket/patchmanager/</code>へ書き込める</li>
+<li><input disabled="" type="checkbox"> <code class="inline-code">Patch Group=sample-window</code>がEC2へ保存されている</li>
+<li><input disabled="" type="checkbox"> <code class="inline-code">sample-window</code>と使用するWindowsパッチベースラインの関連付けを確認済みです</li>
+<li><input disabled="" type="checkbox"> ターゲットに一致するEC2がパイロット1台だけです</li>
+<li><input disabled="" type="checkbox"> 初回テストが<code class="inline-code">Operation=Scan</code>です</li>
+<li><input disabled="" type="checkbox"> 初回テストの<code class="inline-code">RebootOption</code>が<code class="inline-code">NoReboot</code>です</li>
+<li><input disabled="" type="checkbox"> 本番Installの場合、バックアップ、再起動、業務停止および確認担当の承認がある</li>
+</ul>
+<h3 id="2-scanテストと成功判定">2. Scanテストと成功判定</h3>
+<ol>
+<li>対象Maintenance Windowのタスクで<code class="inline-code">Operation=Scan</code>、<code class="inline-code">RebootOption=NoReboot</code>、登録済みターゲットとS3出力先を確認します。</li>
+<li>メンテナンスウィンドウの次回実行日時を確認し、承認済み時間帯に有効化します。検証用の日時へ変更する場合は元のスケジュールを記録します。実行開始後、「履歴」で実行IDと開始時刻を記録します。</li>
+<li>Maintenance Window、タスク、Run Commandおよびノード別結果を確認します。</li>
+<li>S3へ標準出力／標準エラーが保存されたことを確認します。</li>
+<li>Patch ManagerのComplianceを開き、最新スキャン結果を確認します。</li>
+</ol>
+<p>次をすべて満たした場合、Scan実行成功と判定します。</p>
+<ul>
+<li>Run Command全体と対象ノードが<code class="inline-code">Success</code></li>
+<li>Windowsの<code class="inline-code">PatchWindows</code>ステップが<code class="inline-code">Success</code>、応答コード0</li>
+<li>Failed、Timed out、Delivery timed outが0</li>
+<li>S3出力が実行IDおよび対象ノードと一致</li>
+<li>Complianceに対象ノード、ベースライン、最新スキャン時刻が反映</li>
+</ul>
+<p>Scan後に<code class="inline-code">MISSING</code>または<code class="inline-code">NonCompliant</code>が表示されても、未適用パッチを正常に検出した結果であればScanコマンドの失敗ではありません。</p>
+<h4 id="今回の確認結果-2">今回の確認結果</h4>
+<p>Scanを意図した2026年9月8日00:00 JSTの実行は、Run Command出力上では<code class="inline-code">OperationType=Install</code>、<code class="inline-code">RebootOption=NoReboot</code>でした。そのため、Maintenance WindowとRun Commandの成功は確認できましたが、Scan単独テストの証跡としては扱いません。</p>
+<figure class="screenshot-wide aws-console-identity"><figcaption>図1　メンテナンスウィンドウ_初回実行詳細</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-patch-manager/022-初回実行の詳細.png" alt="初回実行の詳細" width="1713" height="809" loading="lazy"></div></figure>
+
+
+
+<h3 id="3-installテストと成功判定">3. Installテストと成功判定</h3>
+<p>Scan結果と変更承認を確認した後、同じパイロット1台へ<code class="inline-code">Operation=Install</code>を実行します。<code class="inline-code">RebootIfNeeded</code>を使用する場合は、業務停止時間と再起動後確認を事前に調整します。</p>
+<p>次をすべて満たした場合、Install実行成功と判定します。</p>
+<ul>
+<li>Maintenance Window、タスク、Run Commandおよび対象ノードが<code class="inline-code">Success</code></li>
+<li>Windowsの<code class="inline-code">PatchWindows</code>ステップが<code class="inline-code">Success</code>、応答コード0</li>
+<li>S3へ実行ログが保存されている</li>
+<li>再起動後、EC2全ステータスチェックが合格で、Fleet ManagerがOnlineへ復帰</li>
+<li>Windowsサービス、イベントログ、アプリケーションおよび業務疎通に異常なし</li>
+<li>再Scan後、意図したベースライン内で<code class="inline-code">MISSING=0</code>、<code class="inline-code">FAILED=0</code>、<code class="inline-code">INSTALLED_PENDING_REBOOT=0</code></li>
+</ul>
+<h4 id="install前にwindowsとawsの状態を記録する">Install前にWindowsとAWSの状態を記録する</h4>
+<ol>
+<li>Windowsへ管理者権限で接続します。</li>
+<li><code class="inline-code">winver</code>を開き、Windows ServerのバージョンとOSビルドを記録します。</li>
+<li>「設定」－「更新とセキュリティ」－「Windows Update」を開き、利用可能な更新、再起動待ちおよび管理ポリシーの表示を記録します。</li>
+<li>「更新の履歴を表示する」を開き、既存履歴を記録します。事前確認では「更新プログラムのチェック」を押しません。</li>
+<li>Systems ManagerのComplianceとFleet Managerのパッチ画面を開き、対象ノード、ベースライン、最終更新日時、必要な更新、エラーおよび適用済みKBを記録します。</li>
+</ol>
+<figure class="screenshot-wide"><figcaption>Install前のOSビルド</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-patch-manager/023-install前のosビルド.png" alt="Install前のOSビルド" width="537" height="471" loading="lazy"></div></figure>
+
+<p>確認時の記録：Install前はWindows Server 2022 Version 21H2、OSビルド<code class="inline-code">20348.5499</code>でした。</p>
+<figure class="screenshot-wide"><figcaption>図3　Windows_Install前WindowsUpdate状態</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-patch-manager/024-install前のwindows-update状態.png" alt="Install前のWindows Update状態" width="1202" height="934" loading="lazy"></div></figure>
+
+
+
+<figure class="screenshot-wide"><figcaption>Install前のWindows Update履歴</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-patch-manager/025-install前のwindows-update履歴.png" alt="Install前のWindows Update履歴" width="1202" height="934" loading="lazy"></div></figure>
+
+<p>確認時の記録：画面では履歴が表示されていません。</p>
+<figure class="screenshot-wide aws-console-identity"><figcaption>図5　Compliance_Install前準拠状態</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-patch-manager/026-install前のpatch-compliance.png" alt="Install前のPatch Compliance" width="1718" height="1304" loading="lazy"></div></figure>
+
+
+
+<figure class="screenshot-wide aws-console-identity"><figcaption>図6　FleetManager_Install前パッチ状態</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-patch-manager/027-install前のfleet-managerパッチ状態.png" alt="Install前のFleet Managerパッチ状態" width="1718" height="1304" loading="lazy"></div></figure>
+
+
+
+<h4 id="installと再起動設定を確認する">Installと再起動設定を確認する</h4>
+<p>Installを実行する場合は、Maintenance WindowのRun Commandタスクを編集し、<code class="inline-code">Operation=Install</code>を選択します。<code class="inline-code">RebootIfNeeded</code>は、Patch Managerが1件以上のパッチをインストールした場合、または<code class="inline-code">INSTALLED_PENDING_REBOOT</code>を検出した場合にOSを再起動します。個々のパッチが再起動を必要とするかを判定してから再起動する設定ではありません。タスクを更新後、承認済みのInstall実行日時を設定して有効化し、実行開始後に履歴から実行IDを記録します。検証終了後は、承認済みの定期スケジュールとタスク設定へ戻します。今回再起動しなかったのは、新規適用パッチがなく、<code class="inline-code">InstalledPendingRebootCount=0</code>だったためです。</p>
+<p><code class="inline-code">NoReboot</code>を選択すると、Patch Managerはパッチ適用後にOSを再起動しません。ただし、インストーラーによるサービス再起動まで抑止するものではありません。</p>
+<figure class="screenshot-wide aws-console-identity"><figcaption>図7　RunCommandタスク_Install・RebootIfNeeded設定</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-patch-manager/028-installとrebootifneededの設定.png" alt="InstallとRebootIfNeededの設定" width="1718" height="1304" loading="lazy"></div></figure>
+
+
+
+<p><a href="https://docs.aws.amazon.com/systems-manager/latest/userguide/patch-manager-aws-runpatchbaseline.html">AWS-RunPatchBaseline command document</a></p>
+<h4 id="awsコンソールでinstallの成功を確認する">AWSコンソールでInstallの成功を確認する</h4>
+<ol>
+<li>Maintenance Windowの「履歴」を開きます。</li>
+<li>Install実行のステータスが「成功」となっていることを確認し、開始時刻と終了時刻を記録します。</li>
+<li>実行IDを選択し、Execution Tasksとタスク呼び出しが「成功／Success」となっていることを確認します。</li>
+<li>Run CommandのコマンドIDを開き、全体、詳細および対象ノードのステータスが「成功」で、エラー数と配信タイムアウト数が0となっていることを確認します。</li>
+<li>コマンドドキュメントが<code class="inline-code">AWS-RunPatchBaseline</code>、実行パラメータが<code class="inline-code">Install/RebootIfNeeded</code>となっていることを確認します。</li>
+<li>「出力の表示」で<code class="inline-code">OperationType</code>、<code class="inline-code">RebootOption</code>、<code class="inline-code">InstalledCount</code>、<code class="inline-code">MissingCount</code>、<code class="inline-code">FailedCount</code>、<code class="inline-code">InstalledPendingRebootCount</code>および新規インストールKB一覧を記録します。</li>
+</ol>
+<figure class="screenshot-wide aws-console-identity"><figcaption>図8　メンテナンスウィンドウ_2回の実行成功</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-patch-manager/029-2回のmaintenance-window実行成功.png" alt="2回のMaintenance Window実行成功" width="1716" height="468" loading="lazy"></div></figure>
+
+
+
+<figure class="screenshot-wide aws-console-identity"><figcaption>図9　メンテナンスウィンドウ_Install実行詳細</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-patch-manager/030-install実行の詳細.png" alt="Install実行の詳細" width="1717" height="857" loading="lazy"></div></figure>
+
+
+
+<figure class="screenshot-wide aws-console-identity"><figcaption>図10　RunCommand_Install実行成功・パラメータ</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-patch-manager/031-run-commandのinstall実行成功.png" alt="Run CommandのInstall実行成功" width="1718" height="1304" loading="lazy"></div></figure>
+
+
+
+<h4 id="今回のinstall実行結果">今回のInstall実行結果</h4>
+<p>2026年9月8日01:00 JSTの検証結果は次のとおりです。</p>
+<div class="guide-table-scroll"><table class="guide-table"><colgroup><col style="width:24%"><col style="width:38%"><col style="width:38%"></colgroup>
+<thead>
+<tr>
+<th>項目</th>
+<th>確認値</th>
+<th>判定</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>コマンドID</td>
+<td><code class="inline-code">9c048d9e-720c-47bc-ab41-b7d5fdc43045</code></td>
+<td>記録済み</td>
+</tr>
+<tr>
+<td>Operation／RebootOption</td>
+<td><code class="inline-code">Install</code>／<code class="inline-code">RebootIfNeeded</code></td>
+<td>設定どおり</td>
+</tr>
+<tr>
+<td>全体／対象ノード</td>
+<td><code class="inline-code">Success</code>／<code class="inline-code">Success</code></td>
+<td>成功</td>
+</tr>
+<tr>
+<td>応答コード</td>
+<td><code class="inline-code">【証跡未取得】</code></td>
+<td>今回取得した画像には表示されていません。次回は対象ノードの出力詳細で取得します</td>
+</tr>
+<tr>
+<td>使用ベースライン</td>
+<td><code class="inline-code">AWS-DefaultPatchBaseline</code>、<code class="inline-code">pb-04ba050f612fba3a6</code></td>
+<td>確認済み</td>
+</tr>
+<tr>
+<td>Patch Group</td>
+<td><code class="inline-code">sample-window</code></td>
+<td>実行出力で確認済み。ベースライン関連付けの直接照会は未取得</td>
+</tr>
+<tr>
+<td>InstalledCount</td>
+<td><code class="inline-code">3</code></td>
+<td>ベースラインに対する既存のインストール済み件数。今回3件を新規適用した意味ではない</td>
+</tr>
+<tr>
+<td>MissingCount／FailedCount</td>
+<td><code class="inline-code">0</code>／<code class="inline-code">0</code></td>
+<td>ベースライン対象の不足・失敗なし</td>
+</tr>
+<tr>
+<td>InstalledPendingRebootCount</td>
+<td><code class="inline-code">0</code></td>
+<td>再起動待ちなし</td>
+</tr>
+<tr>
+<td>新規インストールKB一覧</td>
+<td>なし</td>
+<td>今回新規に適用されたパッチなし</td>
+</tr>
+<tr>
+<td>再起動</td>
+<td>発生なし</td>
+<td>対象更新がなかったため</td>
+</tr>
+<tr>
+<td>S3出力</td>
+<td>保存確認済み</td>
+<td><code class="inline-code">sample-mw-bucket/patchmanager/</code>に保存された出力で、コマンドID、ノードID、実行種別、集計値および実行時刻をRun Command画面と照合済み</td>
+</tr>
+</tbody></table></div>
+<p><code class="inline-code">Success</code>は、指定したベースラインに基づく処理がエラーなく完了したことを示します。今回のように新規適用対象が0件の場合も<code class="inline-code">Success</code>となります。実際に更新されたKBを確認する場合は、Run Command出力末尾の<code class="inline-code">KbArticleId / Installed / Message</code>一覧、Windowsの更新履歴およびOSビルドを実行前後で比較します。</p>
+<p>今回のS3出力では、<code class="inline-code">InstalledCount=3</code>、<code class="inline-code">InstalledOtherCount=6</code>ですが、実行末尾の<code class="inline-code">KbArticleId / Installed / Message</code>一覧は空でした。このため、3件と6件はスキャン時点で既にインストール済みと分類された件数です。今回新規に9件を適用した意味ではありません。<code class="inline-code">rebootCount=0</code>、<code class="inline-code">InstalledPendingRebootCount=0</code>のため、今回の実行で再起動は発生しておらず、再起動待ちもありません。</p>
+<h4 id="s3でinstall実行ログを確認する">S3でInstall実行ログを確認する</h4>
+<ol>
+<li>S3コンソールで、Run Commandタスクに指定したバケットを開きます。</li>
+<li>キープレフィックス<code class="inline-code">patchmanager/</code>を開きます。</li>
+<li>対象コマンドID、対象ノードID、プラグイン名<code class="inline-code">awsrunPowerShellScript</code>、ステップ名<code class="inline-code">PatchWindows</code>の順に開きます。</li>
+<li><code class="inline-code">stdout</code>を開き、Run Command画面とコマンドID、ノードID、実行時刻、<code class="inline-code">OperationType</code>、<code class="inline-code">RebootOption</code>および集計値が一致することを確認します。</li>
+<li><code class="inline-code">stderr</code>が作成されている場合は内容を確認し、エラーの有無を判定します。</li>
+</ol>
+<figure class="screenshot-wide aws-console-identity"><figcaption>図11　S3_Install実行ログプレフィックス確認</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-patch-manager/032-s3のpatchmanagerプレフィックス.png" alt="S3のpatchmanagerプレフィックス" width="1716" height="444" loading="lazy"></div></figure>
+
+
+
+<figure class="screenshot-wide aws-console-identity"><figcaption>図12　S3_Install実行stdout確認</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-patch-manager/033-s3に保存されたinstall実行stdout.png" alt="S3に保存されたInstall実行stdout" width="1716" height="444" loading="lazy"></div></figure>
+
+
+
+<h4 id="windows-server内でinstall後の状態を確認する">Windows Server内でInstall後の状態を確認する</h4>
+<ol>
+<li>再起動が発生した場合は、RDPまたは承認済み運用経路で再接続できることを確認します。</li>
+<li><code class="inline-code">winver</code>を開き、Install前に記録したWindowsバージョンとOSビルドから変化したか比較します。</li>
+<li>「コントロールパネル」－「プログラム」－「プログラムと機能」－「インストールされた更新プログラムを表示」を開きます。</li>
+<li>KB番号とインストール日をInstall前後で比較します。今回の実行時刻より前の日付のKBは、今回SSMが新規適用した更新として扱いません。</li>
+<li>必要に応じてWindowsイベントログ、サービス状態および業務アプリケーションの疎通を確認します。</li>
+</ol>
+<figure class="screenshot-wide"><figcaption>Install後のOSビルド</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-patch-manager/034-install後のosビルド.png" alt="Install後のOSビルド" width="534" height="472" loading="lazy"></div></figure>
+
+<p>確認時の記録：結果はInstall前と同じVersion 21H2、OSビルド<code class="inline-code">20348.5499</code>です。OSビルドの変化はありませんでした。</p>
+<figure class="screenshot-wide"><figcaption>Install後のインストール済み更新</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-patch-manager/035-install後のインストール済み更新.png" alt="Install後のインストール済み更新" width="1142" height="668" loading="lazy"></div></figure>
+
+<p>確認時の記録：表示された日付はいずれもSSM実行日の2026年9月8日より前です。今回新規に適用されたKBではありません。</p>
+<h3 id="4-systems-managerの成功とwindows-update表示の違い">4. Systems Managerの成功とWindows Update表示の違い</h3>
+<p>Systems Managerの<code class="inline-code">Success</code>と、Windows Update画面に「利用可能な更新プログラムはありません」と表示されることは同じ意味ではありません。また、Patch Managerで<code class="inline-code">Compliant</code>でも、Windows Updateに別の更新が表示される場合があります。</p>
+<ul class="check-list">
+<li>Patch Managerの<code class="inline-code">Success</code>：<code class="inline-code">AWS-RunPatchBaseline</code>コマンドが正常終了したことを示します</li>
+<li>Patch Managerの<code class="inline-code">Compliant</code>／<code class="inline-code">MissingCount=0</code>：使用したパッチベースラインで承認された更新に不足がないことを示します</li>
+<li>Windows Updateの表示：Windows UpdateまたはWSUSが現在提示する更新を表示します。パッチベースラインの分類、重要度および承認待機日数と一致するとは限りません</li>
+</ul>
+<p>今回使用した<code class="inline-code">AWS-DefaultPatchBaseline</code>は、Windows Serverについて、分類が<code class="inline-code">CriticalUpdates</code>または<code class="inline-code">SecurityUpdates</code>で、MSRC重要度が<code class="inline-code">Critical</code>または<code class="inline-code">Important</code>の更新を、公開または更新から7日後に承認します。Windows Updateで検出された<code class="inline-code">KB2267602</code>はMicrosoft Defender Antivirusのセキュリティインテリジェンス更新です。頻繁に更新される定義更新です。今回のデフォルトベースラインで承認されたOSパッチとは別に管理されるため、Patch Managerが<code class="inline-code">Compliant</code>でもWindows Updateに表示される場合があります。</p>
+<figure class="screenshot-wide"><figcaption>図15　WindowsUpdate_ベースライン対象外更新の検出</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-patch-manager/036-ベースライン対象外更新の検出.png" alt="ベースライン対象外更新の検出" width="1201" height="730" loading="lazy"></div></figure>
+
+
+
+<figure class="screenshot-wide"><figcaption>図16　WindowsUpdate_手動更新KB2267602の履歴</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-patch-manager/037-手動更新したkb2267602の履歴.png" alt="手動更新したKB2267602の履歴" width="1201" height="730" loading="lazy"></div></figure>
+
+
+
+<div class="callout callout-warning"><p><strong>⚠️ 注意：実行前のWindows Update操作</strong><br>SSMによる適用前後を比較する場合、Install前にWindows Updateの「更新プログラムのチェック」を押すと、Windows Update側でダウンロードやインストールが始まり、SSMの適用結果と混在する可能性があります。事前確認では画面表示と既存履歴だけを記録し、手動チェックはSSM実行後の切り分け作業として実施します。</p>
+</div>
+<ul>
+<li><a href="https://docs.aws.amazon.com/systems-manager/latest/userguide/patch-manager-installing-patches.html">How patches are installed</a></li>
+<li><a href="https://learn.microsoft.com/en-us/defender-endpoint/microsoft-defender-antivirus-updates">Microsoft Defender Antivirus security intelligence and product updates</a></li>
+</ul>
+<h3 id="5-失敗時の対応と切り戻し">5. 失敗時の対応と切り戻し</h3>
+<ol>
+<li>対象ウィンドウを無効化して次回実行を停止し、コマンドID、対象ノード、エラー出力を記録します。無効化だけでは進行中の処理は停止しません。</li>
+<li>SSM接続、更新元への通信、WindowsイベントログとRun Command出力を確認します。</li>
+<li>再実行または復元が必要な場合は、影響範囲を確認し、事前に準備した復元手順に従います。更新プログラムの削除可否はKBごとに確認します。</li>
+<li>復旧後、Online、サービス、業務疎通を確認し、スケジュールを再開します。</li>
+</ol>
+<h2 id="運用後確認">運用後確認</h2>
+<ul class="check-list">
+<li><input disabled="" type="checkbox"> Scan／NoRebootの単独実行と応答コード0を確認している</li>
+<li><input disabled="" type="checkbox"> Install結果と新規適用KBを記録している（対象0件の場合は0件と記録）</li>
+<li><input disabled="" type="checkbox"> 必要な再起動後、SSM接続・サービス・業務疎通が復旧している</li>
+<li><input disabled="" type="checkbox"> 再Scanの不足・失敗・再起動待ちを確認している</li>
+<li><input disabled="" type="checkbox"> コマンドID・ノードID・実行時刻とS3ログを照合している</li>
+</ul>
+</section></main>
+  </div>
+  <script src="../assets/app.js?v=20260908-skill-transfer1"></script>
+</body>
+</html>

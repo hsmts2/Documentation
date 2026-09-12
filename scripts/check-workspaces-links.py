@@ -14,7 +14,11 @@ class Page(HTMLParser):
 r=Path(__file__).resolve().parents[1]; pages=list((r/'tutorials').glob('workspaces-*.html')); errors=[]
 cache={p.resolve():Page(p.read_text('utf-8-sig')) for p in pages}
 for p in pages:
- doc=cache[p.resolve()];errors += [f'{p.name} duplicate {i}' for i,n in Counter(doc.ids).items() if n>1]
+ doc=cache[p.resolve()]; html=p.read_text('utf-8-sig')
+ if html.count('<h1>') != 1: errors.append(f'{p.name}: expected one page title')
+ if html.count('aria-current="page"') != 1: errors.append(f'{p.name}: expected one active sidebar link')
+ if '.pptx"' in html: errors.append(f'{p.name}: editable PowerPoint link remains')
+ errors += [f'{p.name} duplicate {i}' for i,n in Counter(doc.ids).items() if n>1]
  for ref in doc.refs:
   u=urlsplit(ref)
   if u.scheme or u.netloc:continue

@@ -3,9 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>マルチVPC・閉域VDI基盤案件 | Documentation</title>
-  <meta name="description" content="複数VPCへ分離した閉域VDI基盤の構築順序と、Managed Microsoft AD、AD Connector、Amazon WorkSpacesの運用手順">
+  <title>全体構築・運用順序 | Documentation</title>
+  <meta name="description" content="全体構築・運用順序の操作手順と設定例">
   <link rel="stylesheet" href="../assets/styles.css?v=20260908-skill-transfer1">
+<link rel="stylesheet" href="../assets/workspaces-guides.css?v=20260912-split">
+<script src="../assets/workspaces-legacy-routes.js?v=20260912-split"></script>
 </head>
 <body>
   <header class="site-header">
@@ -26,20 +28,7 @@
       </div>
       <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">✎</span>記事</p>
       <a href="cloudflare-private-site.html">Private GitHubリポジトリをCloudflare Workersで認証付き公開してみた</a>
-      <details class="sidebar-nested-menu" open>
-        <summary>マルチVPC・閉域VDI基盤案件（9ページ）</summary>
-        <div class="sidebar-subnav">
-          <a href="workspaces-skill-transfer.html" class="active" aria-current="page">全体構築・運用順序</a>
-          <a href="workspaces-managed-ad.html">AWS Managed Microsoft AD 構築・管理</a>
-          <a href="workspaces-management-ec2.html">管理用EC2・Active Directory管理</a>
-          <a href="workspaces-ad-connector.html">AD Connector 構築・権限委任</a>
-          <a href="workspaces-provisioning-gpo.html">Amazon WorkSpaces 構築・OU・GPO</a>
-          <a href="workspaces-image-bundle.html">WorkSpaces カスタムイメージ・バンドル</a>
-          <a href="workspaces-patch-manager.html">Systems Manager Patch Manager</a>
-          <a href="workspaces-cost-optimizer.html">Amazon WorkSpaces Cost Optimizer</a>
-          <a href="workspaces-cloudwatch-monitoring.html">CloudWatch・SNS 監視／通知</a>
-        </div>
-      </details>
+      <details class="sidebar-nested-menu" open><summary>マルチVPC・閉域VDI基盤案件</summary><div class="sidebar-subnav"><a href="workspaces-skill-transfer.html" class="active" aria-current="page">全体構築・運用順序</a><a href="workspaces-managed-ad.html">AWS Managed Microsoft ADの構築</a><a href="workspaces-managed-ad-users.html">AWS Managed Microsoft ADのユーザー・グループ管理</a><a href="workspaces-management-ec2.html">管理用EC2の起動・接続・AD管理</a><a href="workspaces-ad-connector-account.html">AD Connector用サービスアカウント・権限委任</a><a href="workspaces-ad-connector.html">AD ConnectorのVPCピアリング・SG設定・作成</a><a href="workspaces-provisioning-gpo.html">WorkSpaces Personalの構築・接続</a><a href="workspaces-target-ou.html">WorkSpaces用ターゲットOUの作成・権限委任</a><a href="workspaces-gpo.html">WorkSpaces用GPOの作成・適用・運用</a><a href="workspaces-image-bundle.html">WorkSpacesカスタムイメージ・バンドルの作成・共有</a><a href="workspaces-systems-manager.html">Systems Manager環境構築</a><a href="workspaces-patch-manager.html">Patch Managerの設定</a><a href="workspaces-patch-operations.html">Patch Managerの実行・結果確認・運用</a><a href="workspaces-cost-optimizer.html">Cost Optimizerの構築・設定</a><a href="workspaces-cost-optimizer-dry-run.html">Cost OptimizerのDry Run解除</a><a href="workspaces-cost-optimizer-schedule.html">Cost Optimizerの実行スケジュール設定・変更</a><a href="workspaces-cost-optimizer-reports.html">Cost Optimizerのレポート・監視</a><a href="workspaces-cloudwatch-monitoring.html">CloudWatchのEC2・Windows OS監視とSNS通知</a><a href="workspaces-cloudwatch-workspaces.html">CloudWatchのWorkSpaces監視・ダッシュボード</a></div></details>
       <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">◈</span>Terraform</p>
       <a href="terraform.html">Terraform 概要</a>
       <a href="hcp-terraform.html">HCP Terraform（Terraform Cloud）</a>
@@ -74,20 +63,14 @@
       <a href="troubleshooting.html">障害切り分けチェックリスト</a>
       <a href="eol.html">EOL / ライフサイクル一覧表</a>
     </aside>
-    <main class="content workspaces-skill-transfer-guide">
-      <nav class="breadcrumb" aria-label="Breadcrumb">
-        <a href="../"><span class="nav-icon" aria-hidden="true">⌂</span>Home</a>
-        <span>トピック</span>
-      </nav>
-      <h1>マルチVPC・閉域VDI基盤案件</h1>
-
+    <main class="content workspaces-skill-transfer-guide"><nav class="breadcrumb" aria-label="Breadcrumb"><a href="../">Home</a><span>トピック</span></nav><h1>全体構築・運用順序</h1>
 
 
     <figure class="architecture-figure"><figcaption>全体構成: 4つのVPCとオンプレミス拠点をDirect Connectで接続し、Managed AD、WorkSpaces、ファイル共有および管理機能を分離する</figcaption><img src="../assets/img/workspaces-skill-transfer/workspaces-skill-transfer-architecture.png" alt="4つのVPCとオンプレミス拠点を接続するAmazon WorkSpaces全体ネットワーク構成図" loading="eager"></figure>
     <div class="callout callout-info"><strong>ℹ️ 情報：構成図と検証環境の範囲</strong><p>上図は閉域VDI基盤の4 VPC構成例です。詳細手順に登場するVPC005・006は追加展開例として扱います。Cost Optimizerの構築検証では、図の管理VPCと別に専用VPC（10.250.0.0/24）を作成しています。各構成の設定値を混在させず、作業対象のパラメータを照合します。</p></div>
     <h2 id="environment-components">環境構成</h2>
     <p>オンプレミス拠点とAWS CloudをDirect Connectで接続し、認証・管理系とVDI系の役割を4つのVPCへ分離する</p>
-    <table>
+    <div class="guide-table-scroll"><table class="guide-table"><colgroup><col style="width:30%"><col style="width:70%"></colgroup>
       <thead><tr><th>構成要素</th><th>主な役割</th></tr></thead>
       <tbody>
         <tr><td>オンプレミス拠点</td><td>利用者・管理者の接続元、既存ネットワークとの連携</td></tr>
@@ -97,7 +80,7 @@
         <tr><td><code class="inline-code">ad-vpc-003</code></td><td>AD ConnectorとAmazon WorkSpacesを配置するVDIネットワーク</td></tr>
         <tr><td><code class="inline-code">ad-vpc-004</code></td><td>追加のAD ConnectorとAmazon WorkSpacesを配置するVDIネットワーク</td></tr>
       </tbody>
-    </table>
+    </table></div>
     <p>掲載内容では、ディレクトリの完全修飾ドメイン名を<code class="inline-code">ad.example.com</code>、環境固有のリソース名を<code class="inline-code">ad-</code>で始まる名称へ一般化している</p>
     <hr>
 <section id="overview" class="procedure-document">
@@ -110,7 +93,7 @@
 <p>AWS管理のドメインコントローラーとGPO、お客様が管理するEC2・OU・GPOを区別します。ドメインコントローラー用SG、管理用EC2のSG、AD ConnectorのSGは、それぞれDirectory ID、VPC、関連リソースを照合します。</p>
 <h3 id="構築作業">構築作業</h3>
 <h4 id="認証-ネットワークの準備">認証・ネットワークの準備</h4>
-<table>
+<div class="guide-table-scroll"><table class="guide-table"><colgroup><col style="width:24%"><col style="width:38%"><col style="width:38%"></colgroup>
 <thead>
 <tr>
 <th>順序</th>
@@ -155,9 +138,9 @@
 <td>アクティブ、接続先ドメイン、2サブネットを確認</td>
 
 </tr>
-</tbody></table>
+</tbody></table></div>
 <h4 id="workspaces-ou-gpo">WorkSpaces・OU・GPO</h4>
-<table>
+<div class="guide-table-scroll"><table class="guide-table"><colgroup><col style="width:24%"><col style="width:38%"><col style="width:38%"></colgroup>
 <thead>
 <tr>
 <th>順序</th>
@@ -196,12 +179,12 @@
 <td>gpupdate、gpresult、対象設定の実動作を確認</td>
 
 </tr>
-</tbody></table>
+</tbody></table></div>
 <div class="callout callout-info"><p><strong>ℹ️ 情報：OU準備とターゲットOU設定の順序</strong></p>
 <p>OU作成・権限委任は管理用EC2から先に実施できます。WorkSpaces側のターゲットOU設定はディレクトリ登録後、新規WorkSpaceの作成前に実施します。既存のOU・委任は再作成せず、同じ対象と設定内容を確認します。GPO適用確認はGPO作成後に実施します。</p>
 </div>
 <h4 id="イメージ-展開">イメージ・展開</h4>
-<table>
+<div class="guide-table-scroll"><table class="guide-table"><colgroup><col style="width:24%"><col style="width:38%"><col style="width:38%"></colgroup>
 <thead>
 <tr>
 <th>順序</th>
@@ -234,9 +217,9 @@
 <td>共有先でイメージをコピーし、バンドルを作成・検証</td>
 
 </tr>
-</tbody></table>
+</tbody></table></div>
 <h4 id="運用機能の構築">運用機能の構築</h4>
-<table>
+<div class="guide-table-scroll"><table class="guide-table"><colgroup><col style="width:24%"><col style="width:38%"><col style="width:38%"></colgroup>
 <thead>
 <tr>
 <th>順序</th>
@@ -287,7 +270,7 @@
 <td>対象メトリクス、しきい値、SNS購読・承認、通知先を確認</td>
 
 </tr>
-</tbody></table>
+</tbody></table></div>
 <p>監視・通知は、対象リソースの作成後から並行して準備できます。本番運用へ移る前に、必要な監視と通知試験を完了します。</p>
 </section>
     </main>

@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cost Optimizerのレポート・監視 | Documentation</title>
+  <meta name="description" content="Cost Optimizerのレポート・監視の操作手順と設定例">
+  <link rel="stylesheet" href="../assets/styles.css?v=20260908-skill-transfer1">
+<link rel="stylesheet" href="../assets/workspaces-guides.css?v=20260912-split">
+<script src="../assets/workspaces-legacy-routes.js?v=20260912-split"></script>
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="../"><img src="../assets/icon.jpg" alt="Documentation icon"><span>Documentation</span></a>
+    <div class="header-actions">
+      <button class="icon-button theme-toggle" type="button" title="テーマを切り替え" aria-label="テーマを切り替え">☀</button>
+      <nav class="nav" aria-label="Global navigation">
+        <a href="../"><span class="nav-icon" aria-hidden="true">⌂</span>Home</a>
+        <a href="https://github.com/hsmts2"><span class="nav-icon" aria-hidden="true">▦</span>Repositories</a>
+        <a href="https://github.com/hsmts2/Documentation"><span class="nav-icon" aria-hidden="true">◆</span>GitHub</a>
+      </nav>
+    </div>
+  </header>
+  <div class="layout layout-wide">
+    <aside id="site-sidebar" class="sidebar" aria-label="Page list">
+      <div class="sidebar-heading">
+        <button class="icon-button sidebar-toggle sidebar-toggle-inline" type="button" aria-controls="site-sidebar" aria-expanded="true" title="ナビゲーションを閉じる" aria-label="ナビゲーションを閉じる">☰</button>
+      </div>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">✎</span>記事</p>
+      <a href="cloudflare-private-site.html">Private GitHubリポジトリをCloudflare Workersで認証付き公開してみた</a>
+      <details class="sidebar-nested-menu" open><summary>マルチVPC・閉域VDI基盤案件</summary><div class="sidebar-subnav"><a href="workspaces-skill-transfer.html">全体構築・運用順序</a><a href="workspaces-managed-ad.html">AWS Managed Microsoft ADの構築</a><a href="workspaces-managed-ad-users.html">AWS Managed Microsoft ADのユーザー・グループ管理</a><a href="workspaces-management-ec2.html">管理用EC2の起動・接続・AD管理</a><a href="workspaces-ad-connector-account.html">AD Connector用サービスアカウント・権限委任</a><a href="workspaces-ad-connector.html">AD ConnectorのVPCピアリング・SG設定・作成</a><a href="workspaces-provisioning-gpo.html">WorkSpaces Personalの構築・接続</a><a href="workspaces-target-ou.html">WorkSpaces用ターゲットOUの作成・権限委任</a><a href="workspaces-gpo.html">WorkSpaces用GPOの作成・適用・運用</a><a href="workspaces-image-bundle.html">WorkSpacesカスタムイメージ・バンドルの作成・共有</a><a href="workspaces-systems-manager.html">Systems Manager環境構築</a><a href="workspaces-patch-manager.html">Patch Managerの設定</a><a href="workspaces-patch-operations.html">Patch Managerの実行・結果確認・運用</a><a href="workspaces-cost-optimizer.html">Cost Optimizerの構築・設定</a><a href="workspaces-cost-optimizer-dry-run.html">Cost OptimizerのDry Run解除</a><a href="workspaces-cost-optimizer-schedule.html">Cost Optimizerの実行スケジュール設定・変更</a><a href="workspaces-cost-optimizer-reports.html" class="active" aria-current="page">Cost Optimizerのレポート・監視</a><a href="workspaces-cloudwatch-monitoring.html">CloudWatchのEC2・Windows OS監視とSNS通知</a><a href="workspaces-cloudwatch-workspaces.html">CloudWatchのWorkSpaces監視・ダッシュボード</a></div></details>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">◈</span>Terraform</p>
+      <a href="terraform.html">Terraform 概要</a>
+      <a href="hcp-terraform.html">HCP Terraform（Terraform Cloud）</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">☁︎</span>AWS</p>
+      <a href="cloudformation.html">CloudFormation 運用手順集</a>
+      <a href="aws-cli.html">AWS CLI 特殊対応</a>
+      <a href="aws-cli-reference.html">AWS CLI コマンドリファレンス</a>
+      <a href="eventbridge-scheduler.html">EventBridge Scheduler</a>
+      <a href="aws-directory-service.html">AWS Directory Service 運用手順</a>
+      <a href="amazon-workspaces.html">Amazon WorkSpaces</a>
+      <a href="amazon-ses.html">Amazon SES SMTPリレー</a>
+      <a href="amazon-ses-monitoring.html">Amazon SES 配信監視</a>
+      <a href="amazon-rds-blue-green.html">Amazon RDS Blue/Green Deployments</a>
+      <a href="apache-acm-certificate-update.html">証明書更新（ACMエクスポート）</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">⚙︎</span>OS／ミドルウェア</p>
+      <a href="rhel9.html">Red Hat Enterprise Linux 9</a>
+      <a href="rhel10.html">Red Hat Enterprise Linux 10</a>
+      <a href="amazon-linux-2023.html">Amazon Linux 2023</a>
+      <a href="windows-server-2022.html">Windows Server 2022</a>
+      <a href="windows-server-2025.html">Windows Server 2025</a>
+      <a href="windows-server-2016-upgrade.html">Windows Server 2016 インプレースアップグレード</a>
+      <a href="storage.html">ストレージ管理</a>
+      <a href="apache.html">Apache</a>
+      <a href="apache-self-signed-ssl-termination.html">Apache SSL終端（自己署名証明書）</a>
+      <a href="redis.html">Redis（KVS）</a>
+      <a href="nfs.html">NFS</a>
+      <a href="samba.html">Samba</a>
+      <a href="mariadb.html">MariaDB</a>
+      <a href="postgresql.html">PostgreSQL</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">▤</span>リファレンス</p>
+      <a href="../writing-style-guide.html">[GitHub Pages] 記法・テンプレート</a>
+      <a href="troubleshooting.html">障害切り分けチェックリスト</a>
+      <a href="eol.html">EOL / ライフサイクル一覧表</a>
+    </aside>
+    <main class="content workspaces-skill-transfer-guide"><nav class="breadcrumb" aria-label="Breadcrumb"><a href="../">Home</a><span>トピック</span></nav><h1>Cost Optimizerのレポート・監視</h1><section id="costOptimizerReports" class="procedure-document">
+
+<span id="16-cost-optimizer-for-amazon-workspaces-レポート-監視手順書" class="legacy-heading-anchor" aria-hidden="true"></span>
+<h2 id="仕様-4">仕様</h2>
+<h3 id="構成-動作-4">構成・動作</h3>
+<p>日次実行のECSタスク、ログ、CSVとWorkSpaces実行モードを照合します。</p>
+<h3 id="管理範囲-4">管理範囲</h3>
+<p>設定値は取得時点の検証例です。実作業では承認済みパラメータと現在のAWS環境を確認します。</p>
+<h3 id="制約事項-4">制約事項</h3>
+<p>取得済みのCSVと画面はDryRun=Yesの実測1台分です。説明用5台データは実測結果に含めません。</p>
+<h2 id="運用作業-2">運用作業</h2>
+<h3 id="1-確認対象">1. 確認対象</h3>
+<p>Cost Optimizerの1回の処理は、主に次の場所で確認します。</p>
+<div class="guide-table-scroll"><table class="guide-table"><colgroup><col style="width:24%"><col style="width:38%"><col style="width:38%"></colgroup>
+<thead>
+<tr>
+<th>確認先</th>
+<th>確認内容</th>
+<th>今回の確認先</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Amazon ECS</td>
+<td>起動したタスク、停止理由、終了コード</td>
+<td>クラスター <code class="inline-code">cost-optimizer-cluster</code></td>
+</tr>
+<tr>
+<td>CloudWatch Logs</td>
+<td>読み込んだパラメータ、走査リージョン、処理結果、例外</td>
+<td><code class="inline-code">/ecs/wco-task/sample-cfn-co-001</code></td>
+</tr>
+<tr>
+<td>Amazon S3</td>
+<td>リージョン／ディレクトリ別CSV、集約CSV</td>
+<td><code class="inline-code">sample-cfn-co-001-costoptimizerbucket-yirana73nt26</code></td>
+</tr>
+<tr>
+<td>CloudWatch dashboard</td>
+<td>台数、課金形態、変換、終了、失敗、処理時間</td>
+<td><code class="inline-code">sample-cfn-co-001-Dashboard-b3cb8f30-ab0e-11f1-b7e4-0e752dcc785b</code></td>
+</tr>
+</tbody></table></div>
+<h3 id="2-ecsタスクを確認する">2. ECSタスクを確認する</h3>
+<ol>
+<li>ECSで <code class="inline-code">cost-optimizer-cluster</code> を開きます。</li>
+<li>「タスク」で対象時刻のタスクを選択し、使用したタスク定義のリビジョンと実行情報を確認します。</li>
+<li>タスクがSTOPPEDとなっていること、停止理由とコンテナ終了コード0を確認します。終了コード0でも処理対象の一部にエラーが残る場合があるため、対象リージョンのログを続けて確認します。</li>
+</ol>
+<figure class="screenshot-wide aws-console-identity"><figcaption>図1　ECS_スケジュール実行タスク一覧</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/029-図1-ecs-スケジュール実行タスク一覧.png" alt="図1_ECS_スケジュール実行タスク一覧" width="1713" height="1304" loading="lazy"></div></figure>
+
+
+
+<h3 id="3-cloudwatchダッシュボードを確認する">3. CloudWatchダッシュボードを確認する</h3>
+<ol>
+<li>CloudWatchの「ダッシュボード」を開きます。</li>
+<li><code class="inline-code">sample-cfn-co-001-Dashboard-b3cb8f30-ab0e-11f1-b7e4-0e752dcc785b</code> を選択します。</li>
+<li>対象期間を実行時刻が含まれる範囲にします。</li>
+<li>総WorkSpaces数、Hourly／Monthly、DryRun／実変換、終了、失敗・スキップ、ECS処理時間を確認します。</li>
+</ol>
+<p>取得済み証跡では総数1、Hourly 1、Monthly 0を確認しました。変換や終了がなければ該当ウィジェットが空になることは正常です。</p>
+<figure class="screenshot-wide aws-console-identity"><figcaption>図2　CloudWatch_ダッシュボード_実績1台</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/030-図2-cloudwatch-ダッシュボード-実績1台.png" alt="図2_CloudWatch_ダッシュボード_実績1台" width="1554" height="1304" loading="lazy"></div></figure>
+
+
+
+<h3 id="4-s3レポートを確認する">4. S3レポートを確認する</h3>
+<ol>
+<li>CloudFormationスタックの「出力」で <code class="inline-code">BucketName</code> を確認します。</li>
+<li>バケットを開き、<code class="inline-code">YYYY/MM/DD/</code> の順に対象日を開きます。</li>
+<li>当日の処理で新規作成された集約版とリージョン／ディレクトリ別CSVを確認します。今回<code class="inline-code">DryRun=Yes</code>の実行で確認した名称は、<code class="inline-code">aggregated_dry-run_daily.csv</code> と <code class="inline-code">＜リージョン＞_＜アカウント＞_＜ディレクトリ＞_dry-run_daily.csv</code> です。</li>
+<li>CSVをダウンロードし、文字化けや列ずれがなく開けることを確認します。</li>
+</ol>
+<p>取得済み証跡では<code class="inline-code">2026/09/08/</code>に、09:01 JST（00:01 UTC）付近で2種類のCSVが保存されました。運用確認では固定日付を使用せず、対象実行日と実際のECS終了時刻に対応するプレフィックスを確認します。</p>
+<figure class="screenshot-wide aws-console-identity"><figcaption>図3　S3_レポート・アクセスログ用バケット確認</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/031-図3-s3-レポート-アクセスログ用バケット確認.png" alt="図3_S3_レポート・アクセスログ用バケット確認" width="1552" height="560" loading="lazy"></div></figure>
+
+
+
+<figure class="screenshot-wide aws-console-identity"><figcaption>図4　S3_DryRun日次CSV出力確認</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/032-図4-s3-dryrun日次csv出力確認.png" alt="図4_S3_DryRun日次CSV出力確認" width="1552" height="506" loading="lazy"></div></figure>
+
+
+
+<figure class="screenshot-wide aws-console-identity"><figcaption>図5　S3_20260908日次CSV出力確認</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/033-図5-s3-20260908日次csv出力確認.png" alt="図5_S3_20260908日次CSV出力確認" width="1889" height="1333" loading="lazy"></div></figure>
+
+
+
+<div class="callout callout-warning"><p><strong>⚠️ 注意：掲載証跡はDry Run有効時の結果</strong><br>図4・図5および実測CSVは <code class="inline-code">DryRun=Yes</code> 時の1台分の結果です。<code class="inline-code">DryRun=No</code> へ変更した後の実変更結果ではありません。
+<code class="inline-code">DryRun=No</code> の実運用確認では、名称を決め打ちせず、対象日の実行時刻以降に作成されたCSVのファイル名と内容を確認します。</p>
+</div>
+<h3 id="5-csvの主な列を確認する">5. CSVの主な列を確認する</h3>
+<div class="guide-table-scroll"><table class="guide-table"><colgroup><col style="width:30%"><col style="width:70%"></colgroup>
+<thead>
+<tr>
+<th>列</th>
+<th>見方</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code class="inline-code">WorkspaceID</code></td>
+<td>対象WorkSpace ID</td>
+</tr>
+<tr>
+<td><code class="inline-code">Billable Hours</code></td>
+<td>当月の請求対象時間</td>
+</tr>
+<tr>
+<td><code class="inline-code">Usage Threshold</code></td>
+<td>対象バンドルに適用したしきい値</td>
+</tr>
+<tr>
+<td><code class="inline-code">Change Reported</code></td>
+<td>判定または変更内容。DryRun時は実変更を意味しない</td>
+</tr>
+<tr>
+<td><code class="inline-code">Initial Mode</code></td>
+<td>実行前の課金モード</td>
+</tr>
+<tr>
+<td><code class="inline-code">New Mode</code></td>
+<td>判定後の課金モード</td>
+</tr>
+<tr>
+<td><code class="inline-code">WorkspaceTerminated</code></td>
+<td>終了判定の結果</td>
+</tr>
+<tr>
+<td><code class="inline-code">Tags</code></td>
+<td>除外タグ等の確認</td>
+</tr>
+<tr>
+<td><code class="inline-code">ReportDate</code></td>
+<td>レポート対象日</td>
+</tr>
+</tbody></table></div>
+<p><code class="inline-code">DryRun=No</code> の実行後はCSVだけで完了判定せず、WorkSpacesコンソールの課金モードも照合します。CSVに <code class="inline-code">Failed to change mode</code> 等がある場合は、同時刻のCloudWatch Logsを確認します。</p>
+<h3 id="6-ダッシュボードの台数-変換結果を確認する">6. ダッシュボードの台数・変換結果を確認する</h3>
+<p>監視対象台数、課金モードの変換件数、Dry Runおよび実際の終了件数の時系列を確認します。</p>
+<figure class="screenshot-wide aws-console-identity"><figcaption>図6　CloudWatchダッシュボード_監視対象1台</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/034-図6-cloudwatchダッシュボード-監視対象1台.png" alt="図6_CloudWatchダッシュボード_監視対象1台" width="1517" height="853" loading="lazy"></div></figure>
+
+
+
+<figure class="screenshot-wide aws-console-identity"><figcaption>図7　CloudWatchダッシュボード_変換実績なし</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/035-図7-cloudwatchダッシュボード-変換実績なし.png" alt="図7_CloudWatchダッシュボード_変換実績なし" width="1517" height="853" loading="lazy"></div></figure>
+
+
+
+<h3 id="7-cloudwatch-logsを確認する">7. CloudWatch Logsを確認する</h3>
+<ol>
+<li>CloudWatchの「ロググループ」で <code class="inline-code">/ecs/wco-task/sample-cfn-co-001</code> を開きます。</li>
+<li>実行時刻に対応するログストリームを開きます。</li>
+<li><code class="inline-code">DryRun</code>、料金しきい値、<code class="inline-code">Regions</code>、<code class="inline-code">TerminateUnusedWorkspaces</code> 等が意図した値か確認します。</li>
+<li><code class="inline-code">ERROR</code>、<code class="inline-code">Exception</code>、<code class="inline-code">Traceback</code>、<code class="inline-code">AccessDenied</code>、<code class="inline-code">UnrecognizedClientException</code>、<code class="inline-code">Failed to change mode</code> を検索します。</li>
+<li>対象リージョンの走査、WorkSpaces件数、CSV出力、完了ログを確認します。</li>
+</ol>
+<p>ロググループの保持期間は365日です。</p>
+<figure class="screenshot-wide aws-console-identity"><figcaption>図8　CloudWatchLogs_ログストリーム一覧</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/036-図8-cloudwatchlogs-ログストリーム一覧.png" alt="図8_CloudWatchLogs_ログストリーム一覧" width="1554" height="1248" loading="lazy"></div></figure>
+
+
+
+<figure class="screenshot-wide aws-console-identity"><figcaption>図9　CloudWatchLogs_実行パラメータ_DryRun-Yes実績</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/037-図9-cloudwatchlogs-実行パラメータ-dryrun-yes実績.png" alt="図9_CloudWatchLogs_実行パラメータ_DryRun-Yes実績" width="1554" height="1248" loading="lazy"></div></figure>
+
+
+
+<p>取得済み証跡では<code class="inline-code">Regions</code>が空欄で、アカウントで未有効化のリージョンに<code class="inline-code">UnrecognizedClientException</code>が記録されましたが、東京リージョンの処理とCSV出力は完了しました。運用範囲が決まっている場合は、CloudFormationパラメータ<code class="inline-code">Regions</code>に必要なリージョンのみを指定します。<code class="inline-code">Failed to change mode</code>がある場合はWorkSpace IDで同じログを検索し、状態や例外を確認します。次回の日次実行で再試行されるため、その結果も確認します。</p>
+<h3 id="8-説明用5台サンプル">8. 説明用5台サンプル</h3>
+<p>実測が1台のため、説明用に架空の5台を記載したCSV・Excel・画像を同フォルダの<code class="inline-code">説明用サンプル</code>に保存しています。これはCloudWatchまたはお客様環境の実測値ではありません。</p>
+<ul>
+<li><code class="inline-code">説明用サンプル_集約_dry-run_daily_5台.csv</code></li>
+<li><code class="inline-code">説明用サンプル_リージョン別_dry-run_daily_5台.csv</code></li>
+<li><code class="inline-code">説明用サンプル_5台_WorkSpacesCostOptimizer.xlsx</code></li>
+<li><code class="inline-code">参考図1_説明用サンプル_WorkSpacesCostOptimizer_5台.png</code></li>
+<li><code class="inline-code">参考図2_料金パラメータ比較_v2.8.1-v2.9.10.png</code></li>
+</ul>
+<p>詳細は <a href="workspaces-cost-optimizer-reports.html#costOptimizerSample">説明用サンプル5台の見方</a> を参照します。</p>
+<h2 id="運用後確認">運用後確認</h2>
+<ul class="check-list">
+<li><input disabled="" type="checkbox"> 対象実行のECSタスクが正常終了していること。</li>
+<li><input disabled="" type="checkbox"> 対象日のS3 CSVが生成され、内容を開けること。</li>
+<li><input disabled="" type="checkbox"> 対象リージョンのログに未解決のエラーがなく、実行パラメータを確認できること。</li>
+</ul>
+</section>
+<hr>
+<section id="costOptimizerSample" class="procedure-document">
+
+<h2 id="参考-説明用サンプル5台の見方と使用範囲">参考：説明用サンプル5台の見方と使用範囲</h2>
+<h3 id="対象データ-2">対象データ</h3>
+<p>本資料は、Cost Optimizer for Amazon WorkSpacesが出力するCSVの項目と、複数台を並べた場合の見方を説明するための補助資料です。</p>
+<div class="callout callout-warning"><p><strong>⚠️ 注意：説明用5台データは架空値</strong></p>
+<p>5台分のCSV、ExcelおよびPNGは、説明用に作成した <strong>架空データ</strong> です。AWS環境から取得した実測値、CloudWatchメトリクス、S3出力原本または処理成功の証跡ではありません。今回取得した実測1台のCSV・画面証跡と混同しないでください。</p>
+</div>
+<h3 id="ファイル一覧と用途">ファイル一覧と用途</h3>
+<h4 id="説明用の架空データ">説明用の架空データ</h4>
+<div class="guide-table-scroll"><table class="guide-table"><colgroup><col style="width:24%"><col style="width:38%"><col style="width:38%"></colgroup>
+<thead>
+<tr>
+<th>ファイル名</th>
+<th>内容</th>
+<th>使用目的</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code class="inline-code">説明用サンプル_リージョン別_dry-run_daily_5台.csv</code></td>
+<td>1リージョン分を想定した5台の架空明細</td>
+<td>リージョン別日次CSVの列構成を説明する</td>
+</tr>
+<tr>
+<td><code class="inline-code">説明用サンプル_集約_dry-run_daily_5台.csv</code></td>
+<td>5台の架空集約明細</td>
+<td>集約日次CSVの列構成を説明する</td>
+</tr>
+<tr>
+<td><code class="inline-code">説明用サンプル_5台_WorkSpacesCostOptimizer.xlsx</code></td>
+<td>上記サンプルを読みやすく整理したExcel</td>
+<td>件数、使用時間、料金しきい値、明細の関係を説明する</td>
+</tr>
+<tr>
+<td><code class="inline-code">参考図1_説明用サンプル_WorkSpacesCostOptimizer_5台.png</code></td>
+<td>Excelの「概要」相当の説明画像</td>
+<td>手順書へ掲載する5台サンプルの概要図</td>
+</tr>
+<tr>
+<td><code class="inline-code">参考図2_料金パラメータ比較_v2.8.1-v2.9.10.png</code></td>
+<td>料金しきい値の比較画像</td>
+<td>お客様環境確認値と本手順書採用値の違いを説明する</td>
+</tr>
+</tbody></table></div>
+<p>このサンプルは1リージョンを想定しているため、リージョン別CSVと集約CSVの5行は同じ内容です。複数リージョンまたはマルチアカウントの実環境では、集約結果がリージョン別結果と異なる場合があります。</p>
+<h4 id="今回の実測証跡">今回の実測証跡</h4>
+<div class="guide-table-scroll"><table class="guide-table"><colgroup><col style="width:24%"><col style="width:38%"><col style="width:38%"></colgroup>
+<thead>
+<tr>
+<th>ファイル名</th>
+<th>内容</th>
+<th>使用目的</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code class="inline-code">実測_リージョン別_dry-run_daily_1台.csv</code></td>
+<td>今回S3から取得した1台分のリージョン別日次レポート</td>
+<td>実際にレポートが生成・保存されたことを確認する</td>
+</tr>
+<tr>
+<td><code class="inline-code">実測_集約_dry-run_daily_1台.csv</code></td>
+<td>今回S3から取得した1台分の集約日次レポート</td>
+<td>実際の集約ファイル形式を確認する</td>
+</tr>
+<tr>
+<td><code class="inline-code">図2_CloudWatch_ダッシュボード_実績1台.png</code></td>
+<td>今回取得したCloudWatchダッシュボード</td>
+<td>実行後にメトリクスが表示される場所を説明する</td>
+</tr>
+<tr>
+<td><code class="inline-code">図4_S3_DryRun日次CSV出力確認.png</code></td>
+<td>今回取得したS3画面</td>
+<td>レポートの格納先とファイル生成を確認する</td>
+</tr>
+</tbody></table></div>
+<p>実測1台の資料は実行証跡に使用できますが、1台だけの結果から複数バンドルの傾向、料金削減効果または全環境の動作を判断することはできません。</p>
+<h3 id="excelブックの見方">Excelブックの見方</h3>
+<p><code class="inline-code">説明用サンプル_5台_WorkSpacesCostOptimizer.xlsx</code> は、次の3シートで構成されています。</p>
+<h4 id="概要-シート">「概要」シート</h4>
+<p>5台のサンプル全体を確認するシートです。</p>
+<ul>
+<li>対象WorkSpaces：5台</li>
+<li>Billable Hours合計：184時間</li>
+<li>変更報告数：0件</li>
+<li>Bundle Type別のBillable HoursとUsage Thresholdをグラフで比較</li>
+</ul>
+<p>台数、合計時間、変更報告数は「サンプル明細」を参照する数式で計算されています。グラフはVALUE、STANDARD、PERFORMANCE、POWER、POWERPROの5種類を説明するためのもので、実環境のバンドル構成比を表すものではありません。</p>
+<h4 id="料金パラメータ比較-シート">「料金パラメータ比較」シート</h4>
+<p>お客様環境で確認したv2.8.1の料金しきい値と、本手順書でv2.9.10へ設定した値を比較するシートです。</p>
+<p>比較列は「手順書設定値」と表示しています。これは、2026年9月8日時点のAWS実装ガイドに掲載され、本手順書で採用した設定値です。v2.9.10配布テンプレート内の既定値とは同義ではありません。両者の差分は、<code class="inline-code">参考_v2.8.1-v2.9.10差分.md</code> を正として確認してください。</p>
+<p>このシートは料金しきい値の違いを説明するために使用します。実際の料金変更判断では、利用リージョンのAmazon WorkSpaces料金、お客様環境の使用状況、Dry Runレポートを別途確認します。</p>
+<h4 id="サンプル明細-シート">「サンプル明細」シート</h4>
+<p>5台分のCSV列を横並びで確認するシートです。主な列は次のとおりです。</p>
+<div class="guide-table-scroll"><table class="guide-table"><colgroup><col style="width:30%"><col style="width:70%"></colgroup>
+<thead>
+<tr>
+<th>列</th>
+<th>確認内容</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code class="inline-code">WorkspaceID</code></td>
+<td>対象WorkSpace。サンプルでは <code class="inline-code">ws-sample001</code> から <code class="inline-code">ws-sample005</code> の架空ID</td>
+</tr>
+<tr>
+<td><code class="inline-code">Billable Hours</code></td>
+<td>当月の課金対象時間としてレポートされた値</td>
+</tr>
+<tr>
+<td><code class="inline-code">Usage Threshold</code></td>
+<td>バンドル種別に対応する料金しきい値</td>
+</tr>
+<tr>
+<td><code class="inline-code">Change Reported</code></td>
+<td>課金モード変更の判定結果</td>
+</tr>
+<tr>
+<td><code class="inline-code">Initial Mode</code>／<code class="inline-code">New Mode</code></td>
+<td>判定前後の課金モード</td>
+</tr>
+<tr>
+<td><code class="inline-code">WorkspaceTerminated</code></td>
+<td>未使用WorkSpace終了機能による終了結果</td>
+</tr>
+<tr>
+<td>パフォーマンス関連列</td>
+<td>遅延、CPU、メモリ、ディスク、UDPパケット損失率などの説明用値</td>
+</tr>
+<tr>
+<td><code class="inline-code">WorkspaceType</code></td>
+<td>PRIMARY／STANDBYの識別</td>
+</tr>
+<tr>
+<td><code class="inline-code">ReportDate</code></td>
+<td>レポート日付</td>
+</tr>
+</tbody></table></div>
+<p>サンプル5台はすべて <code class="inline-code">Change Reported=No Change</code>、<code class="inline-code">Initial Mode=AUTO_STOP</code>、<code class="inline-code">New Mode=AUTO_STOP</code> としています。これは列の読み方を説明するための設定です。課金モード変更が実際に成功したことを示すものではありません。</p>
+<h3 id="実行結果を確認する際の注意">実行結果を確認する際の注意</h3>
+<p>CloudWatchダッシュボードは、分析対象数、変更結果、コンテナ実行状況などを把握するための可視化画面です。作成直後やメトリクス送信前は空欄となる場合があります。</p>
+<p>処理成功の確認では、次の3点を併せて確認します。</p>
+<ol>
+<li>ECSタスクが起動し、異常終了していないこと</li>
+<li>CloudWatch Logsの対象実行ログにエラーがないこと</li>
+<li>ソリューションが作成したS3バケットへ対象日のCSVレポートが保存されていること</li>
+</ol>
+<p>CSVが作成されていても、各WorkSpaceの課金モードが変更されたとは限りません。<code class="inline-code">Change Reported</code>、<code class="inline-code">Initial Mode</code>、<code class="inline-code">New Mode</code>、および必要に応じてECSログを確認してください。変更失敗またはスキップがある場合は、日次レポートの結果とECSログの例外内容を照合します。</p>
+</section></main>
+  </div>
+  <script src="../assets/app.js?v=20260908-skill-transfer1"></script>
+</body>
+</html>

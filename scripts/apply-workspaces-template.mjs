@@ -140,7 +140,8 @@ for (let index = 0; index < pages.length; index += 1) {
   const [file] = pages[index];
   const filePath = path.join(tutorialRoot, file);
   const source = fs.readFileSync(filePath, "utf8");
-  const output = transform(source, index);
+  // Split pages already passed the grouped-source template. Keep their dedicated navigation.
+  const output = source.includes("assets/workspaces-guides.css") ? source : transform(source, index);
   if (checkOnly && output !== source) errors.push(`${file}: template formatting is out of sync`);
   if (!checkOnly && output !== source) fs.writeFileSync(filePath, output, "utf8");
   const finalHtml = checkOnly ? source : output;

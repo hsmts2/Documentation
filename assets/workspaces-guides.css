@@ -1,0 +1,10 @@
+/* WorkSpaces procedures: bounded table widths and readable, aligned values. */
+.workspaces-skill-transfer-guide .guide-table-scroll {max-width:1040px;overflow-x:auto;margin:22px 0;}
+.workspaces-skill-transfer-guide .guide-table {width:100%;table-layout:fixed;margin:0;}
+.workspaces-skill-transfer-guide .guide-table th,
+.workspaces-skill-transfer-guide .guide-table td {text-align:left !important;overflow-wrap:anywhere;word-break:normal;vertical-align:top;}
+.workspaces-skill-transfer-guide .guide-table code {white-space:normal;overflow-wrap:anywhere;}
+.legacy-heading-anchor {display:block;scroll-margin-top:90px;}
+@media (max-width:640px) {
+ .workspaces-skill-transfer-guide .guide-table {min-width:600px;}
+}
