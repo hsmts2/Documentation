@@ -23,6 +23,7 @@ themeToggle?.addEventListener("click", () => {
 });
 
 const sidebarToggle = document.querySelector(".sidebar-toggle");
+if (window.matchMedia("(max-width: 980px)").matches) document.body.classList.add("sidebar-collapsed");
 
 const syncSidebarToggle = () => {
   if (!sidebarToggle) return;

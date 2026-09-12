@@ -199,9 +199,10 @@ main {
   overflow-x: hidden;
 }
 
+/* Keep the reading column fixed when navigation is hidden. */
 body.sidebar-collapsed .layout {
-  grid-template-columns: 44px minmax(0, 1260px);
-  width: min(1420px, calc(100% - 48px));
+  grid-template-columns: minmax(210px, 260px) minmax(0, 1180px);
+  width: min(1500px, calc(100% - 48px));
 }
 
 .layout.layout-wide {
@@ -210,12 +211,12 @@ body.sidebar-collapsed .layout {
 }
 
 body.sidebar-collapsed .layout.layout-wide {
-  grid-template-columns: 44px minmax(0, 1260px);
-  width: min(1420px, calc(100% - 48px));
+  grid-template-columns: minmax(210px, 260px) minmax(0, 1180px);
+  width: min(1500px, calc(100% - 48px));
 }
 
 body.sidebar-collapsed .sidebar {
-  width: 44px;
+  width: auto;
   overflow: hidden;
 }
 
@@ -260,7 +261,7 @@ body.sidebar-collapsed .sidebar {
 }
 
 body.sidebar-collapsed .sidebar-heading {
-  justify-content: center;
+  justify-content: flex-end;
   margin-bottom: 0;
 }
 
@@ -278,9 +279,9 @@ body.sidebar-collapsed .sidebar-nested-menu {
   gap: 7px;
   margin: 22px 0 7px;
   color: var(--text);
-  font-size: 16px;
+  font-size: 13px;
   font-weight: 700;
-  letter-spacing: 0.02em;
+  letter-spacing: 0;
 }
 
 .sidebar-group-icon {
@@ -1997,4 +1998,34 @@ figure > figcaption:first-child {
     width: 100%;
     text-align: center;
   }
+}
+
+/* Compact navigation labels; preserve full names instead of truncating them. */
+.sidebar a { font-size: 12px; line-height: 1.6; overflow-wrap: anywhere; }
+.sidebar .sidebar-group-icon { flex-shrink: 0; }
+html { scrollbar-gutter: stable; }
+
+/* On narrow screens navigation overlays the page instead of pushing it down. */
+@media (max-width: 980px) {
+  .layout, body.sidebar-collapsed .layout,
+  .layout.layout-wide, body.sidebar-collapsed .layout.layout-wide {
+    grid-template-columns: 1fr;
+    width: calc(100% - 48px);
+    padding-top: 88px;
+  }
+  .sidebar, body.sidebar-collapsed .sidebar {
+    position: fixed;
+    top: 84px;
+    left: 24px;
+    z-index: 900;
+    width: min(320px, calc(100vw - 48px));
+    max-height: calc(100dvh - 110px);
+    overflow-y: auto;
+    background: var(--bg);
+  }
+}
+@media (max-width: 640px) {
+  .layout, body.sidebar-collapsed .layout,
+  .layout.layout-wide, body.sidebar-collapsed .layout.layout-wide { width: calc(100% - 32px); }
+  .sidebar, body.sidebar-collapsed .sidebar { top: 144px; left: 16px; max-height: calc(100dvh - 164px); }
 }
