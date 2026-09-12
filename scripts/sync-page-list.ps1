@@ -13,17 +13,27 @@ $groups = @(
         Pages = @(
             [pscustomobject]@{ File = 'cloudflare-private-site.html'; Label = 'Private GitHubリポジトリをCloudflare Workersで認証付き公開してみた' }
             [pscustomobject]@{
-                Label = 'マルチVPC・閉域VDI基盤案件（9ページ）'
+                Label = '[PoC] マルチVPC・閉域VDI基盤案件'
                 Children = @(
-                    [pscustomobject]@{ File = 'workspaces-skill-transfer.html'; Label = '全体構築・運用順序'; Title = 'マルチVPC・閉域VDI基盤案件' }
-                    [pscustomobject]@{ File = 'workspaces-managed-ad.html'; Label = 'AWS Managed Microsoft AD 構築・管理' }
-                    [pscustomobject]@{ File = 'workspaces-management-ec2.html'; Label = '管理用EC2・Active Directory管理' }
-                    [pscustomobject]@{ File = 'workspaces-ad-connector.html'; Label = 'AD Connector 構築・権限委任' }
-                    [pscustomobject]@{ File = 'workspaces-provisioning-gpo.html'; Label = 'Amazon WorkSpaces 構築・OU・GPO' }
-                    [pscustomobject]@{ File = 'workspaces-image-bundle.html'; Label = 'WorkSpaces カスタムイメージ・バンドル' }
-                    [pscustomobject]@{ File = 'workspaces-patch-manager.html'; Label = 'Systems Manager Patch Manager' }
-                    [pscustomobject]@{ File = 'workspaces-cost-optimizer.html'; Label = 'Amazon WorkSpaces Cost Optimizer' }
-                    [pscustomobject]@{ File = 'workspaces-cloudwatch-monitoring.html'; Label = 'CloudWatch・SNS 監視／通知' }
+                    [pscustomobject]@{ File = 'workspaces-skill-transfer.html'; Label = '全体構築・運用順序' }
+                    [pscustomobject]@{ File = 'workspaces-managed-ad.html'; Label = 'AWS Managed Microsoft ADの構築' }
+                    [pscustomobject]@{ File = 'workspaces-managed-ad-users.html'; Label = 'AWS Managed Microsoft ADのユーザー・グループ管理' }
+                    [pscustomobject]@{ File = 'workspaces-management-ec2.html'; Label = '管理用EC2の起動・接続・AD管理' }
+                    [pscustomobject]@{ File = 'workspaces-ad-connector-account.html'; Label = 'AD Connector用サービスアカウント・権限委任' }
+                    [pscustomobject]@{ File = 'workspaces-ad-connector.html'; Label = 'AD ConnectorのVPCピアリング・SG設定・作成' }
+                    [pscustomobject]@{ File = 'workspaces-provisioning-gpo.html'; Label = 'WorkSpaces Personalの構築・接続' }
+                    [pscustomobject]@{ File = 'workspaces-target-ou.html'; Label = 'WorkSpaces用ターゲットOUの作成・権限委任' }
+                    [pscustomobject]@{ File = 'workspaces-gpo.html'; Label = 'WorkSpaces用GPOの作成・適用・運用' }
+                    [pscustomobject]@{ File = 'workspaces-image-bundle.html'; Label = 'WorkSpacesカスタムイメージ・バンドルの作成・共有' }
+                    [pscustomobject]@{ File = 'workspaces-systems-manager.html'; Label = 'Systems Manager環境構築' }
+                    [pscustomobject]@{ File = 'workspaces-patch-manager.html'; Label = 'Patch Managerの設定' }
+                    [pscustomobject]@{ File = 'workspaces-patch-operations.html'; Label = 'Patch Managerの実行・結果確認・運用' }
+                    [pscustomobject]@{ File = 'workspaces-cost-optimizer.html'; Label = 'Cost Optimizerの構築・設定' }
+                    [pscustomobject]@{ File = 'workspaces-cost-optimizer-dry-run.html'; Label = 'Cost OptimizerのDry Run解除' }
+                    [pscustomobject]@{ File = 'workspaces-cost-optimizer-schedule.html'; Label = 'Cost Optimizerの実行スケジュール設定・変更' }
+                    [pscustomobject]@{ File = 'workspaces-cost-optimizer-reports.html'; Label = 'Cost Optimizerのレポート・監視' }
+                    [pscustomobject]@{ File = 'workspaces-cloudwatch-monitoring.html'; Label = 'CloudWatchのEC2・Windows OS監視とSNS通知' }
+                    [pscustomobject]@{ File = 'workspaces-cloudwatch-workspaces.html'; Label = 'CloudWatchのWorkSpaces監視・ダッシュボード' }
                 )
             }
         )
@@ -170,17 +180,11 @@ foreach ($target in $targets) {
                 $rootHref = if ($isIndex) { $page.RootFile } else { "../$($page.RootFile)" }
                 $lines.Add("      <a href=`"$rootHref`">$($page.Label)</a>")
             } elseif ($page.Children) {
-                $isNestedActive = @($page.Children | Where-Object { $_.File -eq $activeFile }).Count -gt 0
-                $openAttribute = if ($isNestedActive) { ' open' } else { '' }
-                $lines.Add("      <details class=`"sidebar-nested-menu`"$openAttribute>")
-                $lines.Add("        <summary>$($page.Label)</summary>")
-                $lines.Add('        <div class="sidebar-subnav">')
+                $lines.Add("      <p class=`"sidebar-group`"><span class=`"sidebar-group-icon`" aria-hidden=`"true`">☁︎</span>$($page.Label)</p>")
                 foreach ($child in $page.Children) {
                     $activeClass = if ($child.File -eq $activeFile) { ' class="active"' } else { '' }
                     $lines.Add("          <a$activeClass href=`"$hrefPrefix$($child.File)`">$($child.Label)</a>")
                 }
-                $lines.Add('        </div>')
-                $lines.Add('      </details>')
             } else {
                 $activeClass = if ($page.File -eq $activeFile) { ' class="active"' } else { '' }
                 $lines.Add("      <a$activeClass href=`"$hrefPrefix$($page.File)`">$($page.Label)</a>")

@@ -37,8 +37,6 @@ for(const [slug,,old,keys] of specs)for(const key of keys){
 }
 const xml=s=>s.replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('"','&quot;');
 let sidebar=fs.readFileSync(path.join(root,'scripts/workspaces-sidebar.html'),'utf8');
-sidebar=sidebar.replace(/<details class="sidebar-nested-menu"[^>]*>[\s\S]*?<\/details>/,
- `<details class="sidebar-nested-menu" open><summary>マルチVPC・閉域VDI基盤案件</summary><div class="sidebar-subnav"><a href="${file('skill-transfer')}">全体構築・運用順序</a>${specs.map(([slug,title])=>`<a href="${file(slug)}">${xml(title)}</a>`).join('')}</div></details>`);
 const fixLinks=(html,old)=>html.replace(/href="([^"]+)"/g,(all,ref)=>{
  if(/^(?:https?:|mailto:)/.test(ref))return all;
  const [p,h]=ref.split('#');if(!h)return all;
