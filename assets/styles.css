@@ -2031,6 +2031,6 @@ html { scrollbar-gutter: stable; }
 }
 
 @media (min-width: 981px) {
-  .sidebar { max-height: calc(100dvh - 112px); overflow-y: auto; overscroll-behavior: contain; }
+  .sidebar { position: static; max-height: none; overflow: visible; }
 }
 main[aria-busy="true"] { cursor: progress; }
