@@ -25,7 +25,7 @@ $groupMatches = [regex]::Matches(
     $sidebarMatch.Groups[1].Value,
     '(?s)<p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">.*?</span>([^<]+)</p>(.*?)(?=<p class="sidebar-group">|$)'
 )
-$sectionIds = @('articles', 'terraform', 'aws-cloud', 'os-server', 'reference')
+$sectionIds = @('articles', 'poc', 'terraform', 'aws-cloud', 'os-server', 'reference')
 
 if ($groupMatches.Count -ne $sectionIds.Count) {
     throw "Expected $($sectionIds.Count) sidebar groups, found $($groupMatches.Count)"
@@ -42,7 +42,7 @@ foreach ($group in $groupMatches) {
 $homeSections = @(
     [pscustomobject]@{ Id = 'articles'; Icon = '&#128221;'; Label = $groupMatches[0].Groups[1].Value; Files = @('cloudflare-private-site.html', 'workspaces-skill-transfer.html') },
     [pscustomobject]@{ Id = 'terraform'; Icon = '&#129521;'; Label = 'Terraform'; Files = @('terraform.html', 'hcp-terraform.html') },
-    [pscustomobject]@{ Id = 'reference'; Icon = '&#128218;'; Label = $groupMatches[4].Groups[1].Value; Files = @('writing-style-guide.html', 'troubleshooting.html', 'eol.html') },
+    [pscustomobject]@{ Id = 'reference'; Icon = '&#128218;'; Label = $groupMatches[5].Groups[1].Value; Files = @('writing-style-guide.html', 'troubleshooting.html', 'eol.html') },
     [pscustomobject]@{ Id = 'aws-platform'; Icon = '&#128736;&#65039;'; Label = 'AWS &#22522;&#30436;&#65295;CLI'; Files = @('cloudformation.html', 'aws-cli.html', 'aws-cli-reference.html') },
     [pscustomobject]@{ Id = 'aws-services'; Icon = '&#9729;&#65039;'; Label = 'AWS &#12469;&#12540;&#12499;&#12473;'; Files = @('eventbridge-scheduler.html', 'aws-directory-service.html', 'amazon-workspaces.html', 'amazon-ses.html', 'amazon-ses-monitoring.html', 'amazon-rds-blue-green.html', 'apache-acm-certificate-update.html') },
     [pscustomobject]@{ Id = 'operating-systems'; Icon = '&#128187;'; Label = 'OS'; Files = @('rhel9.html', 'rhel10.html', 'amazon-linux-2023.html', 'windows-server-2022.html', 'windows-server-2025.html', 'windows-server-2016-upgrade.html') },
@@ -51,11 +51,12 @@ $homeSections = @(
 )
 $sidebarLinks['writing-style-guide.html'] = '[GitHub Pages] &#35352;&#27861;&#12539;&#12486;&#12531;&#12503;&#12524;&#12540;&#12488;'
 $sidebarLinks['workspaces-skill-transfer.html'] = '&#12510;&#12523;&#12481;VPC&#12539;&#38281;&#22495;VDI&#22522;&#30436;&#26696;&#20214;&#65288;9&#12506;&#12540;&#12472;&#65289;'
+$skillTransferDescription = '複数VPCへ分離した閉域VDI基盤の構築順序と、Managed Microsoft AD、AD Connector、Amazon WorkSpacesの運用手順'
 
 $lines = [System.Collections.Generic.List[string]]::new()
 $lines.Add('      <!-- home-groups:start -->')
-$lines.Add('      <section class="document-directory" aria-labelledby="all-documents">')
-$lines.Add('        <h2 id="all-documents">&#12377;&#12409;&#12390;&#12398;&#12489;&#12461;&#12517;&#12513;&#12531;&#12488;</h2>')
+$lines.Add('      <section class="document-directory" aria-labelledby="technical-documents-title">')
+$lines.Add('        <h2 id="technical-documents-title" class="home-section-title">技術ドキュメント</h2>')
 $lines.Add('        <div class="document-directory-grid">')
 
 foreach ($section in $homeSections) {
@@ -84,6 +85,7 @@ foreach ($section in $homeSections) {
         }
 
         $description = $descriptionMatch.Groups[1].Value.TrimEnd([char[]]@([char]0x3002, [char]0x002E))
+        if ($file -eq 'workspaces-skill-transfer.html') { $description = $skillTransferDescription }
         $anchor = if ($fileIndex -eq 0) { " id=`"$($section.Id)`"" } else { '' }
         $lines.Add("          <article class=`"document-card`"$anchor>")
         $lines.Add("            <p class=`"document-card-category document-card-category-$($section.Id)`"><span aria-hidden=`"true`">$($section.Icon)</span> $($section.Label)</p>")

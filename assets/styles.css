@@ -494,6 +494,13 @@ li {
   margin: 0;
 }
 
+.cloudflare-private-site-guide > .page-summary {
+  padding: 16px 20px;
+  background: var(--warning-bg);
+  border-left-color: var(--warning-line);
+  border-radius: 4px;
+}
+
 .notice,
 .callout {
   margin: 28px 0;
@@ -1144,42 +1151,69 @@ mark {
   }
 }
 
-.career-profile-link {
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.migration-status {
+  margin: 0 0 28px;
+  padding: 0 0 20px;
+  border-bottom: 1px solid var(--line);
+}
+
+.migration-status-heading {
   display: flex;
-  align-items: center;
+  align-items: baseline;
   justify-content: space-between;
   gap: 16px;
-  margin: 24px 0 8px;
-  padding: 18px 22px;
-  border: 1px solid var(--line);
-  border-left: 5px solid var(--accent);
-  border-radius: 8px;
-  background: var(--panel-soft);
+  margin-bottom: 10px;
   color: var(--text);
-  font-size: 18px;
-  font-weight: 750;
+  font-size: 14px;
+  font-weight: 650;
 }
 
-.career-profile-link:hover {
-  border-color: var(--accent);
-  color: var(--accent);
-  text-decoration: none;
+.migration-status-heading strong {
+  color: var(--muted);
+  font-size: 14px;
 }
 
-.career-profile-link-arrow {
-  flex: 0 0 auto;
-  color: var(--accent);
-  font-size: 22px;
-  line-height: 1;
+.migration-status progress {
+  display: block;
+  width: 100%;
+  height: 8px;
+  appearance: none;
+  border: 0;
+  background: #1b3c3b;
+}
+
+.migration-status progress::-webkit-progress-bar { background: #1b3c3b; }
+.migration-status progress::-webkit-progress-value { background: #4bd2c4; }
+.migration-status progress::-moz-progress-bar { background: #4bd2c4; }
+:root[data-theme="light"] .migration-status progress,
+:root[data-theme="light"] .migration-status progress::-webkit-progress-bar { background: #dbe8e6; }
+:root[data-theme="light"] .migration-status progress::-webkit-progress-value,
+:root[data-theme="light"] .migration-status progress::-moz-progress-bar { background: #008a80; }
+
+.home-section-title {
+  margin: 0 0 16px;
+  padding: 0;
+  font-size: 24px;
+}
+
+.profile-directory + .document-directory {
+  margin-top: 34px;
 }
 
 .document-directory {
-  margin-top: 26px;
-}
-
-.document-directory > h2 {
-  margin: 0 0 22px;
-  padding: 0;
+  margin-top: 0;
 }
 
 .document-directory-grid {
@@ -1214,6 +1248,12 @@ mark {
   border-color: rgba(207, 34, 46, 0.42);
   background: rgba(207, 34, 46, 0.1);
   color: #ff7b72;
+}
+
+.document-card-category-profile {
+  border-color: rgba(57, 210, 192, 0.46);
+  background: rgba(57, 210, 192, 0.1);
+  color: #56d4dd;
 }
 
 .document-card-category-terraform {
@@ -1259,6 +1299,7 @@ mark {
 }
 
 :root[data-theme="light"] .document-card-category-articles { color: #a40e26; }
+:root[data-theme="light"] .document-card-category-profile { color: #096b72; }
 :root[data-theme="light"] .document-card-category-terraform { color: #6639ba; }
 :root[data-theme="light"] .document-card-category-reference { color: #0969da; }
 :root[data-theme="light"] .document-card-category-aws-platform { color: #9a6700; }

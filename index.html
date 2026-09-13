@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Documentation</title>
-  <link rel="stylesheet" href="assets/styles.css?v=20260907-home4">
+  <link rel="stylesheet" href="assets/styles.css?v=20260914-home6">
 </head>
 <body>
   <header class="site-header">
@@ -84,22 +84,33 @@
       <a href="tutorials/eol.html">EOL / ライフサイクル一覧表</a>
     </aside>
 
-    <main class="content">
+    <main class="content home-page">
       <nav class="breadcrumb" aria-label="Breadcrumb">
         <a href="./"><span class="nav-icon" aria-hidden="true">⌂</span>Home</a>
         <span>トピック</span>
       </nav>
 
-      <h1>Documentation</h1>
+      <div class="migration-status" role="status" aria-label="ドキュメント移行の進捗">
+        <div class="migration-status-heading"><span>Confluence・Scrapbox.ioから移行中</span><strong>60%</strong></div>
+        <progress value="60" max="100" aria-label="ドキュメント移行の進捗">60%</progress>
+      </div>
 
-      <a class="career-profile-link" href="career.html">
-        <span>職務経歴書</span>
-        <span class="career-profile-link-arrow" aria-hidden="true">→</span>
-      </a>
+      <h1 class="visually-hidden">Documentation</h1>
+
+      <section class="document-directory profile-directory" aria-labelledby="profile-documents-title">
+        <h2 id="profile-documents-title" class="home-section-title">プロフィール資料</h2>
+        <div class="document-directory-grid">
+          <article class="document-card">
+            <p class="document-card-category document-card-category-profile">プロフィール</p>
+            <h3><a href="career.html">職務経歴書</a></h3>
+            <p>職務概要・担当案件・技術環境をまとめた経歴書</p>
+          </article>
+        </div>
+      </section>
 
       <!-- home-groups:start -->
-      <section class="document-directory" aria-labelledby="all-documents">
-        <h2 id="all-documents">&#12377;&#12409;&#12390;&#12398;&#12489;&#12461;&#12517;&#12513;&#12531;&#12488;</h2>
+      <section class="document-directory" aria-labelledby="technical-documents-title">
+        <h2 id="technical-documents-title" class="home-section-title">技術ドキュメント</h2>
         <div class="document-directory-grid">
           <article class="document-card" id="articles">
             <p class="document-card-category document-card-category-articles"><span aria-hidden="true">&#128221;</span> 記事</p>
