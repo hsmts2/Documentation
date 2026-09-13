@@ -94,7 +94,7 @@
 <li>DNSドメイン名とDirectory IDを照合し、ステータスが「アクティブ」になっていることを確認します。</li>
 <li>「アクション」から「ディレクトリ管理 EC2 インスタンスの起動」を選択します。</li>
 </ol>
-<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-management-ec2/001-directory-serviceから管理用ec2インスタンスの起動画面を開く.png" alt="Directory Serviceから管理用EC2インスタンスの起動画面を開く" width="1616" height="1304" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-management-ec2/001-directory-serviceから管理用ec2インスタンスの起動画面を開く.png" alt="Directory Serviceから管理用EC2インスタンスの起動画面を開く" width="1616" height="1304" loading="eager"></div></figure>
 
 
 
@@ -167,7 +167,7 @@
 <li>「同等のAWS CLIコマンドを表示」を開き、Directory ID、リージョンおよび各パラメータを表と照合します。</li>
 <li>AWS CloudShellを開き、下記の情報パネルに記載したコマンドをBashで実行します。実行前に、対象のAWSアカウントとリージョンを確認します。</li>
 </ol>
-<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-management-ec2/002-管理用ec2インスタンスの起動条件.png" alt="管理用EC2インスタンスの起動条件" width="1396" height="1127" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-management-ec2/002-管理用ec2インスタンスの起動条件.png" alt="管理用EC2インスタンスの起動条件" width="1396" height="1127" loading="eager"></div></figure>
 
 
 
@@ -204,7 +204,7 @@
 <li>VPC、サブネット、IAMロール、SG、AMI、インスタンスタイプおよびIMDSv2の設定を照合します。</li>
 <li>作成されたインスタンスIDとプライベートIPアドレスを記録します。</li>
 </ol>
-<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-management-ec2/003-管理用ec2インスタンスの稼働確認.png" alt="管理用EC2インスタンスの稼働確認" width="1616" height="1304" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-management-ec2/003-管理用ec2インスタンスの稼働確認.png" alt="管理用EC2インスタンスの稼働確認" width="1616" height="1304" loading="eager"></div></figure>
 
 
 
@@ -216,7 +216,7 @@
 <li>Systems Managerを開き、「Fleet Manager」を選択します。</li>
 <li>対象のインスタンスIDを確認し、ノードのチェックボックスを選択します。Pingステータスが「オンライン」になっていることを確認します。</li>
 </ol>
-<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-management-ec2/004-fleet-managerの管理対象ノード選択例.png" alt="Fleet Managerの管理対象ノード選択例" width="1716" height="473" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-management-ec2/004-fleet-managerの管理対象ノード選択例.png" alt="Fleet Managerの管理対象ノード選択例" width="1716" height="473" loading="eager"></div></figure>
 
 
 
@@ -224,7 +224,7 @@
 <li>「ノードアクション」から「リモートデスクトップで接続」を選択します。</li>
 <li>承認済みの認証方式を選択します。Windows資格情報を使用する場合はユーザー名とパスワードを入力し、キーペアを使用する場合は対応する秘密鍵を指定します。</li>
 </ol>
-<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-management-ec2/005-fleet-managerの認証情報入力例.png" alt="Fleet Managerの認証情報入力例" width="1718" height="700" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-management-ec2/005-fleet-managerの認証情報入力例.png" alt="Fleet Managerの認証情報入力例" width="1718" height="700" loading="eager"></div></figure>
 
 
 
@@ -232,7 +232,7 @@
 <li>「接続」を選択します。</li>
 <li>Windowsデスクトップが表示され、接続先のノード名とインスタンスIDが対象と一致することを確認します。</li>
 </ol>
-<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-management-ec2/006-fleet-managerによる管理用ec2への接続完了.png" alt="Fleet Managerによる管理用EC2への接続完了" width="1616" height="1304" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-management-ec2/006-fleet-managerによる管理用ec2への接続完了.png" alt="Fleet Managerによる管理用EC2への接続完了" width="1616" height="1304" loading="eager"></div></figure>
 
 
 
@@ -245,7 +245,7 @@
 <li>「サーバー マネージャー」を開き、「ローカル サーバー」を選択します。</li>
 <li>「ドメイン」に<code class="inline-code">ad.example.com</code>が表示されることを確認します。</li>
 </ol>
-<figure class="screenshot-wide"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-management-ec2/007-管理用ec2インスタンスのドメイン参加確認.png" alt="管理用EC2インスタンスのドメイン参加確認" width="1920" height="1152" loading="lazy"></div></figure>
+<figure class="screenshot-wide"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-management-ec2/007-管理用ec2インスタンスのドメイン参加確認.png" alt="管理用EC2インスタンスのドメイン参加確認" width="1920" height="1152" loading="eager"></div></figure>
 
 
 
@@ -255,14 +255,14 @@
 <li>Windowsの検索欄で「グループ ポリシーの管理」を検索します。</li>
 <li>検索結果を右クリックし、「別のユーザーとして実行」を選択します。</li>
 </ol>
-<figure class="screenshot-wide"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-management-ec2/008-グループポリシーの管理をドメインユーザーとして起動.png" alt="グループポリシーの管理をドメインユーザーとして起動" width="1920" height="1152" loading="lazy"></div></figure>
+<figure class="screenshot-wide"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-management-ec2/008-グループポリシーの管理をドメインユーザーとして起動.png" alt="グループポリシーの管理をドメインユーザーとして起動" width="1920" height="1152" loading="eager"></div></figure>
 
 
 
 <ol start="3">
 <li>承認済みのドメインユーザー名とパスワードを入力します。ユーザー名は<code class="inline-code">ad\&lt;ユーザー名&gt;</code>または対象ドメインのUPNを使用し、認証先ドメインを確認します。</li>
 </ol>
-<figure class="screenshot-wide"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-management-ec2/009-ドメインユーザー資格情報の入力例.png" alt="ドメインユーザー資格情報の入力例" width="1920" height="1152" loading="lazy"></div></figure>
+<figure class="screenshot-wide"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-management-ec2/009-ドメインユーザー資格情報の入力例.png" alt="ドメインユーザー資格情報の入力例" width="1920" height="1152" loading="eager"></div></figure>
 
 
 
@@ -279,7 +279,7 @@
 <li>「グループ ポリシー オブジェクト」を選択し、GPO一覧が表示されることを確認します。</li>
 <li>GPO名、状態、WMIフィルター、更新日時および所有者を変更前の状態として確認します。図7では7件のGPOが表示されています。</li>
 </ol>
-<figure class="screenshot-wide"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-management-ec2/010-gpmcでaws-managed-microsoft-adのgpo一覧を確認.png" alt="GPMCでAWS Managed Microsoft ADのGPO一覧を確認" width="1920" height="1152" loading="lazy"></div></figure>
+<figure class="screenshot-wide"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-management-ec2/010-gpmcでaws-managed-microsoft-adのgpo一覧を確認.png" alt="GPMCでAWS Managed Microsoft ADのGPO一覧を確認" width="1920" height="1152" loading="eager"></div></figure>
 
 
 
@@ -288,7 +288,7 @@
 <li>「コンピューターの構成」から「ポリシー」「Windowsの設定」「セキュリティの設定」「アカウント ポリシー」の順に展開します。</li>
 <li>パスワード、アカウントロックアウトおよびKerberosのポリシーを確認します。値は変更しません。</li>
 </ol>
-<figure class="screenshot-wide"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-management-ec2/011-default-domain-policyのアカウントポリシー確認.png" alt="Default Domain Policyのアカウントポリシー確認" width="1920" height="1152" loading="lazy"></div></figure>
+<figure class="screenshot-wide"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-management-ec2/011-default-domain-policyのアカウントポリシー確認.png" alt="Default Domain Policyのアカウントポリシー確認" width="1920" height="1152" loading="eager"></div></figure>
 
 
 
@@ -396,7 +396,7 @@
 <ol>
 <li>GPMCで<code class="inline-code">ad.example.com</code>を右クリックし、「ドメイン コントローラーの変更」を選択します。</li>
 </ol>
-<figure class="screenshot-wide"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-management-ec2/012-gpmcの参照先ドメインコントローラー変更メニュー.png" alt="GPMCの参照先ドメインコントローラー変更メニュー" width="1363" height="713" loading="lazy"></div></figure>
+<figure class="screenshot-wide"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-management-ec2/012-gpmcの参照先ドメインコントローラー変更メニュー.png" alt="GPMCの参照先ドメインコントローラー変更メニュー" width="1363" height="713" loading="eager"></div></figure>
 
 
 
@@ -404,7 +404,7 @@
 <li>「次のドメイン コントローラー」を選択し、現在とは別の確認対象を選択します。</li>
 <li>「OK」を選択します。</li>
 </ol>
-<figure class="screenshot-wide"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-management-ec2/013-gpmcの参照先ドメインコントローラー選択.png" alt="GPMCの参照先ドメインコントローラー選択" width="520" height="580" loading="lazy"></div></figure>
+<figure class="screenshot-wide"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-management-ec2/013-gpmcの参照先ドメインコントローラー選択.png" alt="GPMCの参照先ドメインコントローラー選択" width="520" height="580" loading="eager"></div></figure>
 
 
 
