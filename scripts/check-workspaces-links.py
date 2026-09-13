@@ -28,7 +28,7 @@ for p in pages:
    if target not in cache:cache[target]=Page(target.read_text('utf-8-sig'))
    if unquote(u.fragment) not in cache[target].ids:errors.append(f'{p.name} anchor: {u.path}#{u.fragment}')
  text=' '.join(doc.text)
- bad=[v for v in ['画像内の番号','Confluence目次','根拠ではありません','ありませんだった','ad.datumidea.jp','skyarch-pid','ad.example.com','ibm-as'] if v in text]
+ bad=[v for v in ['画像内の番号','Confluence目次','根拠ではありません','ありませんだった','ad.datumidea.jp','skyarch-pid','ibm-as'] if v in text]
  print(p.name,'images',len(doc.imgs)-1,'bad',bad)
  if bad:errors.append(f'{p.name}: {bad}')
 print('\n'.join(errors));print('ERRORS',len(errors));raise SystemExit(1 if errors else 0)

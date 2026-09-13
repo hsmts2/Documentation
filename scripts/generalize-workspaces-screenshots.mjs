@@ -6,8 +6,8 @@ const runtimeModules = process.env.NODE_PATH;
 const tessdataDir = process.env.TESSDATA_DIR || process.cwd();
 const assetRoot = process.env.WORKSPACES_ASSET_ROOT;
 const sourcePrefix = process.env.SOURCE_ENVIRONMENT_PREFIX;
-const publicPrefix = process.env.PUBLIC_ENVIRONMENT_PREFIX || "p-pm";
-const publicDomain = process.env.PUBLIC_DIRECTORY_DOMAIN || "p-pm.example.com";
+const publicPrefix = process.env.PUBLIC_ENVIRONMENT_PREFIX || "ad";
+const publicDomain = process.env.PUBLIC_DIRECTORY_DOMAIN || "ad.example.com";
 if (!runtimeModules || !assetRoot || !sourcePrefix) {
   throw new Error("Set NODE_PATH, WORKSPACES_ASSET_ROOT and SOURCE_ENVIRONMENT_PREFIX");
 }

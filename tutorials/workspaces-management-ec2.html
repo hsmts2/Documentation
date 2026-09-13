@@ -243,7 +243,7 @@
 <h3 id="5-管理用ec2のドメイン参加を確認する">5. 管理用EC2のドメイン参加を確認する</h3>
 <ol>
 <li>「サーバー マネージャー」を開き、「ローカル サーバー」を選択します。</li>
-<li>「ドメイン」に<code class="inline-code">p-pm.example.com</code>が表示されることを確認します。</li>
+<li>「ドメイン」に<code class="inline-code">ad.example.com</code>が表示されることを確認します。</li>
 </ol>
 <figure class="screenshot-wide"><figcaption>図5　管理用EC2インスタンスのドメイン参加確認</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-management-ec2/007-管理用ec2インスタンスのドメイン参加確認.png" alt="管理用EC2インスタンスのドメイン参加確認" width="1920" height="1152" loading="lazy"></div></figure>
 
@@ -260,7 +260,7 @@
 
 
 <ol start="3">
-<li>承認済みのドメインユーザー名とパスワードを入力します。ユーザー名は<code class="inline-code">p-pm\&lt;ユーザー名&gt;</code>または対象ドメインのUPNを使用し、認証先ドメインを確認します。</li>
+<li>承認済みのドメインユーザー名とパスワードを入力します。ユーザー名は<code class="inline-code">ad\&lt;ユーザー名&gt;</code>または対象ドメインのUPNを使用し、認証先ドメインを確認します。</li>
 </ol>
 <figure class="screenshot-wide"><figcaption>図6-1　ドメインユーザー資格情報の入力例</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-management-ec2/009-ドメインユーザー資格情報の入力例.png" alt="ドメインユーザー資格情報の入力例" width="1920" height="1152" loading="lazy"></div></figure>
 
@@ -275,7 +275,7 @@
 </div>
 <h3 id="7-gpo一覧とdefault-domain-policyを確認する">7. GPO一覧とDefault Domain Policyを確認する</h3>
 <ol>
-<li>GPMCで対象フォレスト、ドメイン、<code class="inline-code">p-pm.example.com</code>の順に展開します。</li>
+<li>GPMCで対象フォレスト、ドメイン、<code class="inline-code">ad.example.com</code>の順に展開します。</li>
 <li>「グループ ポリシー オブジェクト」を選択し、GPO一覧が表示されることを確認します。</li>
 <li>GPO名、状態、WMIフィルター、更新日時および所有者を変更前の状態として確認します。図7では7件のGPOが表示されています。</li>
 </ol>
@@ -367,7 +367,7 @@
 </div>
 <div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>Get-ADUserResultantPasswordPolicy -Identity '&lt;対象ユーザー名&gt;'</code></pre></div>
 <p>PSOが返されない場合は、ドメイン既定のパスワードポリシーを確認します。</p>
-<div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>Get-ADDefaultDomainPasswordPolicy -Identity 'p-pm.example.com'</code></pre></div>
+<div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>Get-ADDefaultDomainPasswordPolicy -Identity 'ad.example.com'</code></pre></div>
 <p><a href="https://docs.aws.amazon.com/directoryservice/latest/admin-guide/ms_ad_password_policies.html">AWS Managed Microsoft ADのパスワードポリシー</a></p>
 <h2 id="運用作業">運用作業</h2>
 <h3 id="1-接続できない場合の状態を確認する">1. 接続できない場合の状態を確認する</h3>
@@ -394,7 +394,7 @@
 <h3 id="2-gpmcの参照先ドメインコントローラーを切り替えて確認する-異常時のみ">2. GPMCの参照先ドメインコントローラーを切り替えて確認する（異常時のみ）</h3>
 <p>GPO、リンクまたは更新日時の表示に差異がある場合に、GPMCの問い合わせ先を切り替えて確認します。ドメインコントローラー自体の構成や稼働状態は、この操作では変わりません。</p>
 <ol>
-<li>GPMCで<code class="inline-code">p-pm.example.com</code>を右クリックし、「ドメイン コントローラーの変更」を選択します。</li>
+<li>GPMCで<code class="inline-code">ad.example.com</code>を右クリックし、「ドメイン コントローラーの変更」を選択します。</li>
 </ol>
 <figure class="screenshot-wide"><figcaption>参考図1　GPMCの参照先ドメインコントローラー変更メニュー</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-management-ec2/012-gpmcの参照先ドメインコントローラー変更メニュー.png" alt="GPMCの参照先ドメインコントローラー変更メニュー" width="1363" height="713" loading="lazy"></div></figure>
 

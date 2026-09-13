@@ -151,7 +151,7 @@
 <ol>
 <li>AWS Directory Serviceコンソールで対象のAWS Managed Microsoft ADを開きます。</li>
 <li>「ネットワークとセキュリティ」を開き、DNS IPv4アドレス、VPCおよびセキュリティグループを確認します。</li>
-<li>VPCコンソールでSGを開き、VPCが<code class="inline-code">p-pm-vpc-002</code>になっていることを確認します。</li>
+<li>VPCコンソールでSGを開き、VPCが<code class="inline-code">ad-vpc-002</code>になっていることを確認します。</li>
 <li>SG名が通常「Managed ADのDirectory ID + <code class="inline-code">_controllers</code>」形式になっていることを確認します。</li>
 <li>変更前のインバウンドルールをCSVまたは画面キャプチャで保存します。</li>
 </ol>
@@ -181,12 +181,12 @@
 <li>ステータスが<code class="inline-code">アクティブ</code>になったことを確認します。<code class="inline-code">保留中の承諾</code>のままルート設定へ進みません。</li>
 </ol>
 <div class="callout callout-info"><p><strong>ℹ️ 情報：画像ごとのピアリング接続名の表示</strong></p>
-<p>図1の入力名は<code class="inline-code">002-003-peering</code>、図3・6の候補表示は<code class="inline-code">p-pm-vpc-002-003-peer</code>です。対象は名前だけで判断せず、作成・承諾した接続のIDと両側のVPCを照合します。図3～7のルート設定では、同じピアリング接続IDが選択されています。</p>
+<p>図1の入力名は<code class="inline-code">002-003-peering</code>、図3・6の候補表示は<code class="inline-code">ad-vpc-002-003-peer</code>です。対象は名前だけで判断せず、作成・承諾した接続のIDと両側のVPCを照合します。図3～7のルート設定では、同じピアリング接続IDが選択されています。</p>
 </div>
 <h3 id="3-managed-ad側-vpc002-の戻りルートを追加する">3. Managed AD側（VPC002）の戻りルートを追加する</h3>
 <ol>
 <li>VPCコンソールで「ルートテーブル」を開きます。</li>
-<li>Managed ADを配置した2つのサブネットそれぞれについて、「サブネットの関連付け」から関連ルートテーブルを確認します。2サブネットが異なるルートテーブルを使用している場合は、両方を変更対象にします。今回の画像は<code class="inline-code">p-pm-pri-rtb-002</code>を確認したときの画面です。</li>
+<li>Managed ADを配置した2つのサブネットそれぞれについて、「サブネットの関連付け」から関連ルートテーブルを確認します。2サブネットが異なるルートテーブルを使用している場合は、両方を変更対象にします。今回の画像は<code class="inline-code">ad-pri-rtb-002</code>を確認したときの画面です。</li>
 <li>対象となるすべてのルートテーブルについて、VPC、関連付くサブネットおよび変更前ルートを確認します。</li>
 <li>「ルート」－「ルートを編集」－「ルートを追加」を選択します。</li>
 <li>送信先にAD Connector側VPCのCIDR <code class="inline-code">192.168.226.0/23</code>を入力します。</li>
@@ -209,7 +209,7 @@
 
 <h3 id="4-ad-connector側-vpc003-の往路ルートを追加する">4. AD Connector側（VPC003）の往路ルートを追加する</h3>
 <ol>
-<li><p>AD Connector用の2つのサブネットそれぞれについて、「サブネットの関連付け」から関連ルートテーブルを確認します。2サブネットが異なるルートテーブルを使用している場合は、両方を変更対象にします。今回の画像は<code class="inline-code">p-pm-vpc-003-pri-rtb-002</code>を確認したときの画面です。
+<li><p>AD Connector用の2つのサブネットそれぞれについて、「サブネットの関連付け」から関連ルートテーブルを確認します。2サブネットが異なるルートテーブルを使用している場合は、両方を変更対象にします。今回の画像は<code class="inline-code">ad-vpc-003-pri-rtb-002</code>を確認したときの画面です。
 WorkSpaces用サブネットが別のルートテーブルを使用する場合は、そのルートテーブルにもManaged ADへの経路を設定します。</p>
 </li>
 <li><p>対象となるすべてのルートテーブルについて、VPC、関連付くサブネットおよび変更前ルートを確認します。</p>
@@ -281,7 +281,7 @@ WorkSpaces用サブネットが別のルートテーブルを使用する場合�
 </tr>
 <tr>
 <td>説明</td>
-<td><code class="inline-code">p-pm-vpc-003</code></td>
+<td><code class="inline-code">ad-vpc-003</code></td>
 </tr>
 </tbody></table></div>
 <figure class="screenshot-wide aws-console-identity"><figcaption>図9　DC-SG追加内容確認</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-ad-connector/027-dc用sgへの追加内容.png" alt="DC用SGへの追加内容" width="1622" height="401" loading="lazy"></div></figure>
@@ -312,8 +312,8 @@ WorkSpaces用サブネットが別のルートテーブルを使用する場合�
 </ol>
 <div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$dnsServers = @('192.168.225.68', '192.168.225.126')
 foreach ($dnsServer in $dnsServers) {
-    Resolve-DnsName -Type SRV '_ldap._tcp.p-pm.example.com' -Server $dnsServer
-    Resolve-DnsName -Type SRV '_kerberos._tcp.p-pm.example.com' -Server $dnsServer
+    Resolve-DnsName -Type SRV '_ldap._tcp.ad.example.com' -Server $dnsServer
+    Resolve-DnsName -Type SRV '_kerberos._tcp.ad.example.com' -Server $dnsServer
     Test-NetConnection -ComputerName $dnsServer -Port 53
     Test-NetConnection -ComputerName $dnsServer -Port 88
     Test-NetConnection -ComputerName $dnsServer -Port 389
@@ -351,7 +351,7 @@ foreach ($dnsServer in $dnsServers) {
 
 <h3 id="9-ad-connectorのvpcと2サブネットを選択する">9. AD ConnectorのVPCと2サブネットを選択する</h3>
 <ol>
-<li>対象VPCを選択します。VPC003の場合は<code class="inline-code">p-pm-vpc-003</code>を選択します。</li>
+<li>対象VPCを選択します。VPC003の場合は<code class="inline-code">ad-vpc-003</code>を選択します。</li>
 <li>ネットワークタイプで「IPv4のみ」を選択します。</li>
 <li>「事前に準備する情報」に記載したAD Connector用サブネットを、異なる2つのアベイラビリティーゾーンから選択します。</li>
 <li>WorkSpaces用の<code class="inline-code">003-003a/c</code>サブネットと取り違えていないことを確認します。</li>
@@ -372,11 +372,11 @@ foreach ($dnsServer in $dnsServers) {
 </thead>
 <tbody><tr>
 <td>ディレクトリのDNS名</td>
-<td><code class="inline-code">p-pm.example.com</code></td>
+<td><code class="inline-code">ad.example.com</code></td>
 </tr>
 <tr>
 <td>ディレクトリのNetBIOS名</td>
-<td><code class="inline-code">p-pm</code></td>
+<td><code class="inline-code">ad</code></td>
 </tr>
 <tr>
 <td>DNS IPアドレス1</td>
@@ -396,8 +396,8 @@ foreach ($dnsServer in $dnsServers) {
 </tr>
 </tbody></table></div>
 <ol>
-<li>DNS名に<code class="inline-code">p-pm.example.com</code>を入力します。</li>
-<li>NetBIOS名に<code class="inline-code">p-pm</code>を入力します。この欄は任意です。</li>
+<li>DNS名に<code class="inline-code">ad.example.com</code>を入力します。</li>
+<li>NetBIOS名に<code class="inline-code">ad</code>を入力します。この欄は任意です。</li>
 <li>DNS IPアドレスに<code class="inline-code">192.168.225.68</code>と<code class="inline-code">192.168.225.126</code>を入力します。</li>
 <li>サービスアカウントのユーザー名に<code class="inline-code">ADConnectorService</code>を入力します。</li>
 <li>パスワードと確認用パスワードへ、準備した同じ値を入力します。</li>

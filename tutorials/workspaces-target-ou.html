@@ -87,18 +87,18 @@
 <span id="7-amazon-workspaces-ターゲットou作成-権限委任手順書" class="legacy-heading-anchor" aria-hidden="true"></span>
 <h2 id="仕様-2">仕様</h2>
 <h3 id="構成-動作-2">構成・動作</h3>
-<div class="code"><div class="code-header"><span>text</span><button class="copy" type="button">Copy</button></div><pre><code>p-pm.example.com
-└─ p-pm
+<div class="code"><div class="code-header"><span>text</span><button class="copy" type="button">Copy</button></div><pre><code>ad.example.com
+└─ ad
    ├─ Computers
    │  └─ WorkSpaces
    └─ Users
       ├─ ADConnectorService
       ├─ Connectors
       └─ WorkSpaces利用ユーザー</code></pre></div>
-<p><code class="inline-code">ADConnectorService</code>と<code class="inline-code">Connectors</code>の配置先は<code class="inline-code">p-pm\Users</code>です。権限を委任する場所は、WorkSpacesのコンピューターオブジェクトを作成する<code class="inline-code">p-pm\Computers\WorkSpaces</code>です。アカウントの配置先と権限の委任先を混同しません。</p>
-<p>ドメイン直下の組み込み<code class="inline-code">Computers</code>コンテナーと、お客様管理領域の<code class="inline-code">p-pm\Computers</code> OUは別の場所です。ADUCで完全なパスを確認してから操作します。</p>
+<p><code class="inline-code">ADConnectorService</code>と<code class="inline-code">Connectors</code>の配置先は<code class="inline-code">ad\Users</code>です。権限を委任する場所は、WorkSpacesのコンピューターオブジェクトを作成する<code class="inline-code">ad\Computers\WorkSpaces</code>です。アカウントの配置先と権限の委任先を混同しません。</p>
+<p>ドメイン直下の組み込み<code class="inline-code">Computers</code>コンテナーと、お客様管理領域の<code class="inline-code">ad\Computers</code> OUは別の場所です。ADUCで完全なパスを確認してから操作します。</p>
 <div class="callout callout-warning"><p><strong>⚠️ 注意：同じ権限委任を二重に登録しない</strong></p>
-<p><a href="workspaces-ad-connector-account.html#connectorDelegation">AD Connector用サービスアカウント作成・権限委任・運用手順</a>で<code class="inline-code">p-pm\Computers\WorkSpaces</code>への委任を完了済みの場合は、詳細ACLを確認して本書の委任操作を省略します。同じ<code class="inline-code">Connectors</code>、対象オブジェクト、権限および適用先のACEを重複して追加しません。</p>
+<p><a href="workspaces-ad-connector-account.html#connectorDelegation">AD Connector用サービスアカウント作成・権限委任・運用手順</a>で<code class="inline-code">ad\Computers\WorkSpaces</code>への委任を完了済みの場合は、詳細ACLを確認して本書の委任操作を省略します。同じ<code class="inline-code">Connectors</code>、対象オブジェクト、権限および適用先のACEを重複して追加しません。</p>
 </div>
 <h3 id="管理範囲-2">管理範囲</h3>
 <p>お客様管理OU配下を対象とし、<code class="inline-code">Connectors</code>へWorkSpacesコンピューターの管理に必要な権限を委任します。AWS管理領域の設定は変更しません。</p>
@@ -133,8 +133,8 @@
 <h4 id="ouを新規作成する">OUを新規作成する</h4>
 <ol>
 <li>対象ドメインの管理資格情報でADUCを開きます。</li>
-<li><code class="inline-code">p-pm.example.com</code>、<code class="inline-code">p-pm</code>、<code class="inline-code">Computers</code>の順に展開します。</li>
-<li><code class="inline-code">p-pm\Computers</code>を右クリックし、「新規作成」から「組織単位」を選択します。</li>
+<li><code class="inline-code">ad.example.com</code>、<code class="inline-code">ad</code>、<code class="inline-code">Computers</code>の順に展開します。</li>
+<li><code class="inline-code">ad\Computers</code>を右クリックし、「新規作成」から「組織単位」を選択します。</li>
 </ol>
 <figure class="screenshot-wide"><figcaption>図3　WorkSpaces_OU作成メニュー</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/013-workspaces-ou作成メニュー.png" alt="WorkSpaces OU作成メニュー" width="1170" height="724" loading="lazy"></div></figure>
 
@@ -150,14 +150,14 @@
 
 
 <ol start="7">
-<li>左ツリーと右ペインの両方で、<code class="inline-code">p-pm\Computers</code>配下に<code class="inline-code">WorkSpaces</code> OUが表示されることを確認します。</li>
+<li>左ツリーと右ペインの両方で、<code class="inline-code">ad\Computers</code>配下に<code class="inline-code">WorkSpaces</code> OUが表示されることを確認します。</li>
 </ol>
 <figure class="screenshot-wide"><figcaption>図5　WorkSpaces_OU作成完了</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/015-workspaces-ou作成完了.png" alt="WorkSpaces OU作成完了" width="1172" height="725" loading="lazy"></div></figure>
 
 
 
 <h4 id="ouのdnを確認する">OUのDNを確認する</h4>
-<div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$workSpacesOuDn = 'OU=WorkSpaces,OU=Computers,OU=p-pm,DC=p-pm,DC=example,DC=com'
+<div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$workSpacesOuDn = 'OU=WorkSpaces,OU=Computers,OU=ad,DC=ad,DC=example,DC=com'
 
 Get-ADOrganizationalUnit -Identity $workSpacesOuDn -Properties ProtectedFromAccidentalDeletion |
     Select-Object Name, DistinguishedName, ProtectedFromAccidentalDeletion</code></pre></div>
@@ -173,7 +173,7 @@ Get-ADOrganizationalUnit -Identity $workSpacesOuDn -Properties ProtectedFromAcci
 </thead>
 <tbody><tr>
 <td>委任先OU</td>
-<td><code class="inline-code">p-pm\Computers\WorkSpaces</code></td>
+<td><code class="inline-code">ad\Computers\WorkSpaces</code></td>
 </tr>
 <tr>
 <td>委任対象</td>
@@ -199,7 +199,7 @@ Get-ADOrganizationalUnit -Identity $workSpacesOuDn -Properties ProtectedFromAcci
 <p>WorkSpaces専用OUにはユーザーを配置しないため、ユーザーオブジェクトの作成・削除・書き込み権限は追加しません。ユーザー検索に必要な既存の読み取り権限は維持し、WorkSpacesコンソールから対象ユーザーを検索できることを別途確認します。</p>
 <h4 id="委任ウィザードを実行する">委任ウィザードを実行する</h4>
 <ol>
-<li>ADUCで<code class="inline-code">p-pm\Computers\WorkSpaces</code>を右クリックし、「制御の委任」を選択します。</li>
+<li>ADUCで<code class="inline-code">ad\Computers\WorkSpaces</code>を右クリックし、「制御の委任」を選択します。</li>
 </ol>
 <figure class="screenshot-wide"><figcaption>図6　WorkSpaces_OU制御の委任</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/016-workspaces-ouの制御の委任.png" alt="WorkSpaces OUの制御の委任" width="1170" height="724" loading="lazy"></div></figure>
 
@@ -249,7 +249,7 @@ Get-ADOrganizationalUnit -Identity $workSpacesOuDn -Properties ProtectedFromAcci
 </ol>
 <p><code class="inline-code">ADConnectorService</code>を直接ACLへ追加せず、<code class="inline-code">Connectors</code>グループ経由で委任します。</p>
 <p>PowerShellでACLを参照する場合の実行例です。出力の<code class="inline-code">Connectors</code>に関するエントリと適用先を、上記の詳細設定画面と照合します。</p>
-<div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>dsacls &quot;OU=WorkSpaces,OU=Computers,OU=p-pm,DC=p-pm,DC=example,DC=com&quot;</code></pre></div>
+<div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>dsacls &quot;OU=WorkSpaces,OU=Computers,OU=ad,DC=ad,DC=example,DC=com&quot;</code></pre></div>
 <h3 id="4-workspacesのターゲットouを設定する">4. WorkSpacesのターゲットOUを設定する</h3>
 <p>WorkSpaces Personalでは、登録済みディレクトリごとにコンピューターアカウントのターゲットOUを1つ指定します。設定方法は<a href="https://docs.aws.amazon.com/ja_jp/workspaces/latest/adminguide/select-ou.html">WorkSpacesディレクトリの管理</a>も参照してください。</p>
 <ol>
@@ -277,10 +277,10 @@ Get-ADOrganizationalUnit -Identity $workSpacesOuDn -Properties ProtectedFromAcci
 <li><a href="workspaces-provisioning-gpo.html#workspacesBuild">Amazon WorkSpaces作成・バンドル設定手順</a>に従い、未使用の検証用ドメインユーザーでWorkSpaceを1台新規作成します。</li>
 <li>作成前にDirectory IDとターゲットOUを再確認します。</li>
 <li>WorkSpaceが<code class="inline-code">AVAILABLE</code>になるまで待ちます。</li>
-<li>ADUCで<code class="inline-code">p-pm\Computers\WorkSpaces</code>を開き、新しいコンピューターオブジェクトを確認します。</li>
+<li>ADUCで<code class="inline-code">ad\Computers\WorkSpaces</code>を開き、新しいコンピューターオブジェクトを確認します。</li>
 <li>PowerShellでもDNを確認します。</li>
 </ol>
-<div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$workSpacesOu = 'OU=WorkSpaces,OU=Computers,OU=p-pm,DC=p-pm,DC=example,DC=com'
+<div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$workSpacesOu = 'OU=WorkSpaces,OU=Computers,OU=ad,DC=ad,DC=example,DC=com'
 
 Get-ADComputer -SearchBase $workSpacesOu -Filter * -Properties DistinguishedName,whenCreated |
     Select-Object Name,DistinguishedName,whenCreated</code></pre></div>
@@ -288,7 +288,7 @@ Get-ADComputer -SearchBase $workSpacesOu -Filter * -Properties DistinguishedName
 <div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>Get-ADComputer -Identity '&lt;WorkSpaceのコンピューター名&gt;' -Properties DistinguishedName,whenCreated |
     Format-List Name,DistinguishedName,whenCreated</code></pre></div>
 <p><code class="inline-code">DistinguishedName</code>が次の形式となっていることを確認します。</p>
-<div class="code"><div class="code-header"><span>text</span><button class="copy" type="button">Copy</button></div><pre><code>CN=&lt;コンピューター名&gt;,OU=WorkSpaces,OU=Computers,OU=p-pm,DC=p-pm,DC=example,DC=com</code></pre></div>
+<div class="code"><div class="code-header"><span>text</span><button class="copy" type="button">Copy</button></div><pre><code>CN=&lt;コンピューター名&gt;,OU=WorkSpaces,OU=Computers,OU=ad,DC=ad,DC=example,DC=com</code></pre></div>
 <p>コンピューターオブジェクトを後から手動移動して成功扱いにしません。新規作成時点から指定OUへ配置されたことを確認します。</p>
 <h2 id="運用作業-2">運用作業</h2>
 <h3 id="1-設定を切り戻す">1. 設定を切り戻す</h3>
