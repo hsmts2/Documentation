@@ -138,18 +138,20 @@ foreach ($aliasFile in $hiddenAliasFiles) {
 
 $targets = @(
     Get-Item -LiteralPath (Join-Path $root 'index.html')
+    Get-Item -LiteralPath (Join-Path $PSScriptRoot 'workspaces-sidebar.html')
     Get-ChildItem -LiteralPath $tutorialsRoot -File -Filter '*.html' |
         Where-Object { -not $hiddenAliasFiles.Contains($_.Name) } |
         Sort-Object Name
 )
-$pattern = '(?s)    <aside id="site-sidebar" class="sidebar" aria-label="[^"]+">.*?    </aside>'
+$pattern = '(?s)(?:    )?<aside id="site-sidebar" class="sidebar" aria-label="[^"]+">.*?    </aside>'
 $utf8NoBom = New-Object System.Text.UTF8Encoding($false)
 $updatedCount = 0
 
 foreach ($target in $targets) {
     $isIndex = $target.FullName -eq (Join-Path $root 'index.html')
+    $isTemplate = $target.FullName -eq (Join-Path $PSScriptRoot 'workspaces-sidebar.html')
 
-    if (-not $isIndex -and -not $pageFiles.Contains($target.Name)) {
+    if (-not $isIndex -and -not $isTemplate -and -not $pageFiles.Contains($target.Name)) {
         $errors.Add("Page list manifest does not include: $($target.Name)")
         continue
     }
@@ -164,7 +166,7 @@ foreach ($target in $targets) {
 
     $newline = if ($content.Contains("`r`n")) { "`r`n" } else { "`n" }
     $hrefPrefix = if ($isIndex) { 'tutorials/' } else { '' }
-    $activeFile = if ($isIndex) { $null } else { $target.Name }
+    $activeFile = if ($isIndex -or $isTemplate) { $null } else { $target.Name }
     $lines = [System.Collections.Generic.List[string]]::new()
 
     $lines.Add('    <aside id="site-sidebar" class="sidebar" aria-label="Page list">')
@@ -182,11 +184,11 @@ foreach ($target in $targets) {
             } elseif ($page.Children) {
                 $lines.Add("      <p class=`"sidebar-group`"><span class=`"sidebar-group-icon`" aria-hidden=`"true`">☁︎</span>$($page.Label)</p>")
                 foreach ($child in $page.Children) {
-                    $activeClass = if ($child.File -eq $activeFile) { ' class="active"' } else { '' }
+                    $activeClass = if ($child.File -eq $activeFile) { ' class="active" aria-current="page"' } else { '' }
                     $lines.Add("          <a$activeClass href=`"$hrefPrefix$($child.File)`">$($child.Label)</a>")
                 }
             } else {
-                $activeClass = if ($page.File -eq $activeFile) { ' class="active"' } else { '' }
+                $activeClass = if ($page.File -eq $activeFile) { ' class="active" aria-current="page"' } else { '' }
                 $lines.Add("      <a$activeClass href=`"$hrefPrefix$($page.File)`">$($page.Label)</a>")
             }
         }

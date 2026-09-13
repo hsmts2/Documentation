@@ -15,6 +15,10 @@ foreach ($entry in $manifestEntries) {
     $expectedTitle = if ($entry.Groups[3].Success) { $entry.Groups[3].Value } else { $manifestLabel }
     $file = Get-Item -LiteralPath (Join-Path $tutorialsRoot $fileName)
     $content = [System.IO.File]::ReadAllText($file.FullName)
+    $isWorkspacesGuide = $content.Contains('<main class="content workspaces-skill-transfer-guide">')
+    if ($isWorkspacesGuide -and $content -match '<h[2-6][^>]*>(?:参考資料|目次)</h[2-6]>') {
+        $errors.Add("${fileName}: standalone references or table of contents remain")
+    }
     $titleMatch = [regex]::Match($content, '<title>(.*?) \| Documentation</title>')
     $h1Matches = [regex]::Matches($content, '<h1[^>]*>(.*?)</h1>')
     $descriptionMatch = [regex]::Match(
@@ -24,7 +28,7 @@ foreach ($entry in $manifestEntries) {
     $leadMatches = [regex]::Matches($content, '<p class="lead">.*?</p>', 'Singleline')
     $activeSidebarMatch = [regex]::Match(
         $content,
-        '<a class="active" href="([^"]+)">(.*?)</a>',
+        '<a class="active"(?: aria-current="page")? href="([^"]+)">(.*?)</a>',
         'Singleline'
     )
 
@@ -59,7 +63,7 @@ foreach ($entry in $manifestEntries) {
         $errors.Add("${fileName}: missing meta description")
     }
 
-    if ($leadMatches.Count -ne 1) {
+    if ((-not $isWorkspacesGuide -and $leadMatches.Count -ne 1) -or ($isWorkspacesGuide -and $leadMatches.Count -gt 1)) {
         $errors.Add("${fileName}: expected one lead paragraph, found $($leadMatches.Count)")
     }
 

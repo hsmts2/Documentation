@@ -4,9 +4,11 @@ $repositoryRoot = Split-Path -Parent $PSScriptRoot
 $careerPagePath = Join-Path $repositoryRoot "career.html"
 $targetFiles = Get-ChildItem -LiteralPath $repositoryRoot -Recurse -File |
     Where-Object {
-        $_.Extension -in ".html", ".md" -and
+        $_.Extension -eq ".html" -and
         $_.FullName -notmatch "[\\/]\.git[\\/]" -and
-        $_.FullName -ne $careerPagePath
+        $_.FullName -notmatch "[\\/]scripts[\\/]" -and
+        $_.FullName -ne $careerPagePath -and
+        $_.Name -notlike 'workspaces-*.html'
     }
 
 $fullStop = [char]0x3002

@@ -1,34 +1,21 @@
 # Documentation
 
-AWS / Infrastructure / IaC / Operations に関する横断的なナレッジサイトです
+AWS基盤、OS、IaC、運用に関する技術ドキュメントとプロフィール資料を掲載しています。
 
 ## 公開URL
 
-https://thsmt.github.io/Documentation/
+https://documentation.hsmts2.workers.dev/
 
-## 目的
+## 掲載内容
 
-- CloudFormation 運用手順の整理
-- AWS CLI 特殊対応の整理
-- AWS CLI コマンドリファレンスの整理
-- EventBridge SchedulerによるAWSサービスの自動停止・起動
-- Amazon SES SMTPリレーの構築
-- Amazon SESの配信監視と通知
-- Git / GitHub 実践編の整理
-- 障害切り分けチェックリストの整理
-- Terraform の整理
-- Red Hat Enterprise Linux 9の整理
-- Amazon Linux 2023の整理
-- Windows Server 2022の整理
-- Windows Server 2016 インプレースアップグレードの整理
-- Zabbix 6.0 運用手順の整理
-- AWX / Ansible 手順の整理
-- EOL / ライフサイクル一覧表の整理
-- GitHub Pages の公開確認
+- プロフィール資料：職務経歴書
+- 技術ドキュメント：Terraform、AWS、OS・ミドルウェア、リファレンス
+- PoC：マルチVPC・閉域VDI基盤の構築と運用手順
 
 ## 執筆ルール
 
 - 表記、見出し、情報パネルのルールは [CONTRIBUTING.md](CONTRIBUTING.md) を参照
-- 文体を一括整形する場合は `powershell -File scripts/normalize-writing-style.ps1` を実行
-- 文末の句点や表記ゆれは `powershell -File scripts/check-writing-style.ps1` で確認
-- ページ内リンクは `powershell -File scripts/check-page-links.ps1` で確認
+- WorkSpaces技術移管ページは承認済み原稿の敬体・句点を維持し、一括整形の対象から除外
+- 公開HTMLの参照先と重複IDは `python scripts/audit-public-pages.py` で確認
+- ナビゲーションとページ内リンクは `powershell -File scripts/check-page-links.ps1` で確認
+- 通常記事の文体は `powershell -File scripts/check-writing-style.ps1` で確認

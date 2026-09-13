@@ -29,25 +29,25 @@
       <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">✎</span>記事</p>
       <a href="cloudflare-private-site.html">Private GitHubリポジトリをCloudflare Workersで認証付き公開してみた</a>
       <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">☁︎</span>[PoC] マルチVPC・閉域VDI基盤案件</p>
-<a href="workspaces-skill-transfer.html">全体構築・運用順序</a>
-<a href="workspaces-managed-ad.html">Managed Microsoft ADの構築</a>
-<a href="workspaces-managed-ad-users.html">Managed Microsoft ADのユーザー・グループ管理</a>
-<a href="workspaces-management-ec2.html">管理用EC2の起動・接続・AD管理</a>
-<a href="workspaces-ad-connector-account.html">AD Connector用サービスアカウント・権限委任</a>
-<a href="workspaces-ad-connector.html">AD ConnectorのVPCピアリング・SG設定・作成</a>
-<a href="workspaces-provisioning-gpo.html">WorkSpaces Personalの構築・接続</a>
-<a href="workspaces-target-ou.html">WorkSpaces用ターゲットOUの作成・権限委任</a>
-<a href="workspaces-gpo.html">WorkSpaces用GPOの作成・適用・運用</a>
-<a href="workspaces-image-bundle.html">WorkSpacesカスタムイメージ作成・共有</a>
-<a href="workspaces-systems-manager.html">Systems Manager環境構築</a>
-<a href="workspaces-patch-manager.html">Patch Managerの設定</a>
-<a href="workspaces-patch-operations.html">Patch Managerの実行・結果確認・運用</a>
-<a href="workspaces-cost-optimizer.html" class="active" aria-current="page">Cost Optimizerの構築・設定</a>
-<a href="workspaces-cost-optimizer-dry-run.html">Cost OptimizerのDry Run解除</a>
-<a href="workspaces-cost-optimizer-schedule.html">Cost Optimizerの実行スケジュール設定・変更</a>
-<a href="workspaces-cost-optimizer-reports.html">Cost Optimizerのレポート・監視</a>
-<a href="workspaces-cloudwatch-monitoring.html">CloudWatchのEC2・Windows OS監視とSNS通知</a>
-<a href="workspaces-cloudwatch-workspaces.html">CloudWatchのWorkSpaces監視</a>
+          <a href="workspaces-skill-transfer.html">全体構築・運用順序</a>
+          <a href="workspaces-managed-ad.html">Managed Microsoft ADの構築</a>
+          <a href="workspaces-managed-ad-users.html">Managed Microsoft ADのユーザー・グループ管理</a>
+          <a href="workspaces-management-ec2.html">管理用EC2の起動・接続・AD管理</a>
+          <a href="workspaces-ad-connector-account.html">AD Connector用サービスアカウント・権限委任</a>
+          <a href="workspaces-ad-connector.html">AD ConnectorのVPCピアリング・SG設定・作成</a>
+          <a href="workspaces-provisioning-gpo.html">WorkSpaces Personalの構築・接続</a>
+          <a href="workspaces-target-ou.html">WorkSpaces用ターゲットOUの作成・権限委任</a>
+          <a href="workspaces-gpo.html">WorkSpaces用GPOの作成・適用・運用</a>
+          <a href="workspaces-image-bundle.html">WorkSpacesカスタムイメージ作成・共有</a>
+          <a href="workspaces-systems-manager.html">Systems Manager環境構築</a>
+          <a href="workspaces-patch-manager.html">Patch Managerの設定</a>
+          <a href="workspaces-patch-operations.html">Patch Managerの実行・結果確認・運用</a>
+          <a class="active" aria-current="page" href="workspaces-cost-optimizer.html">Cost Optimizerの構築・設定</a>
+          <a href="workspaces-cost-optimizer-dry-run.html">Cost OptimizerのDry Run解除</a>
+          <a href="workspaces-cost-optimizer-schedule.html">Cost Optimizerの実行スケジュール設定・変更</a>
+          <a href="workspaces-cost-optimizer-reports.html">Cost Optimizerのレポート・監視</a>
+          <a href="workspaces-cloudwatch-monitoring.html">CloudWatchのEC2・Windows OS監視とSNS通知</a>
+          <a href="workspaces-cloudwatch-workspaces.html">CloudWatchのWorkSpaces監視</a>
       <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">◈</span>Terraform</p>
       <a href="terraform.html">Terraform 概要</a>
       <a href="hcp-terraform.html">HCP Terraform（Terraform Cloud）</a>
@@ -403,32 +403,6 @@
 <li>自動変更から除外するWorkSpaceには、公式仕様に従って <code class="inline-code">Skip_Convert</code> タグを使用します。</li>
 <li>成功可否はダッシュボードだけで判断せず、ECS、CloudWatch Logs、S3 CSV、WorkSpaces実設定を突合します。</li>
 </ul>
-<h2 id="参考資料">参考資料</h2>
-<div class="guide-table-scroll"><table class="guide-table"><colgroup><col style="width:30%"><col style="width:70%"></colgroup>
-<thead>
-<tr>
-<th>資料</th>
-<th>確認する内容</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><a href="https://github.com/aws-solutions/cost-optimizer-for-amazon-workspaces">GitHubリポジトリ</a></td>
-<td>ソリューションの概要、開発・ビルド方法、公開コード</td>
-</tr>
-<tr>
-<td><a href="https://github.com/aws-solutions/cost-optimizer-for-amazon-workspaces/tree/v2.9.10/source">ソースコード（v2.9.10）</a></td>
-<td>本手順書で使用するバージョンの実装</td>
-</tr>
-<tr>
-<td><a href="https://github.com/aws-solutions/cost-optimizer-for-amazon-workspaces/releases/tag/v2.9.10">リリースノート（v2.9.10）</a></td>
-<td>本手順書のバージョンでの変更点・修正内容</td>
-</tr>
-<tr>
-<td><a href="https://github.com/aws-solutions/cost-optimizer-for-amazon-workspaces/releases">リリース一覧</a></td>
-<td>更新候補のバージョンとリリース履歴</td>
-</tr>
-</tbody></table></div>
-<p>本手順書の実装を確認する場合は、<code class="inline-code">v2.9.10</code>に固定したソースコードを参照します。バージョンを更新する場合は、現在のバージョンから更新先までのリリースノートとCloudFormation変更セットを確認します。</p>
 </section>
 <hr>
 <section id="costOptimizerVersionDiff" class="procedure-document">

@@ -62,6 +62,7 @@ for(const [slug,title,old,keys] of [['skill-transfer','全体構築・運用順�
   return s;
  }).join('\n<hr>\n'):html.match(/<main\b[^>]*>([\s\S]*?)<\/main>/)[1].replace(/^[\s\S]*?<\/h1>/,'');
  body=body.replace(/<p>\s*<a\b[^>]*href="[^"]+\.pptx"[^>]*>[\s\S]*?<\/a>\s*<\/p>/g,'');
+ body=body.replace(/<h2 id="参考資料(?:-\d+)?">参考資料<\/h2>[\s\S]*?(?=<\/section>)/g,'');
  body=fixLinks(body,old);body=tables(body);
  html=html.replace(/<main\b[^>]*>[\s\S]*?<\/main>/,`<main class="content workspaces-skill-transfer-guide"><nav class="breadcrumb" aria-label="Breadcrumb"><a href="../">Home</a><span>トピック</span></nav><h1>${xml(title)}</h1>${body}</main>`);
  html=html.replace(/<title>[\s\S]*?<\/title>/,`<title>${xml(title)} | Documentation</title>`).replace(/<meta name="description"[^>]*>/,`<meta name="description" content="${xml(title)}の操作手順と設定例">`);

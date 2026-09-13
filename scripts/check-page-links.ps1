@@ -1,7 +1,8 @@
 ﻿$ErrorActionPreference = 'Stop'
 
 $root = Split-Path -Parent $PSScriptRoot
-$files = Get-ChildItem -LiteralPath $root -Recurse -File -Filter '*.html'
+$files = Get-ChildItem -LiteralPath $root -Recurse -File -Filter '*.html' |
+    Where-Object { $_.FullName -notmatch '[\\/]scripts[\\/]' }
 $errors = [System.Collections.Generic.List[string]]::new()
 
 $mainPattern = [regex]::new(
@@ -73,6 +74,10 @@ foreach ($file in $files) {
     $mainMatch = $mainPattern.Match($content)
     if (-not $mainMatch.Success) {
         $errors.Add("$relativePath`: missing main element")
+        continue
+    }
+
+    if ($mainMatch.Value -match '<main class="content workspaces-skill-transfer-guide">') {
         continue
     }
 

@@ -29,25 +29,25 @@
       <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">✎</span>記事</p>
       <a href="cloudflare-private-site.html">Private GitHubリポジトリをCloudflare Workersで認証付き公開してみた</a>
       <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">☁︎</span>[PoC] マルチVPC・閉域VDI基盤案件</p>
-<a href="workspaces-skill-transfer.html">全体構築・運用順序</a>
-<a href="workspaces-managed-ad.html">Managed Microsoft ADの構築</a>
-<a href="workspaces-managed-ad-users.html">Managed Microsoft ADのユーザー・グループ管理</a>
-<a href="workspaces-management-ec2.html">管理用EC2の起動・接続・AD管理</a>
-<a href="workspaces-ad-connector-account.html">AD Connector用サービスアカウント・権限委任</a>
-<a href="workspaces-ad-connector.html">AD ConnectorのVPCピアリング・SG設定・作成</a>
-<a href="workspaces-provisioning-gpo.html">WorkSpaces Personalの構築・接続</a>
-<a href="workspaces-target-ou.html">WorkSpaces用ターゲットOUの作成・権限委任</a>
-<a href="workspaces-gpo.html">WorkSpaces用GPOの作成・適用・運用</a>
-<a href="workspaces-image-bundle.html">WorkSpacesカスタムイメージ作成・共有</a>
-<a href="workspaces-systems-manager.html">Systems Manager環境構築</a>
-<a href="workspaces-patch-manager.html">Patch Managerの設定</a>
-<a href="workspaces-patch-operations.html">Patch Managerの実行・結果確認・運用</a>
-<a href="workspaces-cost-optimizer.html">Cost Optimizerの構築・設定</a>
-<a href="workspaces-cost-optimizer-dry-run.html">Cost OptimizerのDry Run解除</a>
-<a href="workspaces-cost-optimizer-schedule.html">Cost Optimizerの実行スケジュール設定・変更</a>
-<a href="workspaces-cost-optimizer-reports.html">Cost Optimizerのレポート・監視</a>
-<a href="workspaces-cloudwatch-monitoring.html" class="active" aria-current="page">CloudWatchのEC2・Windows OS監視とSNS通知</a>
-<a href="workspaces-cloudwatch-workspaces.html">CloudWatchのWorkSpaces監視</a>
+          <a href="workspaces-skill-transfer.html">全体構築・運用順序</a>
+          <a href="workspaces-managed-ad.html">Managed Microsoft ADの構築</a>
+          <a href="workspaces-managed-ad-users.html">Managed Microsoft ADのユーザー・グループ管理</a>
+          <a href="workspaces-management-ec2.html">管理用EC2の起動・接続・AD管理</a>
+          <a href="workspaces-ad-connector-account.html">AD Connector用サービスアカウント・権限委任</a>
+          <a href="workspaces-ad-connector.html">AD ConnectorのVPCピアリング・SG設定・作成</a>
+          <a href="workspaces-provisioning-gpo.html">WorkSpaces Personalの構築・接続</a>
+          <a href="workspaces-target-ou.html">WorkSpaces用ターゲットOUの作成・権限委任</a>
+          <a href="workspaces-gpo.html">WorkSpaces用GPOの作成・適用・運用</a>
+          <a href="workspaces-image-bundle.html">WorkSpacesカスタムイメージ作成・共有</a>
+          <a href="workspaces-systems-manager.html">Systems Manager環境構築</a>
+          <a href="workspaces-patch-manager.html">Patch Managerの設定</a>
+          <a href="workspaces-patch-operations.html">Patch Managerの実行・結果確認・運用</a>
+          <a href="workspaces-cost-optimizer.html">Cost Optimizerの構築・設定</a>
+          <a href="workspaces-cost-optimizer-dry-run.html">Cost OptimizerのDry Run解除</a>
+          <a href="workspaces-cost-optimizer-schedule.html">Cost Optimizerの実行スケジュール設定・変更</a>
+          <a href="workspaces-cost-optimizer-reports.html">Cost Optimizerのレポート・監視</a>
+          <a class="active" aria-current="page" href="workspaces-cloudwatch-monitoring.html">CloudWatchのEC2・Windows OS監視とSNS通知</a>
+          <a href="workspaces-cloudwatch-workspaces.html">CloudWatchのWorkSpaces監視</a>
       <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">◈</span>Terraform</p>
       <a href="terraform.html">Terraform 概要</a>
       <a href="hcp-terraform.html">HCP Terraform（Terraform Cloud）</a>
@@ -717,35 +717,6 @@ CloudWatch agentの稼働とWindows OSメトリクスの出力は掲載画像で
 <li>四半期：通常値とピーク値、しきい値、不要なアラーム・ウィジェットを見直します。</li>
 <li>構成変更時：新しいリソースを監視対象へ追加し、通知試験を行います。</li>
 <li>設定を戻す場合：作業前に退避したagent設定を復元し、既存のログ収集とメトリクス送信を確認します。共有IAMロールのポリシーは利用先への影響を確認してから変更します。</li>
-</ul>
-<h2 id="参考資料">参考資料</h2>
-<ul>
-<li><p><a href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/viewing_metrics_with_cloudwatch.html">EC2のCloudWatchメトリクス</a></p>
-</li>
-<li><p><a href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/creating_status_check_alarms.html">EC2ステータスチェックアラームの作成</a></p>
-</li>
-<li><p><a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/metrics-collected-by-CloudWatch-agent.html">CloudWatch agentで収集するメトリクス</a></p>
-</li>
-<li><p><a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/installing-cloudwatch-agent-ssm.html">Systems Managerを使用したCloudWatch agentのインストール</a></p>
-</li>
-<li><p><a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/create-cloudwatch-agent-configuration-file-wizard.html">CloudWatch agent設定ウィザード</a></p>
-</li>
-<li><p><a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Agent-Configuration-File-Details.html">CloudWatch agent設定ファイルの詳細</a></p>
-</li>
-<li><p><a href="https://docs.aws.amazon.com/aws-managed-policy/latest/reference/CloudWatchAgentServerPolicy.html">AWS管理ポリシーCloudWatchAgentServerPolicy</a></p>
-</li>
-<li><p><a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/troubleshooting-CloudWatch-Agent.html">CloudWatch agentのトラブルシューティング</a></p>
-</li>
-<li><p><a href="https://docs.aws.amazon.com/sns/latest/dg/sns-create-topic.html">Amazon SNSトピックの作成</a></p>
-</li>
-<li><p><a href="https://docs.aws.amazon.com/sns/latest/dg/sns-create-subscribe-endpoint-to-topic.html">Amazon SNSトピックの購読</a></p>
-</li>
-<li><p><a href="https://docs.aws.amazon.com/sns/latest/dg/sns-email-notifications.html">Amazon SNSのメール通知</a></p>
-</li>
-<li><p><a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Notify_Users_Alarm_Changes.html">CloudWatchアラームからSNSへ通知する</a></p>
-</li>
-<li><p><a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/create_dashboard.html">CloudWatchダッシュボードの作成</a></p>
-</li>
 </ul>
 </section></main>
   </div>
