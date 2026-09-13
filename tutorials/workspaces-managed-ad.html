@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AWS Managed Microsoft ADの構築 | Documentation</title>
-  <meta name="description" content="AWS Managed Microsoft ADの構築の操作手順と設定例">
+  <title>Managed Microsoft ADの構築 | Documentation</title>
+  <meta name="description" content="Managed Microsoft ADの構築の操作手順と設定例">
   <link rel="stylesheet" href="../assets/styles.css?v=20260908-skill-transfer1">
 <link rel="stylesheet" href="../assets/workspaces-guides.css?v=20260912-split">
 <script src="../assets/workspaces-legacy-routes.js?v=20260912-split"></script>
@@ -30,15 +30,15 @@
       <a href="cloudflare-private-site.html">Private GitHubリポジトリをCloudflare Workersで認証付き公開してみた</a>
       <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">☁︎</span>[PoC] マルチVPC・閉域VDI基盤案件</p>
 <a href="workspaces-skill-transfer.html">全体構築・運用順序</a>
-<a href="workspaces-managed-ad.html" class="active" aria-current="page">AWS Managed Microsoft ADの構築</a>
-<a href="workspaces-managed-ad-users.html">AWS Managed Microsoft ADのユーザー・グループ管理</a>
+<a href="workspaces-managed-ad.html" class="active" aria-current="page">Managed Microsoft ADの構築</a>
+<a href="workspaces-managed-ad-users.html">Managed Microsoft ADのユーザー・グループ管理</a>
 <a href="workspaces-management-ec2.html">管理用EC2の起動・接続・AD管理</a>
 <a href="workspaces-ad-connector-account.html">AD Connector用サービスアカウント・権限委任</a>
 <a href="workspaces-ad-connector.html">AD ConnectorのVPCピアリング・SG設定・作成</a>
 <a href="workspaces-provisioning-gpo.html">WorkSpaces Personalの構築・接続</a>
 <a href="workspaces-target-ou.html">WorkSpaces用ターゲットOUの作成・権限委任</a>
 <a href="workspaces-gpo.html">WorkSpaces用GPOの作成・適用・運用</a>
-<a href="workspaces-image-bundle.html">WorkSpacesカスタムイメージ・バンドルの作成・共有</a>
+<a href="workspaces-image-bundle.html">WorkSpacesカスタムイメージ作成・共有</a>
 <a href="workspaces-systems-manager.html">Systems Manager環境構築</a>
 <a href="workspaces-patch-manager.html">Patch Managerの設定</a>
 <a href="workspaces-patch-operations.html">Patch Managerの実行・結果確認・運用</a>
@@ -47,7 +47,7 @@
 <a href="workspaces-cost-optimizer-schedule.html">Cost Optimizerの実行スケジュール設定・変更</a>
 <a href="workspaces-cost-optimizer-reports.html">Cost Optimizerのレポート・監視</a>
 <a href="workspaces-cloudwatch-monitoring.html">CloudWatchのEC2・Windows OS監視とSNS通知</a>
-<a href="workspaces-cloudwatch-workspaces.html">CloudWatchのWorkSpaces監視・ダッシュボード</a>
+<a href="workspaces-cloudwatch-workspaces.html">CloudWatchのWorkSpaces監視</a>
       <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">◈</span>Terraform</p>
       <a href="terraform.html">Terraform 概要</a>
       <a href="hcp-terraform.html">HCP Terraform（Terraform Cloud）</a>
@@ -82,7 +82,7 @@
       <a href="troubleshooting.html">障害切り分けチェックリスト</a>
       <a href="eol.html">EOL / ライフサイクル一覧表</a>
     </aside>
-    <main class="content workspaces-skill-transfer-guide"><nav class="breadcrumb" aria-label="Breadcrumb"><a href="../">Home</a><span>トピック</span></nav><h1>AWS Managed Microsoft ADの構築</h1><section id="managedAdBuild" class="procedure-document">
+    <main class="content workspaces-skill-transfer-guide"><nav class="breadcrumb" aria-label="Breadcrumb"><a href="../">Home</a><span>トピック</span></nav><h1>Managed Microsoft ADの構築</h1><section id="managedAdBuild" class="procedure-document">
 
 <span id="aws-managed-microsoft-ad構築手順" class="legacy-heading-anchor" aria-hidden="true"></span>
 <h2 id="仕様-2">仕様</h2>
@@ -203,7 +203,7 @@
 <li>「ディレクトリのセットアップ」で「AWS Managed Microsoft AD」を選択します。</li>
 <li>「ディレクトリのセットアップ」を選択します。</li>
 </ol>
-<figure class="screenshot-wide aws-console-identity"><figcaption>図1　AWS Managed Microsoft ADの選択とセットアップ開始</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-managed-ad/005-aws-managed-microsoft-adの選択とセットアップ開始.png" alt="AWS Managed Microsoft ADの選択とセットアップ開始" width="1616" height="1304" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-managed-ad/005-aws-managed-microsoft-adの選択とセットアップ開始.png" alt="AWS Managed Microsoft ADの選択とセットアップ開始" width="1616" height="1304" loading="lazy"></div></figure>
 
 
 
@@ -214,7 +214,7 @@
 <li>「次へ」を選択します。</li>
 </ol>
 <p>本環境ではAWS Managed Microsoft ADを新規作成するため、「既存のADドメインをハイブリッドディレクトリで拡張・新規」は選択しません。</p>
-<figure class="screenshot-wide aws-console-identity"><figcaption>図2　AWS Managed Microsoft ADの新規作成</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-managed-ad/006-aws-managed-microsoft-adの新規作成.png" alt="AWS Managed Microsoft ADの新規作成" width="1616" height="1304" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-managed-ad/006-aws-managed-microsoft-adの新規作成.png" alt="AWS Managed Microsoft ADの新規作成" width="1616" height="1304" loading="lazy"></div></figure>
 
 
 
@@ -262,7 +262,7 @@
 <div class="callout callout-info"><p><strong>ℹ️ 情報：クライアントのDNS設定は後続手順で実施する</strong></p>
 <p>ディレクトリを作成しただけでは、VPC内のクライアントが自動的にDirectory ServiceのDNS IPアドレスを使用する状態にはなりません。管理用EC2などの名前解決に必要なDHCPオプションセットまたはクライアントDNS設定は、後続手順で実施します。</p>
 </div>
-<figure class="screenshot-wide aws-console-identity"><figcaption>図3　ディレクトリのエディションとドメイン名の入力</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-managed-ad/007-ディレクトリのエディションとドメイン名の入力.png" alt="ディレクトリのエディションとドメイン名の入力" width="1616" height="1304" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-managed-ad/007-ディレクトリのエディションとドメイン名の入力.png" alt="ディレクトリのエディションとドメイン名の入力" width="1616" height="1304" loading="lazy"></div></figure>
 
 
 
@@ -282,7 +282,7 @@
 <p>AWS Managed Microsoft ADのDefault Domain Policyでは、<code class="inline-code">Admin</code>を含むユーザーのパスワード最長有効期間が42日に設定されます。運用開始前に、パスワードの保管担当者、変更担当者および次回変更日を決定します。</p>
 <p><a href="https://docs.aws.amazon.com/ja_jp/directoryservice/latest/admin-guide/ms_ad_password_policies.html">AWS Managed Microsoft ADのパスワードポリシー</a></p>
 </div>
-<figure class="screenshot-wide aws-console-identity"><figcaption>図4　Adminパスワードと確認用パスワードの入力</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-managed-ad/008-adminパスワードと確認用パスワードの入力.png" alt="Adminパスワードと確認用パスワードの入力" width="1616" height="1304" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-managed-ad/008-adminパスワードと確認用パスワードの入力.png" alt="Adminパスワードと確認用パスワードの入力" width="1616" height="1304" loading="lazy"></div></figure>
 
 
 
@@ -327,7 +327,7 @@
 <li>選択した2つのサブネットが、それぞれ<code class="inline-code">ap-northeast-1a</code>と<code class="inline-code">ap-northeast-1c</code>に属していることを確認します。</li>
 <li>「次へ」を選択します。</li>
 </ol>
-<figure class="screenshot-wide aws-console-identity"><figcaption>図5　VPCと異なるAZに属する2つのサブネットの選択</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-managed-ad/009-vpcと異なるazに属する2つのサブネットの選択.png" alt="VPCと異なるAZに属する2つのサブネットの選択" width="1616" height="1304" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-managed-ad/009-vpcと異なるazに属する2つのサブネットの選択.png" alt="VPCと異なるAZに属する2つのサブネットの選択" width="1616" height="1304" loading="lazy"></div></figure>
 
 
 
@@ -344,7 +344,7 @@
 <p>DNS名、VPCおよびサブネットの誤りがないことを確認してから作成します。入力値に誤りがある場合は「ディレクトリの作成」を選択せず、該当画面へ戻って修正します。</p>
 </div>
 <p>内容に問題がなければ、「ディレクトリの作成」を選択します。</p>
-<figure class="screenshot-wide aws-console-identity"><figcaption>図6　ディレクトリ作成前の設定確認</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-managed-ad/010-ディレクトリ作成前の設定確認.png" alt="ディレクトリ作成前の設定確認" width="1616" height="1304" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-managed-ad/010-ディレクトリ作成前の設定確認.png" alt="ディレクトリ作成前の設定確認" width="1616" height="1304" loading="lazy"></div></figure>
 
 
 

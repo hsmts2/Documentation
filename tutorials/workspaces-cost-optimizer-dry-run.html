@@ -30,15 +30,15 @@
       <a href="cloudflare-private-site.html">Private GitHubリポジトリをCloudflare Workersで認証付き公開してみた</a>
       <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">☁︎</span>[PoC] マルチVPC・閉域VDI基盤案件</p>
 <a href="workspaces-skill-transfer.html">全体構築・運用順序</a>
-<a href="workspaces-managed-ad.html">AWS Managed Microsoft ADの構築</a>
-<a href="workspaces-managed-ad-users.html">AWS Managed Microsoft ADのユーザー・グループ管理</a>
+<a href="workspaces-managed-ad.html">Managed Microsoft ADの構築</a>
+<a href="workspaces-managed-ad-users.html">Managed Microsoft ADのユーザー・グループ管理</a>
 <a href="workspaces-management-ec2.html">管理用EC2の起動・接続・AD管理</a>
 <a href="workspaces-ad-connector-account.html">AD Connector用サービスアカウント・権限委任</a>
 <a href="workspaces-ad-connector.html">AD ConnectorのVPCピアリング・SG設定・作成</a>
 <a href="workspaces-provisioning-gpo.html">WorkSpaces Personalの構築・接続</a>
 <a href="workspaces-target-ou.html">WorkSpaces用ターゲットOUの作成・権限委任</a>
 <a href="workspaces-gpo.html">WorkSpaces用GPOの作成・適用・運用</a>
-<a href="workspaces-image-bundle.html">WorkSpacesカスタムイメージ・バンドルの作成・共有</a>
+<a href="workspaces-image-bundle.html">WorkSpacesカスタムイメージ作成・共有</a>
 <a href="workspaces-systems-manager.html">Systems Manager環境構築</a>
 <a href="workspaces-patch-manager.html">Patch Managerの設定</a>
 <a href="workspaces-patch-operations.html">Patch Managerの実行・結果確認・運用</a>
@@ -47,7 +47,7 @@
 <a href="workspaces-cost-optimizer-schedule.html">Cost Optimizerの実行スケジュール設定・変更</a>
 <a href="workspaces-cost-optimizer-reports.html">Cost Optimizerのレポート・監視</a>
 <a href="workspaces-cloudwatch-monitoring.html">CloudWatchのEC2・Windows OS監視とSNS通知</a>
-<a href="workspaces-cloudwatch-workspaces.html">CloudWatchのWorkSpaces監視・ダッシュボード</a>
+<a href="workspaces-cloudwatch-workspaces.html">CloudWatchのWorkSpaces監視</a>
       <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">◈</span>Terraform</p>
       <a href="terraform.html">Terraform 概要</a>
       <a href="hcp-terraform.html">HCP Terraform（Terraform Cloud）</a>
@@ -102,7 +102,7 @@
 <li>スタック<code class="inline-code">sample-cfn-co-001</code>を開きます。</li>
 <li>「パラメータ」または「出力」で、変更前が <code class="inline-code">DryRun=Yes</code> となっていることを確認します。</li>
 </ol>
-<figure class="screenshot-wide aws-console-identity"><figcaption>図1　CloudFormation_変更前パラメータ_DryRun-Yes</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/011-図1-cloudformation-変更前パラメータ-dryrun-yes.png" alt="図1_CloudFormation_変更前パラメータ_DryRun-Yes" width="1728" height="1450" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/011-図1-cloudformation-変更前パラメータ-dryrun-yes.png" alt="図1_CloudFormation_変更前パラメータ_DryRun-Yes" width="1728" height="1450" loading="lazy"></div></figure>
 
 
 
@@ -111,7 +111,7 @@
 <li>「スタックアクション」から「現在のスタックの変更セットを作成」を選択します。</li>
 <li>テンプレートは「現在のテンプレートを使用」を選択し、「次へ」を選択します。</li>
 </ol>
-<figure class="screenshot-wide aws-console-identity"><figcaption>図2　CloudFormation_変更セット_現在のテンプレート使用</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/012-図2-cloudformation-変更セット-現在のテンプレート使用.png" alt="図2_CloudFormation_変更セット_現在のテンプレート使用" width="1721" height="1446" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/012-図2-cloudformation-変更セット-現在のテンプレート使用.png" alt="図2_CloudFormation_変更セット_現在のテンプレート使用" width="1721" height="1446" loading="lazy"></div></figure>
 
 
 
@@ -119,7 +119,7 @@
 <li><code class="inline-code">Launch in Dry Run Mode</code> を <code class="inline-code">No</code> に変更します。</li>
 <li><code class="inline-code">Terminate unused workspaces=No</code>、<code class="inline-code">TestEndOfMonth=No</code> および他のパラメータが意図せず変わっていないことを確認します。</li>
 </ol>
-<figure class="screenshot-wide"><figcaption>図3　CloudFormation_パラメータ_DryRun-No入力</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/013-図3-cloudformation-パラメータ-dryrun-no入力.png" alt="図3_CloudFormation_パラメータ_DryRun-No入力" width="1260" height="265" loading="lazy"></div></figure>
+<figure class="screenshot-wide"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/013-図3-cloudformation-パラメータ-dryrun-no入力.png" alt="図3_CloudFormation_パラメータ_DryRun-No入力" width="1260" height="265" loading="lazy"></div></figure>
 
 
 
@@ -127,7 +127,7 @@
 <li>「プロビジョニング失敗時の動作」は「すべてのリソースをロールバック」とします。</li>
 <li>検証オプションに意図しない変更がないことと、IAMリソースの作成に関する承認欄を確認します。</li>
 </ol>
-<figure class="screenshot-wide"><figcaption>図4　CloudFormation_変更セットオプション_ロールバック有効</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/014-図4-cloudformation-変更セットオプション-ロールバック有効.png" alt="図4_CloudFormation_変更セットオプション_ロールバック有効" width="1380" height="1080" loading="lazy"></div></figure>
+<figure class="screenshot-wide"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/014-図4-cloudformation-変更セットオプション-ロールバック有効.png" alt="図4_CloudFormation_変更セットオプション_ロールバック有効" width="1380" height="1080" loading="lazy"></div></figure>
 
 
 
@@ -138,7 +138,7 @@
 <li>取得例では<code class="inline-code">CostOptimizerTaskDefinition</code>がModify・置換True（ReplaceAndDelete）、<code class="inline-code">ScheduleRule</code>がModify・置換Falseでした。実作業では使用中のテンプレートと変更パラメータに対する差分を確認します。</li>
 <li>意図しない削除・置換がないことを確認します。</li>
 </ol>
-<figure class="screenshot-wide"><figcaption>図5　CloudFormation_変更セット差分_2リソース</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/015-図5-cloudformation-変更セット差分-2リソース.png" alt="図5_CloudFormation_変更セット差分_2リソース" width="1670" height="650" loading="lazy"></div></figure>
+<figure class="screenshot-wide"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/015-図5-cloudformation-変更セット差分-2リソース.png" alt="図5_CloudFormation_変更セット差分_2リソース" width="1670" height="650" loading="lazy"></div></figure>
 
 
 
@@ -146,7 +146,7 @@
 <li>「変更セットを実行」を選択して確認画面を開きます。</li>
 <li>ロールバック設定を最終確認し、確認画面の「変更セットを実行」を選択します。</li>
 </ol>
-<figure class="screenshot-wide"><figcaption>図6　CloudFormation_変更セット実行確認</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/016-図6-cloudformation-変更セット実行確認.png" alt="図6_CloudFormation_変更セット実行確認" width="655" height="570" loading="lazy"></div></figure>
+<figure class="screenshot-wide"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/016-図6-cloudformation-変更セット実行確認.png" alt="図6_CloudFormation_変更セット実行確認" width="655" height="570" loading="lazy"></div></figure>
 
 
 
@@ -157,11 +157,11 @@
 <li>「パラメータ」または「出力」で <code class="inline-code">DryRun=No</code> を確認します。</li>
 <li>ECSタスク定義に新しいリビジョンが作成され、EventBridgeターゲットがそのリビジョンを参照していることを確認します。</li>
 </ol>
-<figure class="screenshot-wide"><figcaption>図7　CloudFormation_更新完了_UPDATE_COMPLETE</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/017-図7-cloudformation-更新完了-update-complete.png" alt="図7_CloudFormation_更新完了_UPDATE_COMPLETE" width="1440" height="250" loading="lazy"></div></figure>
+<figure class="screenshot-wide"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/017-図7-cloudformation-更新完了-update-complete.png" alt="図7_CloudFormation_更新完了_UPDATE_COMPLETE" width="1440" height="250" loading="lazy"></div></figure>
 
 
 
-<figure class="screenshot-wide"><figcaption>図8　CloudFormation_変更後パラメータ_DryRun-No</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/018-図8-cloudformation-変更後パラメータ-dryrun-no.png" alt="図8_CloudFormation_変更後パラメータ_DryRun-No" width="1290" height="215" loading="lazy"></div></figure>
+<figure class="screenshot-wide"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/018-図8-cloudformation-変更後パラメータ-dryrun-no.png" alt="図8_CloudFormation_変更後パラメータ_DryRun-No" width="1290" height="215" loading="lazy"></div></figure>
 
 
 
@@ -242,7 +242,7 @@
 <p>監視対象総数、時間課金・月額課金の台数、課金モード変換件数、終了件数、失敗・スキップ件数およびECSタスク処理時間を確認します。ダッシュボードは全体傾向を確認する補助資料です。単独では成功判定に使用しません。</p>
 <h3 id="6-ドリフト確認の補足">6. ドリフト確認の補足</h3>
 <p>取得済みのCloudFormationドリフト検出では、<code class="inline-code">CostOptimizerTaskDefinition</code>が<code class="inline-code">MODIFIED</code>でした。差分は、単一アカウント構成でテンプレートに空文字として定義された<code class="inline-code">SpokeAccountDynamoDBTable</code>環境変数が、ECS側では未設定となっている内容です。</p>
-<figure class="screenshot-wide"><figcaption>図9　CloudFormationドリフト_空環境変数差分</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/019-図9-cloudformationドリフト-空環境変数差分.png" alt="図9_CloudFormationドリフト_空環境変数差分" width="1690" height="385" loading="lazy"></div></figure>
+<figure class="screenshot-wide"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/019-図9-cloudformationドリフト-空環境変数差分.png" alt="図9_CloudFormationドリフト_空環境変数差分" width="1690" height="385" loading="lazy"></div></figure>
 
 
 

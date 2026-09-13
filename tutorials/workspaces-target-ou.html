@@ -30,15 +30,15 @@
       <a href="cloudflare-private-site.html">Private GitHubリポジトリをCloudflare Workersで認証付き公開してみた</a>
       <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">☁︎</span>[PoC] マルチVPC・閉域VDI基盤案件</p>
 <a href="workspaces-skill-transfer.html">全体構築・運用順序</a>
-<a href="workspaces-managed-ad.html">AWS Managed Microsoft ADの構築</a>
-<a href="workspaces-managed-ad-users.html">AWS Managed Microsoft ADのユーザー・グループ管理</a>
+<a href="workspaces-managed-ad.html">Managed Microsoft ADの構築</a>
+<a href="workspaces-managed-ad-users.html">Managed Microsoft ADのユーザー・グループ管理</a>
 <a href="workspaces-management-ec2.html">管理用EC2の起動・接続・AD管理</a>
 <a href="workspaces-ad-connector-account.html">AD Connector用サービスアカウント・権限委任</a>
 <a href="workspaces-ad-connector.html">AD ConnectorのVPCピアリング・SG設定・作成</a>
 <a href="workspaces-provisioning-gpo.html">WorkSpaces Personalの構築・接続</a>
 <a href="workspaces-target-ou.html" class="active" aria-current="page">WorkSpaces用ターゲットOUの作成・権限委任</a>
 <a href="workspaces-gpo.html">WorkSpaces用GPOの作成・適用・運用</a>
-<a href="workspaces-image-bundle.html">WorkSpacesカスタムイメージ・バンドルの作成・共有</a>
+<a href="workspaces-image-bundle.html">WorkSpacesカスタムイメージ作成・共有</a>
 <a href="workspaces-systems-manager.html">Systems Manager環境構築</a>
 <a href="workspaces-patch-manager.html">Patch Managerの設定</a>
 <a href="workspaces-patch-operations.html">Patch Managerの実行・結果確認・運用</a>
@@ -47,7 +47,7 @@
 <a href="workspaces-cost-optimizer-schedule.html">Cost Optimizerの実行スケジュール設定・変更</a>
 <a href="workspaces-cost-optimizer-reports.html">Cost Optimizerのレポート・監視</a>
 <a href="workspaces-cloudwatch-monitoring.html">CloudWatchのEC2・Windows OS監視とSNS通知</a>
-<a href="workspaces-cloudwatch-workspaces.html">CloudWatchのWorkSpaces監視・ダッシュボード</a>
+<a href="workspaces-cloudwatch-workspaces.html">CloudWatchのWorkSpaces監視</a>
       <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">◈</span>Terraform</p>
       <a href="terraform.html">Terraform 概要</a>
       <a href="hcp-terraform.html">HCP Terraform（Terraform Cloud）</a>
@@ -110,12 +110,12 @@
 </div>
 <h3 id="1-管理端末と既存workspaceを確認する">1. 管理端末と既存WorkSpaceを確認する</h3>
 <p>管理用EC2または既存の管理用WorkSpaceへ接続します。初回構築でWorkSpaceがない場合は、ドメイン参加済みの管理用EC2を使用します。図1と図2は管理用WorkSpaceでの確認例です。</p>
-<figure class="screenshot-wide"><figcaption>図1　WorkSpace接続完了</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/011-workspaceへの接続完了.png" alt="WorkSpaceへの接続完了" width="1920" height="1152" loading="lazy"></div></figure>
+<figure class="screenshot-wide"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/011-workspaceへの接続完了.png" alt="WorkSpaceへの接続完了" width="1920" height="1152" loading="lazy"></div></figure>
 
 
 
 <p>サーバーマネージャーの「ローカルサーバー」で、コンピューター名とドメイン名を確認します。</p>
-<figure class="screenshot-wide"><figcaption>図2　WorkSpaceドメイン参加確認</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/012-workspaceのドメイン参加確認.png" alt="WorkSpaceのドメイン参加確認" width="1920" height="1152" loading="lazy"></div></figure>
+<figure class="screenshot-wide"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/012-workspaceのドメイン参加確認.png" alt="WorkSpaceのドメイン参加確認" width="1920" height="1152" loading="lazy"></div></figure>
 
 
 
@@ -136,7 +136,7 @@
 <li><code class="inline-code">ad.example.com</code>、<code class="inline-code">ad</code>、<code class="inline-code">Computers</code>の順に展開します。</li>
 <li><code class="inline-code">ad\Computers</code>を右クリックし、「新規作成」から「組織単位」を選択します。</li>
 </ol>
-<figure class="screenshot-wide"><figcaption>図3　WorkSpaces_OU作成メニュー</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/013-workspaces-ou作成メニュー.png" alt="WorkSpaces OU作成メニュー" width="1170" height="724" loading="lazy"></div></figure>
+<figure class="screenshot-wide"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/013-workspaces-ou作成メニュー.png" alt="WorkSpaces OU作成メニュー" width="1170" height="724" loading="lazy"></div></figure>
 
 
 
@@ -145,14 +145,14 @@
 <li>「コンテナーを誤って削除されないように保護する」を有効のままにします。</li>
 <li>「OK」を選択します。</li>
 </ol>
-<figure class="screenshot-wide"><figcaption>図4　WorkSpaces_OU名入力・誤削除防止</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/014-workspaces-ou名と誤削除防止.png" alt="WorkSpaces OU名と誤削除防止" width="509" height="433" loading="lazy"></div></figure>
+<figure class="screenshot-wide"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/014-workspaces-ou名と誤削除防止.png" alt="WorkSpaces OU名と誤削除防止" width="509" height="433" loading="lazy"></div></figure>
 
 
 
 <ol start="7">
 <li>左ツリーと右ペインの両方で、<code class="inline-code">ad\Computers</code>配下に<code class="inline-code">WorkSpaces</code> OUが表示されることを確認します。</li>
 </ol>
-<figure class="screenshot-wide"><figcaption>図5　WorkSpaces_OU作成完了</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/015-workspaces-ou作成完了.png" alt="WorkSpaces OU作成完了" width="1172" height="725" loading="lazy"></div></figure>
+<figure class="screenshot-wide"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/015-workspaces-ou作成完了.png" alt="WorkSpaces OU作成完了" width="1172" height="725" loading="lazy"></div></figure>
 
 
 
@@ -201,7 +201,7 @@ Get-ADOrganizationalUnit -Identity $workSpacesOuDn -Properties ProtectedFromAcci
 <ol>
 <li>ADUCで<code class="inline-code">ad\Computers\WorkSpaces</code>を右クリックし、「制御の委任」を選択します。</li>
 </ol>
-<figure class="screenshot-wide"><figcaption>図6　WorkSpaces_OU制御の委任</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/016-workspaces-ouの制御の委任.png" alt="WorkSpaces OUの制御の委任" width="1170" height="724" loading="lazy"></div></figure>
+<figure class="screenshot-wide"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/016-workspaces-ouの制御の委任.png" alt="WorkSpaces OUの制御の委任" width="1170" height="724" loading="lazy"></div></figure>
 
 
 
@@ -209,14 +209,14 @@ Get-ADOrganizationalUnit -Identity $workSpacesOuDn -Properties ProtectedFromAcci
 <li>ウィザードで「次へ」を選択し、「追加」から<code class="inline-code">Connectors</code>を指定します。</li>
 <li>「名前の確認」で対象ドメインの<code class="inline-code">Connectors</code>へ解決されたことを確認し、「OK」、「次へ」の順に選択します。</li>
 </ol>
-<figure class="screenshot-wide"><figcaption>図7　Connectors選択</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/017-connectorsグループの選択.png" alt="Connectorsグループの選択" width="581" height="436" loading="lazy"></div></figure>
+<figure class="screenshot-wide"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/017-connectorsグループの選択.png" alt="Connectorsグループの選択" width="581" height="436" loading="lazy"></div></figure>
 
 
 
 <ol start="4">
 <li>「委任するカスタムタスクを作成する」を選択して「次へ」を選択します。</li>
 </ol>
-<figure class="screenshot-wide"><figcaption>図8　カスタムタスク選択</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/018-カスタムタスクの選択.png" alt="カスタムタスクの選択" width="579" height="438" loading="lazy"></div></figure>
+<figure class="screenshot-wide"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/018-カスタムタスクの選択.png" alt="カスタムタスクの選択" width="579" height="438" loading="lazy"></div></figure>
 
 
 
@@ -224,7 +224,7 @@ Get-ADOrganizationalUnit -Identity $workSpacesOuDn -Properties ProtectedFromAcci
 <li>「フォルダー内の次のオブジェクトのみ」を選択します。</li>
 <li>「コンピューター オブジェクト」と、選択したオブジェクトの作成・削除を選択して「次へ」を選択します。</li>
 </ol>
-<figure class="screenshot-wide"><figcaption>図9　コンピューターオブジェクトと作成削除</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/019-コンピューターオブジェクトと作成削除.png" alt="コンピューターオブジェクトと作成削除" width="577" height="436" loading="lazy"></div></figure>
+<figure class="screenshot-wide"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/019-コンピューターオブジェクトと作成削除.png" alt="コンピューターオブジェクトと作成削除" width="577" height="436" loading="lazy"></div></figure>
 
 
 
@@ -232,7 +232,7 @@ Get-ADOrganizationalUnit -Identity $workSpacesOuDn -Properties ProtectedFromAcci
 <li>表示カテゴリで「全般」を選び、「読み取り」と「書き込み」を選択します。</li>
 <li>「次へ」を選択し、完了画面で委任内容を確認して「完了」を選択します。</li>
 </ol>
-<figure class="screenshot-wide"><figcaption>図10　読み取り・書き込み</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/020-読み取りと書き込みの選択.png" alt="読み取りと書き込みの選択" width="580" height="435" loading="lazy"></div></figure>
+<figure class="screenshot-wide"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/020-読み取りと書き込みの選択.png" alt="読み取りと書き込みの選択" width="580" height="435" loading="lazy"></div></figure>
 
 
 
@@ -261,14 +261,14 @@ Get-ADOrganizationalUnit -Identity $workSpacesOuDn -Properties ProtectedFromAcci
 <li>候補に表示されない場合は、承認済みDNをカスタムOUとして入力します。</li>
 <li>「保存」を選択します。</li>
 </ol>
-<figure class="screenshot-wide aws-console-identity"><figcaption>図11　ターゲットOU編集</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/021-ターゲットouの編集.png" alt="ターゲットOUの編集" width="1715" height="746" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/021-ターゲットouの編集.png" alt="ターゲットOUの編集" width="1715" height="746" loading="lazy"></div></figure>
 
 
 
 <ol start="8">
 <li>保存成功の通知と、保存後のOU共通名・OU識別名を確認します。</li>
 </ol>
-<figure class="screenshot-wide aws-console-identity"><figcaption>図12　ターゲットOU保存完了</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/022-ターゲットouの保存完了.png" alt="ターゲットOUの保存完了" width="1718" height="1304" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/022-ターゲットouの保存完了.png" alt="ターゲットOUの保存完了" width="1718" height="1304" loading="lazy"></div></figure>
 
 
 

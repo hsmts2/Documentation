@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>WorkSpacesカスタムイメージ・バンドルの作成・共有 | Documentation</title>
-  <meta name="description" content="WorkSpacesカスタムイメージ・バンドルの作成・共有の操作手順と設定例">
+  <title>WorkSpacesカスタムイメージ作成・共有 | Documentation</title>
+  <meta name="description" content="WorkSpacesカスタムイメージ作成・共有の操作手順と設定例">
   <link rel="stylesheet" href="../assets/styles.css?v=20260908-skill-transfer1">
 <link rel="stylesheet" href="../assets/workspaces-guides.css?v=20260912-split">
 <script src="../assets/workspaces-legacy-routes.js?v=20260912-split"></script>
@@ -30,15 +30,15 @@
       <a href="cloudflare-private-site.html">Private GitHubリポジトリをCloudflare Workersで認証付き公開してみた</a>
       <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">☁︎</span>[PoC] マルチVPC・閉域VDI基盤案件</p>
 <a href="workspaces-skill-transfer.html">全体構築・運用順序</a>
-<a href="workspaces-managed-ad.html">AWS Managed Microsoft ADの構築</a>
-<a href="workspaces-managed-ad-users.html">AWS Managed Microsoft ADのユーザー・グループ管理</a>
+<a href="workspaces-managed-ad.html">Managed Microsoft ADの構築</a>
+<a href="workspaces-managed-ad-users.html">Managed Microsoft ADのユーザー・グループ管理</a>
 <a href="workspaces-management-ec2.html">管理用EC2の起動・接続・AD管理</a>
 <a href="workspaces-ad-connector-account.html">AD Connector用サービスアカウント・権限委任</a>
 <a href="workspaces-ad-connector.html">AD ConnectorのVPCピアリング・SG設定・作成</a>
 <a href="workspaces-provisioning-gpo.html">WorkSpaces Personalの構築・接続</a>
 <a href="workspaces-target-ou.html">WorkSpaces用ターゲットOUの作成・権限委任</a>
 <a href="workspaces-gpo.html">WorkSpaces用GPOの作成・適用・運用</a>
-<a href="workspaces-image-bundle.html" class="active" aria-current="page">WorkSpacesカスタムイメージ・バンドルの作成・共有</a>
+<a href="workspaces-image-bundle.html" class="active" aria-current="page">WorkSpacesカスタムイメージ作成・共有</a>
 <a href="workspaces-systems-manager.html">Systems Manager環境構築</a>
 <a href="workspaces-patch-manager.html">Patch Managerの設定</a>
 <a href="workspaces-patch-operations.html">Patch Managerの実行・結果確認・運用</a>
@@ -47,7 +47,7 @@
 <a href="workspaces-cost-optimizer-schedule.html">Cost Optimizerの実行スケジュール設定・変更</a>
 <a href="workspaces-cost-optimizer-reports.html">Cost Optimizerのレポート・監視</a>
 <a href="workspaces-cloudwatch-monitoring.html">CloudWatchのEC2・Windows OS監視とSNS通知</a>
-<a href="workspaces-cloudwatch-workspaces.html">CloudWatchのWorkSpaces監視・ダッシュボード</a>
+<a href="workspaces-cloudwatch-workspaces.html">CloudWatchのWorkSpaces監視</a>
       <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">◈</span>Terraform</p>
       <a href="terraform.html">Terraform 概要</a>
       <a href="hcp-terraform.html">HCP Terraform（Terraform Cloud）</a>
@@ -82,7 +82,7 @@
       <a href="troubleshooting.html">障害切り分けチェックリスト</a>
       <a href="eol.html">EOL / ライフサイクル一覧表</a>
     </aside>
-    <main class="content workspaces-skill-transfer-guide"><nav class="breadcrumb" aria-label="Breadcrumb"><a href="../">Home</a><span>トピック</span></nav><h1>WorkSpacesカスタムイメージ・バンドルの作成・共有</h1><section id="workspacesImage" class="procedure-document">
+    <main class="content workspaces-skill-transfer-guide"><nav class="breadcrumb" aria-label="Breadcrumb"><a href="../">Home</a><span>トピック</span></nav><h1>WorkSpacesカスタムイメージ作成・共有</h1><section id="workspacesImage" class="procedure-document">
 
 <span id="9-amazon-workspaces-カスタムイメージ-バンドル作成-共有手順書" class="legacy-heading-anchor" aria-hidden="true"></span>
 <h2 id="仕様">仕様</h2>
@@ -145,7 +145,7 @@
 </ol>
 <div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>Start-Process 'C:\Program Files\Amazon\ImageChecker.exe' -Verb RunAs</code></pre></div>
 <p>UACが表示された場合は発行元を確認して「はい」を選択します。</p>
-<figure class="screenshot-wide"><figcaption>参考図1　Image Checkerの実行前画面</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-image-bundle/001-image-checker実行前.png" alt="Image Checker実行前" width="533" height="694" loading="lazy"></div></figure>
+<figure class="screenshot-wide"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-image-bundle/001-image-checker実行前.png" alt="Image Checker実行前" width="533" height="694" loading="lazy"></div></figure>
 
 
 
@@ -156,7 +156,7 @@
 </ol>
 <h4 id="staged-appx警告の解消">Staged AppX警告の解消</h4>
 <p><code class="inline-code">One or more AppX packages are in a staged state</code>と表示された場合は、図1の警告対象を確認します。</p>
-<figure class="screenshot-wide"><figcaption>図1　ImageChecker_AppXステージ状態警告</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-image-bundle/002-image-checkerのappxステージ状態警告.png" alt="Image CheckerのAppXステージ状態警告" width="530" height="690" loading="lazy"></div></figure>
+<figure class="screenshot-wide"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-image-bundle/002-image-checkerのappxステージ状態警告.png" alt="Image CheckerのAppXステージ状態警告" width="530" height="690" loading="lazy"></div></figure>
 
 
 
@@ -187,11 +187,11 @@ $remainingStagedPackages</code></pre></div>
 </div>
 <p>再登録の動作は<a href="https://learn.microsoft.com/en-us/powershell/module/appx/add-appxpackage">Add-AppxPackage</a>を参照してください。警告に応じた個別対処を優先し、アプリケーションの削除は対象と影響を確認してから実施します。</p>
 <p>図2で全項目が<code class="inline-code">PASSED</code>、図3で<code class="inline-code">Validation successful</code>を確認します。</p>
-<figure class="screenshot-wide"><figcaption>図2　ImageChecker全項目合格</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-image-bundle/003-image-checkerの全項目合格.png" alt="Image Checkerの全項目合格" width="534" height="689" loading="lazy"></div></figure>
+<figure class="screenshot-wide"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-image-bundle/003-image-checkerの全項目合格.png" alt="Image Checkerの全項目合格" width="534" height="689" loading="lazy"></div></figure>
 
 
 
-<figure class="screenshot-wide"><figcaption>図3　ImageChecker正常完了</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-image-bundle/004-image-checkerの正常完了.png" alt="Image Checkerの正常完了" width="531" height="689" loading="lazy"></div></figure>
+<figure class="screenshot-wide"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-image-bundle/004-image-checkerの正常完了.png" alt="Image Checkerの正常完了" width="531" height="689" loading="lazy"></div></figure>
 
 
 
@@ -219,7 +219,7 @@ $remainingStagedPackages</code></pre></div>
 <li><p>「イメージの作成」を選択します。</p>
 </li>
 </ol>
-<figure class="screenshot-wide aws-console-identity"><figcaption>図4　カスタムイメージ作成条件入力</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-image-bundle/005-カスタムイメージ作成条件入力.png" alt="カスタムイメージ作成条件入力" width="1718" height="1304" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-image-bundle/005-カスタムイメージ作成条件入力.png" alt="カスタムイメージ作成条件入力" width="1718" height="1304" loading="lazy"></div></figure>
 
 
 
@@ -227,7 +227,7 @@ $remainingStagedPackages</code></pre></div>
 <li>「イメージ」を開き、対象イメージが「利用可能」になるまで待ちます。</li>
 <li>イメージ名、イメージID、OS、プロトコルおよび所有者を確認します。</li>
 </ol>
-<figure class="screenshot-wide aws-console-identity"><figcaption>図5　カスタムイメージ利用可能確認</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-image-bundle/006-カスタムイメージ利用可能確認.png" alt="カスタムイメージ利用可能確認" width="1718" height="367" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-image-bundle/006-カスタムイメージ利用可能確認.png" alt="カスタムイメージ利用可能確認" width="1718" height="367" loading="lazy"></div></figure>
 
 
 
@@ -236,7 +236,7 @@ $remainingStagedPackages</code></pre></div>
 <li>「イメージ」で作成したカスタムイメージを選択します。</li>
 <li>「アクション」から「バンドルの作成」を選択します。</li>
 </ol>
-<figure class="screenshot-wide aws-console-identity"><figcaption>図6　カスタムバンドル作成開始</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-image-bundle/007-カスタムバンドル作成開始.png" alt="カスタムバンドル作成開始" width="1718" height="367" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-image-bundle/007-カスタムバンドル作成開始.png" alt="カスタムバンドル作成開始" width="1718" height="367" loading="lazy"></div></figure>
 
 
 
@@ -245,7 +245,7 @@ $remainingStagedPackages</code></pre></div>
 <li>コンピューティングタイプにPowerProを指定し、元イメージ以上の容量を選択します。設計値が80GB／50GBの場合は、その容量で利用できるイメージを使用します。</li>
 <li>「バンドルの作成」を選択します。</li>
 </ol>
-<figure class="screenshot-wide aws-console-identity"><figcaption>図7　カスタムバンドル設定</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-image-bundle/008-カスタムバンドル設定.png" alt="カスタムバンドル設定" width="1718" height="1304" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-image-bundle/008-カスタムバンドル設定.png" alt="カスタムバンドル設定" width="1718" height="1304" loading="lazy"></div></figure>
 
 
 
@@ -253,7 +253,7 @@ $remainingStagedPackages</code></pre></div>
 <li>「バンドル」で状態が「利用可能」になるまで待ちます。</li>
 <li>バンドルID、元イメージID、PowerPro、承認済みのルート／ユーザー容量およびDCVを確認します。</li>
 </ol>
-<figure class="screenshot-wide aws-console-identity"><figcaption>図8　カスタムバンドル作成完了</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-image-bundle/009-カスタムバンドル作成完了.png" alt="カスタムバンドル作成完了" width="1717" height="455" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-image-bundle/009-カスタムバンドル作成完了.png" alt="カスタムバンドル作成完了" width="1717" height="455" loading="lazy"></div></figure>
 
 
 
@@ -297,7 +297,7 @@ aws workspaces describe-workspace-bundles --bundle-ids $bundleId --region ap-nor
 <li>イメージ名、イメージID、状態、OSおよびプロトコルを作業申請と照合します。</li>
 <li>「共有アカウント」で「アカウントを追加」を選択します。</li>
 </ol>
-<figure class="screenshot-wide aws-console-identity"><figcaption>図9　共有対象イメージ選択</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-image-bundle/010-共有対象イメージ選択.png" alt="共有対象イメージ選択" width="1718" height="1304" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-image-bundle/010-共有対象イメージ選択.png" alt="共有対象イメージ選択" width="1718" height="1304" loading="lazy"></div></figure>
 
 
 
@@ -305,14 +305,14 @@ aws workspaces describe-workspace-bundles --bundle-ids $bundleId --region ap-nor
 <li>共有先の12桁AWSアカウントIDを入力します。</li>
 <li>作業申請と再照合し、「イメージの共有」を選択します。</li>
 </ol>
-<figure class="screenshot-wide aws-console-identity"><figcaption>図10　共有先AWSアカウント追加</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-image-bundle/011-共有先awsアカウント追加.png" alt="共有先AWSアカウント追加" width="1717" height="645" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-image-bundle/011-共有先awsアカウント追加.png" alt="共有先AWSアカウント追加" width="1717" height="645" loading="lazy"></div></figure>
 
 
 
 <ol start="6">
 <li>成功メッセージと共有アカウント一覧を確認します。</li>
 </ol>
-<figure class="screenshot-wide aws-console-identity"><figcaption>図11　カスタムイメージ共有完了</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-image-bundle/012-カスタムイメージ共有完了.png" alt="カスタムイメージ共有完了" width="1718" height="1304" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-image-bundle/012-カスタムイメージ共有完了.png" alt="カスタムイメージ共有完了" width="1718" height="1304" loading="lazy"></div></figure>
 
 
 
@@ -336,14 +336,14 @@ aws workspaces describe-workspace-bundles --bundle-ids $bundleId --region ap-nor
 <li>共有元の対象イメージで、共有解除するAWSアカウントを選択します。</li>
 <li>AWSアカウントIDを照合し、「共有解除」を選択します。</li>
 </ol>
-<figure class="screenshot-wide aws-console-identity"><figcaption>図12　共有解除対象AWSアカウント選択</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-image-bundle/013-共有解除対象awsアカウント選択.png" alt="共有解除対象AWSアカウント選択" width="1718" height="1304" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-image-bundle/013-共有解除対象awsアカウント選択.png" alt="共有解除対象AWSアカウント選択" width="1718" height="1304" loading="lazy"></div></figure>
 
 
 
 <ol start="4">
 <li>確認ダイアログのイメージ名とAWSアカウントIDを再確認し、「共有解除」を選択します。</li>
 </ol>
-<figure class="screenshot-wide aws-console-identity"><figcaption>図13　カスタムイメージ共有解除確認</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-image-bundle/014-カスタムイメージ共有解除確認.png" alt="カスタムイメージ共有解除確認" width="1718" height="1304" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-image-bundle/014-カスタムイメージ共有解除確認.png" alt="カスタムイメージ共有解除確認" width="1718" height="1304" loading="lazy"></div></figure>
 
 
 

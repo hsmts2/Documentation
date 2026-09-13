@@ -30,15 +30,15 @@
       <a href="cloudflare-private-site.html">Private GitHubリポジトリをCloudflare Workersで認証付き公開してみた</a>
       <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">☁︎</span>[PoC] マルチVPC・閉域VDI基盤案件</p>
 <a href="workspaces-skill-transfer.html">全体構築・運用順序</a>
-<a href="workspaces-managed-ad.html">AWS Managed Microsoft ADの構築</a>
-<a href="workspaces-managed-ad-users.html">AWS Managed Microsoft ADのユーザー・グループ管理</a>
+<a href="workspaces-managed-ad.html">Managed Microsoft ADの構築</a>
+<a href="workspaces-managed-ad-users.html">Managed Microsoft ADのユーザー・グループ管理</a>
 <a href="workspaces-management-ec2.html">管理用EC2の起動・接続・AD管理</a>
 <a href="workspaces-ad-connector-account.html">AD Connector用サービスアカウント・権限委任</a>
 <a href="workspaces-ad-connector.html">AD ConnectorのVPCピアリング・SG設定・作成</a>
 <a href="workspaces-provisioning-gpo.html">WorkSpaces Personalの構築・接続</a>
 <a href="workspaces-target-ou.html">WorkSpaces用ターゲットOUの作成・権限委任</a>
 <a href="workspaces-gpo.html">WorkSpaces用GPOの作成・適用・運用</a>
-<a href="workspaces-image-bundle.html">WorkSpacesカスタムイメージ・バンドルの作成・共有</a>
+<a href="workspaces-image-bundle.html">WorkSpacesカスタムイメージ作成・共有</a>
 <a href="workspaces-systems-manager.html">Systems Manager環境構築</a>
 <a href="workspaces-patch-manager.html" class="active" aria-current="page">Patch Managerの設定</a>
 <a href="workspaces-patch-operations.html">Patch Managerの実行・結果確認・運用</a>
@@ -47,7 +47,7 @@
 <a href="workspaces-cost-optimizer-schedule.html">Cost Optimizerの実行スケジュール設定・変更</a>
 <a href="workspaces-cost-optimizer-reports.html">Cost Optimizerのレポート・監視</a>
 <a href="workspaces-cloudwatch-monitoring.html">CloudWatchのEC2・Windows OS監視とSNS通知</a>
-<a href="workspaces-cloudwatch-workspaces.html">CloudWatchのWorkSpaces監視・ダッシュボード</a>
+<a href="workspaces-cloudwatch-workspaces.html">CloudWatchのWorkSpaces監視</a>
       <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">◈</span>Terraform</p>
       <a href="terraform.html">Terraform 概要</a>
       <a href="hcp-terraform.html">HCP Terraform（Terraform Cloud）</a>
@@ -180,7 +180,7 @@ aws ssm register-patch-baseline-for-patch-group `
 <li>運用開始前は「アクション」からウィンドウを無効化し、タスク・対象・実行承認の確認後に有効化します。</li>
 </ol>
 <p><a href="https://docs.aws.amazon.com/systems-manager/latest/userguide/maintenance-window-tutorial-patching.html">Tutorial: Create a maintenance window for patching using the console</a></p>
-<figure class="screenshot-wide aws-console-identity"><figcaption>図1　メンテナンスウィンドウ_概要・作成開始</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-patch-manager/009-maintenance-windowsの概要と作成開始.png" alt="Maintenance Windowsの概要と作成開始" width="1718" height="1304" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-patch-manager/009-maintenance-windowsの概要と作成開始.png" alt="Maintenance Windowsの概要と作成開始" width="1718" height="1304" loading="lazy"></div></figure>
 
 
 
@@ -217,11 +217,11 @@ aws ssm register-patch-baseline-for-patch-group `
 <td>許可しない</td>
 </tr>
 </tbody></table></div>
-<figure class="screenshot-wide aws-console-identity"><figcaption>図2　メンテナンスウィンドウ_設定入力</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-patch-manager/010-メンテナンスウィンドウの設定入力.png" alt="メンテナンスウィンドウの設定入力" width="1718" height="1304" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-patch-manager/010-メンテナンスウィンドウの設定入力.png" alt="メンテナンスウィンドウの設定入力" width="1718" height="1304" loading="lazy"></div></figure>
 
 
 
-<figure class="screenshot-wide aws-console-identity"><figcaption>図3　メンテナンスウィンドウ_作成完了</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-patch-manager/011-メンテナンスウィンドウの作成完了.png" alt="メンテナンスウィンドウの作成完了" width="1716" height="351" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-patch-manager/011-メンテナンスウィンドウの作成完了.png" alt="メンテナンスウィンドウの作成完了" width="1716" height="351" loading="lazy"></div></figure>
 
 
 
@@ -237,19 +237,19 @@ aws ssm register-patch-baseline-for-patch-group `
 <li>「Register target」を選択します。</li>
 <li>ターゲット一覧に<code class="inline-code">PatchingTarget</code>が表示されることを確認します。</li>
 </ol>
-<figure class="screenshot-wide aws-console-identity"><figcaption>図4　ターゲット登録開始</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-patch-manager/012-ターゲット登録を開始.png" alt="ターゲット登録を開始" width="1718" height="408" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-patch-manager/012-ターゲット登録を開始.png" alt="ターゲット登録を開始" width="1718" height="408" loading="lazy"></div></figure>
 
 
 
-<figure class="screenshot-wide aws-console-identity"><figcaption>図5　ターゲット_PatchGroup条件入力前</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-patch-manager/013-ターゲット名とpatch-group条件の入力.png" alt="ターゲット名とPatch Group条件の入力" width="1440" height="1092" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-patch-manager/013-ターゲット名とpatch-group条件の入力.png" alt="ターゲット名とPatch Group条件の入力" width="1440" height="1092" loading="lazy"></div></figure>
 
 
 
-<figure class="screenshot-wide aws-console-identity"><figcaption>図6　ターゲット_Patch Group条件入力</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-patch-manager/014-patch-groupタグ条件を入力.png" alt="Patch Groupタグ条件を入力" width="1718" height="1304" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-patch-manager/014-patch-groupタグ条件を入力.png" alt="Patch Groupタグ条件を入力" width="1718" height="1304" loading="lazy"></div></figure>
 
 
 
-<figure class="screenshot-wide aws-console-identity"><figcaption>図7　ターゲット登録完了</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-patch-manager/015-ターゲット登録完了.png" alt="ターゲット登録完了" width="1717" height="401" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-patch-manager/015-ターゲット登録完了.png" alt="ターゲット登録完了" width="1717" height="401" loading="lazy"></div></figure>
 
 
 
@@ -262,11 +262,11 @@ aws ssm register-patch-baseline-for-patch-group `
 <li>EC2詳細画面でタグが保存済みとなっていることを確認します。</li>
 <li>Maintenance Windowのターゲット条件に一致するEC2がパイロット1台だけとなっていることを確認します。</li>
 </ol>
-<figure class="screenshot-wide aws-console-identity"><figcaption>図8　EC2_Patch Groupタグ設定_保存前</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-patch-manager/016-ec2へpatch-groupタグを入力.png" alt="EC2へPatch Groupタグを入力" width="1716" height="457" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-patch-manager/016-ec2へpatch-groupタグを入力.png" alt="EC2へPatch Groupタグを入力" width="1716" height="457" loading="lazy"></div></figure>
 
 
 
-<figure class="screenshot-wide aws-console-identity"><figcaption>図9　EC2_Patch Groupタグ設定_保存完了</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-patch-manager/017-ec2のpatch-groupタグ保存完了.png" alt="EC2のPatch Groupタグ保存完了" width="1706" height="621" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-patch-manager/017-ec2のpatch-groupタグ保存完了.png" alt="EC2のPatch Groupタグ保存完了" width="1706" height="621" loading="lazy"></div></figure>
 
 
 
@@ -284,19 +284,19 @@ aws ssm register-patch-baseline-for-patch-group `
 <li>初回テストでは<code class="inline-code">Operation=Scan</code>、<code class="inline-code">RebootOption=NoReboot</code>を設定します。</li>
 <li>Step Timeout Secondsを<code class="inline-code">10800</code>、コマンドのタイムアウトを<code class="inline-code">600</code>秒に設定して登録します。実作業では承認済みの値を使用します。</li>
 </ol>
-<figure class="screenshot-wide aws-console-identity"><figcaption>図10　メンテナンスウィンドウ_RunCommandタスク登録開始</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-patch-manager/018-run-commandタスク登録画面を開く.png" alt="Run Commandタスク登録画面を開く" width="1716" height="351" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-patch-manager/018-run-commandタスク登録画面を開く.png" alt="Run Commandタスク登録画面を開く" width="1716" height="351" loading="lazy"></div></figure>
 
 
 
-<figure class="screenshot-wide aws-console-identity"><figcaption>図11　Run Commandタスク_ドキュメント・ターゲット設定</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-patch-manager/019-run-commandタスクのドキュメントとターゲット.png" alt="Run Commandタスクのドキュメントとターゲット" width="1718" height="1304" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-patch-manager/019-run-commandタスクのドキュメントとターゲット.png" alt="Run Commandタスクのドキュメントとターゲット" width="1718" height="1304" loading="lazy"></div></figure>
 
 
 
-<figure class="screenshot-wide aws-console-identity"><figcaption>図12　Run Commandタスク_S3出力・Scan・NoReboot設定</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-patch-manager/020-s3出力-scanおよびnorebootの設定.png" alt="S3出力、ScanおよびNoRebootの設定" width="1439" height="1093" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-patch-manager/020-s3出力-scanおよびnorebootの設定.png" alt="S3出力、ScanおよびNoRebootの設定" width="1439" height="1093" loading="lazy"></div></figure>
 
 
 
-<figure class="screenshot-wide aws-console-identity"><figcaption>図13　Run Commandタスク_登録完了</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-patch-manager/021-run-commandタスク登録完了.png" alt="Run Commandタスク登録完了" width="1718" height="411" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-patch-manager/021-run-commandタスク登録完了.png" alt="Run Commandタスク登録完了" width="1718" height="411" loading="lazy"></div></figure>
 
 
 

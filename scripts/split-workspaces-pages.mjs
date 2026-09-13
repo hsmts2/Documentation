@@ -5,15 +5,15 @@ const root=path.dirname(path.dirname(fileURLToPath(import.meta.url)));
 const dir=path.join(root,'tutorials');
 // Each tuple is a deliverable procedure. Appendices remain with their owning procedure.
 const specs=[
- ['managed-ad','AWS Managed Microsoft ADの構築','managed-ad',['managedAdBuild']],
- ['managed-ad-users','AWS Managed Microsoft ADのユーザー・グループ管理','managed-ad',['managedAdUsers']],
+ ['managed-ad','Managed Microsoft ADの構築','managed-ad',['managedAdBuild']],
+ ['managed-ad-users','Managed Microsoft ADのユーザー・グループ管理','managed-ad',['managedAdUsers']],
  ['management-ec2','管理用EC2の起動・接続・AD管理','management-ec2',['managementEc2']],
  ['ad-connector-account','AD Connector用サービスアカウント・権限委任','ad-connector',['connectorDelegation']],
  ['ad-connector','AD ConnectorのVPCピアリング・SG設定・作成','ad-connector',['connectorBuild']],
  ['provisioning-gpo','WorkSpaces Personalの構築・接続','provisioning-gpo',['workspacesBuild']],
  ['target-ou','WorkSpaces用ターゲットOUの作成・権限委任','provisioning-gpo',['workspacesOu']],
  ['gpo','WorkSpaces用GPOの作成・適用・運用','provisioning-gpo',['workspacesGpo']],
- ['image-bundle','WorkSpacesカスタムイメージ・バンドルの作成・共有','image-bundle',['workspacesImage']],
+ ['image-bundle','WorkSpacesカスタムイメージ作成・共有','image-bundle',['workspacesImage']],
  ['systems-manager','Systems Manager環境構築','patch-manager',['systemsManagerBuild']],
  ['patch-manager','Patch Managerの設定','patch-manager',['patchSettings']],
  ['patch-operations','Patch Managerの実行・結果確認・運用','patch-manager',['patchOperations']],
@@ -22,7 +22,7 @@ const specs=[
  ['cost-optimizer-schedule','Cost Optimizerの実行スケジュール設定・変更','cost-optimizer',['costOptimizerSchedule']],
  ['cost-optimizer-reports','Cost Optimizerのレポート・監視','cost-optimizer',['costOptimizerReports','costOptimizerSample']],
  ['cloudwatch-monitoring','CloudWatchのEC2・Windows OS監視とSNS通知','cloudwatch-monitoring',['cloudWatchEc2']],
- ['cloudwatch-workspaces','CloudWatchのWorkSpaces監視・ダッシュボード','cloudwatch-monitoring',['cloudWatchWorkSpaces']],
+ ['cloudwatch-workspaces','CloudWatchのWorkSpaces監視','cloudwatch-monitoring',['cloudWatchWorkSpaces']],
 ];
 const file=slug=>`workspaces-${slug}.html`;
 const sources=new Map([...new Set(['skill-transfer',...specs.map(s=>s[2])])].map(slug=>[slug,fs.readFileSync(path.join(dir,file(slug)),'utf8')]));

@@ -186,7 +186,7 @@ a:hover {
 
 .layout {
   display: grid;
-  grid-template-columns: minmax(210px, 260px) minmax(0, 1180px);
+  grid-template-columns: minmax(210px, 300px) minmax(0, 1140px);
   gap: 36px;
   width: min(1500px, calc(100% - 48px));
   margin: 0 auto;
@@ -201,17 +201,17 @@ main {
 
 /* Keep the reading column fixed when navigation is hidden. */
 body.sidebar-collapsed .layout {
-  grid-template-columns: minmax(210px, 260px) minmax(0, 1180px);
+  grid-template-columns: minmax(210px, 300px) minmax(0, 1140px);
   width: min(1500px, calc(100% - 48px));
 }
 
 .layout.layout-wide {
-  grid-template-columns: minmax(210px, 260px) minmax(0, 1180px);
+  grid-template-columns: minmax(210px, 300px) minmax(0, 1140px);
   width: min(1500px, calc(100% - 48px));
 }
 
 body.sidebar-collapsed .layout.layout-wide {
-  grid-template-columns: minmax(210px, 260px) minmax(0, 1180px);
+  grid-template-columns: minmax(210px, 300px) minmax(0, 1140px);
   width: min(1500px, calc(100% - 48px));
 }
 

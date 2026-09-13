@@ -30,15 +30,15 @@
       <a href="cloudflare-private-site.html">Private GitHubリポジトリをCloudflare Workersで認証付き公開してみた</a>
       <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">☁︎</span>[PoC] マルチVPC・閉域VDI基盤案件</p>
 <a href="workspaces-skill-transfer.html">全体構築・運用順序</a>
-<a href="workspaces-managed-ad.html">AWS Managed Microsoft ADの構築</a>
-<a href="workspaces-managed-ad-users.html">AWS Managed Microsoft ADのユーザー・グループ管理</a>
+<a href="workspaces-managed-ad.html">Managed Microsoft ADの構築</a>
+<a href="workspaces-managed-ad-users.html">Managed Microsoft ADのユーザー・グループ管理</a>
 <a href="workspaces-management-ec2.html">管理用EC2の起動・接続・AD管理</a>
 <a href="workspaces-ad-connector-account.html">AD Connector用サービスアカウント・権限委任</a>
 <a href="workspaces-ad-connector.html">AD ConnectorのVPCピアリング・SG設定・作成</a>
 <a href="workspaces-provisioning-gpo.html">WorkSpaces Personalの構築・接続</a>
 <a href="workspaces-target-ou.html">WorkSpaces用ターゲットOUの作成・権限委任</a>
 <a href="workspaces-gpo.html">WorkSpaces用GPOの作成・適用・運用</a>
-<a href="workspaces-image-bundle.html">WorkSpacesカスタムイメージ・バンドルの作成・共有</a>
+<a href="workspaces-image-bundle.html">WorkSpacesカスタムイメージ作成・共有</a>
 <a href="workspaces-systems-manager.html" class="active" aria-current="page">Systems Manager環境構築</a>
 <a href="workspaces-patch-manager.html">Patch Managerの設定</a>
 <a href="workspaces-patch-operations.html">Patch Managerの実行・結果確認・運用</a>
@@ -47,7 +47,7 @@
 <a href="workspaces-cost-optimizer-schedule.html">Cost Optimizerの実行スケジュール設定・変更</a>
 <a href="workspaces-cost-optimizer-reports.html">Cost Optimizerのレポート・監視</a>
 <a href="workspaces-cloudwatch-monitoring.html">CloudWatchのEC2・Windows OS監視とSNS通知</a>
-<a href="workspaces-cloudwatch-workspaces.html">CloudWatchのWorkSpaces監視・ダッシュボード</a>
+<a href="workspaces-cloudwatch-workspaces.html">CloudWatchのWorkSpaces監視</a>
       <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">◈</span>Terraform</p>
       <a href="terraform.html">Terraform 概要</a>
       <a href="hcp-terraform.html">HCP Terraform（Terraform Cloud）</a>
@@ -92,7 +92,7 @@
 <p>本書の設定表と画像は検証環境の例です。実作業では承認済みパラメータシートの値を使用します。</p>
 <h3 id="制約事項">制約事項</h3>
 <p>Systems Manager用の受信ポートは不要です。対象ノードからSystems Manager、必要なS3バケットおよび更新元へ接続できる通信経路を用意します。</p>
-<figure class="screenshot-wide"><figcaption>図1　Systems ManagerによるWindowsパッチ管理の全体像</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-patch-manager/001-systems-managerによるwindowsパッチ管理の全体像.png" alt="Systems ManagerによるWindowsパッチ管理の全体像" width="1672" height="941" loading="lazy"></div></figure>
+<figure class="screenshot-wide"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-patch-manager/001-systems-managerによるwindowsパッチ管理の全体像.png" alt="Systems ManagerによるWindowsパッチ管理の全体像" width="1672" height="941" loading="lazy"></div></figure>
 
 
 
@@ -161,11 +161,11 @@
 <li>設定内容を確認してロールを作成します。</li>
 </ol>
 <p>本番環境の既存ロールに付与された4ポリシーは、後述の比較表へ調査結果として記録します。これは新規ロールの作成手順ではなく、4ポリシーを新規ロールへ一括付与して再現するものでもありません。</p>
-<figure class="screenshot-wide aws-console-identity"><figcaption>図2　IAMロール_AmazonSSMManagedInstanceCore選択</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-patch-manager/002-amazonssmmanagedinstancecoreを選択.png" alt="AmazonSSMManagedInstanceCoreを選択" width="1717" height="666" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-patch-manager/002-amazonssmmanagedinstancecoreを選択.png" alt="AmazonSSMManagedInstanceCoreを選択" width="1717" height="666" loading="lazy"></div></figure>
 
 
 
-<figure class="screenshot-wide aws-console-identity"><figcaption>図3　IAMロール_設定内容確認</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-patch-manager/003-iamロールの設定内容を確認.png" alt="IAMロールの設定内容を確認" width="1718" height="1304" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-patch-manager/003-iamロールの設定内容を確認.png" alt="IAMロールの設定内容を確認" width="1718" height="1304" loading="lazy"></div></figure>
 
 
 
@@ -277,7 +277,7 @@
 <li>既存環境を再現する場合は、設計書に記載された日付付きAMI名とAMI IDが一致する行を選択します。新規構築で最新AMIを採用する場合は、動作確認と変更承認を経てから選択します。</li>
 </ol>
 <p><a href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/finding-an-ami.html">Find an AMI that meets the requirements for your EC2 instance</a></p>
-<figure class="screenshot-wide aws-console-identity"><figcaption>図4　EC2起動_WindowsServer2022日本語AMI検索</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-patch-manager/004-windows-server-2022日本語amiの検索.png" alt="Windows Server 2022日本語AMIの検索" width="1718" height="1304" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-patch-manager/004-windows-server-2022日本語amiの検索.png" alt="Windows Server 2022日本語AMIの検索" width="1718" height="1304" loading="lazy"></div></figure>
 
 
 
@@ -294,11 +294,11 @@
 <li>SSM、SSM Messages、EC2 Messages、必要なAWS管理S3バケットおよびWindows Update Catalog／WSUSへ到達できる通信経路を確認します。</li>
 <li>インスタンスを起動し、状態が「実行中」、全ステータスチェックが合格になるまで待ちます。</li>
 </ol>
-<figure class="screenshot-wide aws-console-identity"><figcaption>図5　EC2起動_AMI・ネットワーク設定</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-patch-manager/005-ec2起動時のami-ネットワーク設定.png" alt="EC2起動時のAMI・ネットワーク設定" width="1718" height="1304" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-patch-manager/005-ec2起動時のami-ネットワーク設定.png" alt="EC2起動時のAMI・ネットワーク設定" width="1718" height="1304" loading="lazy"></div></figure>
 
 
 
-<figure class="screenshot-wide aws-console-identity"><figcaption>図6　EC2起動_IAMインスタンスプロフィール設定</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-patch-manager/006-iamインスタンスプロフィールを設定.png" alt="IAMインスタンスプロフィールを設定" width="1718" height="1304" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-patch-manager/006-iamインスタンスプロフィールを設定.png" alt="IAMインスタンスプロフィールを設定" width="1718" height="1304" loading="lazy"></div></figure>
 
 
 
@@ -364,11 +364,11 @@ Get-CimInstance Win32_Service -Filter &quot;Name='AmazonSSMAgent'&quot; |
 <li>対象EC2のノード状態が「実行中」、Ping statusが「オンライン」となっていることを確認します。</li>
 <li>OS、AMI、SSM Agentバージョン、IAMロールを記録します。</li>
 </ol>
-<figure class="screenshot-wide aws-console-identity"><figcaption>図7　FleetManager_マネージドノードOnline確認</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-patch-manager/007-fleet-managerでonlineを確認.png" alt="Fleet ManagerでOnlineを確認" width="1716" height="473" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-patch-manager/007-fleet-managerでonlineを確認.png" alt="Fleet ManagerでOnlineを確認" width="1716" height="473" loading="lazy"></div></figure>
 
 
 
-<figure class="screenshot-wide aws-console-identity"><figcaption>図8　EC2_SSM Agent・IAMロール確認</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-patch-manager/008-ec2接続画面でssm-agentとiamロールを確認.png" alt="EC2接続画面でSSM AgentとIAMロールを確認" width="1718" height="1248" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-patch-manager/008-ec2接続画面でssm-agentとiamロールを確認.png" alt="EC2接続画面でSSM AgentとIAMロールを確認" width="1718" height="1248" loading="lazy"></div></figure>
 
 
 

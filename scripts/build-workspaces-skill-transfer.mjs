@@ -479,9 +479,7 @@ const transformDocument = async (key, pageAssetFolder, sequenceStart) => {
     const awsConsole = await isAwsConsoleScreenshot(sourceImage);
     if (!process.env.WORKSPACES_SKIP_IMAGES) await copyPublishedImage(sourceImage, destination, awsConsole, meta);
     const classes = ["screenshot-wide", awsConsole ? "aws-console-identity" : ""].filter(Boolean).join(" ");
-    const following = markdown.slice(markdown.indexOf(match[0]) + match[0].length);
-    const caption = following.match(/^\s*\*((?:図|参考図|構成図)[^\n*]+)\*/)?.[1] || match[1];
-    const figure = `<figure class="${classes}"><figcaption>${htmlEscape(caption)}</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/${path.basename(pageAssetFolder)}/${filename}" alt="${htmlEscape(match[1])}" width="${meta.width || ""}" height="${meta.height || ""}" loading="lazy"></div></figure>`;
+    const figure = `<figure class="${classes}"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/${path.basename(pageAssetFolder)}/${filename}" alt="${htmlEscape(match[1])}" width="${meta.width || ""}" height="${meta.height || ""}" loading="lazy"></div></figure>`;
     imageMetadata.push({ source: sourceImage, destination, awsConsole });
     markdown = markdown.replace(match[0], figure);
   }

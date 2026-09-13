@@ -30,15 +30,15 @@
       <a href="cloudflare-private-site.html">Private GitHubリポジトリをCloudflare Workersで認証付き公開してみた</a>
       <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">☁︎</span>[PoC] マルチVPC・閉域VDI基盤案件</p>
 <a href="workspaces-skill-transfer.html">全体構築・運用順序</a>
-<a href="workspaces-managed-ad.html">AWS Managed Microsoft ADの構築</a>
-<a href="workspaces-managed-ad-users.html">AWS Managed Microsoft ADのユーザー・グループ管理</a>
+<a href="workspaces-managed-ad.html">Managed Microsoft ADの構築</a>
+<a href="workspaces-managed-ad-users.html">Managed Microsoft ADのユーザー・グループ管理</a>
 <a href="workspaces-management-ec2.html">管理用EC2の起動・接続・AD管理</a>
 <a href="workspaces-ad-connector-account.html">AD Connector用サービスアカウント・権限委任</a>
 <a href="workspaces-ad-connector.html">AD ConnectorのVPCピアリング・SG設定・作成</a>
 <a href="workspaces-provisioning-gpo.html">WorkSpaces Personalの構築・接続</a>
 <a href="workspaces-target-ou.html">WorkSpaces用ターゲットOUの作成・権限委任</a>
 <a href="workspaces-gpo.html">WorkSpaces用GPOの作成・適用・運用</a>
-<a href="workspaces-image-bundle.html">WorkSpacesカスタムイメージ・バンドルの作成・共有</a>
+<a href="workspaces-image-bundle.html">WorkSpacesカスタムイメージ作成・共有</a>
 <a href="workspaces-systems-manager.html">Systems Manager環境構築</a>
 <a href="workspaces-patch-manager.html">Patch Managerの設定</a>
 <a href="workspaces-patch-operations.html">Patch Managerの実行・結果確認・運用</a>
@@ -47,7 +47,7 @@
 <a href="workspaces-cost-optimizer-schedule.html">Cost Optimizerの実行スケジュール設定・変更</a>
 <a href="workspaces-cost-optimizer-reports.html">Cost Optimizerのレポート・監視</a>
 <a href="workspaces-cloudwatch-monitoring.html">CloudWatchのEC2・Windows OS監視とSNS通知</a>
-<a href="workspaces-cloudwatch-workspaces.html">CloudWatchのWorkSpaces監視・ダッシュボード</a>
+<a href="workspaces-cloudwatch-workspaces.html">CloudWatchのWorkSpaces監視</a>
       <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">◈</span>Terraform</p>
       <a href="terraform.html">Terraform 概要</a>
       <a href="hcp-terraform.html">HCP Terraform（Terraform Cloud）</a>
@@ -88,7 +88,7 @@
 <h2 id="仕様">仕様</h2>
 <h3 id="構成-動作">構成・動作</h3>
 <p>Cost Optimizer for Amazon WorkSpacesは、WorkSpaces本体の組み込み機能ではなく、AWS Solutions Libraryから提供されるCloudFormationテンプレートで構築するソリューションです。WorkSpacesの利用時間と料金しきい値を比較し、時間課金の<code class="inline-code">AUTO_STOP</code>と月額課金の<code class="inline-code">ALWAYS_ON</code>のどちらが適しているかを日次で判定します。</p>
-<figure class="screenshot-wide"><figcaption>図1　ハブアカウント単一構成_v2.9.10</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/001-図1-ハブアカウント単一構成-v2-9-10.png" alt="図1_ハブアカウント単一構成_v2.9.10" width="1950" height="1200" loading="lazy"></div></figure>
+<figure class="screenshot-wide"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/001-図1-ハブアカウント単一構成-v2-9-10.png" alt="図1_ハブアカウント単一構成_v2.9.10" width="1950" height="1200" loading="lazy"></div></figure>
 
 
 
@@ -174,14 +174,14 @@
 <li>次のv2.9.10公式配布テンプレートURLを入力し、「次へ」を選択します。</li>
 </ol>
 <p><code class="inline-code">https://solutions-reference.s3.amazonaws.com/cost-optimizer-for-amazon-workspaces/v2.9.10/cost-optimizer-for-amazon-workspaces.template</code></p>
-<figure class="screenshot-wide aws-console-identity"><figcaption>図2　CloudFormation_公式テンプレートURL指定</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/002-図2-cloudformation-公式テンプレートurl指定.png" alt="図2_CloudFormation_公式テンプレートURL指定" width="1713" height="1304" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/002-図2-cloudformation-公式テンプレートurl指定.png" alt="図2_CloudFormation_公式テンプレートURL指定" width="1713" height="1304" loading="lazy"></div></figure>
 
 
 
 <div class="callout callout-warning"><p><strong>⚠️ 注意：固定バージョンのテンプレートURLを使用する</strong><br>図2は2026年9月8日に取得した証跡です。当時v2.9.10を指していた<code class="inline-code">latest</code> URLが表示されています。再構築時は、画像内の<code class="inline-code">latest</code>を上記の<code class="inline-code">v2.9.10</code>に置き換えて入力してください。別バージョンへ更新する場合は、そのバージョンのリリースノートと変更セットを事前に確認します。</p>
 </div>
 <p>テンプレートを事前に承認・保管する運用では、「テンプレートファイルのアップロード」を使用しても構いません。選択したファイル名が承認済みテンプレートと一致することを確認します。</p>
-<figure class="screenshot-wide aws-console-identity"><figcaption>図3　CloudFormation_テンプレートファイル直接アップロード</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/003-図3-cloudformation-テンプレートファイル直接アップロード.png" alt="図3_CloudFormation_テンプレートファイル直接アップロード" width="1713" height="1304" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/003-図3-cloudformation-テンプレートファイル直接アップロード.png" alt="図3_CloudFormation_テンプレートファイル直接アップロード" width="1713" height="1304" loading="lazy"></div></figure>
 
 
 
@@ -232,7 +232,7 @@
 </tr>
 </tbody></table></div>
 <p><code class="inline-code">Create New VPC=Yes</code> のため、Existing VPC SettingsのサブネットIDとセキュリティグループIDは空欄にします。</p>
-<figure class="screenshot-wide aws-console-identity"><figcaption>図4　CloudFormation_スタック名・VPC・DryRun設定</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/004-図4-cloudformation-スタック名-vpc-dryrun設定.png" alt="図4_CloudFormation_スタック名・VPC・DryRun設定" width="1713" height="1304" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/004-図4-cloudformation-スタック名-vpc-dryrun設定.png" alt="図4_CloudFormation_スタック名・VPC・DryRun設定" width="1713" height="1304" loading="lazy"></div></figure>
 
 
 
@@ -340,7 +340,7 @@
 </div>
 <p><code class="inline-code">Regions</code> を空欄にすると、アカウント内の対応リージョンをすべて走査します。組織で未有効化のリージョンに対するエラーを抑え、処理範囲を明確にする場合は、WorkSpacesを運用するリージョンだけをカンマ区切りで指定します。</p>
 <p><code class="inline-code">TerminateUnusedWorkspaces</code> は、<code class="inline-code">No</code>で終了機能を無効化し、<code class="inline-code">Dry Run</code>で終了候補だけをレポートし、<code class="inline-code">Yes</code>で終了を許可します。実際に終了するには、全体の<code class="inline-code">DryRun=No</code>も必要です。スタンバイWorkSpaceは対象外です。<code class="inline-code">TerminateUnusedWorkspaces=Yes</code>と<code class="inline-code">TestEndOfMonth=Yes</code>を同時に設定しないでください。</p>
-<figure class="screenshot-wide aws-console-identity"><figcaption>図5　CloudFormation_料金・運用パラメータ設定</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/005-図5-cloudformation-料金-運用パラメータ設定.png" alt="図5_CloudFormation_料金・運用パラメータ設定" width="1713" height="1304" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/005-図5-cloudformation-料金-運用パラメータ設定.png" alt="図5_CloudFormation_料金・運用パラメータ設定" width="1713" height="1304" loading="lazy"></div></figure>
 
 
 
@@ -352,7 +352,7 @@
 <li><code class="inline-code">AWS::IAM::Role</code> 等の作成を確認し、「AWS CloudFormationによってIAMリソースがカスタム名で作成される場合があることを承認します」を選択します。</li>
 <li>「次へ」を選択します。</li>
 </ol>
-<figure class="screenshot-wide aws-console-identity"><figcaption>図6　CloudFormation_スタックオプション・IAM承認</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/006-図6-cloudformation-スタックオプション-iam承認.png" alt="図6_CloudFormation_スタックオプション・IAM承認" width="1713" height="1304" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/006-図6-cloudformation-スタックオプション-iam承認.png" alt="図6_CloudFormation_スタックオプション・IAM承認" width="1713" height="1304" loading="lazy"></div></figure>
 
 
 
@@ -361,7 +361,7 @@
 <li>スタック名、28個のパラメータ、IAM承認を確認します。</li>
 <li><code class="inline-code">DryRun=Yes</code>、<code class="inline-code">TerminateUnusedWorkspaces=No</code>、<code class="inline-code">TestEndOfMonth=No</code> を再確認します。</li>
 </ol>
-<figure class="screenshot-wide aws-console-identity"><figcaption>図7　CloudFormation_作成前パラメータ確認</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/007-図7-cloudformation-作成前パラメータ確認.png" alt="図7_CloudFormation_作成前パラメータ確認" width="1713" height="1304" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/007-図7-cloudformation-作成前パラメータ確認.png" alt="図7_CloudFormation_作成前パラメータ確認" width="1713" height="1304" loading="lazy"></div></figure>
 
 
 
@@ -369,7 +369,7 @@
 <li>画面下部へ移動し、「送信」を選択します。</li>
 </ol>
 <p>作成中はCloudFormationのイベントで失敗がないことを確認します。</p>
-<figure class="screenshot-wide aws-console-identity"><figcaption>図8　CloudFormation_スタック作成中</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/008-図8-cloudformation-スタック作成中.png" alt="図8_CloudFormation_スタック作成中" width="1713" height="1304" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/008-図8-cloudformation-スタック作成中.png" alt="図8_CloudFormation_スタック作成中" width="1713" height="1304" loading="lazy"></div></figure>
 
 
 
@@ -380,11 +380,11 @@
 <li>「出力」タブで <code class="inline-code">SolutionVersion=v2.9.10</code>、<code class="inline-code">DryRun=Yes</code>、<code class="inline-code">BucketName</code>、<code class="inline-code">StandardLimit=85</code>などの料金しきい値を確認します。</li>
 <li>作成直後はダッシュボードが空でも異常とは限りません。初回ECSタスク実行後にS3、ログ、メトリクスを確認します。</li>
 </ol>
-<figure class="screenshot-wide"><figcaption>図9　CloudFormation_作成リソース_CREATE_COMPLETE</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/009-図9-cloudformation-作成リソース-create-complete.png" alt="図9_CloudFormation_作成リソース_CREATE_COMPLETE" width="1713" height="1304" loading="lazy"></div></figure>
+<figure class="screenshot-wide"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/009-図9-cloudformation-作成リソース-create-complete.png" alt="図9_CloudFormation_作成リソース_CREATE_COMPLETE" width="1713" height="1304" loading="lazy"></div></figure>
 
 
 
-<figure class="screenshot-wide aws-console-identity"><figcaption>図10　CloudFormation_出力_SolutionVersion-v2.9.10</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/010-図10-cloudformation-出力-solutionversion-v2-9-10.png" alt="図10_CloudFormation_出力_SolutionVersion-v2.9.10" width="1713" height="1304" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/010-図10-cloudformation-出力-solutionversion-v2-9-10.png" alt="図10_CloudFormation_出力_SolutionVersion-v2.9.10" width="1713" height="1304" loading="lazy"></div></figure>
 
 
 

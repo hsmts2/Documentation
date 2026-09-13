@@ -1,7 +1,7 @@
 [
   {
     "file": "workspaces-managed-ad.html",
-    "title": "AWS Managed Microsoft ADの構築",
+    "title": "Managed Microsoft ADの構築",
     "source": "workspaces-managed-ad.html",
     "keys": [
       "managedAdBuild"
@@ -9,7 +9,7 @@
   },
   {
     "file": "workspaces-managed-ad-users.html",
-    "title": "AWS Managed Microsoft ADのユーザー・グループ管理",
+    "title": "Managed Microsoft ADのユーザー・グループ管理",
     "source": "workspaces-managed-ad.html",
     "keys": [
       "managedAdUsers"
@@ -65,7 +65,7 @@
   },
   {
     "file": "workspaces-image-bundle.html",
-    "title": "WorkSpacesカスタムイメージ・バンドルの作成・共有",
+    "title": "WorkSpacesカスタムイメージ作成・共有",
     "source": "workspaces-image-bundle.html",
     "keys": [
       "workspacesImage"
@@ -140,7 +140,7 @@
   },
   {
     "file": "workspaces-cloudwatch-workspaces.html",
-    "title": "CloudWatchのWorkSpaces監視・ダッシュボード",
+    "title": "CloudWatchのWorkSpaces監視",
     "source": "workspaces-cloudwatch-monitoring.html",
     "keys": [
       "cloudWatchWorkSpaces"

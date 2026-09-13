@@ -30,15 +30,15 @@
       <a href="cloudflare-private-site.html">Private GitHubリポジトリをCloudflare Workersで認証付き公開してみた</a>
       <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">☁︎</span>[PoC] マルチVPC・閉域VDI基盤案件</p>
 <a href="workspaces-skill-transfer.html">全体構築・運用順序</a>
-<a href="workspaces-managed-ad.html">AWS Managed Microsoft ADの構築</a>
-<a href="workspaces-managed-ad-users.html">AWS Managed Microsoft ADのユーザー・グループ管理</a>
+<a href="workspaces-managed-ad.html">Managed Microsoft ADの構築</a>
+<a href="workspaces-managed-ad-users.html">Managed Microsoft ADのユーザー・グループ管理</a>
 <a href="workspaces-management-ec2.html">管理用EC2の起動・接続・AD管理</a>
 <a href="workspaces-ad-connector-account.html">AD Connector用サービスアカウント・権限委任</a>
 <a href="workspaces-ad-connector.html">AD ConnectorのVPCピアリング・SG設定・作成</a>
 <a href="workspaces-provisioning-gpo.html">WorkSpaces Personalの構築・接続</a>
 <a href="workspaces-target-ou.html">WorkSpaces用ターゲットOUの作成・権限委任</a>
 <a href="workspaces-gpo.html">WorkSpaces用GPOの作成・適用・運用</a>
-<a href="workspaces-image-bundle.html">WorkSpacesカスタムイメージ・バンドルの作成・共有</a>
+<a href="workspaces-image-bundle.html">WorkSpacesカスタムイメージ作成・共有</a>
 <a href="workspaces-systems-manager.html">Systems Manager環境構築</a>
 <a href="workspaces-patch-manager.html">Patch Managerの設定</a>
 <a href="workspaces-patch-operations.html">Patch Managerの実行・結果確認・運用</a>
@@ -47,7 +47,7 @@
 <a href="workspaces-cost-optimizer-schedule.html" class="active" aria-current="page">Cost Optimizerの実行スケジュール設定・変更</a>
 <a href="workspaces-cost-optimizer-reports.html">Cost Optimizerのレポート・監視</a>
 <a href="workspaces-cloudwatch-monitoring.html">CloudWatchのEC2・Windows OS監視とSNS通知</a>
-<a href="workspaces-cloudwatch-workspaces.html">CloudWatchのWorkSpaces監視・ダッシュボード</a>
+<a href="workspaces-cloudwatch-workspaces.html">CloudWatchのWorkSpaces監視</a>
       <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">◈</span>Terraform</p>
       <a href="terraform.html">Terraform 概要</a>
       <a href="hcp-terraform.html">HCP Terraform（Terraform Cloud）</a>
@@ -151,52 +151,52 @@
 </div>
 <h4 id="検証開始時の確認">検証開始時の確認</h4>
 <p>検証開始時は<code class="inline-code">cron(0 0 * * ? *)</code>です。00:00 UTC、すなわち09:00 JSTの設定でした。これは今回の復元先の08:00 JSTとは異なります。</p>
-<figure class="screenshot-wide aws-console-identity"><figcaption>図1　EventBridge_検証開始時09時_設定確認</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/020-図1-eventbridge-検証開始時09時-設定確認.png" alt="図1_EventBridge_検証開始時09時_設定確認" width="1889" height="1333" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/020-図1-eventbridge-検証開始時09時-設定確認.png" alt="図1_EventBridge_検証開始時09時_設定確認" width="1889" height="1333" loading="lazy"></div></figure>
 
 
 
 <h4 id="お客様環境の06-00-jstを検証">お客様環境の06:00 JSTを検証</h4>
 <p>「特定の時刻」を選択し、時間へ<code class="inline-code">21</code>を入力します。画面上のCron式が<code class="inline-code">0 21 * * ? *</code>、次回トリガーが21:00 UTCとなっていることを確認して「次へ」を選択します。</p>
-<figure class="screenshot-wide aws-console-identity"><figcaption>図2　EventBridge_お客様時刻06時_UTC21時入力</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/021-図2-eventbridge-お客様時刻06時-utc21時入力.png" alt="図2_EventBridge_お客様時刻06時_UTC21時入力" width="1889" height="1333" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/021-図2-eventbridge-お客様時刻06時-utc21時入力.png" alt="図2_EventBridge_お客様時刻06時_UTC21時入力" width="1889" height="1333" loading="lazy"></div></figure>
 
 
 
 <p>ターゲットがECSタスク、クラスターが<code class="inline-code">cost-optimizer-cluster</code>、タスク定義が<code class="inline-code">wco-task</code>、リビジョンが<code class="inline-code">4</code>となっていることを確認します。時刻以外の設定は変更しません。</p>
-<figure class="screenshot-wide aws-console-identity"><figcaption>図3　EventBridge_ターゲット_ECSタスク定義4確認</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/022-図3-eventbridge-ターゲット-ecsタスク定義4確認.png" alt="図3_EventBridge_ターゲット_ECSタスク定義4確認" width="1889" height="1333" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/022-図3-eventbridge-ターゲット-ecsタスク定義4確認.png" alt="図3_EventBridge_ターゲット_ECSタスク定義4確認" width="1889" height="1333" loading="lazy"></div></figure>
 
 
 
 <p>確認画面でCron式とターゲットを再確認します。</p>
-<figure class="screenshot-wide aws-console-identity"><figcaption>図4　EventBridge_お客様時刻06時_更新確認</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/023-図4-eventbridge-お客様時刻06時-更新確認.png" alt="図4_EventBridge_お客様時刻06時_更新確認" width="1889" height="1333" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/023-図4-eventbridge-お客様時刻06時-更新確認.png" alt="図4_EventBridge_お客様時刻06時_更新確認" width="1889" height="1333" loading="lazy"></div></figure>
 
 
 
 <p>確認後、画面下部までスクロールし、「ルールの更新」を選択します。</p>
 <p>更新成功メッセージ、<code class="inline-code">0 21 * * ? *</code>および21:00 UTCの次回トリガー一覧を確認しました。</p>
-<figure class="screenshot-wide aws-console-identity"><figcaption>図5　EventBridge_お客様時刻06時_反映確認</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/024-図5-eventbridge-お客様時刻06時-反映確認.png" alt="図5_EventBridge_お客様時刻06時_反映確認" width="1889" height="1333" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/024-図5-eventbridge-お客様時刻06時-反映確認.png" alt="図5_EventBridge_お客様時刻06時_反映確認" width="1889" height="1333" loading="lazy"></div></figure>
 
 
 
 <h4 id="今回の復元先の08-00-jstへ戻す">今回の復元先の08:00 JSTへ戻す</h4>
 <p>時間を<code class="inline-code">23</code>へ変更し、Cron式が<code class="inline-code">0 23 * * ? *</code>、次回トリガーが23:00 UTCとなっていることを確認します。</p>
-<figure class="screenshot-wide aws-console-identity"><figcaption>図6　EventBridge_復元先08時_UTC23時入力</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/025-図6-eventbridge-復元先08時-utc23時入力.png" alt="図6_EventBridge_復元先08時_UTC23時入力" width="1889" height="1333" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/025-図6-eventbridge-復元先08時-utc23時入力.png" alt="図6_EventBridge_復元先08時_UTC23時入力" width="1889" height="1333" loading="lazy"></div></figure>
 
 
 
 <p>確認画面でCron式とターゲットを再確認します。</p>
-<figure class="screenshot-wide aws-console-identity"><figcaption>図7　EventBridge_復元先08時_更新確認</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/026-図7-eventbridge-復元先08時-更新確認.png" alt="図7_EventBridge_復元先08時_更新確認" width="1889" height="1333" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/026-図7-eventbridge-復元先08時-更新確認.png" alt="図7_EventBridge_復元先08時_更新確認" width="1889" height="1333" loading="lazy"></div></figure>
 
 
 
 <p>確認後、画面下部までスクロールし、「ルールの更新」を選択します。</p>
 <p>更新成功メッセージ、<code class="inline-code">0 23 * * ? *</code>および23:00 UTCの次回トリガー一覧を確認しました。</p>
-<figure class="screenshot-wide aws-console-identity"><figcaption>図8　EventBridge_復元先08時_最終反映確認</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/027-図8-eventbridge-復元先08時-最終反映確認.png" alt="図8_EventBridge_復元先08時_最終反映確認" width="1889" height="1333" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/027-図8-eventbridge-復元先08時-最終反映確認.png" alt="図8_EventBridge_復元先08時_最終反映確認" width="1889" height="1333" loading="lazy"></div></figure>
 
 
 
 <h4 id="utc同日内の二重実行を回避">UTC同日内の二重実行を回避</h4>
 <p>検証当日は実行時刻を複数回変更したため、同一UTC日内に複数回起動しないようEventBridgeルールを一時的に無効化しました。無効化後もCron式は<code class="inline-code">0 23 * * ? *</code>のまま保持されています。</p>
-<figure class="screenshot-wide aws-console-identity"><figcaption>図9　EventBridge_二重実行回避_ルール無効化</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/028-図9-eventbridge-二重実行回避-ルール無効化.png" alt="図9_EventBridge_二重実行回避_ルール無効化" width="1918" height="1540" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/028-図9-eventbridge-二重実行回避-ルール無効化.png" alt="図9_EventBridge_二重実行回避_ルール無効化" width="1918" height="1540" loading="lazy"></div></figure>
 
 
 

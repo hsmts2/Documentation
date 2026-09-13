@@ -30,15 +30,15 @@
       <a href="cloudflare-private-site.html">Private GitHubリポジトリをCloudflare Workersで認証付き公開してみた</a>
       <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">☁︎</span>[PoC] マルチVPC・閉域VDI基盤案件</p>
 <a href="workspaces-skill-transfer.html">全体構築・運用順序</a>
-<a href="workspaces-managed-ad.html">AWS Managed Microsoft ADの構築</a>
-<a href="workspaces-managed-ad-users.html">AWS Managed Microsoft ADのユーザー・グループ管理</a>
+<a href="workspaces-managed-ad.html">Managed Microsoft ADの構築</a>
+<a href="workspaces-managed-ad-users.html">Managed Microsoft ADのユーザー・グループ管理</a>
 <a href="workspaces-management-ec2.html">管理用EC2の起動・接続・AD管理</a>
 <a href="workspaces-ad-connector-account.html">AD Connector用サービスアカウント・権限委任</a>
 <a href="workspaces-ad-connector.html">AD ConnectorのVPCピアリング・SG設定・作成</a>
 <a href="workspaces-provisioning-gpo.html">WorkSpaces Personalの構築・接続</a>
 <a href="workspaces-target-ou.html">WorkSpaces用ターゲットOUの作成・権限委任</a>
 <a href="workspaces-gpo.html">WorkSpaces用GPOの作成・適用・運用</a>
-<a href="workspaces-image-bundle.html">WorkSpacesカスタムイメージ・バンドルの作成・共有</a>
+<a href="workspaces-image-bundle.html">WorkSpacesカスタムイメージ作成・共有</a>
 <a href="workspaces-systems-manager.html">Systems Manager環境構築</a>
 <a href="workspaces-patch-manager.html">Patch Managerの設定</a>
 <a href="workspaces-patch-operations.html">Patch Managerの実行・結果確認・運用</a>
@@ -47,7 +47,7 @@
 <a href="workspaces-cost-optimizer-schedule.html">Cost Optimizerの実行スケジュール設定・変更</a>
 <a href="workspaces-cost-optimizer-reports.html" class="active" aria-current="page">Cost Optimizerのレポート・監視</a>
 <a href="workspaces-cloudwatch-monitoring.html">CloudWatchのEC2・Windows OS監視とSNS通知</a>
-<a href="workspaces-cloudwatch-workspaces.html">CloudWatchのWorkSpaces監視・ダッシュボード</a>
+<a href="workspaces-cloudwatch-workspaces.html">CloudWatchのWorkSpaces監視</a>
       <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">◈</span>Terraform</p>
       <a href="terraform.html">Terraform 概要</a>
       <a href="hcp-terraform.html">HCP Terraform（Terraform Cloud）</a>
@@ -130,7 +130,7 @@
 <li>「タスク」で対象時刻のタスクを選択し、使用したタスク定義のリビジョンと実行情報を確認します。</li>
 <li>タスクがSTOPPEDとなっていること、停止理由とコンテナ終了コード0を確認します。終了コード0でも処理対象の一部にエラーが残る場合があるため、対象リージョンのログを続けて確認します。</li>
 </ol>
-<figure class="screenshot-wide aws-console-identity"><figcaption>図1　ECS_スケジュール実行タスク一覧</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/029-図1-ecs-スケジュール実行タスク一覧.png" alt="図1_ECS_スケジュール実行タスク一覧" width="1713" height="1304" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/029-図1-ecs-スケジュール実行タスク一覧.png" alt="図1_ECS_スケジュール実行タスク一覧" width="1713" height="1304" loading="lazy"></div></figure>
 
 
 
@@ -142,7 +142,7 @@
 <li>総WorkSpaces数、Hourly／Monthly、DryRun／実変換、終了、失敗・スキップ、ECS処理時間を確認します。</li>
 </ol>
 <p>取得済み証跡では総数1、Hourly 1、Monthly 0を確認しました。変換や終了がなければ該当ウィジェットが空になることは正常です。</p>
-<figure class="screenshot-wide aws-console-identity"><figcaption>図2　CloudWatch_ダッシュボード_実績1台</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/030-図2-cloudwatch-ダッシュボード-実績1台.png" alt="図2_CloudWatch_ダッシュボード_実績1台" width="1554" height="1304" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/030-図2-cloudwatch-ダッシュボード-実績1台.png" alt="図2_CloudWatch_ダッシュボード_実績1台" width="1554" height="1304" loading="lazy"></div></figure>
 
 
 
@@ -154,15 +154,15 @@
 <li>CSVをダウンロードし、文字化けや列ずれがなく開けることを確認します。</li>
 </ol>
 <p>取得済み証跡では<code class="inline-code">2026/09/08/</code>に、09:01 JST（00:01 UTC）付近で2種類のCSVが保存されました。運用確認では固定日付を使用せず、対象実行日と実際のECS終了時刻に対応するプレフィックスを確認します。</p>
-<figure class="screenshot-wide aws-console-identity"><figcaption>図3　S3_レポート・アクセスログ用バケット確認</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/031-図3-s3-レポート-アクセスログ用バケット確認.png" alt="図3_S3_レポート・アクセスログ用バケット確認" width="1552" height="560" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/031-図3-s3-レポート-アクセスログ用バケット確認.png" alt="図3_S3_レポート・アクセスログ用バケット確認" width="1552" height="560" loading="lazy"></div></figure>
 
 
 
-<figure class="screenshot-wide aws-console-identity"><figcaption>図4　S3_DryRun日次CSV出力確認</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/032-図4-s3-dryrun日次csv出力確認.png" alt="図4_S3_DryRun日次CSV出力確認" width="1552" height="506" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/032-図4-s3-dryrun日次csv出力確認.png" alt="図4_S3_DryRun日次CSV出力確認" width="1552" height="506" loading="lazy"></div></figure>
 
 
 
-<figure class="screenshot-wide aws-console-identity"><figcaption>図5　S3_20260908日次CSV出力確認</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/033-図5-s3-20260908日次csv出力確認.png" alt="図5_S3_20260908日次CSV出力確認" width="1889" height="1333" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/033-図5-s3-20260908日次csv出力確認.png" alt="図5_S3_20260908日次CSV出力確認" width="1889" height="1333" loading="lazy"></div></figure>
 
 
 
@@ -217,11 +217,11 @@
 <p><code class="inline-code">DryRun=No</code> の実行後はCSVだけで完了判定せず、WorkSpacesコンソールの課金モードも照合します。CSVに <code class="inline-code">Failed to change mode</code> 等がある場合は、同時刻のCloudWatch Logsを確認します。</p>
 <h3 id="6-ダッシュボードの台数-変換結果を確認する">6. ダッシュボードの台数・変換結果を確認する</h3>
 <p>監視対象台数、課金モードの変換件数、Dry Runおよび実際の終了件数の時系列を確認します。</p>
-<figure class="screenshot-wide aws-console-identity"><figcaption>図6　CloudWatchダッシュボード_監視対象1台</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/034-図6-cloudwatchダッシュボード-監視対象1台.png" alt="図6_CloudWatchダッシュボード_監視対象1台" width="1517" height="853" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/034-図6-cloudwatchダッシュボード-監視対象1台.png" alt="図6_CloudWatchダッシュボード_監視対象1台" width="1517" height="853" loading="lazy"></div></figure>
 
 
 
-<figure class="screenshot-wide aws-console-identity"><figcaption>図7　CloudWatchダッシュボード_変換実績なし</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/035-図7-cloudwatchダッシュボード-変換実績なし.png" alt="図7_CloudWatchダッシュボード_変換実績なし" width="1517" height="853" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/035-図7-cloudwatchダッシュボード-変換実績なし.png" alt="図7_CloudWatchダッシュボード_変換実績なし" width="1517" height="853" loading="lazy"></div></figure>
 
 
 
@@ -234,11 +234,11 @@
 <li>対象リージョンの走査、WorkSpaces件数、CSV出力、完了ログを確認します。</li>
 </ol>
 <p>ロググループの保持期間は365日です。</p>
-<figure class="screenshot-wide aws-console-identity"><figcaption>図8　CloudWatchLogs_ログストリーム一覧</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/036-図8-cloudwatchlogs-ログストリーム一覧.png" alt="図8_CloudWatchLogs_ログストリーム一覧" width="1554" height="1248" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/036-図8-cloudwatchlogs-ログストリーム一覧.png" alt="図8_CloudWatchLogs_ログストリーム一覧" width="1554" height="1248" loading="lazy"></div></figure>
 
 
 
-<figure class="screenshot-wide aws-console-identity"><figcaption>図9　CloudWatchLogs_実行パラメータ_DryRun-Yes実績</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/037-図9-cloudwatchlogs-実行パラメータ-dryrun-yes実績.png" alt="図9_CloudWatchLogs_実行パラメータ_DryRun-Yes実績" width="1554" height="1248" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/037-図9-cloudwatchlogs-実行パラメータ-dryrun-yes実績.png" alt="図9_CloudWatchLogs_実行パラメータ_DryRun-Yes実績" width="1554" height="1248" loading="lazy"></div></figure>
 
 
 

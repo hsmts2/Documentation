@@ -30,15 +30,15 @@
       <a href="cloudflare-private-site.html">Private GitHubリポジトリをCloudflare Workersで認証付き公開してみた</a>
       <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">☁︎</span>[PoC] マルチVPC・閉域VDI基盤案件</p>
 <a href="workspaces-skill-transfer.html">全体構築・運用順序</a>
-<a href="workspaces-managed-ad.html">AWS Managed Microsoft ADの構築</a>
-<a href="workspaces-managed-ad-users.html">AWS Managed Microsoft ADのユーザー・グループ管理</a>
+<a href="workspaces-managed-ad.html">Managed Microsoft ADの構築</a>
+<a href="workspaces-managed-ad-users.html">Managed Microsoft ADのユーザー・グループ管理</a>
 <a href="workspaces-management-ec2.html">管理用EC2の起動・接続・AD管理</a>
 <a href="workspaces-ad-connector-account.html">AD Connector用サービスアカウント・権限委任</a>
 <a href="workspaces-ad-connector.html">AD ConnectorのVPCピアリング・SG設定・作成</a>
 <a href="workspaces-provisioning-gpo.html" class="active" aria-current="page">WorkSpaces Personalの構築・接続</a>
 <a href="workspaces-target-ou.html">WorkSpaces用ターゲットOUの作成・権限委任</a>
 <a href="workspaces-gpo.html">WorkSpaces用GPOの作成・適用・運用</a>
-<a href="workspaces-image-bundle.html">WorkSpacesカスタムイメージ・バンドルの作成・共有</a>
+<a href="workspaces-image-bundle.html">WorkSpacesカスタムイメージ作成・共有</a>
 <a href="workspaces-systems-manager.html">Systems Manager環境構築</a>
 <a href="workspaces-patch-manager.html">Patch Managerの設定</a>
 <a href="workspaces-patch-operations.html">Patch Managerの実行・結果確認・運用</a>
@@ -47,7 +47,7 @@
 <a href="workspaces-cost-optimizer-schedule.html">Cost Optimizerの実行スケジュール設定・変更</a>
 <a href="workspaces-cost-optimizer-reports.html">Cost Optimizerのレポート・監視</a>
 <a href="workspaces-cloudwatch-monitoring.html">CloudWatchのEC2・Windows OS監視とSNS通知</a>
-<a href="workspaces-cloudwatch-workspaces.html">CloudWatchのWorkSpaces監視・ダッシュボード</a>
+<a href="workspaces-cloudwatch-workspaces.html">CloudWatchのWorkSpaces監視</a>
       <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">◈</span>Terraform</p>
       <a href="terraform.html">Terraform 概要</a>
       <a href="hcp-terraform.html">HCP Terraform（Terraform Cloud）</a>
@@ -120,7 +120,7 @@
 </tr>
 </tbody></table></div>
 <p>ドメイン直下の<code class="inline-code">Computers</code>コンテナーと、<code class="inline-code">ad\Computers</code> OUは別の管理領域です。ユーザーは<code class="inline-code">ad\Users</code>に配置し、WorkSpaces専用OUにはコンピューターアカウントを配置します。</p>
-<figure class="screenshot-wide"><figcaption>構成図1　WorkSpaces用OU・GPOの関係</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/001-workspaces用ou-gpo構成.png" alt="WorkSpaces用OU・GPO構成" width="3840" height="2160" loading="lazy"></div></figure>
+<figure class="screenshot-wide"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/001-workspaces用ou-gpo構成.png" alt="WorkSpaces用OU・GPO構成" width="3840" height="2160" loading="lazy"></div></figure>
 
 
 
@@ -154,7 +154,7 @@
 <li>対象AD Connectorが登録済み一覧にないことを確認します。</li>
 <li>「ディレクトリの作成」を選択します。</li>
 </ol>
-<figure class="screenshot-wide aws-console-identity"><figcaption>図1　WorkSpaces_ディレクトリ未登録確認</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/002-workspacesディレクトリ未登録.png" alt="WorkSpacesディレクトリ未登録" width="1717" height="523" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/002-workspacesディレクトリ未登録.png" alt="WorkSpacesディレクトリ未登録" width="1717" height="523" loading="lazy"></div></figure>
 
 
 
@@ -168,7 +168,7 @@
 <li>「登録」を選択し、<code class="inline-code">REGISTERING</code>から登録済みへ変わるまで待ちます。</li>
 <li>登録後のDirectory ID、AD Connector、VPC、ドメインおよび2サブネットを確認します。</li>
 </ol>
-<figure class="screenshot-wide aws-console-identity"><figcaption>図2　WorkSpaces_ディレクトリ登録完了</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/003-workspacesディレクトリ登録完了.png" alt="WorkSpacesディレクトリ登録完了" width="1717" height="523" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/003-workspacesディレクトリ登録完了.png" alt="WorkSpacesディレクトリ登録完了" width="1717" height="523" loading="lazy"></div></figure>
 
 
 
@@ -191,7 +191,7 @@
 <li>「WorkSpacesを起動」から「個人」を選択します。</li>
 <li>「WorkSpacesの作成」を選択します。</li>
 </ol>
-<figure class="screenshot-wide aws-console-identity"><figcaption>図3　WorkSpaces_作成開始</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/004-workspaces作成開始.png" alt="WorkSpaces作成開始" width="1718" height="641" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/004-workspaces作成開始.png" alt="WorkSpaces作成開始" width="1718" height="641" loading="lazy"></div></figure>
 
 
 
@@ -207,12 +207,12 @@
 <li>ルート／ユーザーボリュームの暗号化とKMSキーを承認済み設計に合わせます。</li>
 <li>必須タグ、ローカル管理者権限、追加SG、インターネット接続およびデバイスアクセス制御を確認します。</li>
 </ol>
-<figure class="screenshot-wide aws-console-identity"><figcaption>図4　WorkSpaces_バンドル・実行モード・ユーザー設定</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/005-workspacesのバンドル-実行モード-ユーザー設定.png" alt="WorkSpacesのバンドル・実行モード・ユーザー設定" width="1718" height="1304" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/005-workspacesのバンドル-実行モード-ユーザー設定.png" alt="WorkSpacesのバンドル・実行モード・ユーザー設定" width="1718" height="1304" loading="lazy"></div></figure>
 
 
 
 <p>選択したバンドルの詳細で、バンドルID、言語、OS、プロトコルおよびハードウェアを確認します。</p>
-<figure class="screenshot-wide aws-console-identity"><figcaption>図5　WorkSpaces_バンドル詳細</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/006-workspacesバンドル詳細.png" alt="WorkSpacesバンドル詳細" width="1718" height="1304" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/006-workspacesバンドル詳細.png" alt="WorkSpacesバンドル詳細" width="1718" height="1304" loading="lazy"></div></figure>
 
 
 
@@ -226,7 +226,7 @@
 <li>「WorkSpacesの作成」を選択します。</li>
 <li>一覧で状態が「構築中」または<code class="inline-code">PENDING</code>になったことを確認します。</li>
 </ol>
-<figure class="screenshot-wide aws-console-identity"><figcaption>図6　WorkSpaces_作成中</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/007-workspaces作成中.png" alt="WorkSpaces作成中" width="1716" height="455" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/007-workspaces作成中.png" alt="WorkSpaces作成中" width="1716" height="455" loading="lazy"></div></figure>
 
 
 
@@ -234,7 +234,7 @@
 <li>状態が「使用可能」または<code class="inline-code">AVAILABLE</code>になるまで待ちます。</li>
 <li>WorkSpace ID、ユーザー、コンピューター名、バンドル、80GB／50GB、実行モード、DCV、IPアドレスおよび暗号化状態を確認します。</li>
 </ol>
-<figure class="screenshot-wide aws-console-identity"><figcaption>図7　WorkSpaces_利用可能確認</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/008-workspaces利用可能.png" alt="WorkSpaces利用可能" width="1716" height="455" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/008-workspaces利用可能.png" alt="WorkSpaces利用可能" width="1716" height="455" loading="lazy"></div></figure>
 
 
 
@@ -253,11 +253,11 @@
 <li>デスクトップ、業務ネットワーク、DNS、時刻同期および必要アプリケーションを確認します。</li>
 <li>AutoStopを使用する場合は、切断、停止および再接続を確認します。</li>
 </ol>
-<figure class="screenshot-wide"><figcaption>参考図1　WorkSpacesクライアントの登録コード入力</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/009-登録コード入力.png" alt="登録コード入力" width="686" height="583" loading="lazy"></div></figure>
+<figure class="screenshot-wide"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/009-登録コード入力.png" alt="登録コード入力" width="686" height="583" loading="lazy"></div></figure>
 
 
 
-<figure class="screenshot-wide"><figcaption>参考図2　WorkSpacesクライアントのユーザー名入力</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/010-ユーザー名入力.png" alt="ユーザー名入力" width="686" height="583" loading="lazy"></div></figure>
+<figure class="screenshot-wide"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-provisioning-gpo/010-ユーザー名入力.png" alt="ユーザー名入力" width="686" height="583" loading="lazy"></div></figure>
 
 
 

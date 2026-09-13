@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CloudWatchのWorkSpaces監視・ダッシュボード | Documentation</title>
-  <meta name="description" content="CloudWatchのWorkSpaces監視・ダッシュボードの操作手順と設定例">
+  <title>CloudWatchのWorkSpaces監視 | Documentation</title>
+  <meta name="description" content="CloudWatchのWorkSpaces監視の操作手順と設定例">
   <link rel="stylesheet" href="../assets/styles.css?v=20260908-skill-transfer1">
 <link rel="stylesheet" href="../assets/workspaces-guides.css?v=20260912-split">
 <script src="../assets/workspaces-legacy-routes.js?v=20260912-split"></script>
@@ -30,15 +30,15 @@
       <a href="cloudflare-private-site.html">Private GitHubリポジトリをCloudflare Workersで認証付き公開してみた</a>
       <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">☁︎</span>[PoC] マルチVPC・閉域VDI基盤案件</p>
 <a href="workspaces-skill-transfer.html">全体構築・運用順序</a>
-<a href="workspaces-managed-ad.html">AWS Managed Microsoft ADの構築</a>
-<a href="workspaces-managed-ad-users.html">AWS Managed Microsoft ADのユーザー・グループ管理</a>
+<a href="workspaces-managed-ad.html">Managed Microsoft ADの構築</a>
+<a href="workspaces-managed-ad-users.html">Managed Microsoft ADのユーザー・グループ管理</a>
 <a href="workspaces-management-ec2.html">管理用EC2の起動・接続・AD管理</a>
 <a href="workspaces-ad-connector-account.html">AD Connector用サービスアカウント・権限委任</a>
 <a href="workspaces-ad-connector.html">AD ConnectorのVPCピアリング・SG設定・作成</a>
 <a href="workspaces-provisioning-gpo.html">WorkSpaces Personalの構築・接続</a>
 <a href="workspaces-target-ou.html">WorkSpaces用ターゲットOUの作成・権限委任</a>
 <a href="workspaces-gpo.html">WorkSpaces用GPOの作成・適用・運用</a>
-<a href="workspaces-image-bundle.html">WorkSpacesカスタムイメージ・バンドルの作成・共有</a>
+<a href="workspaces-image-bundle.html">WorkSpacesカスタムイメージ作成・共有</a>
 <a href="workspaces-systems-manager.html">Systems Manager環境構築</a>
 <a href="workspaces-patch-manager.html">Patch Managerの設定</a>
 <a href="workspaces-patch-operations.html">Patch Managerの実行・結果確認・運用</a>
@@ -47,7 +47,7 @@
 <a href="workspaces-cost-optimizer-schedule.html">Cost Optimizerの実行スケジュール設定・変更</a>
 <a href="workspaces-cost-optimizer-reports.html">Cost Optimizerのレポート・監視</a>
 <a href="workspaces-cloudwatch-monitoring.html">CloudWatchのEC2・Windows OS監視とSNS通知</a>
-<a href="workspaces-cloudwatch-workspaces.html" class="active" aria-current="page">CloudWatchのWorkSpaces監視・ダッシュボード</a>
+<a href="workspaces-cloudwatch-workspaces.html" class="active" aria-current="page">CloudWatchのWorkSpaces監視</a>
       <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">◈</span>Terraform</p>
       <a href="terraform.html">Terraform 概要</a>
       <a href="hcp-terraform.html">HCP Terraform（Terraform Cloud）</a>
@@ -82,7 +82,7 @@
       <a href="troubleshooting.html">障害切り分けチェックリスト</a>
       <a href="eol.html">EOL / ライフサイクル一覧表</a>
     </aside>
-    <main class="content workspaces-skill-transfer-guide"><nav class="breadcrumb" aria-label="Breadcrumb"><a href="../">Home</a><span>トピック</span></nav><h1>CloudWatchのWorkSpaces監視・ダッシュボード</h1><section id="cloudWatchWorkSpaces" class="procedure-document">
+    <main class="content workspaces-skill-transfer-guide"><nav class="breadcrumb" aria-label="Breadcrumb"><a href="../">Home</a><span>トピック</span></nav><h1>CloudWatchのWorkSpaces監視</h1><section id="cloudWatchWorkSpaces" class="procedure-document">
 
 <span id="amazon-cloudwatch-workspaces監視とアラーム設定手順書" class="legacy-heading-anchor" aria-hidden="true"></span>
 <h2 id="仕様-2">仕様</h2>
@@ -140,7 +140,7 @@
 <td><code class="inline-code">sample-cw-critical-workspaces-unhealthy-ws-jkxz7js0s</code></td>
 </tr>
 </tbody></table></div>
-<figure class="screenshot-wide aws-console-identity"><figcaption>図2　WorkSpaces Unhealthy条件設定</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cloudwatch-monitoring/020-workspaces-unhealthy条件設定.png" alt="WorkSpaces Unhealthy条件設定" width="3260" height="1410" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cloudwatch-monitoring/020-workspaces-unhealthy条件設定.png" alt="WorkSpaces Unhealthy条件設定" width="3260" height="1410" loading="lazy"></div></figure>
 
 
 
@@ -190,7 +190,7 @@
 <td><code class="inline-code">sample-cw-warning-workspaces-connectionfailure-ws-jkxz7js0s</code></td>
 </tr>
 </tbody></table></div>
-<figure class="screenshot-wide aws-console-identity"><figcaption>図3　WorkSpaces ConnectionFailure条件設定</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cloudwatch-monitoring/021-workspaces-connectionfailure条件設定.png" alt="WorkSpaces ConnectionFailure条件設定" width="4030" height="1410" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cloudwatch-monitoring/021-workspaces-connectionfailure条件設定.png" alt="WorkSpaces ConnectionFailure条件設定" width="4030" height="1410" loading="lazy"></div></figure>
 
 
 
@@ -199,7 +199,7 @@
 <li>説明欄には、監視範囲を明確にするため「クライアント認証後、WorkSpacesセッションの接続開始時に発生した失敗を監視する。事前認証段階のAD認証失敗は含まれない」旨を記載します。</li>
 <li>設定内容を確認してアラームを作成します。</li>
 </ol>
-<figure class="screenshot-wide aws-console-identity"><figcaption>図4　WorkSpaces ConnectionFailure作成内容確認</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cloudwatch-monitoring/022-workspaces-connectionfailure作成内容確認.png" alt="WorkSpaces ConnectionFailure作成内容確認" width="4030" height="2040" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cloudwatch-monitoring/022-workspaces-connectionfailure作成内容確認.png" alt="WorkSpaces ConnectionFailure作成内容確認" width="4030" height="2040" loading="lazy"></div></figure>
 
 
 
@@ -301,7 +301,7 @@
 <li>リソース名、単位、統計、期間が一目で分かるウィジェットタイトルを設定します。</li>
 <li><strong>ダッシュボードの保存</strong>を選択します。</li>
 </ol>
-<figure class="screenshot-wide aws-console-identity"><figcaption>図5　CloudWatch監視ダッシュボード作成完了</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cloudwatch-monitoring/023-cloudwatch監視ダッシュボード作成完了.png" alt="CloudWatch監視ダッシュボード作成完了" width="2720" height="630" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cloudwatch-monitoring/023-cloudwatch監視ダッシュボード作成完了.png" alt="CloudWatch監視ダッシュボード作成完了" width="2720" height="630" loading="lazy"></div></figure>
 
 
 
@@ -309,7 +309,7 @@
 </div>
 <h3 id="5-アラームと通知を確認する">5. アラームと通知を確認する</h3>
 <p>CloudWatchで<strong>アラーム</strong>－<strong>すべてのアラーム</strong>を開き、検索欄へ<code class="inline-code">sample-cw-</code>を入力します。</p>
-<figure class="screenshot-wide aws-console-identity"><figcaption>図6　作成済みCloudWatchアラーム4件</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cloudwatch-monitoring/024-作成済みcloudwatchアラーム4件.png" alt="作成済みCloudWatchアラーム4件" width="2300" height="720" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cloudwatch-monitoring/024-作成済みcloudwatchアラーム4件.png" alt="作成済みCloudWatchアラーム4件" width="2300" height="720" loading="lazy"></div></figure>
 
 
 

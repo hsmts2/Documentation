@@ -30,15 +30,15 @@
       <a href="cloudflare-private-site.html">Private GitHubリポジトリをCloudflare Workersで認証付き公開してみた</a>
       <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">☁︎</span>[PoC] マルチVPC・閉域VDI基盤案件</p>
 <a href="workspaces-skill-transfer.html">全体構築・運用順序</a>
-<a href="workspaces-managed-ad.html">AWS Managed Microsoft ADの構築</a>
-<a href="workspaces-managed-ad-users.html">AWS Managed Microsoft ADのユーザー・グループ管理</a>
+<a href="workspaces-managed-ad.html">Managed Microsoft ADの構築</a>
+<a href="workspaces-managed-ad-users.html">Managed Microsoft ADのユーザー・グループ管理</a>
 <a href="workspaces-management-ec2.html">管理用EC2の起動・接続・AD管理</a>
 <a href="workspaces-ad-connector-account.html">AD Connector用サービスアカウント・権限委任</a>
 <a href="workspaces-ad-connector.html" class="active" aria-current="page">AD ConnectorのVPCピアリング・SG設定・作成</a>
 <a href="workspaces-provisioning-gpo.html">WorkSpaces Personalの構築・接続</a>
 <a href="workspaces-target-ou.html">WorkSpaces用ターゲットOUの作成・権限委任</a>
 <a href="workspaces-gpo.html">WorkSpaces用GPOの作成・適用・運用</a>
-<a href="workspaces-image-bundle.html">WorkSpacesカスタムイメージ・バンドルの作成・共有</a>
+<a href="workspaces-image-bundle.html">WorkSpacesカスタムイメージ作成・共有</a>
 <a href="workspaces-systems-manager.html">Systems Manager環境構築</a>
 <a href="workspaces-patch-manager.html">Patch Managerの設定</a>
 <a href="workspaces-patch-operations.html">Patch Managerの実行・結果確認・運用</a>
@@ -47,7 +47,7 @@
 <a href="workspaces-cost-optimizer-schedule.html">Cost Optimizerの実行スケジュール設定・変更</a>
 <a href="workspaces-cost-optimizer-reports.html">Cost Optimizerのレポート・監視</a>
 <a href="workspaces-cloudwatch-monitoring.html">CloudWatchのEC2・Windows OS監視とSNS通知</a>
-<a href="workspaces-cloudwatch-workspaces.html">CloudWatchのWorkSpaces監視・ダッシュボード</a>
+<a href="workspaces-cloudwatch-workspaces.html">CloudWatchのWorkSpaces監視</a>
       <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">◈</span>Terraform</p>
       <a href="terraform.html">Terraform 概要</a>
       <a href="hcp-terraform.html">HCP Terraform（Terraform Cloud）</a>
@@ -158,7 +158,7 @@
 <div class="callout callout-warning"><p><strong>⚠️ 注意：Managed AD用SGとAD Connector用SGを取り違えない</strong></p>
 <p>AD Connector作成後にも「AD ConnectorのDirectory ID + <code class="inline-code">_controllers</code>」形式の別SGが自動作成されます。名称が似ているため、Directory IDとVPCを照合してから操作します。</p>
 </div>
-<figure class="screenshot-wide aws-console-identity"><figcaption>参考図1　接続先Managed ADのDNS IPとDC用SGの確認</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-ad-connector/018-接続先managed-adのdns-ipとdc用sgの確認.png" alt="接続先Managed ADのDNS IPとDC用SGの確認" width="1616" height="1304" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-ad-connector/018-接続先managed-adのdns-ipとdc用sgの確認.png" alt="接続先Managed ADのDNS IPとDC用SGの確認" width="1616" height="1304" loading="lazy"></div></figure>
 
 
 
@@ -172,7 +172,7 @@
 <li>アカウントは「自分のアカウント」、リージョンは「このリージョン」を選択し、アクセプタVPCにVPC003を選択します。</li>
 <li>両VPCのCIDRが重複していないことを再確認し、ピアリング接続を作成します。</li>
 </ol>
-<figure class="screenshot-wide aws-console-identity"><figcaption>図1　VPCピアリング接続設定</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-ad-connector/019-vpcピアリング接続設定.png" alt="VPCピアリング接続設定" width="1616" height="970" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-ad-connector/019-vpcピアリング接続設定.png" alt="VPCピアリング接続設定" width="1616" height="970" loading="lazy"></div></figure>
 
 
 
@@ -195,15 +195,15 @@
 <li>「変更を保存」を選択します。</li>
 <li>手順2で特定したすべてのルートテーブルに対して手順4～8を繰り返します。保存後の各ルート一覧で、対象ルートの状態が<code class="inline-code">アクティブ</code>になっていることを確認します。</li>
 </ol>
-<figure class="screenshot-wide aws-console-identity"><figcaption>図2　VPC002ルート変更前</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-ad-connector/020-vpc002ルート変更前.png" alt="VPC002ルート変更前" width="1616" height="485" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-ad-connector/020-vpc002ルート変更前.png" alt="VPC002ルート変更前" width="1616" height="485" loading="lazy"></div></figure>
 
 
 
-<figure class="screenshot-wide aws-console-identity"><figcaption>図3　VPC002ピアリングルート入力</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-ad-connector/021-vpc002ピアリングルート追加.png" alt="VPC002ピアリングルート追加" width="1616" height="415" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-ad-connector/021-vpc002ピアリングルート追加.png" alt="VPC002ピアリングルート追加" width="1616" height="415" loading="lazy"></div></figure>
 
 
 
-<figure class="screenshot-wide aws-console-identity"><figcaption>図4　VPC002ルート保存前プレビュー</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-ad-connector/022-vpc002ルート保存前プレビュー.png" alt="VPC002ルート保存前プレビュー" width="1616" height="330" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-ad-connector/022-vpc002ルート保存前プレビュー.png" alt="VPC002ルート保存前プレビュー" width="1616" height="330" loading="lazy"></div></figure>
 
 
 
@@ -227,15 +227,15 @@ WorkSpaces用サブネットが別のルートテーブルを使用する場合�
 <li><p>手順1で特定したすべてのルートテーブルに対して手順3～7を繰り返します。保存後の各ルート一覧で、対象ルートの状態が<code class="inline-code">アクティブ</code>になっていることを確認します。</p>
 </li>
 </ol>
-<figure class="screenshot-wide aws-console-identity"><figcaption>図5　VPC003ルート変更前</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-ad-connector/023-vpc003ルート変更前.png" alt="VPC003ルート変更前" width="1616" height="460" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-ad-connector/023-vpc003ルート変更前.png" alt="VPC003ルート変更前" width="1616" height="460" loading="lazy"></div></figure>
 
 
 
-<figure class="screenshot-wide aws-console-identity"><figcaption>図6　VPC003ピアリングルート入力</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-ad-connector/024-vpc003ピアリングルート追加.png" alt="VPC003ピアリングルート追加" width="1616" height="345" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-ad-connector/024-vpc003ピアリングルート追加.png" alt="VPC003ピアリングルート追加" width="1616" height="345" loading="lazy"></div></figure>
 
 
 
-<figure class="screenshot-wide aws-console-identity"><figcaption>図7　VPC003ルート保存前プレビュー</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-ad-connector/025-vpc003ルート保存前プレビュー.png" alt="VPC003ルート保存前プレビュー" width="1616" height="400" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-ad-connector/025-vpc003ルート保存前プレビュー.png" alt="VPC003ルート保存前プレビュー" width="1616" height="400" loading="lazy"></div></figure>
 
 
 
@@ -246,7 +246,7 @@ WorkSpaces用サブネットが別のルートテーブルを使用する場合�
 <li>「インバウンドルール」を開きます。</li>
 <li>既存ルールを削除・置換せず、変更前の件数と内容を確認します。</li>
 </ol>
-<figure class="screenshot-wide aws-console-identity"><figcaption>図8　DC-SG変更前</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-ad-connector/026-managed-adのdc用sg変更前.png" alt="Managed ADのDC用SG変更前" width="1616" height="1150" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-ad-connector/026-managed-adのdc用sg変更前.png" alt="Managed ADのDC用SG変更前" width="1616" height="1150" loading="lazy"></div></figure>
 
 
 
@@ -284,7 +284,7 @@ WorkSpaces用サブネットが別のルートテーブルを使用する場合�
 <td><code class="inline-code">ad-vpc-003</code></td>
 </tr>
 </tbody></table></div>
-<figure class="screenshot-wide aws-console-identity"><figcaption>図9　DC-SG追加内容確認</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-ad-connector/027-dc用sgへの追加内容.png" alt="DC用SGへの追加内容" width="1622" height="401" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-ad-connector/027-dc用sgへの追加内容.png" alt="DC用SGへの追加内容" width="1622" height="401" loading="lazy"></div></figure>
 
 
 
@@ -293,7 +293,7 @@ WorkSpaces用サブネットが別のルートテーブルを使用する場合�
 <li>追加内容のプレビュー画面へ進み、図9の追加行を確認して「確認」を選択します。</li>
 <li>成功メッセージと、既存件数から1件増えたことを確認します。図8・10では18件から19件へ増えています。</li>
 </ol>
-<figure class="screenshot-wide aws-console-identity"><figcaption>図10　DC-SG変更完了</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-ad-connector/028-dc用sg変更完了.png" alt="DC用SG変更完了" width="1616" height="1165" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-ad-connector/028-dc用sg変更完了.png" alt="DC用SG変更完了" width="1616" height="1165" loading="lazy"></div></figure>
 
 
 
@@ -335,7 +335,7 @@ foreach ($dnsServer in $dnsServers) {
 <li>「ディレクトリ」から「ディレクトリのセットアップ」を選択します。</li>
 <li>ディレクトリタイプで「AD Connector」を選択し、「次へ」を選択します。</li>
 </ol>
-<figure class="screenshot-wide aws-console-identity"><figcaption>図11　AD Connectorのタイプ選択</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-ad-connector/029-ad-connectorのタイプ選択.png" alt="AD Connectorのタイプ選択" width="1616" height="555" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-ad-connector/029-ad-connectorのタイプ選択.png" alt="AD Connectorのタイプ選択" width="1616" height="555" loading="lazy"></div></figure>
 
 
 
@@ -345,7 +345,7 @@ foreach ($dnsServer in $dnsServers) {
 <li>ディレクトリの説明は未入力とします。</li>
 <li>「次へ」を選択します。</li>
 </ol>
-<figure class="screenshot-wide aws-console-identity"><figcaption>図12　AD Connectorのサイズ選択</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-ad-connector/030-ad-connectorのサイズ選択.png" alt="AD Connectorのサイズ選択" width="1616" height="690" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-ad-connector/030-ad-connectorのサイズ選択.png" alt="AD Connectorのサイズ選択" width="1616" height="690" loading="lazy"></div></figure>
 
 
 
@@ -357,7 +357,7 @@ foreach ($dnsServer in $dnsServers) {
 <li>WorkSpaces用の<code class="inline-code">003-003a/c</code>サブネットと取り違えていないことを確認します。</li>
 <li>「次へ」を選択します。</li>
 </ol>
-<figure class="screenshot-wide aws-console-identity"><figcaption>図13　AD ConnectorのVPCとサブネット選択</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-ad-connector/031-ad-connectorのvpcとサブネット選択.png" alt="AD ConnectorのVPCとサブネット選択" width="1616" height="555" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-ad-connector/031-ad-connectorのvpcとサブネット選択.png" alt="AD ConnectorのVPCとサブネット選択" width="1616" height="555" loading="lazy"></div></figure>
 
 
 
@@ -403,7 +403,7 @@ foreach ($dnsServer in $dnsServers) {
 <li>パスワードと確認用パスワードへ、準備した同じ値を入力します。</li>
 <li>「次へ」を選択します。</li>
 </ol>
-<figure class="screenshot-wide aws-console-identity"><figcaption>図14　AD ConnectorのActive Directory情報入力</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-ad-connector/032-ad-connectorのactive-directory情報入力.png" alt="AD ConnectorのActive Directory情報入力" width="1718" height="1020" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-ad-connector/032-ad-connectorのactive-directory情報入力.png" alt="AD ConnectorのActive Directory情報入力" width="1718" height="1020" loading="lazy"></div></figure>
 
 
 
@@ -414,7 +414,7 @@ foreach ($dnsServer in $dnsServers) {
 <li>パスワードが画面や証跡に表示されていないことを確認します。</li>
 <li>「ディレクトリの作成」を選択します。</li>
 </ol>
-<figure class="screenshot-wide aws-console-identity"><figcaption>図15　AD Connector作成前の設定確認</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-ad-connector/033-ad-connectorの設定確認.png" alt="AD Connectorの設定確認" width="1718" height="1265" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-ad-connector/033-ad-connectorの設定確認.png" alt="AD Connectorの設定確認" width="1718" height="1265" loading="lazy"></div></figure>
 
 
 
@@ -422,7 +422,7 @@ foreach ($dnsServer in $dnsServers) {
 <ol>
 <li>一覧に対象AD Connectorが表示され、ステータスが「作成中」になっていることを確認します。</li>
 </ol>
-<figure class="screenshot-wide aws-console-identity"><figcaption>図16　AD Connector作成中</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-ad-connector/034-ad-connector作成中.png" alt="AD Connector作成中" width="1717" height="352" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-ad-connector/034-ad-connector作成中.png" alt="AD Connector作成中" width="1717" height="352" loading="lazy"></div></figure>
 
 
 
@@ -430,14 +430,14 @@ foreach ($dnsServer in $dnsServers) {
 <li>画面を適宜更新し、ステータスが「アクティブ」になるまで待ちます。</li>
 <li>「アクティブ」にならない場合は、SG、ルート、NACL、DNS、SRVレコードおよびサービスアカウント状態を確認します。</li>
 </ol>
-<figure class="screenshot-wide aws-console-identity"><figcaption>図17　AD Connector作成完了</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-ad-connector/035-ad-connector作成完了.png" alt="AD Connector作成完了" width="1717" height="352" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-ad-connector/035-ad-connector作成完了.png" alt="AD Connector作成完了" width="1717" height="352" loading="lazy"></div></figure>
 
 
 
 <ol start="4">
 <li>詳細を開き、タイプ、サイズ、接続先ドメインおよび接続アカウントを確認します。</li>
 </ol>
-<figure class="screenshot-wide aws-console-identity"><figcaption>図18　AD Connector詳細確認</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-ad-connector/036-ad-connector詳細確認.png" alt="AD Connector詳細確認" width="1717" height="352" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-ad-connector/036-ad-connector詳細確認.png" alt="AD Connector詳細確認" width="1717" height="352" loading="lazy"></div></figure>
 
 
 
@@ -453,7 +453,7 @@ foreach ($dnsServer in $dnsServers) {
 <li>Managed AD側のDC用SGとは異なるSGを使用していることを、Directory ID、VPC IDおよびSG IDで確認します。</li>
 <li>自己参照インバウンドルールとアウトバウンドルールを確認します。AWSが自動作成したルールは保持します。</li>
 </ol>
-<figure class="screenshot-wide aws-console-identity"><figcaption>図19　AD Connectorの自動作成SG</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-ad-connector/037-ad-connectorの自動作成sg.png" alt="AD Connectorの自動作成SG" width="1718" height="645" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-ad-connector/037-ad-connectorの自動作成sg.png" alt="AD Connectorの自動作成SG" width="1718" height="645" loading="lazy"></div></figure>
 
 
 

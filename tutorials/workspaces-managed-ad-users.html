@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AWS Managed Microsoft ADのユーザー・グループ管理 | Documentation</title>
-  <meta name="description" content="AWS Managed Microsoft ADのユーザー・グループ管理の操作手順と設定例">
+  <title>Managed Microsoft ADのユーザー・グループ管理 | Documentation</title>
+  <meta name="description" content="Managed Microsoft ADのユーザー・グループ管理の操作手順と設定例">
   <link rel="stylesheet" href="../assets/styles.css?v=20260908-skill-transfer1">
 <link rel="stylesheet" href="../assets/workspaces-guides.css?v=20260912-split">
 <script src="../assets/workspaces-legacy-routes.js?v=20260912-split"></script>
@@ -30,15 +30,15 @@
       <a href="cloudflare-private-site.html">Private GitHubリポジトリをCloudflare Workersで認証付き公開してみた</a>
       <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">☁︎</span>[PoC] マルチVPC・閉域VDI基盤案件</p>
 <a href="workspaces-skill-transfer.html">全体構築・運用順序</a>
-<a href="workspaces-managed-ad.html">AWS Managed Microsoft ADの構築</a>
-<a href="workspaces-managed-ad-users.html" class="active" aria-current="page">AWS Managed Microsoft ADのユーザー・グループ管理</a>
+<a href="workspaces-managed-ad.html">Managed Microsoft ADの構築</a>
+<a href="workspaces-managed-ad-users.html" class="active" aria-current="page">Managed Microsoft ADのユーザー・グループ管理</a>
 <a href="workspaces-management-ec2.html">管理用EC2の起動・接続・AD管理</a>
 <a href="workspaces-ad-connector-account.html">AD Connector用サービスアカウント・権限委任</a>
 <a href="workspaces-ad-connector.html">AD ConnectorのVPCピアリング・SG設定・作成</a>
 <a href="workspaces-provisioning-gpo.html">WorkSpaces Personalの構築・接続</a>
 <a href="workspaces-target-ou.html">WorkSpaces用ターゲットOUの作成・権限委任</a>
 <a href="workspaces-gpo.html">WorkSpaces用GPOの作成・適用・運用</a>
-<a href="workspaces-image-bundle.html">WorkSpacesカスタムイメージ・バンドルの作成・共有</a>
+<a href="workspaces-image-bundle.html">WorkSpacesカスタムイメージ作成・共有</a>
 <a href="workspaces-systems-manager.html">Systems Manager環境構築</a>
 <a href="workspaces-patch-manager.html">Patch Managerの設定</a>
 <a href="workspaces-patch-operations.html">Patch Managerの実行・結果確認・運用</a>
@@ -47,7 +47,7 @@
 <a href="workspaces-cost-optimizer-schedule.html">Cost Optimizerの実行スケジュール設定・変更</a>
 <a href="workspaces-cost-optimizer-reports.html">Cost Optimizerのレポート・監視</a>
 <a href="workspaces-cloudwatch-monitoring.html">CloudWatchのEC2・Windows OS監視とSNS通知</a>
-<a href="workspaces-cloudwatch-workspaces.html">CloudWatchのWorkSpaces監視・ダッシュボード</a>
+<a href="workspaces-cloudwatch-workspaces.html">CloudWatchのWorkSpaces監視</a>
       <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">◈</span>Terraform</p>
       <a href="terraform.html">Terraform 概要</a>
       <a href="hcp-terraform.html">HCP Terraform（Terraform Cloud）</a>
@@ -82,7 +82,7 @@
       <a href="troubleshooting.html">障害切り分けチェックリスト</a>
       <a href="eol.html">EOL / ライフサイクル一覧表</a>
     </aside>
-    <main class="content workspaces-skill-transfer-guide"><nav class="breadcrumb" aria-label="Breadcrumb"><a href="../">Home</a><span>トピック</span></nav><h1>AWS Managed Microsoft ADのユーザー・グループ管理</h1><section id="managedAdUsers" class="procedure-document">
+    <main class="content workspaces-skill-transfer-guide"><nav class="breadcrumb" aria-label="Breadcrumb"><a href="../">Home</a><span>トピック</span></nav><h1>Managed Microsoft ADのユーザー・グループ管理</h1><section id="managedAdUsers" class="procedure-document">
 
 <span id="aws-directory-serviceによるユーザーおよびグループメンバーシップ管理手順" class="legacy-heading-anchor" aria-hidden="true"></span>
 <h2 id="仕様-3">仕様</h2>
@@ -268,7 +268,7 @@
 <li>ディレクトリID、DNS名<code class="inline-code">ad.example.com</code>、ディレクトリタイプ「Microsoft AD」およびステータス「アクティブ」を照合します。</li>
 <li>対象ディレクトリIDのリンクを選択し、詳細画面を開きます。</li>
 </ol>
-<figure class="screenshot-wide aws-console-identity"><figcaption>図1　対象のAWS Managed Microsoft ADを選択</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-managed-ad/012-対象のaws-managed-microsoft-adを選択.png" alt="対象のAWS Managed Microsoft ADを選択" width="1616" height="1304" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-managed-ad/012-対象のaws-managed-microsoft-adを選択.png" alt="対象のAWS Managed Microsoft ADを選択" width="1616" height="1304" loading="lazy"></div></figure>
 
 
 
@@ -276,21 +276,21 @@
 <li>「ユーザー」タブを選択します。</li>
 <li>「ユーザーとグループの管理」が「無効」になっている場合は、「有効にする」を選択します。既に「有効」の場合は、手順8へ進みます。</li>
 </ol>
-<figure class="screenshot-wide aws-console-identity"><figcaption>図2　ユーザーとグループの管理機能が無効の状態</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-managed-ad/013-ユーザーとグループの管理機能が無効の状態.png" alt="ユーザーとグループの管理機能が無効の状態" width="1616" height="1304" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-managed-ad/013-ユーザーとグループの管理機能が無効の状態.png" alt="ユーザーとグループの管理機能が無効の状態" width="1616" height="1304" loading="lazy"></div></figure>
 
 
 
 <ol start="7">
 <li>確認ダイアログの説明と対象ディレクトリを確認し、「有効にする」を選択します。</li>
 </ol>
-<figure class="screenshot-wide aws-console-identity"><figcaption>図3　ユーザーとグループの管理機能の有効化確認</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-managed-ad/014-ユーザーとグループの管理機能の有効化確認.png" alt="ユーザーとグループの管理機能の有効化確認" width="1616" height="1304" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-managed-ad/014-ユーザーとグループの管理機能の有効化確認.png" alt="ユーザーとグループの管理機能の有効化確認" width="1616" height="1304" loading="lazy"></div></figure>
 
 
 
 <ol start="8">
 <li>「ユーザーとグループの管理」が「有効」に変わり、「ユーザー」タブに一覧と「ユーザーを作成」が表示されることを確認します。</li>
 </ol>
-<figure class="screenshot-wide aws-console-identity"><figcaption>図4　ユーザーとグループの管理機能の有効化完了</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-managed-ad/015-ユーザーとグループの管理機能の有効化完了.png" alt="ユーザーとグループの管理機能の有効化完了" width="1616" height="1304" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-managed-ad/015-ユーザーとグループの管理機能の有効化完了.png" alt="ユーザーとグループの管理機能の有効化完了" width="1616" height="1304" loading="lazy"></div></figure>
 
 
 
@@ -351,7 +351,7 @@
 <li>名、姓、表示名およびメールアドレスを、上表に従って入力します。その他の任意項目は、作業依頼に指定がある場合だけ入力します。</li>
 <li>パスワードが伏字になっていることを確認し、「次へ」を選択します。</li>
 </ol>
-<figure class="screenshot-wide aws-console-identity"><figcaption>図5　新規ユーザーの詳細入力</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-managed-ad/016-新規ユーザーの詳細入力.png" alt="新規ユーザーの詳細入力" width="1616" height="1297" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-managed-ad/016-新規ユーザーの詳細入力.png" alt="新規ユーザーの詳細入力" width="1616" height="1297" loading="lazy"></div></figure>
 
 
 
@@ -362,7 +362,7 @@
 <li>「ユーザーをグループに追加」で、<code class="inline-code">AWS Delegated Administrators</code>を選択します。作成時にグループを指定しない運用の場合は、グループを選択せずに進みます。</li>
 <li>選択したグループを確認し、「次へ」を選択します。</li>
 </ol>
-<figure class="screenshot-wide aws-console-identity"><figcaption>図6　新規ユーザーの所属グループ選択</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-managed-ad/017-新規ユーザーの所属グループ選択.png" alt="新規ユーザーの所属グループ選択" width="1718" height="1304" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-managed-ad/017-新規ユーザーの所属グループ選択.png" alt="新規ユーザーの所属グループ選択" width="1718" height="1304" loading="lazy"></div></figure>
 
 
 
@@ -370,14 +370,14 @@
 <li>確認画面で、ログイン名、名、姓、表示名、メールアドレスおよび所属予定グループを設定表と照合します。</li>
 <li>内容に問題がなければ、「ユーザーを作成」を選択します。</li>
 </ol>
-<figure class="screenshot-wide aws-console-identity"><figcaption>図7　新規ユーザー作成内容の確認</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-managed-ad/018-新規ユーザー作成内容の確認.png" alt="新規ユーザー作成内容の確認" width="1718" height="1304" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-managed-ad/018-新規ユーザー作成内容の確認.png" alt="新規ユーザー作成内容の確認" width="1718" height="1304" loading="lazy"></div></figure>
 
 
 
 <ol start="10">
 <li>作成成功メッセージと、ユーザー一覧に<code class="inline-code">sampleadmin</code>が表示され、ステータスが「有効」になっていることを確認します。</li>
 </ol>
-<figure class="screenshot-wide aws-console-identity"><figcaption>図8　新規ユーザー作成完了</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-managed-ad/019-新規ユーザー作成完了.png" alt="新規ユーザー作成完了" width="1718" height="1304" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-managed-ad/019-新規ユーザー作成完了.png" alt="新規ユーザー作成完了" width="1718" height="1304" loading="lazy"></div></figure>
 
 
 
@@ -407,7 +407,7 @@
 <li><code class="inline-code">AWS Delegated FSx Administrators</code>を検索します。</li>
 <li>検索結果のグループ名リンクを選択し、詳細画面を開きます。</li>
 </ol>
-<figure class="screenshot-wide aws-console-identity"><figcaption>図9　追加先グループの検索</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-managed-ad/020-追加先グループの検索.png" alt="追加先グループの検索" width="1616" height="1297" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-managed-ad/020-追加先グループの検索.png" alt="追加先グループの検索" width="1616" height="1297" loading="lazy"></div></figure>
 
 
 
@@ -415,7 +415,7 @@
 <li>グループ名、識別名、SID、グループタイプ、グループの範囲および既存メンバーを確認します。</li>
 <li>「メンバーを追加」から「ユーザーを追加」を選択します。「グループを追加」は選択しません。</li>
 </ol>
-<figure class="screenshot-wide aws-console-identity"><figcaption>図10　対象グループで「ユーザーを追加」を選択</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-managed-ad/021-対象グループでユーザーを追加を選択.png" alt="対象グループでユーザーを追加を選択" width="1616" height="1297" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-managed-ad/021-対象グループでユーザーを追加を選択.png" alt="対象グループでユーザーを追加を選択" width="1616" height="1297" loading="lazy"></div></figure>
 
 
 
@@ -424,21 +424,21 @@
 <li><code class="inline-code">Admin</code>と<code class="inline-code">sampleadmin</code>を選択します。</li>
 <li>「選択したユーザー」に追加対象の2ユーザーだけが表示されていることを確認し、「ユーザーをグループに追加」を選択します。</li>
 </ol>
-<figure class="screenshot-wide aws-console-identity"><figcaption>図11　グループへ追加する既存ユーザーの選択</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-managed-ad/022-グループへ追加する既存ユーザーの選択.png" alt="グループへ追加する既存ユーザーの選択" width="1616" height="1297" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-managed-ad/022-グループへ追加する既存ユーザーの選択.png" alt="グループへ追加する既存ユーザーの選択" width="1616" height="1297" loading="lazy"></div></figure>
 
 
 
 <ol start="9">
 <li>メンバー追加の成功メッセージと、メンバー一覧に<code class="inline-code">Admin</code>と<code class="inline-code">sampleadmin</code>が表示されることを確認します。</li>
 </ol>
-<figure class="screenshot-wide aws-console-identity"><figcaption>図12　ユーザーのグループ追加完了</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-managed-ad/023-ユーザーのグループ追加完了.png" alt="ユーザーのグループ追加完了" width="1616" height="1297" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-managed-ad/023-ユーザーのグループ追加完了.png" alt="ユーザーのグループ追加完了" width="1616" height="1297" loading="lazy"></div></figure>
 
 
 
 <ol start="10">
 <li><code class="inline-code">sampleadmin</code>のユーザー詳細を開き、グループメンバーシップに<code class="inline-code">AWS Delegated FSx Administrators</code>が表示されることを確認します。</li>
 </ol>
-<figure class="screenshot-wide aws-console-identity"><figcaption>図13　ユーザー詳細とグループメンバーシップの確認</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-managed-ad/024-ユーザー詳細とグループメンバーシップの確認.png" alt="ユーザー詳細とグループメンバーシップの確認" width="1616" height="1297" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-managed-ad/024-ユーザー詳細とグループメンバーシップの確認.png" alt="ユーザー詳細とグループメンバーシップの確認" width="1616" height="1297" loading="lazy"></div></figure>
 
 
 
@@ -469,7 +469,7 @@
 <li>「メンバー」タブで、ログイン名が<code class="inline-code">sampleadmin</code>、メンバータイプが「ユーザー」の行を確認します。</li>
 <li><code class="inline-code">sampleadmin</code>だけを選択し、削除元グループ名とユーザーログイン名を再確認します。</li>
 </ol>
-<figure class="screenshot-wide aws-console-identity"><figcaption>図14　グループメンバー削除直前</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-managed-ad/025-グループメンバー削除直前.png" alt="グループメンバー削除直前" width="1718" height="1304" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-managed-ad/025-グループメンバー削除直前.png" alt="グループメンバー削除直前" width="1718" height="1304" loading="lazy"></div></figure>
 
 
 
@@ -480,7 +480,7 @@
 <li>対象に誤りがなければ、「削除」を選択します。</li>
 <li>削除成功メッセージを確認し、メンバー一覧から<code class="inline-code">sampleadmin</code>が消え、その他のユーザーや子グループが残っていることを確認します。</li>
 </ol>
-<figure class="screenshot-wide aws-console-identity"><figcaption>図15　グループメンバー削除完了</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-managed-ad/026-グループメンバー削除完了.png" alt="グループメンバー削除完了" width="1718" height="1304" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-managed-ad/026-グループメンバー削除完了.png" alt="グループメンバー削除完了" width="1718" height="1304" loading="lazy"></div></figure>
 
 
 
@@ -514,14 +514,14 @@
 <li>対象ディレクトリの「ユーザー」タブを開きます。</li>
 <li><code class="inline-code">samplework</code>を検索し、削除対象ユーザーだけを選択します。</li>
 </ol>
-<figure class="screenshot-wide aws-console-identity"><figcaption>図16　削除対象ユーザーの選択</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-managed-ad/027-削除対象ユーザーの選択.png" alt="削除対象ユーザーの選択" width="1718" height="1304" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-managed-ad/027-削除対象ユーザーの選択.png" alt="削除対象ユーザーの選択" width="1718" height="1304" loading="lazy"></div></figure>
 
 
 
 <ol start="3">
 <li>「アクション」から「ユーザーアカウントを削除」を選択します。</li>
 </ol>
-<figure class="screenshot-wide aws-console-identity"><figcaption>図17　削除対象ユーザーと削除アクションの選択</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-managed-ad/028-削除対象ユーザーと削除アクションの選択.png" alt="削除対象ユーザーと削除アクションの選択" width="1718" height="1304" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-managed-ad/028-削除対象ユーザーと削除アクションの選択.png" alt="削除対象ユーザーと削除アクションの選択" width="1718" height="1304" loading="lazy"></div></figure>
 
 
 
@@ -530,7 +530,7 @@
 <li>対象ユーザーの情報と、アクセスに必要な情報が削除される旨を確認します。</li>
 <li>対象に誤りがなければ、「ユーザーアカウントを削除」を選択します。</li>
 </ol>
-<figure class="screenshot-wide aws-console-identity"><figcaption>図18　ユーザーアカウント削除前の最終確認</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-managed-ad/029-ユーザーアカウント削除前の最終確認.png" alt="ユーザーアカウント削除前の最終確認" width="1718" height="1304" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-managed-ad/029-ユーザーアカウント削除前の最終確認.png" alt="ユーザーアカウント削除前の最終確認" width="1718" height="1304" loading="lazy"></div></figure>
 
 
 
@@ -538,7 +538,7 @@
 <li>削除成功メッセージを確認します。</li>
 <li>「ユーザー」タブで<code class="inline-code">samplework</code>を検索し、一覧に表示されず、対象外のユーザーが残っていることを確認します。</li>
 </ol>
-<figure class="screenshot-wide aws-console-identity"><figcaption>図19　ユーザーアカウント削除完了</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-managed-ad/030-ユーザーアカウント削除完了.png" alt="ユーザーアカウント削除完了" width="1718" height="1304" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-managed-ad/030-ユーザーアカウント削除完了.png" alt="ユーザーアカウント削除完了" width="1718" height="1304" loading="lazy"></div></figure>
 
 
 

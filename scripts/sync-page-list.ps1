@@ -16,15 +16,15 @@ $groups = @(
                 Label = '[PoC] マルチVPC・閉域VDI基盤案件'
                 Children = @(
                     [pscustomobject]@{ File = 'workspaces-skill-transfer.html'; Label = '全体構築・運用順序' }
-                    [pscustomobject]@{ File = 'workspaces-managed-ad.html'; Label = 'AWS Managed Microsoft ADの構築' }
-                    [pscustomobject]@{ File = 'workspaces-managed-ad-users.html'; Label = 'AWS Managed Microsoft ADのユーザー・グループ管理' }
+                    [pscustomobject]@{ File = 'workspaces-managed-ad.html'; Label = 'Managed Microsoft ADの構築' }
+                    [pscustomobject]@{ File = 'workspaces-managed-ad-users.html'; Label = 'Managed Microsoft ADのユーザー・グループ管理' }
                     [pscustomobject]@{ File = 'workspaces-management-ec2.html'; Label = '管理用EC2の起動・接続・AD管理' }
                     [pscustomobject]@{ File = 'workspaces-ad-connector-account.html'; Label = 'AD Connector用サービスアカウント・権限委任' }
                     [pscustomobject]@{ File = 'workspaces-ad-connector.html'; Label = 'AD ConnectorのVPCピアリング・SG設定・作成' }
                     [pscustomobject]@{ File = 'workspaces-provisioning-gpo.html'; Label = 'WorkSpaces Personalの構築・接続' }
                     [pscustomobject]@{ File = 'workspaces-target-ou.html'; Label = 'WorkSpaces用ターゲットOUの作成・権限委任' }
                     [pscustomobject]@{ File = 'workspaces-gpo.html'; Label = 'WorkSpaces用GPOの作成・適用・運用' }
-                    [pscustomobject]@{ File = 'workspaces-image-bundle.html'; Label = 'WorkSpacesカスタムイメージ・バンドルの作成・共有' }
+                    [pscustomobject]@{ File = 'workspaces-image-bundle.html'; Label = 'WorkSpacesカスタムイメージ作成・共有' }
                     [pscustomobject]@{ File = 'workspaces-systems-manager.html'; Label = 'Systems Manager環境構築' }
                     [pscustomobject]@{ File = 'workspaces-patch-manager.html'; Label = 'Patch Managerの設定' }
                     [pscustomobject]@{ File = 'workspaces-patch-operations.html'; Label = 'Patch Managerの実行・結果確認・運用' }
@@ -33,7 +33,7 @@ $groups = @(
                     [pscustomobject]@{ File = 'workspaces-cost-optimizer-schedule.html'; Label = 'Cost Optimizerの実行スケジュール設定・変更' }
                     [pscustomobject]@{ File = 'workspaces-cost-optimizer-reports.html'; Label = 'Cost Optimizerのレポート・監視' }
                     [pscustomobject]@{ File = 'workspaces-cloudwatch-monitoring.html'; Label = 'CloudWatchのEC2・Windows OS監視とSNS通知' }
-                    [pscustomobject]@{ File = 'workspaces-cloudwatch-workspaces.html'; Label = 'CloudWatchのWorkSpaces監視・ダッシュボード' }
+                    [pscustomobject]@{ File = 'workspaces-cloudwatch-workspaces.html'; Label = 'CloudWatchのWorkSpaces監視' }
                 )
             }
         )

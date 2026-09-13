@@ -30,15 +30,15 @@
       <a href="cloudflare-private-site.html">Private GitHubリポジトリをCloudflare Workersで認証付き公開してみた</a>
       <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">☁︎</span>[PoC] マルチVPC・閉域VDI基盤案件</p>
 <a href="workspaces-skill-transfer.html">全体構築・運用順序</a>
-<a href="workspaces-managed-ad.html">AWS Managed Microsoft ADの構築</a>
-<a href="workspaces-managed-ad-users.html">AWS Managed Microsoft ADのユーザー・グループ管理</a>
+<a href="workspaces-managed-ad.html">Managed Microsoft ADの構築</a>
+<a href="workspaces-managed-ad-users.html">Managed Microsoft ADのユーザー・グループ管理</a>
 <a href="workspaces-management-ec2.html">管理用EC2の起動・接続・AD管理</a>
 <a href="workspaces-ad-connector-account.html">AD Connector用サービスアカウント・権限委任</a>
 <a href="workspaces-ad-connector.html">AD ConnectorのVPCピアリング・SG設定・作成</a>
 <a href="workspaces-provisioning-gpo.html">WorkSpaces Personalの構築・接続</a>
 <a href="workspaces-target-ou.html">WorkSpaces用ターゲットOUの作成・権限委任</a>
 <a href="workspaces-gpo.html">WorkSpaces用GPOの作成・適用・運用</a>
-<a href="workspaces-image-bundle.html">WorkSpacesカスタムイメージ・バンドルの作成・共有</a>
+<a href="workspaces-image-bundle.html">WorkSpacesカスタムイメージ作成・共有</a>
 <a href="workspaces-systems-manager.html">Systems Manager環境構築</a>
 <a href="workspaces-patch-manager.html">Patch Managerの設定</a>
 <a href="workspaces-patch-operations.html">Patch Managerの実行・結果確認・運用</a>
@@ -47,7 +47,7 @@
 <a href="workspaces-cost-optimizer-schedule.html">Cost Optimizerの実行スケジュール設定・変更</a>
 <a href="workspaces-cost-optimizer-reports.html">Cost Optimizerのレポート・監視</a>
 <a href="workspaces-cloudwatch-monitoring.html" class="active" aria-current="page">CloudWatchのEC2・Windows OS監視とSNS通知</a>
-<a href="workspaces-cloudwatch-workspaces.html">CloudWatchのWorkSpaces監視・ダッシュボード</a>
+<a href="workspaces-cloudwatch-workspaces.html">CloudWatchのWorkSpaces監視</a>
       <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">◈</span>Terraform</p>
       <a href="terraform.html">Terraform 概要</a>
       <a href="hcp-terraform.html">HCP Terraform（Terraform Cloud）</a>
@@ -87,7 +87,7 @@
 <span id="amazon-cloudwatch-ec2-windows-os監視とアラーム設定手順書" class="legacy-heading-anchor" aria-hidden="true"></span>
 <h2 id="仕様">仕様</h2>
 <h3 id="構成-動作">構成・動作</h3>
-<figure class="screenshot-wide"><figcaption>図1　CloudWatch監視構成</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cloudwatch-monitoring/001-cloudwatch監視構成.png" alt="CloudWatch監視構成" width="1800" height="940" loading="lazy"></div></figure>
+<figure class="screenshot-wide"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cloudwatch-monitoring/001-cloudwatch監視構成.png" alt="CloudWatch監視構成" width="1800" height="940" loading="lazy"></div></figure>
 
 
 
@@ -138,21 +138,21 @@
 <li>新規作成する場合は「トピックの作成」を選択します。</li>
 <li>タイプを「スタンダード」、名前を<code class="inline-code">sample-sns-cloudwatch-alerts</code>にします。</li>
 </ol>
-<figure class="screenshot-wide aws-console-identity"><figcaption>図2　SNSトピック作成画面</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cloudwatch-monitoring/002-snsトピック作成画面.png" alt="SNSトピック作成画面" width="1730" height="1680" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cloudwatch-monitoring/002-snsトピック作成画面.png" alt="SNSトピック作成画面" width="1730" height="1680" loading="lazy"></div></figure>
 
 
 
 <ol start="5">
 <li>表示名はメール通知のみの場合は空欄にできます。暗号化・アクセスポリシーは承認済み設計に合わせ、「トピックの作成」を選択します。</li>
 </ol>
-<figure class="screenshot-wide aws-console-identity"><figcaption>図3　SNSトピック名とStandard設定</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cloudwatch-monitoring/003-snsトピック名とstandard設定.png" alt="SNSトピック名とStandard設定" width="1730" height="1388" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cloudwatch-monitoring/003-snsトピック名とstandard設定.png" alt="SNSトピック名とStandard設定" width="1730" height="1388" loading="lazy"></div></figure>
 
 
 
 <ol start="6">
 <li>詳細画面でトピック名・タイプ・ARNを確認します。</li>
 </ol>
-<figure class="screenshot-wide aws-console-identity"><figcaption>図4　SNSトピック作成完了</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cloudwatch-monitoring/004-snsトピック作成完了.png" alt="SNSトピック作成完了" width="1880" height="820" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cloudwatch-monitoring/004-snsトピック作成完了.png" alt="SNSトピック作成完了" width="1880" height="820" loading="lazy"></div></figure>
 
 
 
@@ -224,7 +224,7 @@
 <li><code class="inline-code">AWS/EC2</code>－<strong>インスタンス別メトリクス</strong>を開きます。</li>
 <li>インスタンスID<code class="inline-code">i-05914a8b6088a3a42</code>、メトリクス名<code class="inline-code">StatusCheckFailed</code>の行を選択します。</li>
 </ol>
-<figure class="screenshot-wide aws-console-identity"><figcaption>図5　StatusCheckFailedメトリクス選択</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cloudwatch-monitoring/005-statuscheckfailedメトリクス選択.png" alt="StatusCheckFailedメトリクス選択" width="1880" height="1460" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cloudwatch-monitoring/005-statuscheckfailedメトリクス選択.png" alt="StatusCheckFailedメトリクス選択" width="1880" height="1460" loading="lazy"></div></figure>
 
 
 
@@ -261,7 +261,7 @@
 <td>欠落（missing）</td>
 </tr>
 </tbody></table></div>
-<figure class="screenshot-wide aws-console-identity"><figcaption>図6　StatusCheckFailed条件設定</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cloudwatch-monitoring/006-statuscheckfailed条件設定.png" alt="StatusCheckFailed条件設定" width="2120" height="1580" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cloudwatch-monitoring/006-statuscheckfailed条件設定.png" alt="StatusCheckFailed条件設定" width="2120" height="1580" loading="lazy"></div></figure>
 
 
 
@@ -274,7 +274,7 @@
 <li><strong>既存のSNSトピックを選択</strong>を選択します。</li>
 <li><code class="inline-code">sample-sns-cloudwatch-alerts</code>を選択します。</li>
 </ol>
-<figure class="screenshot-wide aws-console-identity"><figcaption>図7　StatusCheckFailed SNS通知設定</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cloudwatch-monitoring/007-statuscheckfailed-sns通知設定.png" alt="StatusCheckFailed SNS通知設定" width="2120" height="1530" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cloudwatch-monitoring/007-statuscheckfailed-sns通知設定.png" alt="StatusCheckFailed SNS通知設定" width="2120" height="1530" loading="lazy"></div></figure>
 
 
 
@@ -291,13 +291,13 @@
 <td><code class="inline-code">sample-cw-critical-ec2-statuscheckfailed-i-05914a8b6088a3a42</code></td>
 </tr>
 </tbody></table></div>
-<figure class="screenshot-wide aws-console-identity"><figcaption>図8　StatusCheckFailed名称設定</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cloudwatch-monitoring/008-statuscheckfailed名称設定.png" alt="StatusCheckFailed名称設定" width="2120" height="1040" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cloudwatch-monitoring/008-statuscheckfailed名称設定.png" alt="StatusCheckFailed名称設定" width="2120" height="1040" loading="lazy"></div></figure>
 
 
 
 <h4 id="内容を確認して作成する">内容を確認して作成する</h4>
 <p>設定値、対象インスタンス、SNSトピックを確認し、<strong>アラームの作成</strong>を選択します。</p>
-<figure class="screenshot-wide aws-console-identity"><figcaption>図9　StatusCheckFailed作成内容確認</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cloudwatch-monitoring/009-statuscheckfailed作成内容確認.png" alt="StatusCheckFailed作成内容確認" width="2120" height="1670" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cloudwatch-monitoring/009-statuscheckfailed作成内容確認.png" alt="StatusCheckFailed作成内容確認" width="2120" height="1670" loading="lazy"></div></figure>
 
 
 
@@ -343,11 +343,11 @@
 <td><code class="inline-code">sample-cw-warning-ec2-cpu-high-i-05914a8b6088a3a42</code></td>
 </tr>
 </tbody></table></div>
-<figure class="screenshot-wide aws-console-identity"><figcaption>図10　EC2 CPUUtilization条件設定</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cloudwatch-monitoring/010-ec2-cpuutilization条件設定.png" alt="EC2 CPUUtilization条件設定" width="2635" height="1500" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cloudwatch-monitoring/010-ec2-cpuutilization条件設定.png" alt="EC2 CPUUtilization条件設定" width="2635" height="1500" loading="lazy"></div></figure>
 
 
 
-<figure class="screenshot-wide aws-console-identity"><figcaption>図11　EC2 CPUUtilization作成内容確認</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cloudwatch-monitoring/011-ec2-cpuutilization作成内容確認.png" alt="EC2 CPUUtilization作成内容確認" width="2620" height="2072" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cloudwatch-monitoring/011-ec2-cpuutilization作成内容確認.png" alt="EC2 CPUUtilization作成内容確認" width="2620" height="2072" loading="lazy"></div></figure>
 
 
 
@@ -356,7 +356,7 @@
 <h3 id="7-windows-osメトリクスを収集する">7. Windows OSメトリクスを収集する</h3>
 <p>EC2標準メトリクスだけでは、Windowsのメモリコミット率とドライブ別空き容量は取得できません。CloudWatch agentをインストール・設定して<code class="inline-code">CWAgent</code>名前空間へ送信します。</p>
 <p>導入前の画像では<code class="inline-code">CWAgent</code>メトリクスが未出力です。設定後の出力結果は図18で確認します。</p>
-<figure class="screenshot-wide aws-console-identity"><figcaption>図12　CWAgentメトリクス未出力</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cloudwatch-monitoring/012-cwagentメトリクス未出力.png" alt="CWAgentメトリクス未出力" width="1540" height="1020" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cloudwatch-monitoring/012-cwagentメトリクス未出力.png" alt="CWAgentメトリクス未出力" width="1540" height="1020" loading="lazy"></div></figure>
 
 
 
@@ -373,7 +373,7 @@
 <li><code class="inline-code">Sample-Policy</code></li>
 </ul>
 <p>IAMロールの許可ポリシー一覧で、<code class="inline-code">CloudWatchAgentServerPolicy</code>が付与されていることを確認します。</p>
-<figure class="screenshot-wide aws-console-identity"><figcaption>図13　CloudWatchAgentServerPolicy付与確認</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cloudwatch-monitoring/013-cloudwatchagentserverpolicy付与確認.png" alt="CloudWatchAgentServerPolicy付与確認" width="1718" height="1304" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cloudwatch-monitoring/013-cloudwatchagentserverpolicy付与確認.png" alt="CloudWatchAgentServerPolicy付与確認" width="1718" height="1304" loading="lazy"></div></figure>
 
 
 
@@ -421,7 +421,7 @@
 </tr>
 </tbody></table></div>
 <p>Run Commandの実行結果で、全体的なステータスと詳細なステータスがともに「成功」となっていることを確認します。</p>
-<figure class="screenshot-wide aws-console-identity"><figcaption>図14　CloudWatch Agentインストール成功</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cloudwatch-monitoring/014-cloudwatch-agentインストール成功.png" alt="CloudWatch Agentインストール成功" width="1718" height="1304" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cloudwatch-monitoring/014-cloudwatch-agentインストール成功.png" alt="CloudWatch Agentインストール成功" width="1718" height="1304" loading="lazy"></div></figure>
 
 
 
@@ -486,7 +486,7 @@
 </ol>
 <p>本検証では、パラメータ<code class="inline-code">AmazonCloudWatch-sample-windows-basic-v1</code>を<code class="inline-code">Standard</code>、<code class="inline-code">String</code>で新規作成し、作成成功メッセージと一覧表示を確認しました。</p>
 <p>保存したパラメータを開き、名前、利用枠、種類および設定値が指定内容と一致していることを確認します。</p>
-<figure class="screenshot-wide aws-console-identity"><figcaption>図15　CWAgent設定パラメータ確認</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cloudwatch-monitoring/015-cwagent設定パラメータ確認.png" alt="CWAgent設定パラメータ確認" width="1718" height="1304" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cloudwatch-monitoring/015-cwagent設定パラメータ確認.png" alt="CWAgent設定パラメータ確認" width="1718" height="1304" loading="lazy"></div></figure>
 
 
 
@@ -503,17 +503,17 @@
 <li>Windows上のパフォーマンスモニターの値と大きく乖離していないことを確認します。</li>
 </ol>
 <p>設定適用コマンドが成功し、コマンドパラメータが指定内容と一致していることを確認します。</p>
-<figure class="screenshot-wide aws-console-identity"><figcaption>図16　CloudWatch Agent設定適用成功</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cloudwatch-monitoring/016-cloudwatch-agent設定適用成功.png" alt="CloudWatch Agent設定適用成功" width="1718" height="1304" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cloudwatch-monitoring/016-cloudwatch-agent設定適用成功.png" alt="CloudWatch Agent設定適用成功" width="1718" height="1304" loading="lazy"></div></figure>
 
 
 
 <p>状態確認コマンドの出力で、<code class="inline-code">status</code>が<code class="inline-code">running</code>、<code class="inline-code">configstatus</code>が<code class="inline-code">configured</code>となっていることを確認します。</p>
-<figure class="screenshot-wide aws-console-identity"><figcaption>図17　CloudWatch Agent稼働確認</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cloudwatch-monitoring/017-cloudwatch-agent稼働確認.png" alt="CloudWatch Agent稼働確認" width="1718" height="1304" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cloudwatch-monitoring/017-cloudwatch-agent稼働確認.png" alt="CloudWatch Agent稼働確認" width="1718" height="1304" loading="lazy"></div></figure>
 
 
 
 <p>CloudWatchで対象メトリクスをグラフ化し、ディスク空き容量とメモリ使用率のデータが1分間隔で表示されることを確認します。</p>
-<figure class="screenshot-wide aws-console-identity"><figcaption>図18　CWAgentメトリクス確認</figcaption><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cloudwatch-monitoring/018-cwagentメトリクス確認.png" alt="CWAgentメトリクス確認" width="1718" height="1304" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cloudwatch-monitoring/018-cwagentメトリクス確認.png" alt="CWAgentメトリクス確認" width="1718" height="1304" loading="lazy"></div></figure>
 
 
 
