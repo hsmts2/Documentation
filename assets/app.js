@@ -53,12 +53,10 @@ removePageToc();
 const enhancePageSummaries = () => {
   document.querySelectorAll("main.content > p.lead").forEach((lead) => {
     const summary = document.createElement("div");
-    const label = document.createElement("strong");
 
     summary.className = "page-summary";
-    label.textContent = "⚡ このページの要約";
     lead.before(summary);
-    summary.append(label, lead);
+    summary.append(lead);
   });
 };
 

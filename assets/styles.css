@@ -439,9 +439,10 @@ main {
 
 h1 {
   margin: 0 0 28px;
-  font-size: clamp(34px, 5vw, 56px);
+  font-size: 38px;
   line-height: 1.08;
   letter-spacing: 0;
+  overflow-wrap: anywhere;
 }
 
 h2 {
@@ -480,14 +481,6 @@ li {
   margin: 24px 0 40px;
   padding: 4px 0 4px 20px;
   border-left: 5px solid var(--summary-accent);
-}
-
-.page-summary strong {
-  display: block;
-  margin-bottom: 8px;
-  color: var(--summary-title);
-  font-size: 20px;
-  line-height: 1.4;
 }
 
 .page-summary .lead {
