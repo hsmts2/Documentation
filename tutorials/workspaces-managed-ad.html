@@ -134,7 +134,7 @@
 </thead>
 <tbody><tr>
 <td><code class="inline-code">Admin</code>ユーザー</td>
-<td>ディレクトリ管理者として、NetBIOS名と同名のOU配下にある<code class="inline-code">Users</code>へ作成されます。本環境では<code class="inline-code">ad\Users</code>です。</td>
+<td>ディレクトリ管理者として、NetBIOS名と同名のOU配下にある<code class="inline-code">Users</code>へ作成されます。本ページの例では<code class="inline-code">ad\Users</code>です。</td>
 </tr>
 <tr>
 <td><code class="inline-code">AWS Delegated Groups</code> OU</td>
@@ -219,7 +219,7 @@
 
 
 <h3 id="3-ディレクトリ情報を入力する">3. ディレクトリ情報を入力する</h3>
-<p>DNS名はActive Directoryで使用する完全修飾ドメイン名です。NetBIOS名はドメインの短縮名として使用します。</p>
+<p>DNS名はActive Directoryで使用する完全修飾ドメイン名です。NetBIOS名はドメインの短縮名として使用します。本ページでは公開用の例示値として、DNS名を<code class="inline-code">ad.example.com</code>、NetBIOS名を<code class="inline-code">ad</code>に統一しています。</p>
 <div class="callout callout-warning"><p><strong>⚠️ 注意：ディレクトリのDNS名を既存のDNS名前空間と重複させない</strong></p>
 <p>同じ名前のAmazon Route 53プライベートホストゾーンなどが存在すると、クライアントの名前解決に影響する可能性があります。入力前に既存のDNS名前空間と重複していないことを確認します。</p>
 </div>
