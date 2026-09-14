@@ -39,6 +39,13 @@ $groups = @(
         )
     }
     [pscustomobject]@{
+        Label = 'Git / GitHub'
+        Icon = '⑂'
+        Pages = @(
+            [pscustomobject]@{ File = 'git-github.html'; Label = 'Git / GitHub 概要' }
+        )
+    }
+    [pscustomobject]@{
         Label = 'Terraform'
         Icon = '◈'
         Pages = @(

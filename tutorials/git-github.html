@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Git / GitHub 概要 | Documentation</title>
+  <meta name="description" content="Git BashとPowerShellによるGitの導入と初期設定、コミットの名前・メール、初期ブランチ名、エディタ、設定結果の確認手順">
+  <link rel="stylesheet" href="../assets/styles.css">
+  <link rel="stylesheet" href="../assets/git-github.css">
+</head>
+<body data-user-values="t_hashimoto@example.com,t_hashimoto">
+  <header class="site-header">
+    <a class="brand" href="../">
+      <img src="../assets/icon.jpg" alt="Documentation icon">
+      <span>Documentation</span>
+    </a>
+    <div class="header-actions">
+      <button class="icon-button theme-toggle" type="button" title="テーマを切り替え" aria-label="テーマを切り替え">☀</button>
+      <nav class="nav" aria-label="Global navigation">
+        <a href="https://github.com/hsmts2/Documentation"><span class="nav-icon" aria-hidden="true">◆</span>GitHub</a>
+      </nav>
+    </div>
+  </header>
+  <div class="layout">
+    <aside id="site-sidebar" class="sidebar" aria-label="Page list">
+      <div class="sidebar-heading">
+        <button class="icon-button sidebar-toggle sidebar-toggle-inline" type="button" aria-controls="site-sidebar" aria-expanded="true" title="ナビゲーションを閉じる" aria-label="ナビゲーションを閉じる">☰</button>
+      </div>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">✎</span>記事</p>
+      <a href="cloudflare-private-site.html">Private GitHubリポジトリをCloudflare Workersで認証付き公開してみた</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">☁︎</span>[PoC] マルチVPC・閉域VDI基盤案件</p>
+          <a href="workspaces-skill-transfer.html">全体構築・運用順序</a>
+          <a href="workspaces-managed-ad.html">Managed Microsoft ADの構築</a>
+          <a href="workspaces-managed-ad-users.html">Managed Microsoft ADのユーザー・グループ管理</a>
+          <a href="workspaces-management-ec2.html">管理用EC2の起動・接続・AD管理</a>
+          <a href="workspaces-ad-connector-account.html">AD Connector用サービスアカウント・権限委任</a>
+          <a href="workspaces-ad-connector.html">AD ConnectorのVPCピアリング・SG設定・作成</a>
+          <a href="workspaces-provisioning-gpo.html">WorkSpaces Personalの構築・接続</a>
+          <a href="workspaces-target-ou.html">WorkSpaces用ターゲットOUの作成・権限委任</a>
+          <a href="workspaces-gpo.html">WorkSpaces用GPOの作成・適用・運用</a>
+          <a href="workspaces-image-bundle.html">WorkSpacesカスタムイメージ作成・共有</a>
+          <a href="workspaces-systems-manager.html">Systems Manager環境構築</a>
+          <a href="workspaces-patch-manager.html">Patch Managerの設定</a>
+          <a href="workspaces-patch-operations.html">Patch Managerの実行・結果確認・運用</a>
+          <a href="workspaces-cost-optimizer.html">Cost Optimizerの構築・設定</a>
+          <a href="workspaces-cost-optimizer-dry-run.html">Cost OptimizerのDry Run解除</a>
+          <a href="workspaces-cost-optimizer-schedule.html">Cost Optimizerの実行スケジュール設定・変更</a>
+          <a href="workspaces-cost-optimizer-reports.html">Cost Optimizerのレポート・監視</a>
+          <a href="workspaces-cloudwatch-monitoring.html">CloudWatchのEC2・Windows OS監視とSNS通知</a>
+          <a href="workspaces-cloudwatch-workspaces.html">CloudWatchのWorkSpaces監視</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">⑂</span>Git / GitHub</p>
+      <a class="active" aria-current="page" href="git-github.html">Git / GitHub 概要</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">◈</span>Terraform</p>
+      <a href="terraform.html">Terraform 概要</a>
+      <a href="hcp-terraform.html">HCP Terraform（Terraform Cloud）</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">☁︎</span>AWS</p>
+      <a href="cloudformation.html">CloudFormation 運用手順集</a>
+      <a href="aws-cli.html">AWS CLI 特殊対応</a>
+      <a href="aws-cli-reference.html">AWS CLI コマンドリファレンス</a>
+      <a href="eventbridge-scheduler.html">EventBridge Scheduler</a>
+      <a href="aws-directory-service.html">AWS Directory Service 運用手順</a>
+      <a href="amazon-workspaces.html">Amazon WorkSpaces</a>
+      <a href="amazon-ses.html">Amazon SES SMTPリレー</a>
+      <a href="amazon-ses-monitoring.html">Amazon SES 配信監視</a>
+      <a href="amazon-rds-blue-green.html">Amazon RDS Blue/Green Deployments</a>
+      <a href="apache-acm-certificate-update.html">証明書更新（ACMエクスポート）</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">⚙︎</span>OS／ミドルウェア</p>
+      <a href="rhel9.html">Red Hat Enterprise Linux 9</a>
+      <a href="rhel10.html">Red Hat Enterprise Linux 10</a>
+      <a href="amazon-linux-2023.html">Amazon Linux 2023</a>
+      <a href="windows-server-2022.html">Windows Server 2022</a>
+      <a href="windows-server-2025.html">Windows Server 2025</a>
+      <a href="windows-server-2016-upgrade.html">Windows Server 2016 インプレースアップグレード</a>
+      <a href="storage.html">ストレージ管理</a>
+      <a href="apache.html">Apache</a>
+      <a href="apache-self-signed-ssl-termination.html">Apache SSL終端（自己署名証明書）</a>
+      <a href="redis.html">Redis（KVS）</a>
+      <a href="nfs.html">NFS</a>
+      <a href="samba.html">Samba</a>
+      <a href="mariadb.html">MariaDB</a>
+      <a href="postgresql.html">PostgreSQL</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">▤</span>リファレンス</p>
+      <a href="../writing-style-guide.html">[GitHub Pages] 記法・テンプレート</a>
+      <a href="troubleshooting.html">障害切り分けチェックリスト</a>
+      <a href="eol.html">EOL / ライフサイクル一覧表</a>
+    </aside>
+    <main class="content git-guide">
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="../"><span class="nav-icon" aria-hidden="true">⌂</span>Home</a>
+        <span>トピック</span>
+      </nav>
+      <p class="eyebrow">Git / GitHub</p>
+      <h1>Git / GitHub 概要</h1>
+      <section>
+        <h2 id="initial-setup">初期設定</h2>
+        <h3 id="installation">① Gitのインストール</h3>
+        <p>導入済みの場合はGit BashまたはPowerShellでバージョンを確認<br>未導入の場合は下のインストール方法から開始</p>
+        <div class="tab-group" data-tabs><div class="tabs" role="tablist" aria-label="Git Bash / PowerShell"><button type="button" role="tab" id="version-before-t0" aria-controls="version-before-p0" aria-selected="true">Git Bash</button><button type="button" role="tab" id="version-before-t1" aria-controls="version-before-p1" aria-selected="false">PowerShell</button></div><div role="tabpanel" id="version-before-p0" aria-labelledby="version-before-t0"><div class="code"><div class="code-header"><span>Git Bash</span><button class="copy" type="button">Copy</button></div><pre><code>git --version</code></pre></div></div><div role="tabpanel" id="version-before-p1" aria-labelledby="version-before-t1" hidden><div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>git --version</code></pre></div></div></div>
+        <p>バージョン表示がある場合はGitの実行環境が準備済み</p>
+        <div class="tab-group" data-tabs><div class="tabs" role="tablist" aria-label="ブラウザからのインストール / PowerShell（WinGet）"><button type="button" role="tab" id="install-method-t0" aria-controls="install-method-p0" aria-selected="true">ブラウザからのインストール</button><button type="button" role="tab" id="install-method-t1" aria-controls="install-method-p1" aria-selected="false">PowerShell（WinGet）</button></div><div role="tabpanel" id="install-method-p0" aria-labelledby="install-method-t0"><p>Git for Windowsの公式ページから、PCのアーキテクチャに対応するインストーラーを取得<br>取得したファイルを開き、画面に従ってインストールを実行</p><p>出典：<a href="https://git-scm.com/install/windows">Git for Windowsの公式インストールページ</a></p></div><div role="tabpanel" id="install-method-p1" aria-labelledby="install-method-t1" hidden><p>PowerShellを起動し、WinGetでGitをインストール</p><div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>winget install --id Git.Git -e --source winget</code></pre></div></div></div>
+        <p>インストール完了後にGit BashまたはPowerShellを起動し、バージョンを再確認</p>
+        <div class="tab-group" data-tabs><div class="tabs" role="tablist" aria-label="Git Bash / PowerShell"><button type="button" role="tab" id="version-after-t0" aria-controls="version-after-p0" aria-selected="true">Git Bash</button><button type="button" role="tab" id="version-after-t1" aria-controls="version-after-p1" aria-selected="false">PowerShell</button></div><div role="tabpanel" id="version-after-p0" aria-labelledby="version-after-t0"><div class="code"><div class="code-header"><span>Git Bash</span><button class="copy" type="button">Copy</button></div><pre><code>git --version</code></pre></div></div><div role="tabpanel" id="version-after-p1" aria-labelledby="version-after-t1" hidden><div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>git --version</code></pre></div></div></div>
+        <p>出典：<a href="https://git-scm.com/install/windows">Git公式：Install for Windows</a></p>
+
+        <h3 id="identity">② コミットに記録する名前・メールの設定</h3>
+        <p>コミットに記録する名前を設定<br><code class="user-value">t_hashimoto</code>は例示値のため、勤務先指定の名前への置き換え</p>
+        <div class="tab-group" data-tabs><div class="tabs" role="tablist" aria-label="Git Bash / PowerShell"><button type="button" role="tab" id="git-tabs-3-tab-0" aria-controls="git-tabs-3-panel-0" aria-selected="true">Git Bash</button><button type="button" role="tab" id="git-tabs-3-tab-1" aria-controls="git-tabs-3-panel-1" aria-selected="false">PowerShell</button></div><div role="tabpanel" id="git-tabs-3-panel-0" aria-labelledby="git-tabs-3-tab-0"><div class="code"><div class="code-header"><span>Git Bash</span><button class="copy" type="button">Copy</button></div><pre><code>git config --global user.name "t_hashimoto"</code></pre></div></div><div role="tabpanel" id="git-tabs-3-panel-1" aria-labelledby="git-tabs-3-tab-1" hidden><div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>git config --global user.name "t_hashimoto"</code></pre></div></div></div>
+        <p>コミットに記録するメールアドレスを設定<br><code class="user-value">t_hashimoto@example.com</code>は例示値のため、勤務先指定のメールアドレスへの置き換え</p>
+        <div class="tab-group" data-tabs><div class="tabs" role="tablist" aria-label="Git Bash / PowerShell"><button type="button" role="tab" id="git-tabs-4-tab-0" aria-controls="git-tabs-4-panel-0" aria-selected="true">Git Bash</button><button type="button" role="tab" id="git-tabs-4-tab-1" aria-controls="git-tabs-4-panel-1" aria-selected="false">PowerShell</button></div><div role="tabpanel" id="git-tabs-4-panel-0" aria-labelledby="git-tabs-4-tab-0"><div class="code"><div class="code-header"><span>Git Bash</span><button class="copy" type="button">Copy</button></div><pre><code>git config --global user.email "t_hashimoto@example.com"</code></pre></div></div><div role="tabpanel" id="git-tabs-4-panel-1" aria-labelledby="git-tabs-4-tab-1" hidden><div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>git config --global user.email "t_hashimoto@example.com"</code></pre></div></div></div>
+        <p>名前・メールは「誰が変更を記録したか」を示す情報であり、GitHubへのログイン設定とは別の設定</p>
+        <p><code class="inline-code">--global</code>は、そのPCの現在のユーザーに共通する設定範囲<br>PCの全ユーザー共通ではなく、リポジトリ固有の設定がある場合はそちらを優先</p>
+        <p>設定値は通常ユーザーフォルダの<code class="inline-code">.gitconfig</code>に保存され、再起動後も保持<br>毎回の再設定は不要で、PowerShellのユーザー名表示や過去のコミットは変更対象外</p>
+        <p>出典：<a href="https://git-scm.com/book/en/v2/Getting-Started-First-Time-Git-Setup">Git公式：First-Time Git Setup</a></p>
+
+        <h3 id="default-branch">③ 初期ブランチ名の設定</h3>
+        <p>勤務先で<code class="inline-code">main</code>を使用する方針の場合に、新規リポジトリの初期ブランチ名を設定</p>
+        <div class="tab-group" data-tabs><div class="tabs" role="tablist" aria-label="Git Bash / PowerShell"><button type="button" role="tab" id="git-tabs-5-tab-0" aria-controls="git-tabs-5-panel-0" aria-selected="true">Git Bash</button><button type="button" role="tab" id="git-tabs-5-tab-1" aria-controls="git-tabs-5-panel-1" aria-selected="false">PowerShell</button></div><div role="tabpanel" id="git-tabs-5-panel-0" aria-labelledby="git-tabs-5-tab-0"><div class="code"><div class="code-header"><span>Git Bash</span><button class="copy" type="button">Copy</button></div><pre><code>git config --global init.defaultBranch main</code></pre></div></div><div role="tabpanel" id="git-tabs-5-panel-1" aria-labelledby="git-tabs-5-tab-1" hidden><div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>git config --global init.defaultBranch main</code></pre></div></div></div>
+        <p>今後<code class="inline-code">git init</code>で新しく作成するリポジトリへの適用<br><strong>既存ブランチの改名や、現在のブランチの切り替えは対象外</strong></p>
+        <p>既に<code class="inline-code">main</code>が設定済みの場合は、再設定不要</p>
+        <p>出典：<a href="https://git-scm.com/docs/git-init">Git公式：git init</a></p>
+
+        <h3 id="editor">④ 使用するエディタの設定</h3>
+        <p>VS Codeを使用する場合は、インストール済みで<code class="inline-code">code</code>コマンドが利用可能なことを確認</p>
+        <div class="tab-group" data-tabs><div class="tabs" role="tablist" aria-label="Git Bash / PowerShell"><button type="button" role="tab" id="git-tabs-6-tab-0" aria-controls="git-tabs-6-panel-0" aria-selected="true">Git Bash</button><button type="button" role="tab" id="git-tabs-6-tab-1" aria-controls="git-tabs-6-panel-1" aria-selected="false">PowerShell</button></div><div role="tabpanel" id="git-tabs-6-panel-0" aria-labelledby="git-tabs-6-tab-0"><div class="code"><div class="code-header"><span>Git Bash</span><button class="copy" type="button">Copy</button></div><pre><code>code --version</code></pre></div></div><div role="tabpanel" id="git-tabs-6-panel-1" aria-labelledby="git-tabs-6-tab-1" hidden><div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>code --version</code></pre></div></div></div>
+        <p>コミットメッセージなどの入力に使用するエディタとしてVS Codeを設定</p>
+        <div class="tab-group" data-tabs><div class="tabs" role="tablist" aria-label="Git Bash / PowerShell"><button type="button" role="tab" id="git-tabs-7-tab-0" aria-controls="git-tabs-7-panel-0" aria-selected="true">Git Bash</button><button type="button" role="tab" id="git-tabs-7-tab-1" aria-controls="git-tabs-7-panel-1" aria-selected="false">PowerShell</button></div><div role="tabpanel" id="git-tabs-7-panel-0" aria-labelledby="git-tabs-7-tab-0"><div class="code"><div class="code-header"><span>Git Bash</span><button class="copy" type="button">Copy</button></div><pre><code>git config --global core.editor "code --wait"</code></pre></div></div><div role="tabpanel" id="git-tabs-7-panel-1" aria-labelledby="git-tabs-7-tab-1" hidden><div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>git config --global core.editor "code --wait"</code></pre></div></div></div>
+        <p><code class="inline-code">--wait</code>は編集対象のファイルを閉じるまで待機するための指定<br>別のエディタを使用する場合は、そのエディタに対応する起動コマンドへ変更</p>
+        <p>出典：<a href="https://git-scm.com/book/en/v2/Appendix-C%3A-Git-Commands-Setup-and-Config.html">Git公式：Setup and Config</a></p>
+
+        <h3 id="verification">⑤ 設定結果の確認</h3>
+        <p>名前、メール、初期ブランチ名、エディタのグローバル設定を確認</p>
+        <div class="tab-group" data-tabs><div class="tabs" role="tablist" aria-label="Git Bash / PowerShell"><button type="button" role="tab" id="git-tabs-8-tab-0" aria-controls="git-tabs-8-panel-0" aria-selected="true">Git Bash</button><button type="button" role="tab" id="git-tabs-8-tab-1" aria-controls="git-tabs-8-panel-1" aria-selected="false">PowerShell</button></div><div role="tabpanel" id="git-tabs-8-panel-0" aria-labelledby="git-tabs-8-tab-0"><div class="code"><div class="code-header"><span>Git Bash</span><button class="copy" type="button">Copy</button></div><pre><code>git config --global user.name
+git config --global user.email
+git config --global init.defaultBranch
+git config --global core.editor</code></pre></div></div><div role="tabpanel" id="git-tabs-8-panel-1" aria-labelledby="git-tabs-8-tab-1" hidden><div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>git config --global user.name
+git config --global user.email
+git config --global init.defaultBranch
+git config --global core.editor</code></pre></div></div></div>
+        <p>上記の例示値を設定した場合の期待結果</p>
+        <div class="code"><div class="code-header"><span>実行結果（例）</span><button class="copy" type="button">Copy</button></div><pre><code>t_hashimoto
+t_hashimoto@example.com
+main
+code --wait</code></pre></div>
+        <p><code class="inline-code">core.editor</code>の出力が空の場合は、グローバル設定での未設定を示す結果<br>別の設定や既定のエディタが使用されるため、エディタ自体の利用不可とは別の状態</p>
+        <p>読み込み元の設定ファイルと設定値を確認</p>
+        <div class="tab-group" data-tabs><div class="tabs" role="tablist" aria-label="Git Bash / PowerShell"><button type="button" role="tab" id="git-tabs-9-tab-0" aria-controls="git-tabs-9-panel-0" aria-selected="true">Git Bash</button><button type="button" role="tab" id="git-tabs-9-tab-1" aria-controls="git-tabs-9-panel-1" aria-selected="false">PowerShell</button></div><div role="tabpanel" id="git-tabs-9-panel-0" aria-labelledby="git-tabs-9-tab-0"><div class="code"><div class="code-header"><span>Git Bash</span><button class="copy" type="button">Copy</button></div><pre><code>git config --list --show-origin</code></pre></div></div><div role="tabpanel" id="git-tabs-9-panel-1" aria-labelledby="git-tabs-9-tab-1" hidden><div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>git config --list --show-origin</code></pre></div></div></div>
+        <p>リポジトリ固有の設定を含めて確認する場合は、対象リポジトリ内で実行</p>
+        <div class="callout callout-warning"><strong>⚠️ 注意</strong><p>設定一覧にはメールアドレス、業務用パス、接続先などが含まれるため、記事への掲載前に機密情報・個人情報の有無を確認</p></div>
+        <p>出典：<a href="https://git-scm.com/book/en/v2/Getting-Started-First-Time-Git-Setup">Git公式：First-Time Git Setup</a></p>
+      </section>
+    </main>
+    <aside class="toc" aria-label="Table of contents"><h2>ページ内</h2><a href="#initial-setup">初期設定</a><a href="#installation">① Gitのインストール</a><a href="#identity">② コミットに記録する名前・メールの設定</a><a href="#default-branch">③ 初期ブランチ名の設定</a><a href="#editor">④ 使用するエディタの設定</a><a href="#verification">⑤ 設定結果の確認</a></aside>
+  </div>
+  <script src="../assets/app.js"></script>
+  <script src="../assets/git-github.js"></script>
+</body>
+</html>

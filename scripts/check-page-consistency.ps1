@@ -63,7 +63,8 @@ foreach ($entry in $manifestEntries) {
         $errors.Add("${fileName}: missing meta description")
     }
 
-    if ((-not $isWorkspacesGuide -and $leadMatches.Count -ne 1) -or ($isWorkspacesGuide -and $leadMatches.Count -gt 1)) {
+    $allowsNoLead = $isWorkspacesGuide -or $fileName -eq 'git-github.html'
+    if ((-not $allowsNoLead -and $leadMatches.Count -ne 1) -or ($allowsNoLead -and $leadMatches.Count -gt 1)) {
         $errors.Add("${fileName}: expected one lead paragraph, found $($leadMatches.Count)")
     }
 
