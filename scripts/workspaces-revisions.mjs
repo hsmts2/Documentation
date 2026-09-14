@@ -1,6 +1,9 @@
 // Publication-specific corrections: keep approved procedure prose, examples and commands intact.
 export function reviseDocument(key, markdown) {
   let text = markdown.replace(/\r\n?/g, "\n");
+  if (key === "costOptimizerReports") {
+    text = text.replace(/^- \[ \] /gm, "- ");
+  }
   if (key === "connectorBuild") text = text.replace(/\n\n/g, "\n");
   if (key === "workspacesOu") {
     text = text.replace("- Managed ADとAD Connectorがアクティブで、⑥のディレクトリ登録が完了していること。", "- OU作成・権限委任では、Managed ADがアクティブで、ドメイン参加済みの管理用EC2から管理できること。\n- ターゲットOU設定では、AD Connectorがアクティブで、⑥のディレクトリ登録が完了していること。");

@@ -91,11 +91,27 @@
 <h3 id="管理範囲-2">管理範囲</h3>
 <p>基本監視は<code class="inline-code">Unhealthy</code>と<code class="inline-code">ConnectionFailure</code>の2アラームです。<code class="inline-code">UserConnected</code>は接続状況の表示に使用します。CPU・メモリ・ボリューム・接続品質の監視は運用要件に応じた追加候補です。</p>
 <h3 id="制約事項-2">制約事項</h3>
-<ul class="check-list">
+<ul>
 <li>接続関連メトリクスはクライアント認証後のセッション接続を対象とします。認証前の失敗は認証基盤側のログなどで確認します。</li>
 <li>AutoStopや未使用時の欠落データは正常扱いとする初期設定です。最新データ時刻とWorkSpacesの状態も確認します。</li>
 <li>メトリクスの提供範囲はプロトコルなどによって異なります。追加時は対象で取得できる系列を確認します。</li>
 </ul>
+<h2 id="前提条件">前提条件</h2>
+<h3 id="既存リソース-ネットワーク">既存リソース・ネットワーク</h3>
+<ul>
+<li>対象WorkSpaceが作成済みで、監視対象のID・ディレクトリ・実行モードが確定していること。</li>
+<li>通知用SNSトピックと確認済みのEmail購読が準備されていること。</li>
+<li>WorkSpacesのメトリクス送信に必要な通信を許可していること。<a href="https://docs.aws.amazon.com/workspaces/latest/adminguide/cloudwatch-metrics.html">AWSのCloudWatchメトリクス要件</a>に従い、<code class="inline-code">us-east-1</code>の<code class="inline-code">AMAZON</code>範囲へのTCP/443を含む通信要件を確認します。</li>
+</ul>
+<h3 id="権限-接続環境">権限・接続環境</h3>
+<p>作業者にはCloudWatchアラーム・ダッシュボードの管理、SNSトピック・購読・テスト発行、およびWorkSpacesの参照権限が必要です。SCPやアクセス許可境界による制限も確認します。WorkSpaceへのCloudWatch agent導入は本手順に含みません。</p>
+<h3 id="事前に準備する情報">事前に準備する情報</h3>
+<div class="guide-table-scroll"><table class="guide-table"><thead><tr><th>項目</th><th>設定値・確認内容</th></tr></thead><tbody>
+<tr><td>検証用WorkSpace ID</td><td><code class="inline-code">ws-jkxz7js0s</code></td></tr>
+<tr><td>SNSトピック</td><td><code class="inline-code">sample-sns-cloudwatch-alerts</code></td></tr>
+<tr><td>リージョン</td><td>アジアパシフィック（東京）<code class="inline-code">ap-northeast-1</code></td></tr>
+</tbody></table></div>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cloudwatch-monitoring/019-workspaces監視対象一覧.png?v=20260914" alt="WorkSpaces監視対象一覧" width="1540" height="650" loading="lazy"></div></figure>
 <h2 id="構築作業-2">構築作業</h2>
 <h3 id="1-unhealthyアラームを作成する">1. Unhealthyアラームを作成する</h3>
 <ol>
@@ -140,7 +156,7 @@
 <td><code class="inline-code">sample-cw-critical-workspaces-unhealthy-ws-jkxz7js0s</code></td>
 </tr>
 </tbody></table></div>
-<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cloudwatch-monitoring/020-workspaces-unhealthy条件設定.png" alt="WorkSpaces Unhealthy条件設定" width="3260" height="1410" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cloudwatch-monitoring/020-workspaces-unhealthy条件設定.png?v=20260914" alt="WorkSpaces Unhealthy条件設定" width="3260" height="1410" loading="lazy"></div></figure>
 
 
 
@@ -190,7 +206,7 @@
 <td><code class="inline-code">sample-cw-warning-workspaces-connectionfailure-ws-jkxz7js0s</code></td>
 </tr>
 </tbody></table></div>
-<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cloudwatch-monitoring/021-workspaces-connectionfailure条件設定.png" alt="WorkSpaces ConnectionFailure条件設定" width="4030" height="1410" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cloudwatch-monitoring/021-workspaces-connectionfailure条件設定.png?v=20260914" alt="WorkSpaces ConnectionFailure条件設定" width="4030" height="1410" loading="lazy"></div></figure>
 
 
 
@@ -199,7 +215,7 @@
 <li>説明欄には、監視範囲を明確にするため「クライアント認証後、WorkSpacesセッションの接続開始時に発生した失敗を監視する。事前認証段階のAD認証失敗は含まれない」旨を記載します。</li>
 <li>設定内容を確認してアラームを作成します。</li>
 </ol>
-<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cloudwatch-monitoring/022-workspaces-connectionfailure作成内容確認.png" alt="WorkSpaces ConnectionFailure作成内容確認" width="4030" height="2040" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cloudwatch-monitoring/022-workspaces-connectionfailure作成内容確認.png?v=20260914" alt="WorkSpaces ConnectionFailure作成内容確認" width="4030" height="2040" loading="lazy"></div></figure>
 
 
 
@@ -301,7 +317,7 @@
 <li>リソース名、単位、統計、期間が一目で分かるウィジェットタイトルを設定します。</li>
 <li><strong>ダッシュボードの保存</strong>を選択します。</li>
 </ol>
-<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cloudwatch-monitoring/023-cloudwatch監視ダッシュボード作成完了.png" alt="CloudWatch監視ダッシュボード作成完了" width="2720" height="630" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cloudwatch-monitoring/023-cloudwatch監視ダッシュボード作成完了.png?v=20260914" alt="CloudWatch監視ダッシュボード作成完了" width="2720" height="630" loading="lazy"></div></figure>
 
 
 
@@ -309,7 +325,7 @@
 </div>
 <h3 id="5-アラームと通知を確認する">5. アラームと通知を確認する</h3>
 <p>CloudWatchで<strong>アラーム</strong>－<strong>すべてのアラーム</strong>を開き、検索欄へ<code class="inline-code">sample-cw-</code>を入力します。</p>
-<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cloudwatch-monitoring/024-作成済みcloudwatchアラーム4件.png" alt="作成済みCloudWatchアラーム4件" width="2300" height="720" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cloudwatch-monitoring/024-作成済みcloudwatchアラーム4件.png?v=20260914" alt="作成済みCloudWatchアラーム4件" width="2300" height="720" loading="lazy"></div></figure>
 
 
 
@@ -488,7 +504,7 @@
 <li>SNS通知の受信時刻とアラーム履歴を照合します。</li>
 <li>対象サービスのコンソール、OSログ、ジョブ履歴で原因と影響を確認します。</li>
 </ol>
-<ul class="check-list">
+<ul>
 <li>アラーム作成画面の成功：設定APIが受理されたこと</li>
 <li>アラーム状態<code class="inline-code">OK</code>：設定したメトリクスが、その期間でしきい値に違反していないこと</li>
 <li>SNS配信成功：SNSから購読先への配信が成功したこと</li>
@@ -496,7 +512,7 @@
 </ul>
 <p>したがって、<code class="inline-code">OK</code>表示だけで作業完了とせず、「対象メトリクスの最新時刻」「アラーム履歴」「SNS受信」「対象サービス側の状態」を証跡として残します。</p>
 <h3 id="定期点検と設定の戻し方">定期点検と設定の戻し方</h3>
-<ul class="check-list">
+<ul>
 <li>月次：アラーム一覧、無効アクション、<code class="inline-code">INSUFFICIENT_DATA</code>の長期継続、SNS購読状態を確認</li>
 <li>四半期：しきい値、評価期間、通知先、不要アラーム、ダッシュボード構成を見直す</li>
 <li>構成変更時：新規EC2およびWorkSpaceが監視対象へ追加されたことを確認</li>

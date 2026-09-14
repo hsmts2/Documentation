@@ -1,5 +1,6 @@
 import fs from "node:fs";
 import { reviseDocument } from "./workspaces-revisions.mjs";
+import { isReviewedMonitoringImage } from "./workspaces-next-images.mjs";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
 import { createRequire } from "node:module";
@@ -407,6 +408,10 @@ const isAwsConsoleScreenshot = async (imagePath) => {
 };
 
 const copyPublishedImage = async (sourceImage, destination, awsConsole, metadata) => {
+  if (isReviewedMonitoringImage(destination)) {
+    if (!fs.existsSync(destination)) throw new Error(`Missing reviewed WorkSpaces image: ${destination}`);
+    return;
+  }
   const sourceSvg = sourceImage.replace(/\.(?:png|jpe?g)$/i, ".svg");
   if (!awsConsole && sourceSvg !== sourceImage && fs.existsSync(sourceSvg)) {
     let svg = fs.readFileSync(sourceSvg, "utf8");
@@ -479,7 +484,8 @@ const transformDocument = async (key, pageAssetFolder, sequenceStart) => {
     const awsConsole = await isAwsConsoleScreenshot(sourceImage);
     if (!process.env.WORKSPACES_SKIP_IMAGES) await copyPublishedImage(sourceImage, destination, awsConsole, meta);
     const classes = ["screenshot-wide", awsConsole ? "aws-console-identity" : ""].filter(Boolean).join(" ");
-    const figure = `<figure class="${classes}"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/${path.basename(pageAssetFolder)}/${filename}" alt="${htmlEscape(match[1])}" width="${meta.width || ""}" height="${meta.height || ""}" loading="lazy"></div></figure>`;
+    const revision = isReviewedMonitoringImage(destination) ? "?v=20260914" : "";
+    const figure = `<figure class="${classes}"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/${path.basename(pageAssetFolder)}/${filename}${revision}" alt="${htmlEscape(match[1])}" width="${meta.width || ""}" height="${meta.height || ""}" loading="lazy"></div></figure>`;
     imageMetadata.push({ source: sourceImage, destination, awsConsole });
     markdown = markdown.replace(match[0], figure);
   }

@@ -92,6 +92,17 @@
 <p>設定値は取得時点の検証例です。実作業では承認済みパラメータと現在のAWS環境を確認します。</p>
 <h3 id="制約事項-4">制約事項</h3>
 <p>取得済みのCSVと画面はDryRun=Yesの実測1台分です。説明用5台データは実測結果に含めません。</p>
+<h2 id="前提条件">前提条件</h2>
+<h3 id="既存リソース-ネットワーク">既存リソース・ネットワーク</h3>
+<p>対象のCloudFormationスタック、ECSクラスター、CloudWatch Logs、レポート用S3バケットが存在することを確認します。</p>
+<h3 id="権限-接続環境">権限・接続環境</h3>
+<p>監視担当者にはECS、CloudWatch Logs、S3、WorkSpacesの参照権限を付与します。SCP、アクセス許可境界、明示的な拒否による制限も確認します。</p>
+<h3 id="事前に準備する情報">事前に準備する情報</h3>
+<div class="guide-table-scroll"><table class="guide-table"><thead><tr><th>項目</th><th>確認内容</th></tr></thead><tbody>
+<tr><td>対象スタック</td><td><code class="inline-code">sample-cfn-co-001</code>（検証例。実作業では現在の対象を確認）</td></tr>
+<tr><td>取得済みレポート</td><td>Dry Run有効時・1台分</td></tr>
+<tr><td>Dry Run解除後の結果</td><td>未確認</td></tr>
+</tbody></table></div>
 <h2 id="運用作業-2">運用作業</h2>
 <h3 id="1-確認対象">1. 確認対象</h3>
 <p>Cost Optimizerの1回の処理は、主に次の場所で確認します。</p>
@@ -130,7 +141,7 @@
 <li>「タスク」で対象時刻のタスクを選択し、使用したタスク定義のリビジョンと実行情報を確認します。</li>
 <li>タスクがSTOPPEDとなっていること、停止理由とコンテナ終了コード0を確認します。終了コード0でも処理対象の一部にエラーが残る場合があるため、対象リージョンのログを続けて確認します。</li>
 </ol>
-<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/029-図1-ecs-スケジュール実行タスク一覧.png" alt="図1_ECS_スケジュール実行タスク一覧" width="1713" height="1304" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/029-図1-ecs-スケジュール実行タスク一覧.png?v=20260914" alt="図1_ECS_スケジュール実行タスク一覧" width="1713" height="1304" loading="lazy"></div></figure>
 
 
 
@@ -142,7 +153,7 @@
 <li>総WorkSpaces数、Hourly／Monthly、DryRun／実変換、終了、失敗・スキップ、ECS処理時間を確認します。</li>
 </ol>
 <p>取得済み証跡では総数1、Hourly 1、Monthly 0を確認しました。変換や終了がなければ該当ウィジェットが空になることは正常です。</p>
-<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/030-図2-cloudwatch-ダッシュボード-実績1台.png" alt="図2_CloudWatch_ダッシュボード_実績1台" width="1554" height="1304" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/030-図2-cloudwatch-ダッシュボード-実績1台.png?v=20260914" alt="図2_CloudWatch_ダッシュボード_実績1台" width="1554" height="1304" loading="lazy"></div></figure>
 
 
 
@@ -154,15 +165,15 @@
 <li>CSVをダウンロードし、文字化けや列ずれがなく開けることを確認します。</li>
 </ol>
 <p>取得済み証跡では<code class="inline-code">2026/09/08/</code>に、09:01 JST（00:01 UTC）付近で2種類のCSVが保存されました。運用確認では固定日付を使用せず、対象実行日と実際のECS終了時刻に対応するプレフィックスを確認します。</p>
-<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/031-図3-s3-レポート-アクセスログ用バケット確認.png" alt="図3_S3_レポート・アクセスログ用バケット確認" width="1552" height="560" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/031-図3-s3-レポート-アクセスログ用バケット確認.png?v=20260914" alt="図3_S3_レポート・アクセスログ用バケット確認" width="1552" height="560" loading="lazy"></div></figure>
 
 
 
-<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/032-図4-s3-dryrun日次csv出力確認.png" alt="図4_S3_DryRun日次CSV出力確認" width="1552" height="506" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/032-図4-s3-dryrun日次csv出力確認.png?v=20260914" alt="図4_S3_DryRun日次CSV出力確認" width="1552" height="506" loading="lazy"></div></figure>
 
 
 
-<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/033-図5-s3-20260908日次csv出力確認.png" alt="図5_S3_20260908日次CSV出力確認" width="1889" height="1333" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/033-図5-s3-20260908日次csv出力確認.png?v=20260914" alt="図5_S3_20260908日次CSV出力確認" width="1889" height="1333" loading="lazy"></div></figure>
 
 
 
@@ -217,11 +228,11 @@
 <p><code class="inline-code">DryRun=No</code> の実行後はCSVだけで完了判定せず、WorkSpacesコンソールの課金モードも照合します。CSVに <code class="inline-code">Failed to change mode</code> 等がある場合は、同時刻のCloudWatch Logsを確認します。</p>
 <h3 id="6-ダッシュボードの台数-変換結果を確認する">6. ダッシュボードの台数・変換結果を確認する</h3>
 <p>監視対象台数、課金モードの変換件数、Dry Runおよび実際の終了件数の時系列を確認します。</p>
-<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/034-図6-cloudwatchダッシュボード-監視対象1台.png" alt="図6_CloudWatchダッシュボード_監視対象1台" width="1517" height="853" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/034-図6-cloudwatchダッシュボード-監視対象1台.png?v=20260914" alt="図6_CloudWatchダッシュボード_監視対象1台" width="1517" height="853" loading="lazy"></div></figure>
 
 
 
-<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/035-図7-cloudwatchダッシュボード-変換実績なし.png" alt="図7_CloudWatchダッシュボード_変換実績なし" width="1517" height="853" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/035-図7-cloudwatchダッシュボード-変換実績なし.png?v=20260914" alt="図7_CloudWatchダッシュボード_変換実績なし" width="1517" height="853" loading="lazy"></div></figure>
 
 
 
@@ -234,11 +245,11 @@
 <li>対象リージョンの走査、WorkSpaces件数、CSV出力、完了ログを確認します。</li>
 </ol>
 <p>ロググループの保持期間は365日です。</p>
-<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/036-図8-cloudwatchlogs-ログストリーム一覧.png" alt="図8_CloudWatchLogs_ログストリーム一覧" width="1554" height="1248" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/036-図8-cloudwatchlogs-ログストリーム一覧.png?v=20260914" alt="図8_CloudWatchLogs_ログストリーム一覧" width="1554" height="1248" loading="lazy"></div></figure>
 
 
 
-<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/037-図9-cloudwatchlogs-実行パラメータ-dryrun-yes実績.png" alt="図9_CloudWatchLogs_実行パラメータ_DryRun-Yes実績" width="1554" height="1248" loading="lazy"></div></figure>
+<figure class="screenshot-wide aws-console-identity"><div class="screenshot-frame"><img src="../assets/img/workspaces-skill-transfer/workspaces-cost-optimizer/037-図9-cloudwatchlogs-実行パラメータ-dryrun-yes実績.png?v=20260914" alt="図9_CloudWatchLogs_実行パラメータ_DryRun-Yes実績" width="1554" height="1248" loading="lazy"></div></figure>
 
 
 
@@ -254,10 +265,10 @@
 </ul>
 <p>詳細は <a href="workspaces-cost-optimizer-reports.html#costOptimizerSample">説明用サンプル5台の見方</a> を参照します。</p>
 <h2 id="運用後確認">運用後確認</h2>
-<ul class="check-list">
-<li><input disabled="" type="checkbox"> 対象実行のECSタスクが正常終了していること。</li>
-<li><input disabled="" type="checkbox"> 対象日のS3 CSVが生成され、内容を開けること。</li>
-<li><input disabled="" type="checkbox"> 対象リージョンのログに未解決のエラーがなく、実行パラメータを確認できること。</li>
+<ul>
+<li>対象実行のECSタスクが正常終了していること。</li>
+<li>対象日のS3 CSVが生成され、内容を開けること。</li>
+<li>対象リージョンのログに未解決のエラーがなく、実行パラメータを確認できること。</li>
 </ul>
 </section>
 <hr>
