@@ -571,8 +571,6 @@ const shell = (page, body) => `<!DOCTYPE html>
     <div class="header-actions">
       <button class="icon-button theme-toggle" type="button" title="テーマを切り替え" aria-label="テーマを切り替え">☀</button>
       <nav class="nav" aria-label="Global navigation">
-        <a href="../"><span class="nav-icon" aria-hidden="true">⌂</span>Home</a>
-        <a href="https://github.com/hsmts2"><span class="nav-icon" aria-hidden="true">▦</span>Repositories</a>
         <a href="https://github.com/hsmts2/Documentation"><span class="nav-icon" aria-hidden="true">◆</span>GitHub</a>
       </nav>
     </div>
@@ -584,8 +582,7 @@ ${sidebarPlaceholder}
         <a href="../"><span class="nav-icon" aria-hidden="true">⌂</span>Home</a>
         <span>トピック</span>
       </nav>
-      <h1>${htmlEscape(page.title)}</h1>
-      <p class="lead">${page.lead}</p>
+      ${page.hero ? "" : `<h1>${htmlEscape(page.title)}</h1><p class="lead">${page.lead}</p>`}
 ${body}
     </main>
   </div>
@@ -635,33 +632,7 @@ for (const page of pageSpecs) {
     body = convertSourceLinksToCards(body);
   }
   if (page.hero) {
-    body = `<nav class="skill-transfer-journey" aria-label="マルチVPC・閉域VDI基盤案件の詳細手順">
-      <a href="workspaces-managed-ad.html"><strong>1. Managed AD</strong><span>構成・作成・ユーザー管理</span></a>
-      <a href="workspaces-management-ec2.html"><strong>2. 管理用EC2</strong><span>接続・ADUC・GPMC</span></a>
-      <a href="workspaces-ad-connector.html"><strong>3. AD Connector</strong><span>権限委任・Peering・作成</span></a>
-      <a href="workspaces-provisioning-gpo.html"><strong>4. WorkSpaces</strong><span>作成・OU・GPO</span></a>
-      <a href="workspaces-image-bundle.html"><strong>5. イメージ展開</strong><span>Image Checker・共有</span></a>
-      <a href="workspaces-patch-manager.html"><strong>6. パッチ運用</strong><span>Scan・Install・証跡</span></a>
-      <a href="workspaces-cost-optimizer.html"><strong>7. コスト最適化</strong><span>デプロイ・監視・設定変更</span></a>
-      <a href="workspaces-cloudwatch-monitoring.html"><strong>8. 監視・通知</strong><span>CloudWatch・SNS・動作確認</span></a>
-    </nav>
-    <figure class="architecture-figure"><figcaption>全体構成: 4つのVPCとオンプレミス拠点をDirect Connectで接続し、Managed AD、WorkSpaces、ファイル共有および管理機能を分離する</figcaption><img src="../assets/img/workspaces-skill-transfer/workspaces-skill-transfer-architecture.png" alt="4つのVPCとオンプレミス拠点を接続するAmazon WorkSpaces全体ネットワーク構成図" loading="eager"></figure>
-    <div class="callout callout-info"><strong>ℹ️ 情報：構成図と検証環境の範囲</strong><p>上図は閉域VDI基盤の4 VPC構成例です。詳細手順に登場するVPC005・006は追加展開例として扱います。Cost Optimizerの構築検証では、図の管理VPCと別に専用VPC（10.250.0.0/24）を作成しています。各構成の設定値を混在させず、作業対象のパラメータを照合します。</p></div>
-    <h2 id="environment-components">環境構成</h2>
-    <p>オンプレミス拠点とAWS CloudをDirect Connectで接続し、認証・管理系とVDI系の役割を4つのVPCへ分離する</p>
-    <table>
-      <thead><tr><th>構成要素</th><th>主な役割</th></tr></thead>
-      <tbody>
-        <tr><td>オンプレミス拠点</td><td>利用者・管理者の接続元、既存ネットワークとの連携</td></tr>
-        <tr><td>Direct Connect</td><td>オンプレミス拠点とAWS Cloud間の閉域接続</td></tr>
-        <tr><td><code>ad-vpc-001</code></td><td>運用・中継用リソースを配置するネットワーク</td></tr>
-        <tr><td><code>ad-vpc-002</code></td><td>AWS Managed Microsoft AD、管理用EC2、FSxおよびCost Optimizerを配置する管理・認証ネットワーク</td></tr>
-        <tr><td><code>ad-vpc-003</code></td><td>AD ConnectorとAmazon WorkSpacesを配置するVDIネットワーク</td></tr>
-        <tr><td><code>ad-vpc-004</code></td><td>追加のAD ConnectorとAmazon WorkSpacesを配置するVDIネットワーク</td></tr>
-      </tbody>
-    </table>
-    <p>掲載内容では、検証環境のドメイン名に<code>ad.example.com</code>、NetBIOS名に<code>ad</code>を使用しています</p>
-    <hr>\n${body}`;
+    body = fs.readFileSync(path.join(scriptDir, "workspaces-overview-body.html"), "utf8");
   }
   body = body.replace(/である(?=。|<\/|\n)/g, "です");
   fs.writeFileSync(path.join(tutorialRoot, page.file), shell(page, body), "utf8");

@@ -1,0 +1,137 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="970" viewBox="0 0 1200 970">
+  <defs>
+    <marker id="arrow-blue" markerWidth="10" markerHeight="10" refX="9" refY="3.5" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L10,3.5 L0,7 Z" fill="#147EBA"/></marker>
+    <marker id="arrow-green" markerWidth="10" markerHeight="10" refX="9" refY="3.5" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L10,3.5 L0,7 Z" fill="#1D8102"/></marker>
+    <marker id="arrow-orange" markerWidth="10" markerHeight="10" refX="9" refY="3.5" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L10,3.5 L0,7 Z" fill="#FF9900"/></marker>
+    <clipPath id="clip-ou"><rect x="1245" y="223" width="605" height="280"/></clipPath>
+    <clipPath id="clip-gpo"><rect x="1245" y="623" width="605" height="280"/></clipPath>
+    <style>
+      text { font-family: "Yu Gothic", "Meiryo", Arial, sans-serif; fill: #232F3E; }
+      .title { font-size: 48px; font-weight: 500; }
+      .subtitle { font-size: 21px; fill: #5F6B7A; }
+      .section { font-size: 16px; font-weight: 700; letter-spacing: 1.5px; fill: #5F6B7A; }
+      .label { font-size: 18px; font-weight: 700; }
+      .body { font-size: 16px; }
+      .small { font-size: 13px; fill: #5F6B7A; }
+      .micro { font-size: 11px; fill: #6B7280; }
+      .num { font-size: 18px; font-weight: 700; fill: #147EBA; text-anchor: middle; dominant-baseline: middle; }
+    </style>
+    <g id="folder"><path d="M0 6h12l4 5h22v24H0z" fill="#F5C242" stroke="#9A6B00" stroke-width="1.4"/><path d="M0 11h38v5H0z" fill="#FFD56A"/></g>
+    <g id="policy"><path d="M0 0h26l9 9v39H0z" fill="#FFFFFF" stroke="#1D8102" stroke-width="2"/><path d="M26 0v10h9" fill="none" stroke="#1D8102" stroke-width="2"/><path d="M7 20h20M7 28h20M7 36h14" stroke="#1D8102" stroke-width="2"/></g>
+    <g id="user"><circle cx="14" cy="11" r="8" fill="#8A94A3"/><path d="M2 40c0-11 5-17 12-17s12 6 12 17z" fill="#8A94A3"/></g>
+    <g id="group"><circle cx="12" cy="10" r="7" fill="#147EBA"/><circle cx="30" cy="12" r="7" fill="#5CA5D1"/><path d="M1 36c0-9 4-14 11-14s11 5 11 14zM19 38c0-9 4-14 11-14s11 5 11 14z" fill="#147EBA"/></g>
+  </defs>
+
+  <rect width="1920" height="1080" fill="#FFFFFF"/>
+  <rect width="1920" height="8" fill="#FF9900"/>
+  <text class="title" x="62" y="73">Amazon WorkSpaces 用 OU・GPO 構成（今回）</text>
+  <text class="subtitle" x="64" y="112">専用OU、最小権限委任、ターゲットOU、専用GPOを一つの管理境界に集約</text>
+
+  <!-- Main architecture boundary -->
+  <rect x="45" y="160" width="1140" height="790" fill="#FFFFFF" stroke="#232F3E" stroke-width="3"/>
+  <text x="75" y="195" class="section">AWS ENVIRONMENT</text>
+
+  <!-- Services -->
+  <g transform="translate(78 238)">
+    <rect x="0" y="0" width="235" height="82" fill="#FFFFFF" stroke="#9CA3AF" stroke-width="1.5"/>
+    <rect x="0" y="0" width="10" height="82" fill="#FF9900"/>
+    <rect x="27" y="18" width="42" height="42" rx="4" fill="#FF9900"/>
+    <text x="48" y="45" text-anchor="middle" font-size="14" font-weight="700" style="fill:#FFFFFF">AWS</text>
+    <text x="82" y="34" class="label">Amazon</text>
+    <text x="82" y="56" class="label">WorkSpaces</text>
+  </g>
+  <g transform="translate(78 370)">
+    <rect x="0" y="0" width="235" height="82" fill="#FFFFFF" stroke="#9CA3AF" stroke-width="1.5"/>
+    <rect x="0" y="0" width="10" height="82" fill="#147EBA"/>
+    <circle cx="49" cy="41" r="21" fill="#147EBA"/>
+    <path d="M38 41h22M49 30v22" stroke="#FFFFFF" stroke-width="3"/>
+    <text x="82" y="48" class="label">AD Connector</text>
+  </g>
+  <path d="M196 320V366" stroke="#FF9900" stroke-width="3.5" marker-end="url(#arrow-orange)"/>
+  <text x="214" y="349" class="small">認証要求</text>
+
+  <!-- Domain -->
+  <rect x="365" y="210" width="775" height="675" fill="#FFFFFF" stroke="#4B5563" stroke-width="2.5"/>
+  <rect x="365" y="210" width="775" height="62" fill="#F7F8F9"/>
+  <text x="395" y="244" font-size="22" font-weight="700">ad.example.com</text>
+  <text x="1108" y="244" text-anchor="end" class="small">AWS Managed Microsoft AD</text>
+  <line x1="745" y1="293" x2="745" y2="844" stroke="#D1D5DB"/>
+
+  <!-- OU structure -->
+  <text class="section" x="400" y="307">OU STRUCTURE</text>
+  <g transform="translate(403 334)">
+    <use href="#folder" x="0" y="0"/>
+    <text class="label" x="51" y="27">ad</text>
+    <path d="M19 40V75 M19 75H68" stroke="#9CA3AF" stroke-width="2" fill="none"/>
+    <use href="#folder" x="68" y="56"/>
+    <text class="body" x="119" y="83">Computers</text>
+    <path d="M87 96V138 M87 130H136" stroke="#9CA3AF" stroke-width="2" fill="none"/>
+    <rect x="130" y="108" width="193" height="57" fill="#F4F9FC" stroke="#147EBA" stroke-width="2"/>
+    <use href="#folder" x="142" y="117"/>
+    <text class="label" x="193" y="145">WorkSpaces</text>
+    <path d="M226 166V202" stroke="#9CA3AF" stroke-width="2"/>
+    <rect x="154" y="202" width="169" height="46" fill="#FFFFFF" stroke="#9CA3AF"/>
+    <text class="body" x="238" y="231" text-anchor="middle">WSAMZN-*</text>
+  </g>
+
+  <!-- Accounts and delegation -->
+  <text class="section" x="775" y="307">SERVICE ACCOUNT &amp; DELEGATION</text>
+  <g transform="translate(780 340)">
+    <use href="#user" x="0" y="0"/>
+    <text class="label" x="48" y="18">ADConnectorService</text>
+    <text class="small" x="48" y="40">ad\Users</text>
+    <path d="M119 55V95" stroke="#147EBA" stroke-width="3" marker-end="url(#arrow-blue)"/>
+    <text class="small" x="138" y="79">member</text>
+    <use href="#group" x="0" y="105"/>
+    <text class="label" x="48" y="124">Connectors</text>
+    <text class="small" x="48" y="146">グローバル／セキュリティ</text>
+  </g>
+  <path d="M788 500 C720 520,690 522,650 488" stroke="#147EBA" stroke-width="3" fill="none" marker-end="url(#arrow-blue)"/>
+  <text x="875" y="578" class="small" text-anchor="middle">WorkSpaces OU に委任</text>
+  <text x="875" y="598" class="micro" text-anchor="middle">Computer objects: Create / Delete / Read / Write</text>
+
+  <!-- Target OU -->
+  <path d="M313 411 C338 411,344 411,363 411 C392 411,414 435,532 466" stroke="#FF9900" stroke-width="4" fill="none" marker-end="url(#arrow-orange)"/>
+  <text x="326" y="395" class="small" font-weight="700">TARGET OU</text>
+  <text x="100" y="483" class="micro">OU=WorkSpaces,OU=Computers,OU=ad,</text>
+  <text x="100" y="499" class="micro">DC=ad,DC=example,DC=com</text>
+
+  <!-- GPO -->
+  <rect x="402" y="635" width="700" height="177" fill="#F7FBF5" stroke="#1D8102" stroke-width="2"/>
+  <use href="#policy" x="427" y="666"/>
+  <text x="482" y="679" font-size="20" font-weight="700">Amazon WorkSpaces DCV Policy</text>
+  <text x="482" y="704" class="small">直接リンク：ad\Computers\WorkSpaces</text>
+  <text x="482" y="730" class="small">リンク有効 / 強制なし / WMIフィルターなし / Authenticated Users</text>
+  <line x1="427" y1="752" x2="1074" y2="752" stroke="#C9E4C0"/>
+  <text x="427" y="781" class="body" font-weight="700">Configure clipboard redirection</text>
+  <text x="706" y="781" class="body" fill="#1D8102">Enabled / Copy and Paste</text>
+  <path d="M589 635C585 589 584 548 584 505" stroke="#1D8102" stroke-width="4" fill="none" marker-end="url(#arrow-green)"/>
+  <text x="607" y="620" class="small" fill="#1D8102">GPO APPLY</text>
+
+  <!-- Callouts -->
+  <g transform="translate(332 446)"><circle cx="0" cy="0" r="20" fill="#FFFFFF" stroke="#147EBA" stroke-width="2"/><text class="num" x="0" y="1">1</text></g>
+  <g transform="translate(1067 489)"><circle cx="0" cy="0" r="20" fill="#FFFFFF" stroke="#147EBA" stroke-width="2"/><text class="num" x="0" y="1">2</text></g>
+  <g transform="translate(367 660)"><circle cx="0" cy="0" r="20" fill="#FFFFFF" stroke="#147EBA" stroke-width="2"/><text class="num" x="0" y="1">3</text></g>
+
+  <rect x="78" y="854" width="1024" height="62" fill="#FFF8EB" stroke="#FF9900" stroke-width="1.5"/>
+  <circle cx="102" cy="885" r="19" fill="#FFFFFF" stroke="#147EBA" stroke-width="2"/><text class="num" x="102" y="886">4</text>
+  <text x="137" y="878" class="body" font-weight="700">ターゲットOU変更後に作成または再構築したWorkSpaceが対象</text>
+  <text x="137" y="900" class="small">既存WorkSpaceのコンピューターオブジェクトは自動移動されない。</text>
+
+  <!-- Evidence panel -->
+  <text x="1230" y="183" class="section">IMPLEMENTATION EVIDENCE</text>
+  <rect x="1228" y="197" width="639" height="339" fill="#FFFFFF" stroke="#9CA3AF" stroke-width="1.5"/>
+  <rect x="1228" y="197" width="639" height="26" fill="#232F3E"/>
+  <text x="1244" y="215" font-size="12" font-weight="700" style="fill:#FFFFFF">01  OU配置の確認（ADUC）</text>
+  <text x="1245" y="522" class="micro">ad\Computers\WorkSpaces と WSAMZN-* コンピューターを確認</text>
+
+  <rect x="1228" y="597" width="639" height="339" fill="#FFFFFF" stroke="#9CA3AF" stroke-width="1.5"/>
+  <rect x="1228" y="597" width="639" height="26" fill="#232F3E"/>
+  <text x="1244" y="615" font-size="12" font-weight="700" style="fill:#FFFFFF">02  GPOリンクの確認（GPMC）</text>
+  <text x="1245" y="922" class="micro">専用OUへの直接リンク、リンク有効、強制なし、WMIフィルターなしを確認</text>
+
+  <line x1="62" y1="985" x2="1858" y2="985" stroke="#D1D5DB"/>
+  <text x="62" y="1017" class="small" font-weight="700">運用原則</text>
+  <text x="153" y="1017" class="small">Default Domain PolicyへWorkSpaces固有設定を追加せず、専用GPOを専用OUへ直接リンクする。</text>
+  <text x="62" y="1050" class="micro">Source: Amazon WorkSpaces Administration Guide — Manage your Windows WorkSpaces using Group Policy</text>
+</svg>

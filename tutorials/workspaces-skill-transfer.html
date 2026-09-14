@@ -15,8 +15,6 @@
     <div class="header-actions">
       <button class="icon-button theme-toggle" type="button" title="テーマを切り替え" aria-label="テーマを切り替え">☀</button>
       <nav class="nav" aria-label="Global navigation">
-        <a href="../"><span class="nav-icon" aria-hidden="true">⌂</span>Home</a>
-        <a href="https://github.com/hsmts2"><span class="nav-icon" aria-hidden="true">▦</span>Repositories</a>
         <a href="https://github.com/hsmts2/Documentation"><span class="nav-icon" aria-hidden="true">◆</span>GitHub</a>
       </nav>
     </div>
@@ -82,216 +80,58 @@
       <a href="troubleshooting.html">障害切り分けチェックリスト</a>
       <a href="eol.html">EOL / ライフサイクル一覧表</a>
     </aside>
-    <main class="content workspaces-skill-transfer-guide"><nav class="breadcrumb" aria-label="Breadcrumb"><a href="../">Home</a><span>トピック</span></nav><h1>全体構築・運用順序</h1>
-
-
-    <figure class="architecture-figure"><figcaption>全体構成: 4つのVPCとオンプレミス拠点をDirect Connectで接続し、Managed AD、WorkSpaces、ファイル共有および管理機能を分離する</figcaption><img src="../assets/img/workspaces-skill-transfer/workspaces-skill-transfer-architecture.png" alt="4つのVPCとオンプレミス拠点を接続するAmazon WorkSpaces全体ネットワーク構成図" loading="eager"></figure>
-    <div class="callout callout-info"><strong>ℹ️ 情報：構成図と検証環境の範囲</strong><p>上図は閉域VDI基盤の4 VPC構成例です。詳細手順に登場するVPC005・006は追加展開例として扱います。Cost Optimizerの構築検証では、図の管理VPCと別に専用VPC（10.250.0.0/24）を作成しています。各構成の設定値を混在させず、作業対象のパラメータを照合します。</p></div>
-    <h2 id="environment-components">環境構成</h2>
-    <p>オンプレミス拠点とAWS CloudをDirect Connectで接続し、認証・管理系とVDI系の役割を4つのVPCへ分離する</p>
-    <div class="guide-table-scroll"><table class="guide-table"><colgroup><col style="width:30%"><col style="width:70%"></colgroup>
-      <thead><tr><th>構成要素</th><th>主な役割</th></tr></thead>
-      <tbody>
-        <tr><td>オンプレミス拠点</td><td>利用者・管理者の接続元、既存ネットワークとの連携</td></tr>
-        <tr><td>Direct Connect</td><td>オンプレミス拠点とAWS Cloud間の閉域接続</td></tr>
-        <tr><td><code class="inline-code">ad-vpc-001</code></td><td>運用・中継用リソースを配置するネットワーク</td></tr>
-        <tr><td><code class="inline-code">ad-vpc-002</code></td><td>AWS Managed Microsoft AD、管理用EC2、FSxおよびCost Optimizerを配置する管理・認証ネットワーク</td></tr>
-        <tr><td><code class="inline-code">ad-vpc-003</code></td><td>AD ConnectorとAmazon WorkSpacesを配置するVDIネットワーク</td></tr>
-        <tr><td><code class="inline-code">ad-vpc-004</code></td><td>追加のAD ConnectorとAmazon WorkSpacesを配置するVDIネットワーク</td></tr>
-      </tbody>
-    </table></div>
-    <p>掲載内容では、検証環境のドメイン名に<code class="inline-code">ad.example.com</code>、NetBIOS名に<code class="inline-code">ad</code>を使用しています</p>
-    <hr>
-<section id="overview" class="procedure-document">
-
-<h2 id="全体構築-運用順序">全体構築・運用順序</h2>
-<h3 id="仕様">仕様</h3>
-<h4 id="構成-動作">構成・動作</h4>
-<p>Managed ADが認証とDNSを提供し、AD Connectorを介してWorkSpacesを利用します。管理用EC2からユーザー、OU、権限委任、GPOを管理します。パッチ適用、コスト最適化、監視通知は、それぞれの管理対象と実行権限を確認して導入します。</p>
-<h4 id="管理範囲">管理範囲</h4>
-<p>AWS管理のドメインコントローラーとGPO、お客様が管理するEC2・OU・GPOを区別します。ドメインコントローラー用SG、管理用EC2のSG、AD ConnectorのSGは、それぞれDirectory ID、VPC、関連リソースを照合します。</p>
-<h3 id="構築作業">構築作業</h3>
-<h4 id="認証-ネットワークの準備">認証・ネットワークの準備</h4>
-<div class="guide-table-scroll"><table class="guide-table"><colgroup><col style="width:24%"><col style="width:38%"><col style="width:38%"></colgroup>
-<thead>
-<tr>
-<th>順序</th>
-<th>作業</th>
-<th>次へ進む条件</th>
-
-</tr>
-</thead>
-<tbody><tr>
-<td>1</td>
-<td>Managed ADを作成</td>
-<td>アクティブ、DNS IP、Directory ID、2サブネットを確認</td>
-
-</tr>
-<tr>
-<td>2</td>
-<td>ユーザー・グループを準備</td>
-<td>利用ユーザーと所属グループを確認</td>
-
-</tr>
-<tr>
-<td>3</td>
-<td>管理用EC2を起動・接続</td>
-<td>ドメイン参加とAD管理ツールの利用を確認</td>
-
-</tr>
-<tr>
-<td>4</td>
-<td>サービスアカウント、OU、権限委任を準備</td>
-<td>Connectorsの所属と対象OUのACLを確認</td>
-
-</tr>
-<tr>
-<td>5</td>
-<td>VPCピアリング・ルート・DC用SGを設定</td>
-<td>SG変更後に2台のDNS／DCへの名前解決と通信を確認</td>
-
-</tr>
-<tr>
-<td>6</td>
-<td>AD Connectorを作成</td>
-<td>アクティブ、接続先ドメイン、2サブネットを確認</td>
-
-</tr>
-</tbody></table></div>
-<h4 id="workspaces-ou-gpo">WorkSpaces・OU・GPO</h4>
-<div class="guide-table-scroll"><table class="guide-table"><colgroup><col style="width:24%"><col style="width:38%"><col style="width:38%"></colgroup>
-<thead>
-<tr>
-<th>順序</th>
-<th>作業</th>
-<th>次へ進む条件</th>
-
-</tr>
-</thead>
-<tbody><tr>
-<td>7</td>
-<td>AD ConnectorをWorkSpacesへ登録</td>
-<td>ディレクトリ登録とWorkSpaces用サブネットを確認</td>
-
-</tr>
-<tr>
-<td>8</td>
-<td>ターゲットOUを設定</td>
-<td>既存OUとConnectorsへの委任を照合し、DNを保存</td>
-
-</tr>
-<tr>
-<td>9</td>
-<td>パイロットWorkSpaceを作成・接続</td>
-<td>AVAILABLE、OU所属、クライアント接続を確認</td>
-
-</tr>
-<tr>
-<td>10</td>
-<td>GPOを作成・リンク</td>
-<td>管理テンプレート、GPO設定、対象OUのリンクを確認</td>
-
-</tr>
-<tr>
-<td>11</td>
-<td>GPO適用と業務動作を確認</td>
-<td>gpupdate、gpresult、対象設定の実動作を確認</td>
-
-</tr>
-</tbody></table></div>
-<div class="callout callout-info"><p><strong>ℹ️ 情報：OU準備とターゲットOU設定の順序</strong></p>
-<p>OU作成・権限委任は管理用EC2から先に実施できます。WorkSpaces側のターゲットOU設定はディレクトリ登録後、新規WorkSpaceの作成前に実施します。既存のOU・委任は再作成せず、同じ対象と設定内容を確認します。GPO適用確認はGPO作成後に実施します。</p>
+    <main class="content workspaces-skill-transfer-guide">
+      <nav class="breadcrumb" aria-label="Breadcrumb"><a href="../">Home</a><span>トピック</span></nav>
+<div class="overview-lead">
+  <p class="overview-kicker">マルチVPC・閉域VDI基盤案件</p>
+  <h1>全体構築・運用順序</h1>
+  <p>認証基盤からVDIの利用開始、継続運用までを、依存関係と確認ポイントで整理します。各工程の詳細は個別ページに分け、このページを全体の道筋として使用します。</p>
 </div>
-<h4 id="イメージ-展開">イメージ・展開</h4>
-<div class="guide-table-scroll"><table class="guide-table"><colgroup><col style="width:24%"><col style="width:38%"><col style="width:38%"></colgroup>
-<thead>
-<tr>
-<th>順序</th>
-<th>作業</th>
-<th>次へ進む条件</th>
 
-</tr>
-</thead>
-<tbody><tr>
-<td>12</td>
-<td>参照WorkSpaceを準備しImage Checkerを実行</td>
-<td>イメージ作成要件を満たし、全項目PASSED</td>
+<nav class="overview-quicknav" aria-label="ページ内の構成">
+  <a href="#network">01 基盤と認証</a><a href="#workspace">02 VDI展開</a><a href="#operations">03 継続運用</a>
+</nav>
 
-</tr>
-<tr>
-<td>13</td>
-<td>カスタムイメージとバンドルを作成</td>
-<td>Image ID、Bundle ID、コンピュートと容量を確認</td>
-
-</tr>
-<tr>
-<td>14</td>
-<td>検証用WorkSpaceで確認</td>
-<td>接続、アプリ、OU、GPO、容量を確認</td>
-
-</tr>
-<tr>
-<td>15</td>
-<td>必要な場合のみ他アカウントへ共有</td>
-<td>共有先でイメージをコピーし、バンドルを作成・検証</td>
-
-</tr>
-</tbody></table></div>
-<h4 id="運用機能の構築">運用機能の構築</h4>
-<div class="guide-table-scroll"><table class="guide-table"><colgroup><col style="width:24%"><col style="width:38%"><col style="width:38%"></colgroup>
-<thead>
-<tr>
-<th>順序</th>
-<th>作業</th>
-<th>次へ進む条件</th>
-
-</tr>
-</thead>
-<tbody><tr>
-<td>16</td>
-<td>Systems Manager環境を構築</td>
-<td>IAM、通信、SSM Agent、マネージドノードを確認</td>
-
-</tr>
-<tr>
-<td>17</td>
-<td>Patch Managerを設定</td>
-<td>ベースライン、タグ、対象、時間帯、出力先を確認</td>
-
-</tr>
-<tr>
-<td>18</td>
-<td>Scan・Installを実行して確認</td>
-<td>コマンド結果、実際のKB適用、再起動、S3ログを照合</td>
-
-</tr>
-<tr>
-<td>19</td>
-<td>Cost Optimizerを構築</td>
-<td>バージョンと設定を確認し、DryRun=Yesで構築</td>
-
-</tr>
-<tr>
-<td>20</td>
-<td>初回レポートを確認し、必要に応じDry Run解除</td>
-<td>対象・除外・しきい値・変更承認を確認</td>
-
-</tr>
-<tr>
-<td>21</td>
-<td>実行時刻の方針を確認</td>
-<td>UTC日内の重複実行を避け、CloudFormationで構成管理</td>
-
-</tr>
-<tr>
-<td>22</td>
-<td>CloudWatch・SNSを設定</td>
-<td>対象メトリクス、しきい値、SNS購読・承認、通知先を確認</td>
-
-</tr>
-</tbody></table></div>
-<p>監視・通知は、対象リソースの作成後から並行して準備できます。本番運用へ移る前に、必要な監視と通知試験を完了します。</p>
+<section class="overview-section" id="network">
+  <p class="overview-phase">PHASE 01 / FOUNDATION</p>
+  <h2>ネットワーク・認証基盤を整える</h2>
+  <p>VPC間の接続とDNS通信を確認してから、Managed Microsoft ADを配置します。管理用EC2からディレクトリを操作できる状態を作り、AD Connector用のアカウントと権限委任を設定します。</p>
+  <figure class="architecture-figure"><img src="../assets/img/workspaces-skill-transfer/workspaces-skill-transfer-architecture.png" alt="4つのVPCとオンプレミス拠点を接続する閉域VDI基盤の構成図" loading="eager"><figcaption>全体構成例。VPCの役割・CIDR・接続経路は実際の環境の設計値と照合します。</figcaption></figure>
+  <div class="overview-steps">
+    <article><span>01</span><h3><a href="workspaces-managed-ad.html">Managed Microsoft AD</a></h3><p>ディレクトリ、DNS IP、配置サブネットを確定し、ユーザーとグループを準備。</p><small>確認：ディレクトリが Active、2台のDNSへの名前解決</small></article>
+    <article><span>02</span><h3><a href="workspaces-management-ec2.html">管理用EC2・AD管理</a></h3><p>ドメイン参加後、ADUCとGPMCから管理対象のOU・ユーザーを操作。</p><small>確認：ドメイン参加、管理ツールと必要権限</small></article>
+    <article><span>03</span><h3><a href="workspaces-ad-connector.html">AD Connector</a></h3><p>サービスアカウント、権限委任、接続経路とセキュリティグループを整備。</p><small>確認：対象OUへの権限、両方のDNS/DCへの疎通</small></article>
+  </div>
 </section>
+
+<section class="overview-section" id="workspace">
+  <p class="overview-phase">PHASE 02 / DELIVERY</p>
+  <h2>WorkSpacesを展開する</h2>
+  <p>ディレクトリ登録後にWorkSpaces用OUとGPOを整え、バンドルを指定して利用者へ割り当てます。カスタムイメージの作成・他アカウント共有は、基本構成の確認後に進めます。</p>
+  <figure class="architecture-figure overview-detail-figure"><img src="../assets/img/workspaces-skill-transfer/workspaces-ou-gpo-ad.png" alt="ad.example.comのWorkSpaces用OU、AD Connector用アカウント、専用GPOの関係図" loading="lazy"><figcaption>OU・GPOの関係。ドメイン表記は <code>ad.example.com</code> に統一した模式図です。</figcaption></figure>
+  <div class="overview-steps">
+    <article><span>04</span><h3><a href="workspaces-provisioning-gpo.html">WorkSpaces・OU・GPO</a></h3><p>ターゲットOUと専用GPOのリンクを確認し、WorkSpaceを作成。</p><small>確認：意図したOUへのコンピューター配置、GPOの適用</small></article>
+    <article><span>05</span><h3><a href="workspaces-image-bundle.html">カスタムイメージ・バンドル</a></h3><p>Image Checkerで検査し、イメージとバンドルを作成・共有。</p><small>確認：共有先アカウントでの利用可否</small></article>
+  </div>
+</section>
+
+<section class="overview-section" id="operations">
+  <p class="overview-phase">PHASE 03 / OPERATIONS</p>
+  <h2>パッチ・コスト・監視を運用に載せる</h2>
+  <p>VDIの利用開始後も、パッチ適用、課金モード判定、監視通知を独立した運用として管理します。変更作業では実行結果と通知到達を確認し、次回の判断に使える記録を残します。</p>
+  <div class="overview-steps">
+    <article><span>06</span><h3><a href="workspaces-patch-manager.html">Systems Manager Patch Manager</a></h3><p>対象タグ、ベースライン、メンテナンスウィンドウを設定。</p><small>確認：実行履歴、成功・失敗と対象インスタンス</small></article>
+    <article><span>07</span><h3><a href="workspaces-cost-optimizer.html">WorkSpaces Cost Optimizer</a></h3><p>ハブアカウントの構成、Dry Run、実行時刻とレポートを確認。</p><small>確認：判定結果、S3レポート、課金モード変更の条件</small></article>
+    <article><span>08</span><h3><a href="workspaces-cloudwatch-monitoring.html">CloudWatch・SNS</a></h3><p>EC2とWorkSpacesのメトリクス、アラーム、通知先を設定。</p><small>確認：SNS購読、アラーム遷移、メール受信</small></article>
+  </div>
+  <div class="overview-diagrams">
+    <figure class="architecture-figure"><img src="../assets/img/workspaces-skill-transfer/cost-optimizer-hub-v2.9.10.png" alt="WorkSpaces Cost Optimizerのハブアカウント単一構成図" loading="lazy"><figcaption>Cost Optimizer：ハブアカウント単一構成（v2.9.10）</figcaption></figure>
+    <figure class="architecture-figure"><img src="../assets/img/workspaces-skill-transfer/cloudwatch-sns-monitoring.png" alt="EC2とWorkSpacesをCloudWatchで監視しSNSから通知する構成図" loading="lazy"><figcaption>CloudWatch監視・SNS通知の構成概要</figcaption></figure>
+  </div>
+</section>
+
+<aside class="overview-note"><strong>構成図の読み方</strong><p>全体図は複数VPCの役割分担を示す構成例です。OU・GPO図はディレクトリ設定、Cost Optimizer図は単一ハブアカウント、監視図はメトリクスから通知までの流れをそれぞれ示します。別の検証環境の設定値を同一のデプロイ構成として扱わないでください。</p></aside>
+
     </main>
   </div>
   <script src="../assets/app.js?v=20260908-skill-transfer1"></script>
