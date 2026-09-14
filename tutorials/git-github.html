@@ -95,9 +95,8 @@
         <h2 id="initial-setup">初期設定</h2>
         <div class="callout"><strong>ℹ️ Git BashとPowerShellの違い</strong><p>どちらもWindows上でコマンドを入力して操作する環境（シェル）<br>Git Bashへの切り替えはOSの変更ではなく、コマンドを解釈する環境の切り替え</p><p><code class="inline-code">git status</code>などのGitコマンドは基本的に共通<br>ファイルの内容表示はGit Bashで<code class="inline-code">cat</code>、PowerShellで<code class="inline-code">Get-Content</code>を使用するなど、一部のコマンドやパス表記に違い</p><p>共通コマンドは「Git Bash / PowerShell」と併記<br>操作手順が異なる場合のみタブで切り替え</p></div>
         <h3 id="installation">1. Gitのインストール</h3>
-        <p>導入済みの場合はGit BashまたはPowerShellでバージョンを確認<br>未導入の場合は下のインストール方法から開始</p>
+        <p>Gitのバージョンを確認</p>
         <div class="code"><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>git --version</code></pre></div>
-        <p>バージョン表示がある場合はGitの実行環境が準備済み</p>
         <div class="tab-group" data-tabs><div class="tabs" role="tablist" aria-label="ブラウザからのインストール / PowerShell（WinGet）"><button type="button" role="tab" id="install-method-t0" aria-controls="install-method-p0" aria-selected="true">ブラウザからのインストール</button><button type="button" role="tab" id="install-method-t1" aria-controls="install-method-p1" aria-selected="false">PowerShell（WinGet）</button></div><div role="tabpanel" id="install-method-p0" aria-labelledby="install-method-t0"><p>Git for Windowsの公式ページから、PCのアーキテクチャに対応するインストーラーを取得<br>取得したファイルを開き、画面に従ってインストールを実行</p><p>出典：<a href="https://git-scm.com/install/windows">Git for Windowsの公式インストールページ</a></p></div><div role="tabpanel" id="install-method-p1" aria-labelledby="install-method-t1" hidden><p>PowerShellを起動し、WinGetでGitをインストール</p><div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>winget install --id Git.Git -e --source winget</code></pre></div></div></div>
         <p>インストール完了後にGit BashまたはPowerShellを起動し、バージョンを再確認</p>
         <div class="code"><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>git --version</code></pre></div>
