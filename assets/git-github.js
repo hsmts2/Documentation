@@ -33,6 +33,7 @@ document.querySelectorAll('.git-guide details .code pre code').forEach(code => {
       }
       row.append(document.createTextNode(short[3]));
     }
+    else if (/^\s+both modified:/.test(text)) paint(row, text, 'red');
     else if (/^\s+(new file:|modified:|deleted:|renamed:)/.test(text)) paint(row, text, staged ? 'green' : 'red');
     else if (/^[ MADRCU?!]{2} /.test(text) && /[MADRCU?!]/.test(text.slice(0, 2))) {
       paint(row, text[0], 'green');

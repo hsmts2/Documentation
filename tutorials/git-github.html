@@ -413,8 +413,142 @@ git commit -m "Stop tracking test.dat"</code></pre></div>
         <p><strong>過去のコミットにはファイルが残る点に注意</strong>。秘密情報を登録した場合は、認証情報の失効・再発行や履歴からの削除など、別途対応が必要</p>
         </details>
       </section>
+<section><h2 id="profile-merge-practice">ブランチとコンフリクト解消の演習</h2>
+        <p>自己紹介ファイルの同じ行を、mainではTerraform、作業ブランチではDockerへ更新した履歴を統合する演習。実行ログを基に、入力ミスと不要な空行を除いて記載</p>
+        <p>対象は非公開の演習用リポジトリ<code class="inline-code">hsmts2/profile-merge-practice</code>。cloneにはアクセス権とGitHub認証が必要（一般公開のサンプルではないため、第三者が実施する場合は同じ分岐状態の自分用リポジトリを準備）</p>
+        <h3 id="practice-clone">1. 演習用リポジトリのclone</h3>
+        <p>開始場所はGit Bashの<code class="inline-code">~/github-book</code>。既存のprojectやfirstではなく、別フォルダへ履歴ごと複製</p>
+        <div class="code"><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>git clone https://github.com/hsmts2/profile-merge-practice.git</code></pre></div><details><summary><strong>実行結果</strong></summary><div class="code"><div class="code-header"><span>実行結果</span><button class="copy" type="button">Copy</button></div><pre><code>Cloning into 'profile-merge-practice'...
+remote: Enumerating objects: 9, done.
+remote: Counting objects: 100% (9/9), done.
+remote: Compressing objects: 100% (3/3), done.
+remote: Total 9 (delta 3), reused 9 (delta 3), pack-reused 0 (from 0)
+Receiving objects: 100% (9/9), done.
+Resolving deltas: 100% (3/3), done.</code></pre></div></details>
+        <p><code class="inline-code">Receiving objects</code>はデータの受信、<code class="inline-code">Resolving deltas</code>は差分からの復元処理。両方が完了し、profile-merge-practiceフォルダを作成</p>
+        <div class="code"><div class="code-header"><span>Git Bash</span><button class="copy" type="button">Copy</button></div><pre><code>cd profile-merge-practice/</code></pre></div><details><summary><strong>実行結果</strong></summary><p>フォルダ移動に成功した場合は出力なし</p></details>
+        <p>以後の作業場所は<code class="inline-code">~/github-book/profile-merge-practice</code>。cloneには.gitと履歴も含まれるため、git initは不要</p>
+        <h3 id="practice-files">2. 作業ファイルとブランチの確認</h3>
+        <div class="code"><div class="code-header"><span>Git Bash</span><button class="copy" type="button">Copy</button></div><pre><code>ls -la</code></pre></div><details><summary><strong>実行結果</strong></summary><div class="code"><div class="code-header"><span>実行結果</span><button class="copy" type="button">Copy</button></div><pre><code>total 5
+drwxr-xr-x 1 hsmts 197609   0 Sep 16 04:39 ./
+drwxr-xr-x 1 hsmts 197609   0 Sep 16 04:39 ../
+drwxr-xr-x 1 hsmts 197609   0 Sep 16 04:39 .git/
+-rw-r--r-- 1 hsmts 197609 104 Sep 16 04:39 profile.md</code></pre></div></details>
+        <p><code class="inline-code">.git/</code>はGitの管理情報、<code class="inline-code">profile.md</code>は作業ファイル。日時・サイズ・所有者は実行環境によって異なる値</p>
+        <div class="code"><div class="code-header"><span>Git Bash</span><button class="copy" type="button">Copy</button></div><pre><code>cat profile.md</code></pre></div><details><summary><strong>実行結果</strong></summary><div class="code"><div class="code-header"><span>実行結果</span><button class="copy" type="button">Copy</button></div><pre><code># 自己紹介
+
+- 名前: t_hashimoto
+- 職業: エンジニア
+- スキル: AWS, Linux, Terraform</code></pre></div></details>
+        <p>現在はmainの内容を展開しているため、スキルは<code class="inline-code">AWS, Linux, Terraform</code></p>
+        <div class="code"><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>git branch -vva</code></pre></div><details><summary><strong>実行結果</strong></summary><div class="code"><div class="code-header"><span>実行結果</span><button class="copy" type="button">Copy</button></div><pre><code>* main                                  38ec622 [origin/main] Add Terraform skill
+  remotes/origin/HEAD                   -&gt; origin/main
+  remotes/origin/feature/update-profile cd8dc1c Add Docker skill
+  remotes/origin/main                   38ec622 Add Terraform skill</code></pre></div></details>
+        <p><code class="inline-code">-vva</code>は<code class="inline-code">-vv -a</code>をまとめた表示オプション。<code class="inline-code">* main</code>は現在のローカルブランチ、<code class="inline-code">[origin/main]</code>はその追跡先。38ec622はコミットID、Add Terraform skillはコミットメッセージ</p>
+        <p><code class="inline-code">remotes/origin/feature/update-profile</code>は取得したリモート側の状態。履歴は手元に取得済みでも、作業用のローカルブランチはまだ未作成。<code class="inline-code">origin/HEAD -&gt; origin/main</code>はリモートの既定ブランチを示す目印で、現在地のHEADとは別</p>
+        <h3 id="practice-branch">3. ローカルブランチの作成</h3>
+        <div class="code"><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>git branch feature/update-profile origin/feature/update-profile</code></pre></div><details><summary><strong>実行結果</strong></summary><div class="code"><div class="code-header"><span>実行結果</span><button class="copy" type="button">Copy</button></div><pre><code>branch 'feature/update-profile' set up to track 'origin/feature/update-profile'.</code></pre></div></details>
+        <p>構文は<code class="inline-code">git branch 新しいブランチ名 作成元</code>。Docker版のcd8dc1cを指すローカルブランチを作り、origin側との追跡関係を設定（切り替えは未実施）</p>
+        <div class="code"><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>git branch</code></pre></div><details><summary><strong>実行結果</strong></summary><div class="code"><div class="code-header"><span>実行結果</span><button class="copy" type="button">Copy</button></div><pre><code>  feature/update-profile
+* main</code></pre></div></details>
+        <div class="code"><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>git branch -vva</code></pre></div><details><summary><strong>実行結果</strong></summary><div class="code"><div class="code-header"><span>実行結果</span><button class="copy" type="button">Copy</button></div><pre><code>  feature/update-profile                cd8dc1c [origin/feature/update-profile] Add Docker skill
+* main                                  38ec622 [origin/main] Add Terraform skill
+  remotes/origin/HEAD                   -&gt; origin/main
+  remotes/origin/feature/update-profile cd8dc1c Add Docker skill
+  remotes/origin/main                   38ec622 Add Terraform skill</code></pre></div></details>
+        <p>ローカルにも2つのブランチが存在。<code class="inline-code">*</code>はmainのままで、手元のprofile.mdもTerraform版のまま</p>
+        <h3 id="practice-diff">4. ブランチ間の差分確認</h3>
+        <div class="code"><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>git diff main feature/update-profile</code></pre></div><details><summary><strong>実行結果</strong></summary><div class="code"><div class="code-header"><span>実行結果</span><button class="copy" type="button">Copy</button></div><pre><code>diff --git a/profile.md b/profile.md
+index eaa12ca..a4c7d2e 100644
+--- a/profile.md
++++ b/profile.md
+@@ -2,4 +2,4 @@
+
+ - 名前: t_hashimoto
+ - 職業: エンジニア
+-- スキル: AWS, Linux, Terraform
++- スキル: AWS, Linux, Docker</code></pre></div></details>
+        <p>比較元はmain、比較先はfeature/update-profile。赤い削除行はTerraform版、緑の追加行はDocker版を表す差分。ファイルを書き換える操作ではなく、ブランチの切り替えも未実施</p>
+        <p>行頭の<code class="inline-code">-- スキル</code>は「差分の削除記号」と「Markdownの箇条書き記号」の組み合わせ。<code class="inline-code">+- スキル</code>も追加記号と箇条書き記号の組み合わせ</p>
+        <figure><figcaption>マージ前の全体像：ローカルとリモートの各ブランチ、作業フォルダの内容</figcaption><img src="../assets/img/profile-merge/local-remote-before-merge.png" alt="マージ前の全体像：ローカルとリモートの各ブランチ、作業フォルダの内容" loading="lazy" style="display:block;width:80%;max-width:100%;height:auto;margin-inline:auto"></figure>
+        <h3 id="practice-conflict">5. マージとコンフリクトの確認</h3>
+        <p>取り込み先は現在のmain、取り込む対象はfeature/update-profile</p>
+        <div class="code"><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>git merge feature/update-profile</code></pre></div><details><summary><strong>実行結果</strong></summary><div class="code"><div class="code-header"><span>実行結果</span><button class="copy" type="button">Copy</button></div><pre><code>Auto-merging profile.md
+CONFLICT (content): Merge conflict in profile.md
+Automatic merge failed; fix conflicts and then commit the result.</code></pre></div></details>
+        <div class="code"><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>git status</code></pre></div><details><summary><strong>実行結果</strong></summary><div class="code"><div class="code-header"><span>実行結果</span><button class="copy" type="button">Copy</button></div><pre><code>On branch main
+Your branch is up to date with 'origin/main'.
+
+You have unmerged paths.
+  (fix conflicts and run "git commit")
+  (use "git merge --abort" to abort the merge)
+
+Unmerged paths:
+  (use "git add &lt;file&gt;..." to mark resolution)
+        both modified:   profile.md
+
+no changes added to commit (use "git add" and/or "git commit -a")</code></pre></div></details>
+        <p><code class="inline-code">both modified: profile.md</code>は双方が変更した同じ箇所を自動統合できない状態。<code class="inline-code">main|MERGING</code>はマージ途中で、新しいマージコミットはまだ未作成</p>
+        <p><code class="inline-code">Your branch is up to date with 'origin/main'.</code>はmainのコミット位置と取得済みorigin/mainが一致する意味。作業ファイルに衝突がないという意味ではない</p>
+        <div class="code"><div class="code-header"><span>Git Bash</span><button class="copy" type="button">Copy</button></div><pre><code>cat profile.md</code></pre></div><details><summary><strong>実行結果</strong></summary><div class="code"><div class="code-header"><span>実行結果</span><button class="copy" type="button">Copy</button></div><pre><code># 自己紹介
+
+- 名前: t_hashimoto
+- 職業: エンジニア
+&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD
+- スキル: AWS, Linux, Terraform
+&#61;&#61;&#61;&#61;&#61;&#61;&#61;
+- スキル: AWS, Linux, Docker
+&gt;&gt;&gt;&gt;&gt;&gt;&gt; feature/update-profile</code></pre></div></details>
+        <p><code class="inline-code">&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD</code>から<code class="inline-code">=======</code>まではmain側のTerraform、区切りから<code class="inline-code">&gt;&gt;&gt;&gt;&gt;&gt;&gt; feature/update-profile</code>までは取り込み側のDocker。これらは解消時に削除する衝突マーカー</p>
+        <h3 id="practice-abort">6. マージの中止と復元確認</h3>
+        <div class="code"><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>git merge --abort</code></pre></div><details><summary><strong>実行結果</strong></summary><p>今回の中止は出力なしで完了</p></details>
+        <div class="code"><div class="code-header"><span>Git Bash</span><button class="copy" type="button">Copy</button></div><pre><code>cat profile.md</code></pre></div><details><summary><strong>実行結果</strong></summary><div class="code"><div class="code-header"><span>実行結果</span><button class="copy" type="button">Copy</button></div><pre><code># 自己紹介
+
+- 名前: t_hashimoto
+- 職業: エンジニア
+- スキル: AWS, Linux, Terraform</code></pre></div></details>
+        <p>今回のように変更のない状態から開始したマージを中止し、Terraform版へ復元。プロンプトはmainに戻り、作業ブランチのDocker版の履歴は保持</p>
+        <h3 id="practice-resolve">7. 再マージとVS Codeでの衝突解消</h3>
+        <div class="code"><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>git merge feature/update-profile</code></pre></div><details><summary><strong>実行結果</strong></summary><div class="code"><div class="code-header"><span>実行結果</span><button class="copy" type="button">Copy</button></div><pre><code>Auto-merging profile.md
+CONFLICT (content): Merge conflict in profile.md
+Automatic merge failed; fix conflicts and then commit the result.</code></pre></div></details>
+        <div class="code"><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>code .</code></pre></div><details><summary><strong>実行結果</strong></summary><p>VS Codeで現在のフォルダを表示</p></details>
+        <figure><figcaption>VS Codeで衝突を確認：現在の変更はmain、入力側の変更はfeature/update-profile</figcaption><img src="../assets/img/profile-merge/vscode-conflict.png" alt="VS Codeで衝突を確認：現在の変更はmain、入力側の変更はfeature/update-profile" loading="lazy" style="display:block;width:80%;max-width:100%;height:auto;margin-inline:auto"></figure>
+        <p>今回は両方のスキルを残すため、衝突部分を次の1行へ統合。名前・職業を保持し、すべての衝突マーカーと重複行を削除</p>
+        <div class="code"><div class="code-header"><span>profile.md</span><button class="copy" type="button">Copy</button></div><pre><code># 自己紹介
+
+- 名前: t_hashimoto
+- 職業: エンジニア
+- スキル: AWS, Linux, Terraform, Docker</code></pre></div>
+        <figure><figcaption>両方のスキルを1行へ統合した編集画面（タブの白い丸は未保存の状態）</figcaption><img src="../assets/img/profile-merge/vscode-resolved-before-save.png" alt="両方のスキルを1行へ統合した編集画面（タブの白い丸は未保存の状態）" loading="lazy" style="display:block;width:80%;max-width:100%;height:auto;margin-inline:auto"></figure>
+        <p>Ctrl＋Sで保存。VS Codeの「両方の変更を取り込む」は2行を残す場合があるため、今回の完成形は上記の1行へ手動で整理</p>
+        <div class="code"><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>git diff --check</code></pre></div><details><summary><strong>実行結果</strong></summary><p>出力なし：今回の差分では衝突マーカーや空白エラーの指摘なし</p></details>
+        <p>このチェックは文章の正しさまで保証するものではないため、TerraformとDockerがともに残っていることも目視確認</p>
+        <h3 id="practice-commit">8. 解消内容の登録とコミット</h3>
+        <div class="code"><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>git add profile.md</code></pre></div><details><summary><strong>実行結果</strong></summary><p>出力なし：修正内容をステージングし、解消済みとして登録</p></details>
+        <p>git add後もマージは途中。保存しただけでは完了せず、次のコミットで履歴への統合を確定</p>
+        <div class="code"><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>git commit -m "Merge profile skill updates"</code></pre></div><details><summary><strong>実行結果</strong></summary><div class="code"><div class="code-header"><span>実行結果</span><button class="copy" type="button">Copy</button></div><pre><code>[main e3e23c7] Merge profile skill updates</code></pre></div></details>
+        <p>e3e23c7が今回作成したマージコミット。プロンプトからMERGINGが消え、main上での統合が完了（コミットIDは実行内容などにより変化）</p>
+        <h3 id="practice-result">9. マージ完了と履歴の確認</h3>
+        <div class="code"><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>git status</code></pre></div><details><summary><strong>実行結果</strong></summary><div class="code"><div class="code-header"><span>実行結果</span><button class="copy" type="button">Copy</button></div><pre><code>On branch main
+Your branch is ahead of 'origin/main' by 2 commits.
+  (use "git push" to publish your local commits)
+
+nothing to commit, working tree clean</code></pre></div></details>
+        <p><code class="inline-code">nothing to commit, working tree clean</code>は未コミットの変更がない状態。<code class="inline-code">ahead of 'origin/main' by 2 commits</code>の2件は、取り込んだDocker側コミットと新しいマージコミット</p>
+        <div class="code"><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>git log --all --graph --oneline</code></pre></div><details><summary><strong>実行結果</strong></summary><div class="code"><div class="code-header"><span>実行結果</span><button class="copy" type="button">Copy</button></div><pre><code>*   e3e23c7 (HEAD -&gt; main) Merge profile skill updates
+|\
+| * cd8dc1c (origin/feature/update-profile, feature/update-profile) Add Docker skill
+* | 38ec622 (origin/main, origin/HEAD) Add Terraform skill
+|/
+* 6810bea Initial profile</code></pre></div></details>
+        <p><code class="inline-code">--all</code>は各参照からたどれる履歴、<code class="inline-code">--graph</code>は履歴のつながり、<code class="inline-code">--oneline</code>は1コミット1行での表示</p>
+        <p>mainはe3e23c7へ進み、2本の線が合流。feature/update-profileはcd8dc1cのまま、origin/mainは38ec622のまま。今回はpush未実施のため、リモート側は未更新</p>
+        <p>ここまででローカルの衝突解消とマージが完了。演習中の確認コマンドや出力は、各「実行結果」を展開して確認</p>
+        </section>
     </main>
-    <aside class="toc" aria-label="Table of contents"><h2>ページ内</h2><a href="#initial-setup">初期設定</a><a href="#installation">1. Gitのインストール</a><a href="#identity">2. コミットに記録する名前・メールの設定</a><a href="#default-branch">3. 初期ブランチ名の設定</a><a href="#editor">4. 使用するエディタの設定</a><a href="#verification">5. 設定結果の確認</a><a href="#repository">リポジトリの初期化とステージング</a><a href="#create-project">1. 作業フォルダの作成・移動</a><a href="#initialize-project">2. リポジトリの初期化</a><a href="#create-readme">3. README.mdの作成</a><a href="#stage-readme">4. README.mdのステージング</a><a href="#stage-status">5. ステージング状態の確認</a><a href="#first-commit">最初のコミット</a><a href="#commit-editor">1. コミットメッセージの入力</a><a href="#commit-result">2. コミット結果の確認</a><a href="#commit-log">3. コミット履歴の確認</a><a href="#track-changes">ファイルの変更・差分確認とコミット</a><a href="#edit-readme">1. README.mdの編集</a><a href="#unstaged-status">2. 変更状態の確認</a><a href="#unstaged-diff">3. 変更内容の確認</a><a href="#stage-update">4. 変更のステージングと差分確認</a><a href="#commit-update">5. 変更のコミット</a><a href="#updated-log">6. 履歴と作業状態の確認</a><a href="#common-commands">よく使うコマンドとファイル</a><a href="#command-init">1. git init：リポジトリの初期化</a><a href="#command-add">2. git add：変更内容のステージング</a><a href="#command-commit">3. git commit：変更履歴の保存</a><a href="#command-config">4. git config：設定の確認・変更</a><a href="#file-gitignore">5. .gitignore：Gitの管理対象から除外</a></aside>
+    <aside class="toc" aria-label="Table of contents"><h2>ページ内</h2><a href="#initial-setup">初期設定</a><a href="#installation">1. Gitのインストール</a><a href="#identity">2. コミットに記録する名前・メールの設定</a><a href="#default-branch">3. 初期ブランチ名の設定</a><a href="#editor">4. 使用するエディタの設定</a><a href="#verification">5. 設定結果の確認</a><a href="#repository">リポジトリの初期化とステージング</a><a href="#create-project">1. 作業フォルダの作成・移動</a><a href="#initialize-project">2. リポジトリの初期化</a><a href="#create-readme">3. README.mdの作成</a><a href="#stage-readme">4. README.mdのステージング</a><a href="#stage-status">5. ステージング状態の確認</a><a href="#first-commit">最初のコミット</a><a href="#commit-editor">1. コミットメッセージの入力</a><a href="#commit-result">2. コミット結果の確認</a><a href="#commit-log">3. コミット履歴の確認</a><a href="#track-changes">ファイルの変更・差分確認とコミット</a><a href="#edit-readme">1. README.mdの編集</a><a href="#unstaged-status">2. 変更状態の確認</a><a href="#unstaged-diff">3. 変更内容の確認</a><a href="#stage-update">4. 変更のステージングと差分確認</a><a href="#commit-update">5. 変更のコミット</a><a href="#updated-log">6. 履歴と作業状態の確認</a><a href="#common-commands">よく使うコマンドとファイル</a><a href="#command-init">1. git init：リポジトリの初期化</a><a href="#command-add">2. git add：変更内容のステージング</a><a href="#command-commit">3. git commit：変更履歴の保存</a><a href="#command-config">4. git config：設定の確認・変更</a><a href="#file-gitignore">5. .gitignore：Gitの管理対象から除外</a><a href="#profile-merge-practice">ブランチとコンフリクト解消の演習</a><a href="#practice-clone">1. 演習用リポジトリのclone</a><a href="#practice-files">2. 作業ファイルとブランチの確認</a><a href="#practice-branch">3. ローカルブランチの作成</a><a href="#practice-diff">4. ブランチ間の差分確認</a><a href="#practice-conflict">5. マージとコンフリクトの確認</a><a href="#practice-abort">6. マージの中止と復元確認</a><a href="#practice-resolve">7. 再マージとVS Codeでの衝突解消</a><a href="#practice-commit">8. 解消内容の登録とコミット</a><a href="#practice-result">9. マージ完了と履歴の確認</a></aside>
   </div>
   <script src="../assets/app.js"></script>
   <script src="../assets/git-github.js"></script>
