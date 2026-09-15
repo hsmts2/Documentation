@@ -356,9 +356,29 @@ cd project</code></pre></div>
         <div class="code"><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>git commit -am "Updates README.md"</code></pre></div>
         <p><code class="inline-code">-a</code>は追跡中のファイルの変更・削除を自動でステージングする指定、<code class="inline-code">-m</code>はメッセージの指定</p>
         <p><strong>未追跡の新規ファイルは-aの対象外</strong>のため、事前に<code class="inline-code">git add</code>が必要。学習中は登録対象を把握しやすいよう、<code class="inline-code">git add</code>と<code class="inline-code">git commit</code>を分けて実行</p>
+        <h3 id="command-config">4. git config：設定の確認・変更</h3>
+        <p>Gitの動作やユーザー情報、コマンドの別名などを設定するためのコマンド</p>
+        <h4>よく使うコマンドに別名を設定</h4>
+        <p><code class="inline-code">git log --graph --oneline</code>を、<code class="inline-code">git g</code>として登録</p>
+        <div class="code"><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>git config --global alias.g "log --graph --oneline"</code></pre></div>
+        <p>登録した別名で実行（<code class="inline-code">--graph</code>は履歴のつながりを図示、<code class="inline-code">--oneline</code>は各コミットを1行で表示）</p>
+        <div class="code"><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>git g</code></pre></div>
+        <h4>状態確認のコマンドを短縮</h4>
+        <p><code class="inline-code">git status -s</code>を、<code class="inline-code">git st</code>として登録</p>
+        <div class="code"><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>git config --global alias.st "status -s"</code></pre></div>
+        <p>登録した別名で実行（表示対象の変更や未追跡ファイルがなければ出力なし）</p>
+        <div class="code"><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>git st</code></pre></div>
+        <h4>登録した設定を確認</h4>
+        <div class="code"><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>git config --global alias.g
+git config --global alias.st</code></pre></div>
+        <p><code class="inline-code">--global</code>は現在のユーザーに共通する設定。別のリポジトリでも利用可能で、ターミナルの再起動後も再設定不要</p>
+        <h4>入力を誤った設定の削除</h4>
+        <p>今回誤って登録した<code class="inline-code">arias.g</code>を削除</p>
+        <div class="code"><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>git config --global --unset arias.g</code></pre></div>
+        <p>正しい設定名は<code class="inline-code">alias.g</code>。<code class="inline-code">arias.g</code>は設定として保存されても、コマンドの別名としては認識されない状態</p>
       </section>
     </main>
-    <aside class="toc" aria-label="Table of contents"><h2>ページ内</h2><a href="#initial-setup">初期設定</a><a href="#installation">1. Gitのインストール</a><a href="#identity">2. コミットに記録する名前・メールの設定</a><a href="#default-branch">3. 初期ブランチ名の設定</a><a href="#editor">4. 使用するエディタの設定</a><a href="#verification">5. 設定結果の確認</a><a href="#repository">リポジトリの初期化とステージング</a><a href="#create-project">1. 作業フォルダの作成・移動</a><a href="#initialize-project">2. リポジトリの初期化</a><a href="#create-readme">3. README.mdの作成</a><a href="#stage-readme">4. README.mdのステージング</a><a href="#stage-status">5. ステージング状態の確認</a><a href="#first-commit">最初のコミット</a><a href="#commit-editor">1. コミットメッセージの入力</a><a href="#commit-result">2. コミット結果の確認</a><a href="#commit-log">3. コミット履歴の確認</a><a href="#track-changes">ファイルの変更・差分確認とコミット</a><a href="#edit-readme">1. README.mdの編集</a><a href="#unstaged-status">2. 変更状態の確認</a><a href="#unstaged-diff">3. 変更内容の確認</a><a href="#stage-update">4. 変更のステージングと差分確認</a><a href="#commit-update">5. 変更のコミット</a><a href="#updated-log">6. 履歴と作業状態の確認</a><a href="#common-commands">よく使うコマンドとファイル</a><a href="#command-init">1. git init：リポジトリの初期化</a><a href="#command-add">2. git add：変更内容のステージング</a><a href="#command-commit">3. git commit：変更履歴の保存</a></aside>
+    <aside class="toc" aria-label="Table of contents"><h2>ページ内</h2><a href="#initial-setup">初期設定</a><a href="#installation">1. Gitのインストール</a><a href="#identity">2. コミットに記録する名前・メールの設定</a><a href="#default-branch">3. 初期ブランチ名の設定</a><a href="#editor">4. 使用するエディタの設定</a><a href="#verification">5. 設定結果の確認</a><a href="#repository">リポジトリの初期化とステージング</a><a href="#create-project">1. 作業フォルダの作成・移動</a><a href="#initialize-project">2. リポジトリの初期化</a><a href="#create-readme">3. README.mdの作成</a><a href="#stage-readme">4. README.mdのステージング</a><a href="#stage-status">5. ステージング状態の確認</a><a href="#first-commit">最初のコミット</a><a href="#commit-editor">1. コミットメッセージの入力</a><a href="#commit-result">2. コミット結果の確認</a><a href="#commit-log">3. コミット履歴の確認</a><a href="#track-changes">ファイルの変更・差分確認とコミット</a><a href="#edit-readme">1. README.mdの編集</a><a href="#unstaged-status">2. 変更状態の確認</a><a href="#unstaged-diff">3. 変更内容の確認</a><a href="#stage-update">4. 変更のステージングと差分確認</a><a href="#commit-update">5. 変更のコミット</a><a href="#updated-log">6. 履歴と作業状態の確認</a><a href="#common-commands">よく使うコマンドとファイル</a><a href="#command-init">1. git init：リポジトリの初期化</a><a href="#command-add">2. git add：変更内容のステージング</a><a href="#command-commit">3. git commit：変更履歴の保存</a><a href="#command-config">4. git config：設定の確認・変更</a></aside>
   </div>
   <script src="../assets/app.js"></script>
   <script src="../assets/git-github.js"></script>
