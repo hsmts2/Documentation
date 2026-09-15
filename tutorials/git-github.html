@@ -376,9 +376,33 @@ git config --global alias.st</code></pre></div>
         <p>今回誤って登録した<code class="inline-code">arias.g</code>を削除</p>
         <div class="code"><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>git config --global --unset arias.g</code></pre></div>
         <p>正しい設定名は<code class="inline-code">alias.g</code>。<code class="inline-code">arias.g</code>は設定として保存されても、コマンドの別名としては認識されない状態</p>
+        <h3 id="file-gitignore">5. .gitignore：Gitの管理対象から除外</h3>
+        <p>未追跡ファイルのうち、Gitで管理しないファイルやフォルダのパターンを指定するファイル。今回は<code class="inline-code">project</code>内の<code class="inline-code">test.dat</code>を除外</p>
+        <h4>ファイル名の確認・修正</h4>
+        <p>Git Bashでファイル一覧を確認し、誤って付いた<code class="inline-code">.txt</code>を削除するために名前を変更</p>
+        <div class="code"><div class="code-header"><span>Git Bash</span><button class="copy" type="button">Copy</button></div><pre><code>ls -la
+mv test.dat.txt test.dat</code></pre></div>
+        <p>ファイル名が既に<code class="inline-code">test.dat</code>の場合は変更不要</p>
+        <h4>.gitignoreの作成</h4>
+        <p><code class="inline-code">test.dat</code>を除外対象として記載した<code class="inline-code">.gitignore</code>を作成（既存の.gitignoreがある場合は上書きせず追記）</p>
+        <div class="code"><div class="code-header"><span>Git Bash</span><button class="copy" type="button">Copy</button></div><pre><code>echo "test.dat" &gt; .gitignore</code></pre></div>
+        <p><code class="inline-code">.gitignore</code>は自動作成されないため、作成前の<code class="inline-code">git add .gitignore</code>は対象ファイルが見つからずエラー</p>
+        <h4>除外状態の確認</h4>
+        <div class="code"><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>git status -s</code></pre></div>
+        <p><code class="inline-code">.gitignore</code>のみが未追跡ファイルとして表示され、<code class="inline-code">test.dat</code>は一覧から除外。ファイル自体は作業フォルダに保持</p>
+        <h4>除外ルールの保存</h4>
+        <p><code class="inline-code">.gitignore</code>自体はGitの管理対象として登録し、除外ルールをコミット</p>
+        <div class="code"><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>git add .gitignore
+git status
+git commit -m "adds .gitignore"</code></pre></div>
+        <p><code class="inline-code">git status</code>で<code class="inline-code">new file: .gitignore</code>を確認後、コミットを実行</p>
+        <h4>保存後の確認</h4>
+        <div class="code"><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>git status -s</code></pre></div>
+        <p>ほかに変更がなければ出力なし。隠しファイルの<code class="inline-code">.gitignore</code>を含む一覧の確認には、Git Bashで<code class="inline-code">ls -la</code>を使用</p>
+        <blockquote><p><strong>既にGitで追跡中のファイルは、.gitignoreに記載するだけでは除外されない点に注意</strong></p></blockquote>
       </section>
     </main>
-    <aside class="toc" aria-label="Table of contents"><h2>ページ内</h2><a href="#initial-setup">初期設定</a><a href="#installation">1. Gitのインストール</a><a href="#identity">2. コミットに記録する名前・メールの設定</a><a href="#default-branch">3. 初期ブランチ名の設定</a><a href="#editor">4. 使用するエディタの設定</a><a href="#verification">5. 設定結果の確認</a><a href="#repository">リポジトリの初期化とステージング</a><a href="#create-project">1. 作業フォルダの作成・移動</a><a href="#initialize-project">2. リポジトリの初期化</a><a href="#create-readme">3. README.mdの作成</a><a href="#stage-readme">4. README.mdのステージング</a><a href="#stage-status">5. ステージング状態の確認</a><a href="#first-commit">最初のコミット</a><a href="#commit-editor">1. コミットメッセージの入力</a><a href="#commit-result">2. コミット結果の確認</a><a href="#commit-log">3. コミット履歴の確認</a><a href="#track-changes">ファイルの変更・差分確認とコミット</a><a href="#edit-readme">1. README.mdの編集</a><a href="#unstaged-status">2. 変更状態の確認</a><a href="#unstaged-diff">3. 変更内容の確認</a><a href="#stage-update">4. 変更のステージングと差分確認</a><a href="#commit-update">5. 変更のコミット</a><a href="#updated-log">6. 履歴と作業状態の確認</a><a href="#common-commands">よく使うコマンドとファイル</a><a href="#command-init">1. git init：リポジトリの初期化</a><a href="#command-add">2. git add：変更内容のステージング</a><a href="#command-commit">3. git commit：変更履歴の保存</a><a href="#command-config">4. git config：設定の確認・変更</a></aside>
+    <aside class="toc" aria-label="Table of contents"><h2>ページ内</h2><a href="#initial-setup">初期設定</a><a href="#installation">1. Gitのインストール</a><a href="#identity">2. コミットに記録する名前・メールの設定</a><a href="#default-branch">3. 初期ブランチ名の設定</a><a href="#editor">4. 使用するエディタの設定</a><a href="#verification">5. 設定結果の確認</a><a href="#repository">リポジトリの初期化とステージング</a><a href="#create-project">1. 作業フォルダの作成・移動</a><a href="#initialize-project">2. リポジトリの初期化</a><a href="#create-readme">3. README.mdの作成</a><a href="#stage-readme">4. README.mdのステージング</a><a href="#stage-status">5. ステージング状態の確認</a><a href="#first-commit">最初のコミット</a><a href="#commit-editor">1. コミットメッセージの入力</a><a href="#commit-result">2. コミット結果の確認</a><a href="#commit-log">3. コミット履歴の確認</a><a href="#track-changes">ファイルの変更・差分確認とコミット</a><a href="#edit-readme">1. README.mdの編集</a><a href="#unstaged-status">2. 変更状態の確認</a><a href="#unstaged-diff">3. 変更内容の確認</a><a href="#stage-update">4. 変更のステージングと差分確認</a><a href="#commit-update">5. 変更のコミット</a><a href="#updated-log">6. 履歴と作業状態の確認</a><a href="#common-commands">よく使うコマンドとファイル</a><a href="#command-init">1. git init：リポジトリの初期化</a><a href="#command-add">2. git add：変更内容のステージング</a><a href="#command-commit">3. git commit：変更履歴の保存</a><a href="#command-config">4. git config：設定の確認・変更</a><a href="#file-gitignore">5. .gitignore：Gitの管理対象から除外</a></aside>
   </div>
   <script src="../assets/app.js"></script>
   <script src="../assets/git-github.js"></script>
