@@ -84,30 +84,16 @@
     </aside>
     <main class="content workspaces-skill-transfer-guide">
       <nav class="breadcrumb" aria-label="Breadcrumb"><a href="../">Home</a><span>トピック</span></nav>
-<div class="overview-lead">
-  <p class="overview-kicker">マルチVPC・閉域VDI基盤案件</p>
-  <h1>全体構築・運用順序</h1>
-  <p>認証基盤からVDIの利用開始、継続運用までを、依存関係と確認ポイントで整理します。各工程の詳細は個別ページに分け、このページを全体の道筋として使用します。</p>
-</div>
-
-<nav class="overview-quicknav" aria-label="ページ内の構成">
-  <a href="#network">01 基盤と認証</a><a href="#workspace">02 VDI展開</a><a href="#operations">03 継続運用</a>
-</nav>
+<p><strong>マルチVPC・閉域VDI基盤案件</strong></p>
+<h1>全体構築・運用順序</h1>
+<p>認証基盤からVDIの利用開始、継続運用までを、依存関係と確認ポイントで整理します。各工程の詳細は個別ページに分け、このページを全体の道筋として使用します。</p>
 
 <section class="overview-section" id="network">
-  <p class="overview-phase">PHASE 01 / FOUNDATION</p>
   <h2>ネットワーク・認証基盤を整える</h2>
   <p>VPC間の接続とDNS通信を確認してから、Managed Microsoft ADを配置します。管理用EC2からディレクトリを操作できる状態を作り、AD Connector用のアカウントと権限委任を設定します。</p>
-  <figure class="architecture-figure"><img src="../assets/img/workspaces-skill-transfer/workspaces-skill-transfer-architecture.png" alt="4つのVPCとオンプレミス拠点を接続する閉域VDI基盤の構成図" loading="eager"><figcaption>全体構成例。VPCの役割・CIDR・接続経路は実際の環境の設計値と照合します。</figcaption></figure>
-  <div class="overview-steps">
-    <article><span>01</span><h3><a href="workspaces-managed-ad.html">Managed Microsoft AD</a></h3><p>ディレクトリ、DNS IP、配置サブネットを確定し、ユーザーとグループを準備。</p><small>確認：ディレクトリが Active、2台のDNSへの名前解決</small></article>
-    <article><span>02</span><h3><a href="workspaces-management-ec2.html">管理用EC2・AD管理</a></h3><p>ドメイン参加後、ADUCとGPMCから管理対象のOU・ユーザーを操作。</p><small>確認：ドメイン参加、管理ツールと必要権限</small></article>
-    <article><span>03</span><h3><a href="workspaces-ad-connector.html">AD Connector</a></h3><p>サービスアカウント、権限委任、接続経路とセキュリティグループを整備。</p><small>確認：対象OUへの権限、両方のDNS/DCへの疎通</small></article>
-  </div>
 </section>
 
 <section class="overview-section" id="workspace">
-  <p class="overview-phase">PHASE 02 / DELIVERY</p>
   <h2>WorkSpacesを展開する</h2>
   <p>ディレクトリ登録後にWorkSpaces用OUとGPOを整え、バンドルを指定して利用者へ割り当てます。カスタムイメージの作成・他アカウント共有は、基本構成の確認後に進めます。</p>
   <figure class="architecture-figure overview-detail-figure"><img src="../assets/img/workspaces-skill-transfer/workspaces-ou-gpo-ad.png" alt="ad.example.comのWorkSpaces用OU、AD Connector用アカウント、専用GPOの関係図" loading="lazy"><figcaption>OU・GPOの関係。ドメイン表記は <code>ad.example.com</code> に統一した模式図です。</figcaption></figure>
@@ -118,7 +104,6 @@
 </section>
 
 <section class="overview-section" id="operations">
-  <p class="overview-phase">PHASE 03 / OPERATIONS</p>
   <h2>パッチ・コスト・監視を運用に載せる</h2>
   <p>VDIの利用開始後も、パッチ適用、課金モード判定、監視通知を独立した運用として管理します。変更作業では実行結果と通知到達を確認し、次回の判断に使える記録を残します。</p>
   <div class="overview-steps">

@@ -25,7 +25,7 @@ foreach ($entry in $manifestEntries) {
         $content,
         '<meta name="description" content="([^"]+)"'
     )
-    $leadMatches = [regex]::Matches($content, '<p class="lead">.*?</p>', 'Singleline')
+    $pageSummaryMatches = [regex]::Matches($content, 'class="[^"]*\bpage-summary\b[^"]*"')
     $activeSidebarMatch = [regex]::Match(
         $content,
         '<a class="active"(?: aria-current="page")? href="([^"]+)">(.*?)</a>',
@@ -63,9 +63,8 @@ foreach ($entry in $manifestEntries) {
         $errors.Add("${fileName}: missing meta description")
     }
 
-    $allowsNoLead = $isWorkspacesGuide -or $fileName -eq 'git-github.html'
-    if ((-not $allowsNoLead -and $leadMatches.Count -ne 1) -or ($allowsNoLead -and $leadMatches.Count -gt 1)) {
-        $errors.Add("${fileName}: expected one lead paragraph, found $($leadMatches.Count)")
+    if ($pageSummaryMatches.Count -gt 0) {
+        $errors.Add("${fileName}: page summary is not allowed")
     }
 
     $headingLabels = @{}

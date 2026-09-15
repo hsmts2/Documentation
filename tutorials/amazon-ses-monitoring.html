@@ -92,7 +92,6 @@
       </nav>
 
       <h1>Amazon SES 配信監視</h1>
-      <p class="lead">Amazon SESの配信、バウンス、苦情、遅延を収集し、異常を通知する監視手順をまとめる<br>Configuration Setを起点としたSNS、EventBridge、CloudWatchの設定と、サプレッションリスト、VDM、送信クォータの確認方法を整理する</p>
 
       <h2 id="overview">配信監視の全体像</h2>
       <p>SMTPサーバーで<code class="inline-code">status=sent</code>になっても、SESが受信者のメールサーバーへ配信したことまでは保証しない<br>PostfixからSESへの引き渡し、SESの配信イベント、受信者側の結果を分けて確認する</p>

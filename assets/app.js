@@ -50,18 +50,6 @@ const removePageToc = () => {
 
 removePageToc();
 
-const enhancePageSummaries = () => {
-  document.querySelectorAll("main.content > p.lead").forEach((lead) => {
-    const summary = document.createElement("div");
-
-    summary.className = "page-summary";
-    lead.before(summary);
-    summary.append(lead);
-  });
-};
-
-enhancePageSummaries();
-
 let pageUserValues = (document.body.dataset.userValues || "")
   .split(",")
   .map((value) => value.trim())
@@ -263,7 +251,6 @@ initializeTabs();
 
 const initializeMain = () => {
   removePageToc();
-  enhancePageSummaries();
   pageUserValues = (document.body.dataset.userValues || "").split(",").map(v => v.trim()).filter(Boolean).sort((a, b) => b.length - a.length);
   userValuePatterns = [
     { pattern: /<[A-Z][A-Z0-9_:-]*>/g, group: 0 },

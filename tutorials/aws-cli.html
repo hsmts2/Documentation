@@ -92,9 +92,6 @@
       </nav>
 
       <h1>AWS CLI 特殊対応</h1>
-      <div class="page-summary">
-        <p class="lead">コンソール操作だけでは対応できない設定変更・復旧作業を、AWS CLIコマンド付きでまとめたリファレンス<br>各項目は「事前確認→実行→事後確認」の順で構成する</p>
-      </div>
 
       <h2 id="rds-pending-maintenance">Amazon RDS 保留中の変更の取り消し</h2>
       <p>Amazon RDSのエンジンバージョン変更を<code class="ui-value">次回のメンテナンスウィンドウで適用</code>として保存した後は、AWSマネジメントコンソールに保留中の変更を取り消す操作がない仕様となっている。その場合は、AWS CLIで現在稼働中の値を再指定し、保留中の変更を打ち消す</p>

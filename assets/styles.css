@@ -18,8 +18,6 @@
   --warning-bg: rgba(250, 204, 21, 0.12);
   --warning-line: #eab308;
   --warning-text: #fde68a;
-  --summary-accent: #6e7681;
-  --summary-title: #fbbf24;
   --user-value: #ff9900;
   --ui-value-bg: rgba(139, 148, 158, 0.14);
   --ui-value-line: rgba(139, 148, 158, 0.5);
@@ -56,8 +54,6 @@
   --warning-bg: #fff8c5;
   --warning-line: #9a6700;
   --warning-text: #7d4e00;
-  --summary-accent: #8c959f;
-  --summary-title: #b45309;
   --user-value: #a84b00;
   --ui-value-bg: #f6f8fa;
   --ui-value-line: #afb8c1;
@@ -466,32 +462,6 @@ p,
 li {
   color: var(--text);
   font-size: 16px;
-}
-
-.lead {
-  margin: 0 0 22px;
-  font-size: 17px;
-}
-
-.lead:empty {
-  display: none;
-}
-
-.page-summary {
-  margin: 24px 0 40px;
-  padding: 4px 0 4px 20px;
-  border-left: 5px solid var(--summary-accent);
-}
-
-.page-summary .lead {
-  margin: 0;
-}
-
-.cloudflare-private-site-guide > .page-summary {
-  padding: 16px 20px;
-  background: var(--warning-bg);
-  border-left-color: var(--warning-line);
-  border-radius: 4px;
 }
 
 .notice,
@@ -1351,27 +1321,6 @@ mark {
   border-top: 1px solid var(--line);
 }
 
-.architecture-flow {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 9px;
-  margin: 18px 0;
-}
-
-.architecture-flow span {
-  padding: 9px 12px;
-  background: var(--card-bg);
-  border: 1px solid var(--line);
-  border-radius: 6px;
-  font-weight: 700;
-}
-
-.architecture-flow b {
-  color: var(--accent-strong);
-  font-size: 13px;
-}
-
 .terraform-process {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 48px minmax(0, 1fr) 48px minmax(0, 1fr) 58px minmax(0, 1fr);
@@ -2033,10 +1982,6 @@ figure > figcaption:first-child {
     grid-template-columns: 1fr;
   }
 
-  .architecture-flow b {
-    width: 100%;
-    text-align: center;
-  }
 }
 
 /* Compact navigation labels; preserve full names instead of truncating them. */

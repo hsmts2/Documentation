@@ -89,16 +89,10 @@
       </nav>
 
       <h1>Private GitHubリポジトリをCloudflare Workersで認証付き公開してみた</h1>
-      <div class="page-summary"><p class="lead">GitHubで管理する静的ドキュメントをCloudflare Workersへ自動デプロイし、Cloudflare AccessとAuthenticatorアプリのMFAで閲覧を保護した手順をまとめる<br>リポジトリ連携、公開ファイルの分離、Access設定、Private化、自動デプロイと最終URLの確認までを実際の構成に沿って整理する</p></div>
 
       <h2 id="overview">今回実現した構成</h2>
       <p>ソースはPrivateのGitHubリポジトリで管理し、<code>main</code>へのPushをCloudflare Workers Buildsが検知して静的ファイルだけをWorkersへデプロイする<br>閲覧時はCloudflare Accessで本人確認を行い、AuthenticatorアプリのTOTPを追加認証として必須にする</p>
-      <div class="architecture-flow" aria-label="公開構成">
-        <span>Private GitHubリポジトリ</span><b>→ Push</b>
-        <span>Workers Builds</span><b>→ Deploy</b>
-        <span>Cloudflare Workers</span><b>→ Access</b>
-        <span>Authenticator MFA</span>
-      </div>
+      <p>Private GitHubリポジトリ → Push → Workers Builds → Deploy → Cloudflare Workers → Access → Authenticator MFA</p>
       <table>
         <thead><tr><th>対象</th><th>今回の設定</th><th>目的</th></tr></thead>
         <tbody>
@@ -223,11 +217,11 @@
           <tr><td>Private化後のPush</td><td>Workers Buildsが自動実行され、正常にデプロイ</td></tr>
         </tbody>
       </table>
-      <p>最終的な確認URLは次のとおり</p>
+      <p>現在の公開先は次のURL</p>
       <p><a class="repo-link external-item" href="https://documentation.hsmts2.workers.dev/">https://documentation.hsmts2.workers.dev/</a></p>
-      <p>以下の画像は旧URLで取得した当時の確認画面</p>
+      <p>掲載画像は旧URLを使用していた時点の確認画面<br>Cloudflare Accessの認証後、Documentationを正常に表示できた状態</p>
       <figure class="screenshot-wide">
-        <figcaption>Cloudflare Accessの認証後、確認用URLでDocumentationを表示できた状態</figcaption>
+        <figcaption>Cloudflare Access認証後のDocumentation表示確認（旧URL）</figcaption>
         <img src="../assets/img/cloudflare-private-site/05-private-site-final-verification.png" alt="Cloudflare Accessで保護したDocumentationの表示確認画面">
       </figure>
 

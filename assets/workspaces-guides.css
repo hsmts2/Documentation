@@ -8,16 +8,9 @@
 @media (max-width:640px) {
  .workspaces-skill-transfer-guide .guide-table {min-width:600px;}
 }
-.workspaces-skill-transfer-guide .overview-lead { padding: 34px 38px; margin: 24px 0; border: 1px solid var(--line); border-radius: 12px; background: var(--panel-soft); }
-.workspaces-skill-transfer-guide .overview-lead h1 { margin: 4px 0 18px; }
-.workspaces-skill-transfer-guide .overview-lead p:last-child { margin-bottom: 0; line-height: 1.85; }
-.workspaces-skill-transfer-guide .overview-kicker,
-.workspaces-skill-transfer-guide .overview-phase { color: #c25319; font-weight: 700; letter-spacing: .07em; font-size: .82rem; }
-.workspaces-skill-transfer-guide .overview-quicknav { display: flex; flex-wrap: wrap; gap: 10px; margin: 28px 0 48px; }
-.workspaces-skill-transfer-guide .overview-quicknav a { padding: 9px 16px; border: 1px solid var(--line); border-radius: 999px; text-decoration: none; }
 .workspaces-skill-transfer-guide .overview-section { margin: 50px 0 70px; scroll-margin-top: 100px; }
 .workspaces-skill-transfer-guide .overview-section > h2 { margin-top: 4px; }
-.workspaces-skill-transfer-guide .overview-section > p:not(.overview-phase) { max-width: 75ch; line-height: 1.85; }
+.workspaces-skill-transfer-guide .overview-section > p { max-width: 75ch; line-height: 1.85; }
 .workspaces-skill-transfer-guide .overview-steps { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 14px; margin: 26px 0; }
 .workspaces-skill-transfer-guide .overview-steps article { padding: 22px; border: 1px solid var(--line); border-radius: 10px; background: var(--panel-soft); }
 .workspaces-skill-transfer-guide .overview-steps article > span { color: #c25319; font-size: 1.3rem; font-weight: 800; }
@@ -30,4 +23,4 @@
 .workspaces-skill-transfer-guide .architecture-figure img { display: block; width: 100%; height: auto; border: 1px solid var(--line); border-radius: 8px; }
 .workspaces-skill-transfer-guide .architecture-figure figcaption { margin-top: 10px; color: var(--muted); line-height: 1.6; }
 .workspaces-skill-transfer-guide .overview-note { padding: 22px 26px; margin: 40px 0; border-left: 4px solid #c25319; background: var(--panel-soft); line-height: 1.75; }
-@media (max-width: 900px) { .workspaces-skill-transfer-guide .overview-steps, .workspaces-skill-transfer-guide .overview-diagrams { grid-template-columns: 1fr; } .workspaces-skill-transfer-guide .overview-lead { padding: 22px; } }
+@media (max-width: 900px) { .workspaces-skill-transfer-guide .overview-steps, .workspaces-skill-transfer-guide .overview-diagrams { grid-template-columns: 1fr; } }
