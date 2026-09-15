@@ -180,10 +180,141 @@ No commits yet
 Changes to be committed:
   (use "git rm --cached &lt;file&gt;..." to unstage)
         new file:   README.md</code></pre></div></details>
-        <p><code class="inline-code">Changes to be committed</code>はステージング済み、<code class="inline-code">No commits yet</code>はコミット未作成を示す状態</p>
+        <ul>
+          <li><code class="inline-code">On branch main</code>：現在の作業対象（カレントブランチ）は<code class="inline-code">main</code></li>
+          <li><code class="inline-code">No commits yet</code>：最初のコミットをまだ作成しておらず、変更履歴が未記録の状態</li>
+          <li><code class="inline-code">Changes to be committed</code>：次のコミットに含める変更がステージングエリアへ登録済みの状態</li>
+          <li><code class="inline-code">new file: README.md</code>：README.mdが新規ファイルとしてステージングされ、次のコミットへの追加対象</li>
+          <li><code class="inline-code">git rm --cached &lt;file&gt;...</code>：この初回コミット前の状態でステージングを取り消すための案内（作業フォルダ内のファイルは保持）</li>
+        </ul>
+        <p>ここまででREADME.mdのステージングが完了し、コミットによる履歴の保存は未実施</p>
       </section>
+      <section>
+        <h2 id="first-commit">最初のコミット</h2>
+        <h3 id="commit-editor">1. コミットメッセージの入力</h3>
+        <p>ステージング済みの変更を記録するため、練習用のprojectフォルダで実行</p>
+        <div class="code"><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>git commit</code></pre></div>
+        <p><code class="inline-code">core.editor</code>に<code class="inline-code">code --wait</code>を設定済みの場合、VS Codeでコミットメッセージの編集画面を起動</p>
+        <ol>
+          <li>開いた<code class="inline-code">COMMIT_EDITMSG</code>の先頭に、コミットメッセージとして<code class="inline-code">initial commit</code>を入力</li>
+          <li><kbd>Ctrl + S</kbd>で保存後、<code class="inline-code">COMMIT_EDITMSG</code>の編集タブを閉じる操作</li>
+          <li>Git BashまたはPowerShellへ戻り、コミットの完了結果を確認</li>
+        </ol>
+        <p><code class="inline-code">--wait</code>の指定により、保存だけでなく編集タブを閉じるまでGitは待機（VS Code全体の終了は不要）</p>
+        <p>メッセージは<code class="inline-code">#</code>を付けずに入力（既定では<code class="inline-code">#</code>で始まる行は説明用コメントとして除外）</p>
+        <h3 id="commit-result">2. コミット結果の確認</h3>
+        <details><summary><strong>実行結果</strong></summary><div class="code"><div class="code-header"><span>実行結果</span><button class="copy" type="button">Copy</button></div><pre><code>[main (root-commit) f4db1c7] initial commit
+ 1 file changed, 1 insertion(+)
+ create mode 100644 README.md</code></pre></div></details>
+        <ul>
+          <li><code class="inline-code">main</code>：コミットを作成したブランチ名</li>
+          <li><code class="inline-code">root-commit</code>：親コミットを持たない最初のコミット</li>
+          <li><code class="inline-code">f4db1c7</code>：コミットを識別するIDの短縮表示（実行ごとに異なる値）</li>
+          <li><code class="inline-code">initial commit</code>：入力したコミットメッセージ</li>
+          <li><code class="inline-code">1 file changed, 1 insertion(+)</code>：1ファイルに1行を追加した記録</li>
+          <li><code class="inline-code">create mode 100644 README.md</code>：README.mdを通常の非実行ファイルとして新規登録した記録</li>
+        </ul>
+        <p>ここまででローカルリポジトリへの履歴保存が完了（GitHubへの送信は未実施）</p>
+        <h3 id="commit-log">3. コミット履歴の確認</h3>
+        <p>作成したコミットのID、記録者、日時、メッセージを確認</p>
+        <div class="code"><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>git log</code></pre></div>
+        <details><summary><strong>実行結果</strong></summary><div class="code"><div class="code-header"><span>実行結果</span><button class="copy" type="button">Copy</button></div><pre><code>commit f4db1c7abf719b5631ac61451562eaba982f7efd (HEAD -&gt; main)
+Author: thsmt &lt;t_hashimoto@example.com&gt;
+Date:   Tue Sep 15 18:02:53 2026 +0900
+
+    initial commit</code></pre></div></details>
+      </section>
+<section><h2 id="track-changes">ファイルの変更・差分確認とコミット</h2>
+        <h3 id="edit-readme">1. README.mdの編集</h3>
+        <p>projectフォルダでVS Codeを起動し、README.mdの2行目に<code class="inline-code">Update</code>を追加して保存</p>
+        <div class="code"><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>code .</code></pre></div>
+        <div class="code"><div class="code-header"><span>README.md</span><button class="copy" type="button">Copy</button></div><pre><code>Hello
+Update</code></pre></div>
+        <h3 id="unstaged-status">2. 変更状態の確認</h3>
+        <div class="code"><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>git status</code></pre></div>
+        <details><summary><strong>実行結果</strong></summary><div class="code"><div class="code-header"><span>実行結果</span><button class="copy" type="button">Copy</button></div><pre><code>On branch main
+Changes not staged for commit:
+  (use "git add &lt;file&gt;..." to update what will be committed)
+  (use "git restore &lt;file&gt;..." to discard changes in working directory)
+        modified:   README.md
+
+no changes added to commit (use "git add" and/or "git commit -a")</code></pre></div></details>
+        <p><code class="inline-code">On branch main</code>は現在のブランチがmain、<code class="inline-code">Changes not staged for commit</code>は変更がステージング未登録、<code class="inline-code">modified: README.md</code>は追跡中のREADME.mdに変更がある状態</p>
+        <p><code class="inline-code">git add</code>は変更の登録、<code class="inline-code">git restore</code>は作業ファイルの変更を破棄するための案内（今回は実行不要）</p>
+        <div class="code"><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>git status -s</code></pre></div>
+        <details><summary><strong>実行結果</strong></summary><div class="code"><div class="code-header"><span>実行結果</span><button class="copy" type="button">Copy</button></div><pre><code> M README.md</code></pre></div></details>
+        <p>短縮表示の1列目はステージングエリア、2列目は作業ファイルの変更状態を表示（今回は2列目の赤いM＝未ステージングの変更）</p>
+        <h3 id="unstaged-diff">3. 変更内容の確認</h3>
+        <div class="code"><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>git diff</code></pre></div>
+        <details><summary><strong>実行結果</strong></summary><div class="code"><div class="code-header"><span>実行結果</span><button class="copy" type="button">Copy</button></div><pre><code>warning: in the working copy of 'README.md', LF will be replaced by CRLF the next time Git touches it
+diff --git a/README.md b/README.md
+index e965047..3b7fbc6 100644
+--- a/README.md
++++ b/README.md
+@@ -1 +1,2 @@
+ Hello
++Update
+\ No newline at end of file</code></pre></div></details>
+        <p><code class="inline-code">git diff</code>は作業ファイルとステージングエリアの差分を表示（<code class="inline-code">+Update</code>は追加行、先頭が空白のHelloは変更のない行）</p>
+        <p><code class="inline-code">@@ -1 +1,2 @@</code>は変更前の1行から変更後の2行への差分範囲、<code class="inline-code">No newline at end of file</code>はファイル末尾の改行がない状態</p>
+        <h3 id="stage-update">4. 変更のステージングと差分確認</h3>
+        <div class="code"><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>git add README.md</code></pre></div>
+        <details><summary><strong>実行結果</strong></summary><div class="code"><div class="code-header"><span>実行結果</span><button class="copy" type="button">Copy</button></div><pre><code>warning: in the working copy of 'README.md', LF will be replaced by CRLF the next time Git touches it</code></pre></div></details>
+        <p>README.mdの変更内容をステージングエリアに登録（警告は改行コード変換の案内）</p>
+        <div class="code"><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>git diff</code></pre></div>
+        <details><summary><strong>実行結果</strong></summary><p>出力なし（作業ファイルとステージングエリアの内容が一致）</p></details>
+        <div class="code"><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>git diff --cached</code></pre></div>
+        <details><summary><strong>実行結果</strong></summary><div class="code"><div class="code-header"><span>実行結果</span><button class="copy" type="button">Copy</button></div><pre><code>diff --git a/README.md b/README.md
+index e965047..3b7fbc6 100644
+--- a/README.md
++++ b/README.md
+@@ -1 +1,2 @@
+ Hello
++Update
+\ No newline at end of file</code></pre></div></details>
+        <p><code class="inline-code">git diff --cached</code>はステージングエリアと直前のコミットとの差分を表示（次のコミットに含まれる変更の確認）</p>
+        <div class="code"><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>git status</code></pre></div>
+        <details><summary><strong>実行結果</strong></summary><div class="code"><div class="code-header"><span>実行結果</span><button class="copy" type="button">Copy</button></div><pre><code>On branch main
+Changes to be committed:
+  (use "git restore --staged &lt;file&gt;..." to unstage)
+        modified:   README.md</code></pre></div></details>
+        <p><code class="inline-code">Changes to be committed</code>は変更が登録済み、緑の<code class="inline-code">modified: README.md</code>は次のコミットに含まれる更新対象（<code class="inline-code">git restore --staged</code>は作業ファイルを残して登録を取り消すための案内）</p>
+        <div class="code"><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>git status -s</code></pre></div>
+        <details><summary><strong>実行結果</strong></summary><div class="code"><div class="code-header"><span>実行結果</span><button class="copy" type="button">Copy</button></div><pre><code>M  README.md</code></pre></div></details>
+        <p>1列目の緑のMはステージング済みの変更、2列目の空白は登録後の追加変更がない状態</p>
+        <figure><figcaption>project内のREADME.mdを例に、編集・ステージング・コミットによる内容の変化と差分の比較範囲を確認</figcaption><img src="../assets/img/git-project-workflow.png" alt="projectのREADME.mdにUpdateを追加し、git addでステージング、git commitで履歴へ保存する流れと、各時点のgit diffおよびgit diff --cachedの比較" loading="lazy" style="display:block;width:80%;max-width:100%;height:auto;margin-inline:auto"></figure>
+        <p>作業フォルダは<code class="inline-code">project</code>、実際に編集するファイルはその中の<code class="inline-code">README.md</code>。今回の構成では、Gitの管理情報とローカルの履歴を<code class="inline-code">project/.git</code>に保存</p>
+        <p>ステージングエリアは別の作業フォルダではなく、次のコミットに含める内容を管理する仕組み。登録情報は主に<code class="inline-code">.git/index</code>、登録したファイルの内容は<code class="inline-code">.git/objects</code>で管理（<code class="inline-code">git add</code>後もREADME.mdは元の場所に保持）</p>
+        <h3 id="commit-update">5. 変更のコミット</h3>
+        <p><code class="inline-code">-m</code>でメッセージを直接指定し、エディタを開かずにコミット</p>
+        <div class="code"><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>git commit -m "Updates README.md"</code></pre></div>
+        <details><summary><strong>実行結果</strong></summary><div class="code"><div class="code-header"><span>実行結果</span><button class="copy" type="button">Copy</button></div><pre><code>[main 286a68e] Updates README.md
+ 1 file changed, 1 insertion(+)</code></pre></div></details>
+        <h3 id="updated-log">6. 履歴と作業状態の確認</h3>
+        <div class="code"><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>git log</code></pre></div>
+        <details><summary><strong>実行結果</strong></summary><div class="code"><div class="code-header"><span>実行結果</span><button class="copy" type="button">Copy</button></div><pre><code>commit 286a68ee9affdb8bda9d3c91d6cba8aed6a0aaaa (HEAD -&gt; main)
+Author: thsmt &lt;t_hashimoto@example.com&gt;
+Date:   Tue Sep 15 18:21:05 2026 +0900
+
+    Updates README.md
+
+commit f4db1c7abf719b5631ac61451562eaba982f7efd
+Author: thsmt &lt;t_hashimoto@example.com&gt;
+Date:   Tue Sep 15 18:02:53 2026 +0900
+
+    initial commit</code></pre></div></details>
+        <p>新しいコミットから順に表示し、<code class="inline-code">HEAD -&gt; main</code>は現在のブランチmainが最新コミットを指す状態（メールアドレスのみ公開用の例示値へ置換）</p>
+        <div class="code"><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>git log --oneline</code></pre></div>
+        <details><summary><strong>実行結果</strong></summary><div class="code"><div class="code-header"><span>実行結果</span><button class="copy" type="button">Copy</button></div><pre><code>286a68e (HEAD -&gt; main) Updates README.md
+f4db1c7 initial commit</code></pre></div></details>
+        <p>コミットIDの短縮形とメッセージを1コミット1行で表示</p>
+        <div class="code"><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>git status</code></pre></div>
+        <details><summary><strong>実行結果</strong></summary><div class="code"><div class="code-header"><span>実行結果</span><button class="copy" type="button">Copy</button></div><pre><code>On branch main
+nothing to commit, working tree clean</code></pre></div></details>
+        <p><code class="inline-code">nothing to commit, working tree clean</code>はコミット対象の変更がなく、作業ツリーがクリーンな状態（GitHubへの送信完了を示すものではない）</p>
+        </section>
     </main>
-    <aside class="toc" aria-label="Table of contents"><h2>ページ内</h2><a href="#initial-setup">初期設定</a><a href="#installation">1. Gitのインストール</a><a href="#identity">2. コミットに記録する名前・メールの設定</a><a href="#default-branch">3. 初期ブランチ名の設定</a><a href="#editor">4. 使用するエディタの設定</a><a href="#verification">5. 設定結果の確認</a><a href="#repository">リポジトリの初期化とステージング</a><a href="#create-project">1. 作業フォルダの作成・移動</a><a href="#initialize-project">2. リポジトリの初期化</a><a href="#create-readme">3. README.mdの作成</a><a href="#stage-readme">4. README.mdのステージング</a><a href="#stage-status">5. ステージング状態の確認</a></aside>
+    <aside class="toc" aria-label="Table of contents"><h2>ページ内</h2><a href="#initial-setup">初期設定</a><a href="#installation">1. Gitのインストール</a><a href="#identity">2. コミットに記録する名前・メールの設定</a><a href="#default-branch">3. 初期ブランチ名の設定</a><a href="#editor">4. 使用するエディタの設定</a><a href="#verification">5. 設定結果の確認</a><a href="#repository">リポジトリの初期化とステージング</a><a href="#create-project">1. 作業フォルダの作成・移動</a><a href="#initialize-project">2. リポジトリの初期化</a><a href="#create-readme">3. README.mdの作成</a><a href="#stage-readme">4. README.mdのステージング</a><a href="#stage-status">5. ステージング状態の確認</a><a href="#first-commit">最初のコミット</a><a href="#commit-editor">1. コミットメッセージの入力</a><a href="#commit-result">2. コミット結果の確認</a><a href="#commit-log">3. コミット履歴の確認</a><a href="#track-changes">ファイルの変更・差分確認とコミット</a><a href="#edit-readme">1. README.mdの編集</a><a href="#unstaged-status">2. 変更状態の確認</a><a href="#unstaged-diff">3. 変更内容の確認</a><a href="#stage-update">4. 変更のステージングと差分確認</a><a href="#commit-update">5. 変更のコミット</a><a href="#updated-log">6. 履歴と作業状態の確認</a></aside>
   </div>
   <script src="../assets/app.js"></script>
   <script src="../assets/git-github.js"></script>

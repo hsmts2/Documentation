@@ -1,4 +1,9 @@
 .git-guide .code .user-value { color: #34d399; }
+.git-guide .git-output pre { background: #000; color: #ddd; }
+.git-guide .git-output .git-green { color: #00cd00; }
+.git-guide .git-output .git-red { color: #ff5555; }
+.git-guide .git-output .git-yellow { color: #cdcd00; }
+.git-guide .git-output .git-cyan { color: #00cdcd; }
 .git-guide .tabs button { background: transparent; color: var(--text); border: 0; border-bottom: 3px solid transparent; padding: 12px 16px; font: inherit; cursor: pointer; }
 .git-guide .tabs button[aria-selected="true"] { border-bottom-color: #34d399; font-weight: 700; }
 .git-guide .tabs button:focus-visible { outline: 2px solid #34d399; outline-offset: 2px; }
