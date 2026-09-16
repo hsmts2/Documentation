@@ -2,6 +2,7 @@
 document.querySelectorAll('.git-guide details .code pre code').forEach(code => {
   code.closest('.code').classList.add('git-output');
   let staged = false;
+  let conflictSide = null;
   const paint = (row, text, color) => {
     const span = document.createElement('span');
     span.className = `git-${color}`;
@@ -11,6 +12,25 @@ document.querySelectorAll('.git-guide details .code pre code').forEach(code => {
   code.querySelectorAll('.code-line').forEach(row => {
     const text = row.textContent;
     row.textContent = '';
+    if (/^<<<<<<< /.test(text)) {
+      conflictSide = 'green';
+      paint(row, text, 'green');
+      return;
+    }
+    if (conflictSide && /^=======$/.test(text)) {
+      conflictSide = 'cyan';
+      paint(row, text, 'yellow');
+      return;
+    }
+    if (conflictSide && /^>>>>>>> /.test(text)) {
+      paint(row, text, 'cyan');
+      conflictSide = null;
+      return;
+    }
+    if (conflictSide) {
+      paint(row, text, conflictSide);
+      return;
+    }
     if (text === 'Changes to be committed:') staged = true;
     if (/^(Changes not staged for commit:|Untracked files:)/.test(text)) staged = false;
     const log = text.match(/^(commit [a-f0-9]+)( \()(HEAD)( -> )(.*)(\))$/);
