@@ -1,5 +1,5 @@
 // Color output only; shared copyText retains the original, unstyled text.
-document.querySelectorAll('.git-guide details .code pre code').forEach(code => {
+document.querySelectorAll('.git-guide details .code pre code, .git-guide [data-git-transcript] pre code').forEach(code => {
   code.closest('.code').classList.add('git-output');
   let staged = false;
   let conflictSide = null;
@@ -12,6 +12,12 @@ document.querySelectorAll('.git-guide details .code pre code').forEach(code => {
   code.querySelectorAll('.code-line').forEach(row => {
     const text = row.textContent;
     row.textContent = '';
+    if (text.startsWith('$ ')) {
+      staged = false;
+      conflictSide = null;
+      row.textContent = text;
+      return;
+    }
     if (/^<<<<<<< /.test(text)) {
       conflictSide = 'green';
       paint(row, text, 'green');

@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gitトラブルシューティング | Documentation</title>
+  <meta name="description" content="Gitのコミットメッセージ修正、変更の取り消し、リモート設定、stashの操作と実行結果">
+  <link rel="stylesheet" href="../assets/styles.css">
+  <link rel="stylesheet" href="../assets/git-github.css">
+</head>
+<body data-user-values="t_hashimoto@example.com,t_hashimoto">
+  <header class="site-header">
+    <a class="brand" href="../">
+      <img src="../assets/icon.jpg" alt="Documentation icon">
+      <span>Documentation</span>
+    </a>
+    <div class="header-actions">
+      <button class="icon-button theme-toggle" type="button" title="テーマを切り替え" aria-label="テーマを切り替え">☀</button>
+      <nav class="nav" aria-label="Global navigation">
+        <a href="https://github.com/hsmts2/Documentation"><span class="nav-icon" aria-hidden="true">◆</span>GitHub</a>
+      </nav>
+    </div>
+  </header>
+  <div class="layout">
+    <aside id="site-sidebar" class="sidebar" aria-label="Page list">
+      <div class="sidebar-heading">
+        <button class="icon-button sidebar-toggle sidebar-toggle-inline" type="button" aria-controls="site-sidebar" aria-expanded="true" title="ナビゲーションを閉じる" aria-label="ナビゲーションを閉じる">☰</button>
+      </div>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">✎</span>記事</p>
+      <a href="cloudflare-private-site.html">Private GitHubリポジトリをCloudflare Workersで認証付き公開してみた</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">☁︎</span>[PoC] マルチVPC・閉域VDI基盤案件</p>
+          <a href="workspaces-skill-transfer.html">全体構築・運用順序</a>
+          <a href="workspaces-managed-ad.html">Managed Microsoft ADの構築</a>
+          <a href="workspaces-managed-ad-users.html">Managed Microsoft ADのユーザー・グループ管理</a>
+          <a href="workspaces-management-ec2.html">管理用EC2の起動・接続・AD管理</a>
+          <a href="workspaces-ad-connector-account.html">AD Connector用サービスアカウント・権限委任</a>
+          <a href="workspaces-ad-connector.html">AD ConnectorのVPCピアリング・SG設定・作成</a>
+          <a href="workspaces-provisioning-gpo.html">WorkSpaces Personalの構築・接続</a>
+          <a href="workspaces-target-ou.html">WorkSpaces用ターゲットOUの作成・権限委任</a>
+          <a href="workspaces-gpo.html">WorkSpaces用GPOの作成・適用・運用</a>
+          <a href="workspaces-image-bundle.html">WorkSpacesカスタムイメージ作成・共有</a>
+          <a href="workspaces-systems-manager.html">Systems Manager環境構築</a>
+          <a href="workspaces-patch-manager.html">Patch Managerの設定</a>
+          <a href="workspaces-patch-operations.html">Patch Managerの実行・結果確認・運用</a>
+          <a href="workspaces-cost-optimizer.html">Cost Optimizerの構築・設定</a>
+          <a href="workspaces-cost-optimizer-dry-run.html">Cost OptimizerのDry Run解除</a>
+          <a href="workspaces-cost-optimizer-schedule.html">Cost Optimizerの実行スケジュール設定・変更</a>
+          <a href="workspaces-cost-optimizer-reports.html">Cost Optimizerのレポート・監視</a>
+          <a href="workspaces-cloudwatch-monitoring.html">CloudWatchのEC2・Windows OS監視とSNS通知</a>
+          <a href="workspaces-cloudwatch-workspaces.html">CloudWatchのWorkSpaces監視</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">⑂</span>Git / GitHub</p>
+      <a href="git-github.html">Git / GitHub 概要</a>
+      <a class="active" aria-current="page" href="git-utilities.html">Gitトラブルシューティング</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">◈</span>Terraform</p>
+      <a href="terraform.html">Terraform 概要</a>
+      <a href="hcp-terraform.html">HCP Terraform（Terraform Cloud）</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">☁︎</span>AWS</p>
+      <a href="cloudformation.html">CloudFormation 運用手順集</a>
+      <a href="aws-cli.html">AWS CLI 特殊対応</a>
+      <a href="aws-cli-reference.html">AWS CLI コマンドリファレンス</a>
+      <a href="eventbridge-scheduler.html">EventBridge Scheduler</a>
+      <a href="aws-directory-service.html">AWS Directory Service 運用手順</a>
+      <a href="amazon-workspaces.html">Amazon WorkSpaces</a>
+      <a href="amazon-ses.html">Amazon SES SMTPリレー</a>
+      <a href="amazon-ses-monitoring.html">Amazon SES 配信監視</a>
+      <a href="amazon-rds-blue-green.html">Amazon RDS Blue/Green Deployments</a>
+      <a href="apache-acm-certificate-update.html">証明書更新（ACMエクスポート）</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">⚙︎</span>OS／ミドルウェア</p>
+      <a href="rhel9.html">Red Hat Enterprise Linux 9</a>
+      <a href="rhel10.html">Red Hat Enterprise Linux 10</a>
+      <a href="amazon-linux-2023.html">Amazon Linux 2023</a>
+      <a href="windows-server-2022.html">Windows Server 2022</a>
+      <a href="windows-server-2025.html">Windows Server 2025</a>
+      <a href="windows-server-2016-upgrade.html">Windows Server 2016 インプレースアップグレード</a>
+      <a href="storage.html">ストレージ管理</a>
+      <a href="apache.html">Apache</a>
+      <a href="apache-self-signed-ssl-termination.html">Apache SSL終端（自己署名証明書）</a>
+      <a href="redis.html">Redis（KVS）</a>
+      <a href="nfs.html">NFS</a>
+      <a href="samba.html">Samba</a>
+      <a href="mariadb.html">MariaDB</a>
+      <a href="postgresql.html">PostgreSQL</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">▤</span>リファレンス</p>
+      <a href="../writing-style-guide.html">[GitHub Pages] 記法・テンプレート</a>
+      <a href="troubleshooting.html">障害切り分けチェックリスト</a>
+      <a href="eol.html">EOL / ライフサイクル一覧表</a>
+    </aside>
+    <main class="content git-guide">
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="../"><span class="nav-icon" aria-hidden="true">⌂</span>Home</a>
+        <span>トピック</span>
+      </nav>
+      <p class="eyebrow">Git / GitHub</p>
+      <h1>Gitトラブルシューティング</h1>
+<section><h2 id="amend">コミットメッセージの修正</h2><h3>1. 追記とコミット</h3>
+<div class="code" data-git-transcript><div class="code-header"><span>Git Bash</span><button class="copy" type="button">Copy</button></div><pre><code>$ echo "- 学習中: Git" &gt;&gt; profile.md</code></pre></div>
+<div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git diff
+diff --git a/profile.md b/profile.md
+index b5e2b13..59f6485 100644
+--- a/profile.md
++++ b/profile.md
+@@ -3,3 +3,4 @@
+ - 名前: t_hashimoto
+ - 職業: エンジニア
+ - スキル: AWS, Linux
++- 学習中: Git</code></pre></div>
+<div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git add profile.md</code></pre></div>
+<div class="code"><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>git commit -m "Udpate profile"
+[main 71dd282] Udpate profile
+ 1 file changed, 1 insertion(+)</code></pre></div>
+<div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git log --oneline -2
+71dd282 (HEAD -&gt; main) Udpate profile
+73318e4 Initial practice files</code></pre></div><p>Udpateは修正を試すための意図的な誤記。71dd282としてファイルの追記を保存</p><h3>2. 修正前の位置を保存してamend</h3>
+<div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git branch original_main</code></pre></div>
+<div class="code"><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>git branch -a
+* main
+  original_main</code></pre></div>
+<div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git commit --amend -m "Update profile"
+[main 638cd67] Update profile
+ Date: Thu Sep 17 00:53:52 2026 +0900
+ 1 file changed, 1 insertion(+)</code></pre></div>
+<div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git log --oneline -2
+638cd67 (HEAD -&gt; main) Update profile
+73318e4 Initial practice files</code></pre></div><p>original_mainは修正前の位置を残す目印。mainは638cd67へ移動し、Update profileというメッセージの新しいコミットへ置き換え。今回はファイル内容の変更なし</p></section><section><h2 id="restore">作業ファイルの変更を取り消す</h2><h3>1. 未ステージングの変更を確認</h3>
+<div class="code" data-git-transcript><div class="code-header"><span>Git Bash</span><button class="copy" type="button">Copy</button></div><pre><code>$ echo "- 練習用: この行は取り消す" &gt;&gt; profile.md</code></pre></div>
+<div class="code"><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>git diff
+diff --git a/profile.md b/profile.md
+index 59f6485..20472c9 100644
+--- a/profile.md
++++ b/profile.md
+@@ -4,3 +4,4 @@
+ - 職業: エンジニア
+ - スキル: AWS, Linux
+ - 学習中: Git
++- 練習用: この行は取り消す</code></pre></div>
+<div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git status -s
+ M profile.md</code></pre></div><p>右側のMはワーキングツリーに未ステージングの変更あり。今回はgit addを実行していない状態</p><h3>2. 変更を取り消して確認</h3>
+<div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git restore profile.md</code></pre></div>
+<div class="code"><div class="code-header"><span>Git Bash</span><button class="copy" type="button">Copy</button></div><pre><code>cat profile.md
+# 自己紹介
+
+- 名前: t_hashimoto
+- 職業: エンジニア
+- スキル: AWS, Linux
+- 学習中: Git</code></pre></div>
+<div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git diff</code></pre></div><p>出力なし</p>
+<div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git status
+On branch main
+nothing to commit, working tree clean</code></pre></div><p>git restoreは既定でインデックスの内容を作業ファイルへ復元。今回は練習用の行が消え、コミット済みの「学習中: Git」は保持</p></section><section><h2 id="unstage">ステージングを取り消す</h2><h3>1. 編集・ステージングと差分確認</h3>
+<div class="code" data-git-transcript><div class="code-header"><span>Git Bash</span><button class="copy" type="button">Copy</button></div><pre><code>$ echo "- 練習用: ステージングを取り消す" &gt;&gt; profile.md</code></pre></div>
+<div class="code"><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>git diff
+diff --git a/profile.md b/profile.md
+index 59f6485..6bc5660 100644
+--- a/profile.md
++++ b/profile.md
+@@ -4,3 +4,4 @@
+ - 職業: エンジニア
+ - スキル: AWS, Linux
+ - 学習中: Git
++- 練習用: ステージングを取り消す</code></pre></div>
+<div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git status -s
+ M profile.md</code></pre></div>
+<div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git add profile.md</code></pre></div>
+<div class="code"><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>git status -s
+M  profile.md</code></pre></div>
+<div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git diff</code></pre></div><p>出力なし</p>
+<div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git diff --cached
+diff --git a/profile.md b/profile.md
+index 59f6485..6bc5660 100644
+--- a/profile.md
++++ b/profile.md
+@@ -4,3 +4,4 @@
+ - 職業: エンジニア
+ - スキル: AWS, Linux
+ - 学習中: Git
++- 練習用: ステージングを取り消す</code></pre></div><p>add前の右側Mから、add後は左側Mへ変化。git diffは出力なし、git diff --cachedには次のコミットに入る追記を表示</p><h3>2. 登録だけを取り消す</h3>
+<div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git restore --staged profile.md</code></pre></div>
+<div class="code"><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>git status -s
+ M profile.md</code></pre></div>
+<div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git diff --cached</code></pre></div><p>出力なし</p>
+<div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git diff
+diff --git a/profile.md b/profile.md
+index 59f6485..6bc5660 100644
+--- a/profile.md
++++ b/profile.md
+@@ -4,3 +4,4 @@
+ - 職業: エンジニア
+ - スキル: AWS, Linux
+ - 学習中: Git
++- 練習用: ステージングを取り消す</code></pre></div>
+<div class="code" data-git-transcript><div class="code-header"><span>Git Bash</span><button class="copy" type="button">Copy</button></div><pre><code>$ cat profile.md
+# 自己紹介
+
+- 名前: t_hashimoto
+- 職業: エンジニア
+- スキル: AWS, Linux
+- 学習中: Git
+- 練習用: ステージングを取り消す</code></pre></div><p>--stagedはインデックスをHEADの内容へ戻す指定。作業ファイルの追記は残り、git diff --cachedは出力なし、git diffには追記を表示</p><h3>3. 練習用の追記を片付ける</h3>
+<div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git restore profile.md</code></pre></div>
+<div class="code"><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>git status
+On branch main
+nothing to commit, working tree clean</code></pre></div><p>ここからは登録解除とは別の操作。練習用の追記だけと確認したうえで、作業ファイルの変更も破棄</p></section><section><h2 id="remote">リモートを間違えて登録した場合</h2><p>書籍のHTTPSからSSHへの変更例を、PC内の間違ったパスから正しいパスへの再登録に置き換え。最初からmainのためgit branch -M mainは省略し、別履歴の共有先へのgit push -u origin mainも未実施</p><h3>1. 接続先を登録・確認</h3>
+<div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git remote -v</code></pre></div><p>出力なし</p>
+<div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git remote add origin ../02-push/wrong.git</code></pre></div>
+<div class="code"><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>git remote -v
+origin  ../02-push/wrong.git (fetch)
+origin  ../02-push/wrong.git (push)</code></pre></div><p>remote addは現在のリポジトリの.git/configに接続先を登録する操作。接続確認は行わないため、存在しないwrong.gitでも登録可能</p><h3>2. 重複エラーと登録の削除</h3>
+<div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git remote add origin ../02-push/remote.git
+error: remote origin already exists.</code></pre></div>
+<div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git remote remove origin</code></pre></div>
+<div class="code"><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>git remote -v</code></pre></div><p>出力なし</p><p>origin already existsは今回意図的に確認するエラー。同名のoriginが既にあるため追加できない状態。removeは手元の接続先登録だけを削除し、共有先自体は削除しない操作</p><h3>3. 正しい接続先の登録・確認・片付け</h3>
+<div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git remote add origin ../02-push/remote.git/</code></pre></div>
+<div class="code"><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>git remote -v
+origin  ../02-push/remote.git/ (fetch)
+origin  ../02-push/remote.git/ (push)</code></pre></div>
+<div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git ls-remote --heads origin
+4d8a764042de03661ae21c0d6380c8ee2ab14b98        refs/heads/main</code></pre></div>
+<div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git remote remove origin</code></pre></div>
+<div class="code"><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>git remote -v</code></pre></div><p>出力なし</p>
+<div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git status
+On branch main
+nothing to commit, working tree clean</code></pre></div><p>ls-remoteで共有先のmainとコミットIDを確認。接続先はPC内の../02-push/remote.git/で、GitHub認証は不要。今回は登録の練習だけのためpushは未実施</p></section><section><h2 id="stash">mainで始めた作業を別ブランチへ移す</h2><p>ログで作成されたブランチ名は<code class="inline-code">feature/cahpter6-profile</code>。chapter6とは綴りが異なるもののGitの操作には問題がないため、本ページでは実際の名前を保持</p><h3>1. main上で追記</h3>
+<div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git branch --show-current
+main</code></pre></div>
+<div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git status
+On branch main
+nothing to commit, working tree clean</code></pre></div>
+<div class="code" data-git-transcript><div class="code-header"><span>Git Bash</span><button class="copy" type="button">Copy</button></div><pre><code>$ echo "- 次に学ぶ内容: Terraform" &gt;&gt; profile.md</code></pre></div>
+<div class="code"><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>git diff
+diff --git a/profile.md b/profile.md
+index 59f6485..ea35167 100644
+--- a/profile.md
++++ b/profile.md
+@@ -4,3 +4,4 @@
+ - 職業: エンジニア
+ - スキル: AWS, Linux
+ - 学習中: Git
++- 次に学ぶ内容: Terraform</code></pre></div>
+<div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git status -s
+ M profile.md</code></pre></div><p>Terraformの追記は未コミット。現在のmainの履歴にはまだ含まれていない状態</p><h3>2. 変更を一時退避</h3>
+<div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git stash
+Saved working directory and index state WIP on main: 638cd67 Update profile</code></pre></div>
+<div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git status
+On branch main
+nothing to commit, working tree clean</code></pre></div>
+<div class="code" data-git-transcript><div class="code-header"><span>Git Bash</span><button class="copy" type="button">Copy</button></div><pre><code>$ cat profile.md
+# 自己紹介
+
+- 名前: t_hashimoto
+- 職業: エンジニア
+- スキル: AWS, Linux
+- 学習中: Git</code></pre></div>
+<div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git stash list
+stash@{0}: WIP on main: 638cd67 Update profile</code></pre></div><p>stash後はcleanに戻り、Terraformの追記は退避領域へ保存。ファイルから消えても変更を失ったわけではない状態</p><h3>3. ブランチを作成して復元</h3>
+<div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git switch -c feature/cahpter6-profile
+Switched to a new branch 'feature/cahpter6-profile'</code></pre></div>
+<div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git branch
+* feature/cahpter6-profile
+  main
+  original_main</code></pre></div>
+<div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git stash pop
+On branch feature/cahpter6-profile
+Changes not staged for commit:
+  (use "git add &lt;file&gt;..." to update what will be committed)
+  (use "git restore &lt;file&gt;..." to discard changes in working directory)
+        modified:   profile.md
+
+no changes added to commit (use "git add" and/or "git commit -a")
+Dropped refs/stash@{0} (057830b4d554b43d5db01c6d42ec332fe134f456)</code></pre></div>
+<div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git status
+On branch feature/cahpter6-profile
+Changes not staged for commit:
+  (use "git add &lt;file&gt;..." to update what will be committed)
+  (use "git restore &lt;file&gt;..." to discard changes in working directory)
+        modified:   profile.md
+
+no changes added to commit (use "git add" and/or "git commit -a")</code></pre></div>
+<div class="code" data-git-transcript><div class="code-header"><span>Git Bash</span><button class="copy" type="button">Copy</button></div><pre><code>$ cat profile.md
+# 自己紹介
+
+- 名前: t_hashimoto
+- 職業: エンジニア
+- スキル: AWS, Linux
+- 学習中: Git
+- 次に学ぶ内容: Terraform</code></pre></div>
+<div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git stash list</code></pre></div><p>出力なし</p><p>pop成功後は作業ブランチに追記を復元し、stash一覧から退避を削除。まだ未ステージングのため、コミットは別途必要</p><h3>4. 作業ブランチでコミット</h3>
+<div class="code"><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>git add profile.md</code></pre></div>
+<div class="code"><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>git commit -m "Add next study topic"
+[feature/cahpter6-profile 00b2eb8] Add next study topic
+ 1 file changed, 1 insertion(+)</code></pre></div>
+<div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git log --oneline -2
+00b2eb8 (HEAD -&gt; feature/cahpter6-profile) Add next study topic
+638cd67 (main) Update profile</code></pre></div>
+<div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git status
+On branch feature/cahpter6-profile
+nothing to commit, working tree clean</code></pre></div><p>00b2eb8としてTerraformの追記を保存。mainは638cd67のまま、終了時点の作業ブランチはfeature/cahpter6-profile</p><details><summary><strong>補足：stashが履歴に見える理由</strong></summary><div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git log --all --graph --oneline
+*   057830b (refs/stash) WIP on main: 638cd67 Update profile
+|\
+| * 6fd2e3b index on main: 638cd67 Update profile
+|/
+* 638cd67 (HEAD -&gt; main) Update profile
+| * 71dd282 (original_main) Udpate profile
+|/
+* 73318e4 Initial practice files</code></pre></div><p>refs/stashやindex on mainは退避内容を保持するための内部コミット。通常のgit commitでmainに追記したわけではなく、mainは638cd67のまま</p></details>
+<h3>5. mainへ戻る操作（ログ終了後の補足）</h3><p>送付ログではmainへの切り替えは成功しておらず、最後もfeature上でcleanの状態。以下は追加の確認手順であり、実施済み結果とは区別</p><div class="code"><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>git switch main</code></pre></div><div class="code"><div class="code-header"><span>Git Bash</span><button class="copy" type="button">Copy</button></div><pre><code>cat profile.md</code></pre></div><div class="code"><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>git status</code></pre></div><p>期待する状態はmain上でclean、Terraformの追記なし。追記はfeatureのコミットに保存済み</p></section></main><aside class="toc" aria-label="Table of contents"><h2>ページ内</h2><a href="#amend">コミットメッセージの修正</a><a href="#restore">作業ファイルの変更を取り消す</a><a href="#unstage">ステージングを取り消す</a><a href="#remote">リモートを間違えて登録した場合</a><a href="#stash">mainで始めた作業を別ブランチへ移す</a></aside></div><script src="../assets/app.js"></script><script src="../assets/git-github.js"></script></body></html>

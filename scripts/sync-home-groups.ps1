@@ -42,7 +42,7 @@ foreach ($group in $groupMatches) {
 $homeSections = @(
     [pscustomobject]@{ Id = 'articles'; Icon = '&#128221;'; Label = $groupMatches[0].Groups[1].Value; Files = @('cloudflare-private-site.html', 'workspaces-skill-transfer.html') },
     [pscustomobject]@{ Id = 'terraform'; Icon = '&#129521;'; Label = 'Terraform'; Files = @('terraform.html', 'hcp-terraform.html') },
-    [pscustomobject]@{ Id = 'git-github'; Icon = '⑂'; Label = 'Git / GitHub'; Files = @('git-github.html') },
+    [pscustomobject]@{ Id = 'git-github'; Icon = '⑂'; Label = 'Git / GitHub'; Files = @('git-github.html', 'git-utilities.html') },
     [pscustomobject]@{ Id = 'reference'; Icon = '&#128218;'; Label = $groupMatches[6].Groups[1].Value; Files = @('writing-style-guide.html', 'troubleshooting.html', 'eol.html') },
     [pscustomobject]@{ Id = 'aws-platform'; Icon = '&#128736;&#65039;'; Label = 'AWS &#22522;&#30436;&#65295;CLI'; Files = @('cloudformation.html', 'aws-cli.html', 'aws-cli-reference.html') },
     [pscustomobject]@{ Id = 'aws-services'; Icon = '&#9729;&#65039;'; Label = 'AWS &#12469;&#12540;&#12499;&#12473;'; Files = @('eventbridge-scheduler.html', 'aws-directory-service.html', 'amazon-workspaces.html', 'amazon-ses.html', 'amazon-ses-monitoring.html', 'amazon-rds-blue-green.html', 'apache-acm-certificate-update.html') },
