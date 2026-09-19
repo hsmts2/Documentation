@@ -1,0 +1,29 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Daily estimated AWS costs to a private Slack channel
+Parameters:
+  WebhookParameterName:
+    Type: String
+    Default: /daily-cost-slack/webhook
+Resources:
+  DailyCostFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: .
+      Handler: app.lambda_handler
+      Runtime: python3.13
+      Role: !Sub arn:${AWS::Partition}:iam::${AWS::AccountId}:role/aws-costs-role
+      Timeout: 30
+      MemorySize: 128
+      Environment:
+        Variables:
+          WEBHOOK_PARAMETER_NAME: !Ref WebhookParameterName
+          FX_PARAMETER_PREFIX: /daily-cost-slack/fx
+      Events:
+        EveryMorning:
+          Type: ScheduleV2
+          Properties:
+            ScheduleExpression: cron(0 3 * * ? *)
+            ScheduleExpressionTimezone: Asia/Tokyo
+            FlexibleTimeWindow:
+              Mode: 'OFF'

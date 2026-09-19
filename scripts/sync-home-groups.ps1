@@ -40,7 +40,7 @@ foreach ($group in $groupMatches) {
 }
 
 $homeSections = @(
-    [pscustomobject]@{ Id = 'articles'; Icon = '&#128221;'; Label = $groupMatches[0].Groups[1].Value; Files = @('cloudflare-private-site.html', 'workspaces-skill-transfer.html') },
+    [pscustomobject]@{ Id = 'articles'; Icon = '&#128221;'; Label = $groupMatches[0].Groups[1].Value; Files = @('cloudflare-private-site.html', 'aws-daily-cost-slack.html', 'workspaces-skill-transfer.html') },
     [pscustomobject]@{ Id = 'terraform'; Icon = '&#129521;'; Label = 'Terraform'; Files = @('terraform.html', 'hcp-terraform.html') },
     [pscustomobject]@{ Id = 'git-github'; Icon = '⑂'; Label = 'Git / GitHub'; Files = @('git-github.html', 'git-utilities.html') },
     [pscustomobject]@{ Id = 'reference'; Icon = '&#128218;'; Label = $groupMatches[6].Groups[1].Value; Files = @('writing-style-guide.html', 'troubleshooting.html', 'eol.html') },

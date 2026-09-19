@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AWS利用料を毎朝3時にSlackへ通知する | Documentation</title>
+  <meta name="description" content="Cost Explorer、Lambda、EventBridge Scheduler、SSM Parameter Store、Slack Incoming Webhookで前日のAWS利用料と当月累計を毎朝3時に通知する構築手順">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="../"><img src="../assets/icon.jpg" alt="Documentation icon"><span>Documentation</span></a>
+    <div class="header-actions">
+      <button class="icon-button theme-toggle" type="button" title="テーマを切り替え" aria-label="テーマを切り替え">☀</button>
+      <nav class="nav" aria-label="Global navigation">
+        <a href="../"><span class="nav-icon" aria-hidden="true">⌂</span>Home</a>
+        <a href="https://github.com/hsmts2/Documentation"><span class="nav-icon" aria-hidden="true">◆</span>GitHub</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="layout">
+    <aside id="site-sidebar" class="sidebar" aria-label="Page list">
+      <div class="sidebar-heading">
+        <button class="icon-button sidebar-toggle sidebar-toggle-inline" type="button" aria-controls="site-sidebar" aria-expanded="true" title="ナビゲーションを閉じる" aria-label="ナビゲーションを閉じる">☰</button>
+      </div>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">✎</span>記事</p>
+      <a href="cloudflare-private-site.html">Private GitHubリポジトリをCloudflare Workersで認証付き公開してみた</a>
+      <a class="active" href="aws-daily-cost-slack.html">AWS利用料を毎朝3時にSlackへ通知する</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">☁︎</span>[PoC] マルチVPC・閉域VDI基盤案件</p>
+          <a href="workspaces-skill-transfer.html">全体構築・運用順序</a>
+          <a href="workspaces-managed-ad.html">Managed Microsoft ADの構築</a>
+          <a href="workspaces-managed-ad-users.html">Managed Microsoft ADのユーザー・グループ管理</a>
+          <a href="workspaces-management-ec2.html">管理用EC2の起動・接続・AD管理</a>
+          <a href="workspaces-ad-connector-account.html">AD Connector用サービスアカウント・権限委任</a>
+          <a href="workspaces-ad-connector.html">AD ConnectorのVPCピアリング・SG設定・作成</a>
+          <a href="workspaces-provisioning-gpo.html">WorkSpaces Personalの構築・接続</a>
+          <a href="workspaces-target-ou.html">WorkSpaces用ターゲットOUの作成・権限委任</a>
+          <a href="workspaces-gpo.html">WorkSpaces用GPOの作成・適用・運用</a>
+          <a href="workspaces-image-bundle.html">WorkSpacesカスタムイメージ作成・共有</a>
+          <a href="workspaces-systems-manager.html">Systems Manager環境構築</a>
+          <a href="workspaces-patch-manager.html">Patch Managerの設定</a>
+          <a href="workspaces-patch-operations.html">Patch Managerの実行・結果確認・運用</a>
+          <a href="workspaces-cost-optimizer.html">Cost Optimizerの構築・設定</a>
+          <a href="workspaces-cost-optimizer-dry-run.html">Cost OptimizerのDry Run解除</a>
+          <a href="workspaces-cost-optimizer-schedule.html">Cost Optimizerの実行スケジュール設定・変更</a>
+          <a href="workspaces-cost-optimizer-reports.html">Cost Optimizerのレポート・監視</a>
+          <a href="workspaces-cloudwatch-monitoring.html">CloudWatchのEC2・Windows OS監視とSNS通知</a>
+          <a href="workspaces-cloudwatch-workspaces.html">CloudWatchのWorkSpaces監視</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">⑂</span>Git / GitHub</p>
+      <a href="git-github.html">Git / GitHub 概要</a>
+      <a href="git-utilities.html">Gitトラブルシューティング</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">◈</span>Terraform</p>
+      <a href="terraform.html">Terraform 概要</a>
+      <a href="hcp-terraform.html">HCP Terraform（Terraform Cloud）</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">☁︎</span>AWS</p>
+      <a href="cloudformation.html">CloudFormation 運用手順集</a>
+      <a href="aws-cli.html">AWS CLI 特殊対応</a>
+      <a href="aws-cli-reference.html">AWS CLI コマンドリファレンス</a>
+      <a href="eventbridge-scheduler.html">EventBridge Scheduler</a>
+      <a href="aws-directory-service.html">AWS Directory Service 運用手順</a>
+      <a href="amazon-workspaces.html">Amazon WorkSpaces</a>
+      <a href="amazon-ses.html">Amazon SES SMTPリレー</a>
+      <a href="amazon-ses-monitoring.html">Amazon SES 配信監視</a>
+      <a href="amazon-rds-blue-green.html">Amazon RDS Blue/Green Deployments</a>
+      <a href="apache-acm-certificate-update.html">証明書更新（ACMエクスポート）</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">⚙︎</span>OS／ミドルウェア</p>
+      <a href="rhel9.html">Red Hat Enterprise Linux 9</a>
+      <a href="rhel10.html">Red Hat Enterprise Linux 10</a>
+      <a href="amazon-linux-2023.html">Amazon Linux 2023</a>
+      <a href="windows-server-2022.html">Windows Server 2022</a>
+      <a href="windows-server-2025.html">Windows Server 2025</a>
+      <a href="windows-server-2016-upgrade.html">Windows Server 2016 インプレースアップグレード</a>
+      <a href="storage.html">ストレージ管理</a>
+      <a href="apache.html">Apache</a>
+      <a href="apache-self-signed-ssl-termination.html">Apache SSL終端（自己署名証明書）</a>
+      <a href="redis.html">Redis（KVS）</a>
+      <a href="nfs.html">NFS</a>
+      <a href="samba.html">Samba</a>
+      <a href="mariadb.html">MariaDB</a>
+      <a href="postgresql.html">PostgreSQL</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">▤</span>リファレンス</p>
+      <a href="../writing-style-guide.html">[GitHub Pages] 記法・テンプレート</a>
+      <a href="troubleshooting.html">障害切り分けチェックリスト</a>
+      <a href="eol.html">EOL / ライフサイクル一覧表</a>
+    </aside>
+
+    <main class="content">
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="../"><span class="nav-icon" aria-hidden="true">⌂</span>Home</a>
+        <span>トピック</span>
+      </nav>
+      <h1>AWS利用料を毎朝3時にSlackへ通知する</h1>
+      <p class="lead">Cost Explorerの前日利用料、サービス別内訳、当月累計を毎日03:00 JSTにSlackへ送る構成をまとめる<br>Slack Incoming Webhook、IAM、Parameter Store、Lambda、EventBridge Schedulerの設定と検証手順を実際の構成に沿って示す</p>
+
+      <h2 id="overview">今回実現した構成</h2>
+      <p>EventBridge Schedulerが毎日03:00 JSTにLambdaを起動する。LambdaはCost ExplorerからUSD建ての概算利用料を取得し、月ごとに固定したECB参考レートで円換算して、Slackの表ブロックで投稿する</p>
+      <table>
+        <thead><tr><th>項目</th><th>設定値</th></tr></thead>
+        <tbody>
+          <tr><td>AWSリージョン</td><td>Asia Pacific (Tokyo) <code>ap-northeast-1</code></td></tr>
+          <tr><td>CloudFormationスタック</td><td><code>aws-daily-cost-slack</code></td></tr>
+          <tr><td>Lambda実行ロール</td><td><code>aws-costs-role</code></td></tr>
+          <tr><td>Lambda</td><td>Python 3.13、128 MB、タイムアウト30秒</td></tr>
+          <tr><td>スケジュール</td><td><code>cron(0 3 * * ? *)</code>、<code>Asia/Tokyo</code>、Flexible time window無効</td></tr>
+          <tr><td>Slack投稿先</td><td><code>#aws-costs</code>（Incoming Webhook）</td></tr>
+          <tr><td>Webhook保管先</td><td>SSM Parameter Store <code>/daily-cost-slack/webhook</code>、SecureString</td></tr>
+          <tr><td>月次レート保管先</td><td>SSM Parameter Store <code>/daily-cost-slack/fx/YYYY-MM</code>、String</td></tr>
+          <tr><td>料金データ</td><td>Cost Explorer <code>UnblendedCost</code>、日次、サービス別。APIクライアントは<code>us-east-1</code></td></tr>
+        </tbody>
+      </table>
+      <figure class="screenshot-wide">
+        <figcaption>Slackの通知例。サービス、USD建て利用料、日本円の列は表ブロックで揃える</figcaption>
+        <img src="../assets/img/aws-daily-cost-slack/01-slack-daily-cost-table.png" alt="AWS Daily Costが前日料金、サービス別の表、今月累計をSlackへ通知した画面" loading="lazy">
+      </figure>
+      <div class="callout callout-warning"><strong>⚠️ 注意</strong><p>Cost Explorerの数値は概算で、反映遅延や後日の調整がある。円換算はECB参考レートによる表示で、税やAWSの確定請求額とは一致しない</p></div>
+
+      <h2 id="slack-webhook">1. Slack Incoming Webhookを作成</h2>
+      <ol>
+        <li>Slack APIのアプリ管理画面で<code>AWS Daily Cost</code>アプリを作成し、対象ワークスペースを選択</li>
+        <li><code>Incoming Webhooks</code>を開いて<code>Activate Incoming Webhooks</code>を有効化</li>
+        <li><code>Add New Webhook</code>から投稿先の<code>#aws-costs</code>を選択して許可</li>
+        <li>発行されたWebhook URLを安全な一時保管場所へ控え、次の手順でParameter Storeへ登録</li>
+      </ol>
+      <figure class="screenshot-wide">
+        <figcaption>Incoming Webhooksの有効化と投稿先チャンネルを確認する画面。Webhook URLはマスク済み</figcaption>
+        <img src="../assets/img/aws-daily-cost-slack/02-slack-incoming-webhook-redacted.png" alt="Slack APIのIncoming Webhooks画面。AWS Daily CostアプリでWebhookが有効で、aws-costsチャンネルが選ばれている" loading="lazy">
+      </figure>
+      <div class="callout callout-warning"><strong>⚠️ 注意</strong><p>Webhook URLそのものが投稿権限を持つ秘密情報。URL、コピー用curlコマンド、Parameter Storeの値をスクリーンショットやGitへ載せない</p></div>
+
+      <h2 id="parameter-store">2. WebhookをParameter Storeへ保存</h2>
+      <p>Systems ManagerのParameter Storeでパラメータを作成する。名前は<code>/daily-cost-slack/webhook</code>、タイプは<code>SecureString</code>、暗号化キーはAWS管理キー<code>aws/ssm</code>とする。値欄へ前手順で取得したWebhook URLを入力して保存する</p>
+      <p>月次レートの<code>/daily-cost-slack/fx/YYYY-MM</code>はLambdaが初回実行時に<code>String</code>として作成するため、手動で作らない</p>
+
+      <h2 id="iam">3. Lambda実行ロールを作成</h2>
+      <p>IAMで信頼されたエンティティに<code>Lambda</code>を選び、ロール名<code>aws-costs-role</code>を作成する。AWS管理ポリシー<code>AWSLambdaBasicExecutionRole</code>でCloudWatch Logsへの出力を許可する</p>
+      <p>料金の読み取り、Webhookと月次レートの読み取り、月次レートの保存に必要なアクションだけをインラインポリシーへ追加する。次の<code>&lt;AWS_ACCOUNT_ID&gt;</code>は自分のAWSアカウントIDへ置き換える</p>
+      <div class="code"><div class="code-header"><span>json</span><button class="copy" type="button">Copy</button></div><pre><code>{
+  "Version": "2012-10-17",
+  "Statement": [
+    {"Sid": "ReadCostExplorer", "Effect": "Allow", "Action": "ce:GetCostAndUsage", "Resource": "*"},
+    {"Sid": "ReadWebhookAndMonthlyRate", "Effect": "Allow", "Action": "ssm:GetParameter", "Resource": [
+      "arn:aws:ssm:ap-northeast-1:&lt;AWS_ACCOUNT_ID&gt;:parameter/daily-cost-slack/webhook",
+      "arn:aws:ssm:ap-northeast-1:&lt;AWS_ACCOUNT_ID&gt;:parameter/daily-cost-slack/fx/*"
+    ]},
+    {"Sid": "StoreMonthlyRate", "Effect": "Allow", "Action": "ssm:PutParameter",
+      "Resource": "arn:aws:ssm:ap-northeast-1:&lt;AWS_ACCOUNT_ID&gt;:parameter/daily-cost-slack/fx/*"}
+  ]
+}</code></pre></div>
+      <p><code>aws/ssm</code>管理キーを使用した今回の構成では、別途カスタマー管理KMSキーの復号権限は付けていない。カスタマー管理キーへ変える場合は、そのキーのポリシーと<code>kms:Decrypt</code>を再確認する</p>
+
+      <h2 id="sam">4. SAMでLambdaとスケジュールを配置</h2>
+      <p>SAM CLIを導入し、<code>app.py</code>と<code>template.yaml</code>を同じディレクトリに置く。実際に配置した定義は次のとおり</p>
+      <div class="code"><div class="code-header"><span>yaml</span><button class="copy" type="button">Copy</button></div><pre><code>AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Daily estimated AWS costs to a private Slack channel
+Parameters:
+  WebhookParameterName:
+    Type: String
+    Default: /daily-cost-slack/webhook
+Resources:
+  DailyCostFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: .
+      Handler: app.lambda_handler
+      Runtime: python3.13
+      Role: !Sub arn:${AWS::Partition}:iam::${AWS::AccountId}:role/aws-costs-role
+      Timeout: 30
+      MemorySize: 128
+      Environment:
+        Variables:
+          WEBHOOK_PARAMETER_NAME: !Ref WebhookParameterName
+          FX_PARAMETER_PREFIX: /daily-cost-slack/fx
+      Events:
+        EveryMorning:
+          Type: ScheduleV2
+          Properties:
+            ScheduleExpression: cron(0 3 * * ? *)
+            ScheduleExpressionTimezone: Asia/Tokyo
+            FlexibleTimeWindow:
+              Mode: 'OFF'</code></pre></div>
+      <p>ローカルの作業ディレクトリでビルドし、AWSアカウントとリージョンを確認してから配置する</p>
+      <div class="code"><div class="code-header"><span>powershell</span><button class="copy" type="button">Copy</button></div><pre><code>aws sts get-caller-identity</code></pre></div>
+      <div class="code"><div class="code-header"><span>powershell</span><button class="copy" type="button">Copy</button></div><pre><code>sam build</code></pre></div>
+      <div class="code"><div class="code-header"><span>powershell</span><button class="copy" type="button">Copy</button></div><pre><code>sam deploy --guided</code></pre></div>
+      <p><code>sam deploy --guided</code>ではスタック名<code>aws-daily-cost-slack</code>、リージョン<code>ap-northeast-1</code>を指定し、変更セットとIAM関連の確認を行う。配置後、EventBridge Schedulerのスケジュールが<code>ENABLED</code>で、時刻が<code>cron(0 3 * * ? *)</code>／<code>Asia/Tokyo</code>か確認する</p>
+
+      <h2 id="lambda-code">5. Lambdaで料金を集計し、表形式で送信</h2>
+      <p><a href="../assets/code/aws-daily-cost-slack/app.py">配置したLambdaの全コード（app.py）</a>と<a href="../assets/code/aws-daily-cost-slack/template.yaml">SAMテンプレート（template.yaml）</a>を掲載する。以下はSlackの列ずれをなくすために使用した表ブロックの部分</p>
+      <div class="code"><div class="code-header"><span>python</span><button class="copy" type="button">Copy</button></div><pre><code>rows = [["サービス", "利用料", "日本円"]]
+rows.extend([SERVICE_NAMES.get(name, name), f"${amount:.2f}",
+             f"{yen(amount, rate):,}円" if rate else "-"] for name, amount in shown)
+blocks.append({
+    "type": "table",
+    "column_settings": [{"align": "left"}] * 3,
+    "rows": [[{"type": "raw_text", "text": cell} for cell in row] for row in rows],
+})</code></pre></div>
+      <p>半角スペースの個数で表を揃える方式は、日本語と英数字が混在するとSlackの表示環境によってずれる。Slackの<code>table</code> Block Kitブロックなら、見出しと金額をそれぞれの列に配置できる。<code>text</code>には表非対応環境向けのフォールバックも含める</p>
+      <p>Cost Explorerでは<code>UnblendedCost</code>を日次・サービス別に取得し、前日の上位5サービスと残額の「その他」、その月の前日までの合計を算出する。表示名が長い<code>Amazon Virtual Private Cloud</code>は<code>Amazon VPC</code>、<code>AWS Secrets Manager</code>は<code>Secrets Manager</code>へ短縮する</p>
+      <p>参考換算レートはECBのUSDとJPYの公表値から計算し、報告対象月の初回投稿時にSSMへ保存する。同じ月の通知では保存済みレートを再利用する。ECB取得に失敗したときはUSDのみを表示する</p>
+
+      <h2 id="verification">6. テスト送信と運用確認</h2>
+      <ol>
+        <li>Lambdaのテストイベントに<code>{}</code>を設定して実行</li>
+        <li>実行結果が<code>status: sent</code>で、<code>#aws-costs</code>に1件届いたことを確認</li>
+        <li>サービス、利用料、日本円の列がSlackで縦に揃い、前日の日付と月次累計が表示されることを確認</li>
+        <li>CloudWatch Logsでエラーがないことと、Schedulerが<code>ENABLED</code>であることを確認</li>
+      </ol>
+      <p>Lambdaの手動テストもCost Explorer APIを呼び、実際にSlackへ投稿する。テストのたびに通知が増え、APIリクエストにも料金が発生し得るため、連続実行には注意する</p>
+      <p class="source">出典：<a href="https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-property-function-schedulev2.html">AWS SAM ScheduleV2</a>、<a href="https://docs.slack.dev/messaging/sending-messages-using-incoming-webhooks/">Slack Incoming Webhooks</a>、<a href="https://docs.slack.dev/reference/block-kit/blocks/table-block/">Slack Table Block</a></p>
+    </main>
+
+    <aside class="toc" aria-label="Table of contents">
+      <h2>ページ内</h2>
+      <a href="#overview">今回実現した構成</a>
+      <a href="#slack-webhook">1. Slack Incoming Webhookを作成</a>
+      <a href="#parameter-store">2. WebhookをParameter Storeへ保存</a>
+      <a href="#iam">3. Lambda実行ロールを作成</a>
+      <a href="#sam">4. SAMでLambdaとスケジュールを配置</a>
+      <a href="#lambda-code">5. Lambdaで料金を集計し、表形式で送信</a>
+      <a href="#verification">6. テスト送信と運用確認</a>
+    </aside>
+  </div>
+  <script src="../assets/app.js"></script>
+</body>
+</html>
