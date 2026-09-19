@@ -91,18 +91,18 @@
         <span>トピック</span>
       </nav>
       <h1>GitHubとSlackの連携・通知設定</h1>
+      <p class="lead">Slackの非公開チャンネル<code class="inline-code">#github-updates</code>で、<code class="inline-code">hsmts2/Documentation</code>の更新通知を受け取る構成例。チャンネル名とリポジトリ名は、利用する環境に合わせて読み替える</p>
 
       <section>
         <h2 id="scope">対象と確認ポイント</h2>
-        <p>Slackの非公開チャンネル<code>#github-updates</code>で、<code>hsmts2/Documentation</code>の更新通知を受け取る構成例。チャンネル名とリポジトリ名は、利用する環境に合わせて読み替える</p>
         <p>Slackワークスペースへのアプリ追加、GitHubアカウントの接続、GitHub Appのリポジトリへのインストール、チャンネルでの購読はそれぞれ別の操作。アカウントを接続しただけでは通知は始まらない</p>
         <table>
           <thead><tr><th>項目</th><th>構成例</th></tr></thead>
           <tbody>
-            <tr><td>Slackチャンネル</td><td><code>#github-updates</code>（非公開）</td></tr>
-            <tr><td>GitHubアカウント</td><td><code>hsmts2</code></td></tr>
-            <tr><td>GitHub Appのアクセス対象</td><td><code>hsmts2/Documentation</code>のみ</td></tr>
-            <tr><td>購読対象</td><td><code>hsmts2/Documentation</code></td></tr>
+            <tr><td>Slackチャンネル</td><td><code class="inline-code">#github-updates</code>（非公開）</td></tr>
+            <tr><td>GitHubアカウント</td><td><code class="inline-code">hsmts2</code></td></tr>
+            <tr><td>GitHub Appのアクセス対象</td><td><code class="inline-code">hsmts2/Documentation</code>のみ</td></tr>
+            <tr><td>購読対象</td><td><code class="inline-code">hsmts2/Documentation</code></td></tr>
           </tbody>
         </table>
       </section>
@@ -111,7 +111,7 @@
         <h2 id="preparation">事前準備</h2>
         <h3 id="create-channel">1. 通知用チャンネルを作成</h3>
         <ol>
-          <li>Slackのサイドバーで追加ボタンを押し、<code>チャンネル</code>を選択</li>
+          <li>Slackのサイドバーで追加ボタンを押し、<code class="ui-value">チャンネル</code>を選択</li>
           <li>通知用途が分かる名前を入力し、公開または非公開を選んで作成</li>
           <li>作成したチャンネルを開き、チャンネル名からトピックと説明を設定</li>
         </ol>
@@ -119,25 +119,25 @@
         <table>
           <thead><tr><th>設定項目</th><th>入力例</th></tr></thead>
           <tbody>
-            <tr><td>チャンネル名</td><td><code>github-updates</code></td></tr>
-            <tr><td>公開範囲</td><td>非公開</td></tr>
+            <tr><td>チャンネル名</td><td><code class="inline-code">github-updates</code></td></tr>
+            <tr><td>公開範囲</td><td><code class="ui-value">非公開</code></td></tr>
             <tr><td>トピック</td><td>GitHubリポジトリの更新通知</td></tr>
             <tr><td>説明</td><td>対象リポジトリのコミット、Pull Request、Issue、リリース、デプロイの通知を受け取るチャンネル</td></tr>
           </tbody>
         </table>
         <p>チャンネルの通知音や未読通知は各メンバーのSlack設定で調整できる。GitHubの購読設定とは別の設定</p>
-        <div class="callout"><strong>チャンネル名について</strong><p>複数のリポジトリを1つのチャンネルで購読する場合は、<code>#github-updates</code>のような汎用名が適する。特定のリポジトリ専用なら、<code>#documentation-updates</code>のように対象が分かる名称にする。チャンネル名とリポジトリ名を一致させる必要はない。名称変更だけで購読対象を変更する操作にはならないため、変更後は<code>/github subscribe list</code>で登録状態を確認する</p></div>
+        <div class="callout callout-info"><strong>ℹ️ 情報：チャンネル名について</strong><p>複数のリポジトリを1つのチャンネルで購読する場合は、<code class="inline-code">#github-updates</code>のような汎用名が適する。特定のリポジトリ専用なら、<code class="inline-code">#documentation-updates</code>のように対象が分かる名称にする。チャンネル名とリポジトリ名を一致させる必要はない。名称変更だけで購読対象を変更する操作にはならないため、変更後は<code class="inline-code">/github subscribe list</code>で登録状態を確認する</p></div>
 
         <h3 id="slack-app">2. GitHubアプリをSlackワークスペースに追加</h3>
         <ol>
-          <li>Slackのアプリ一覧で<code>GitHub</code>を検索し、GitHub公式アプリの詳細を表示</li>
-          <li><code>Add to Slack</code>から対象ワークスペースを選び、表示された権限を確認してインストール</li>
+          <li>Slackのアプリ一覧で<code class="ui-value">GitHub</code>を検索し、GitHub公式アプリの詳細を表示</li>
+          <li><code class="ui-value">Add to Slack</code>から対象ワークスペースを選び、表示された権限を確認してインストール</li>
           <li>アプリの導入に管理者承認が必要なワークスペースでは、承認依頼と完了通知を確認</li>
         </ol>
         <p>アプリがワークスペースに導入済みの場合は再インストールせず、次のチャンネルへの招待とアカウント接続へ進む</p>
 
         <h3 id="invite">3. 非公開チャンネルにGitHubアプリを招待</h3>
-        <p><code>#github-updates</code>を開き、メッセージ入力欄で次を実行する。非公開チャンネルではアプリを明示的に招待する必要がある</p>
+        <p><code class="inline-code">#github-updates</code>を開き、メッセージ入力欄で次を実行する。非公開チャンネルではアプリを明示的に招待する必要がある</p>
         <div class="code"><div class="code-header"><span>Slackのチャンネル</span><button class="copy" type="button">Copy</button></div><pre><code>/invite @github</code></pre></div>
         <p>メンションだけでは参加せず、Slackbotの確認からアプリを追加する。追加確認には、チャンネルのファイルや履歴にアクセス可能になる旨が表示されるため、対象チャンネルを確認してから承認する</p>
         <figure class="screenshot-medium">
@@ -155,7 +155,7 @@
           <figcaption>図3　GitHub側でSlackアカウント連携の権限を確認</figcaption>
           <img src="../assets/img/github-slack-integration/03-github-account-authorization.png" alt="GitHubでSlack by GitHubへのアクセス権限を確認する画面" loading="lazy">
         </figure>
-        <div class="callout callout-warning"><strong>認証画面の取り扱い</strong><p>確認コード、認証URL、トークン、セッション情報を含むスクリーンショットは公開しない。掲載した図に確認コードは含めていない</p></div>
+        <div class="callout callout-warning"><strong>⚠️ 注意：認証画面の取り扱い</strong><p>確認コード、認証URL、トークン、セッション情報を含むスクリーンショットは公開しない。掲載した図に確認コードは含めていない</p></div>
         <h3 id="install">5. GitHub Appを対象リポジトリへインストール</h3>
         <p>サインイン後も購読できず、GitHubアプリから「まずGitHub Appをインストール」と案内された場合、GitHub側でリポジトリへのアクセス許可がまだ完了していない</p>
         <figure class="screenshot-medium">
@@ -163,47 +163,34 @@
           <img src="../assets/img/github-slack-integration/04-repository-install-required.png" alt="GitHubアプリが接続済みだが対象リポジトリへのインストールが必要というSlackの案内" loading="lazy">
         </figure>
         <ol>
-          <li>案内の<code>Install the GitHub app</code>からGitHubのインストール画面を開く</li>
-          <li><code>Only select repositories</code>を選び、<code>hsmts2/Documentation</code>だけを指定</li>
-          <li>表示された権限を確認し、<code>Install</code>を選択。追加の本人確認が求められた場合はGitHub側で完了</li>
+          <li>案内の<code class="ui-value">Install the GitHub app</code>からGitHubのインストール画面を開く</li>
+          <li><code class="ui-value">Only select repositories</code>を選び、<code class="inline-code">hsmts2/Documentation</code>だけを指定</li>
+          <li>表示された権限を確認し、<code class="ui-value">Install</code>を選択。追加の本人確認が求められた場合はGitHub側で完了</li>
           <li>Slackへ戻り、インストール成功の応答を確認</li>
         </ol>
         <figure class="screenshot-wide">
           <figcaption>図5　アクセス対象をDocumentationリポジトリのみに限定</figcaption>
           <img src="../assets/img/github-slack-integration/05-selected-repository-only.png" alt="GitHub Appのインストール先をhsmts2/Documentationのみに限定した画面" loading="lazy">
         </figure>
-        <div class="callout callout-warning"><strong>権限の確認</strong><p>この画面にはコード、Actions、デプロイ、Issue、Pull Requestなどへの読み書き権限が表示される。通知だけを使う場合も権限内容を確認し、<code>All repositories</code>を安易に選ばない。対象リポジトリを追加するときもGitHub側のアクセス範囲を再確認する</p></div>
+        <div class="callout callout-warning"><strong>⚠️ 注意：権限の確認</strong><p>この画面にはコード、Actions、デプロイ、Issue、Pull Requestなどへの読み書き権限が表示される。通知だけを使う場合も権限内容を確認し、<code class="ui-value">All repositories</code>を安易に選ばない。対象リポジトリを追加するときもGitHub側のアクセス範囲を再確認する</p></div>
       </section>
 
       <section>
         <h2 id="subscribe">通知の購読と確認</h2>
-        <p>GitHubアプリが参加している<code>#github-updates</code>で実行する。GitHubアプリとのDMではなく、通知を受けるチャンネルの入力欄を使う</p>
+        <p>GitHubアプリが参加している<code class="inline-code">#github-updates</code>で実行する。GitHubアプリとのDMではなく、通知を受けるチャンネルの入力欄を使う</p>
         <div class="code"><div class="code-header"><span>Slackの #github-updates</span><button class="copy" type="button">Copy</button></div><pre><code>/github subscribe hsmts2/Documentation</code></pre></div>
         <p>購読成功の応答を確認したら、同じチャンネルで登録一覧を確認する</p>
         <div class="code"><div class="code-header"><span>Slackの #github-updates</span><button class="copy" type="button">Copy</button></div><pre><code>/github subscribe list</code></pre></div>
-        <p>購読が成功すると、GitHubアプリから<code>Subscribed to hsmts2/Documentation</code>のような応答が返る。登録一覧に対象リポジトリが表示されることも確認する。実際の通知配送は、対象リポジトリで対象イベントが発生したときに別途確認する</p>
+        <p>購読が成功すると、GitHubアプリから<code class="inline-code">Subscribed to hsmts2/Documentation</code>のような応答が返る。登録一覧に対象リポジトリが表示されることも確認する。実際の通知配送は、対象リポジトリで対象イベントが発生したときに別途確認する</p>
         <p>標準の購読ではIssue、Pull Request、デフォルトブランチへのコミット、リリース、デプロイなどが通知対象。GitHub Actionsのワークフロー実行通知は標準では無効のため、必要なら個別に設定する</p>
       </section>
 
       <section>
         <h2 id="manage">通知範囲の変更・解除</h2>
-        <p>たとえばIssue通知だけを外す場合は次を実行する。通知種別を変更したら<code>/github subscribe list</code>で設定を再確認する</p>
+        <p>たとえばIssue通知だけを外す場合は次を実行する。通知種別を変更したら<code class="inline-code">/github subscribe list</code>で設定を再確認する</p>
         <div class="code"><div class="code-header"><span>Slackの #github-updates</span><button class="copy" type="button">Copy</button></div><pre><code>/github unsubscribe hsmts2/Documentation issues</code></pre></div>
         <p>チャンネルからリポジトリ全体の購読を解除する場合は次を実行する。GitHub側のアプリインストールやSlackユーザーのサインインは、これだけでは解除されない</p>
         <div class="code"><div class="code-header"><span>Slackの #github-updates</span><button class="copy" type="button">Copy</button></div><pre><code>/github unsubscribe hsmts2/Documentation</code></pre></div>
-      </section>
-
-      <section>
-        <h2 id="references">参考資料</h2>
-        <ul>
-          <li>出典：<a href="https://slack.com/help/articles/201402297-Create-a-channel">Slack: Create a channel</a></li>
-          <li>出典：<a href="https://slack.com/help/articles/201654083-Set-a-conversation-topic-or-channel-description">Slack: Set a conversation topic or channel description</a></li>
-          <li>出典：<a href="https://slack.com/help/articles/202035138-Add-apps-to-your-Slack-workspace">Slack: Add apps to your workspace</a></li>
-          <li>出典：<a href="https://docs.github.com/en/integrations/how-tos/slack/integrate-github-with-slack">GitHub Docs: Integrating GitHub with Slack</a></li>
-          <li>出典：<a href="https://docs.github.com/en/integrations/how-tos/slack/use-github-in-slack">GitHub Docs: Using GitHub in Slack</a></li>
-          <li>出典：<a href="https://docs.github.com/en/integrations/how-tos/slack/customize-notifications">GitHub Docs: Customizing notifications for GitHub in Slack</a></li>
-          <li>出典：<a href="https://github.com/integrations/slack">GitHub公式のSlack連携README</a></li>
-        </ul>
       </section>
     </main>
 
@@ -218,7 +205,6 @@
       <a href="#install">5. GitHub Appを対象リポジトリへインストール</a>
       <a href="#subscribe">通知の購読と確認</a>
       <a href="#manage">通知範囲の変更・解除</a>
-      <a href="#references">参考資料</a>
     </aside>
   </div>
   <script src="../assets/app.js"></script>
