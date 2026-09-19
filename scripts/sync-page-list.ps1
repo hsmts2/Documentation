@@ -45,6 +45,7 @@ $groups = @(
         Pages = @(
             [pscustomobject]@{ File = 'git-github.html'; Label = 'Git / GitHub 概要' }
             [pscustomobject]@{ File = 'git-utilities.html'; Label = 'Gitトラブルシューティング' }
+            [pscustomobject]@{ File = 'github-slack-integration.html'; Label = 'GitHubとSlackの連携・通知設定' }
         )
     }
     [pscustomobject]@{

@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GitHubとSlackの連携・通知設定 | Documentation</title>
+  <meta name="description" content="GitHub AppをSlackの非公開チャンネルへ追加し、対象リポジトリを限定して購読・確認する手順。サインインとGitHub側アプリのインストールの違いも整理。">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="../"><img src="../assets/icon.jpg" alt="Documentation icon"><span>Documentation</span></a>
+    <div class="header-actions">
+      <button class="icon-button theme-toggle" type="button" title="テーマを切り替え" aria-label="テーマを切り替え">☀</button>
+      <nav class="nav" aria-label="Global navigation">
+        <a href="https://github.com/hsmts2/Documentation"><span class="nav-icon" aria-hidden="true">◆</span>GitHub</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="layout">
+    <aside id="site-sidebar" class="sidebar" aria-label="Page list">
+      <div class="sidebar-heading">
+        <button class="icon-button sidebar-toggle sidebar-toggle-inline" type="button" aria-controls="site-sidebar" aria-expanded="true" title="ナビゲーションを閉じる" aria-label="ナビゲーションを閉じる">☰</button>
+      </div>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">✎</span>記事</p>
+      <a href="cloudflare-private-site.html">Private GitHubリポジトリをCloudflare Workersで認証付き公開してみた</a>
+      <a href="aws-daily-cost-slack.html">AWS利用料を毎朝3時にSlackへ通知してみた</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">☁︎</span>[PoC] マルチVPC・閉域VDI基盤案件</p>
+          <a href="workspaces-skill-transfer.html">全体構築・運用順序</a>
+          <a href="workspaces-managed-ad.html">Managed Microsoft ADの構築</a>
+          <a href="workspaces-managed-ad-users.html">Managed Microsoft ADのユーザー・グループ管理</a>
+          <a href="workspaces-management-ec2.html">管理用EC2の起動・接続・AD管理</a>
+          <a href="workspaces-ad-connector-account.html">AD Connector用サービスアカウント・権限委任</a>
+          <a href="workspaces-ad-connector.html">AD ConnectorのVPCピアリング・SG設定・作成</a>
+          <a href="workspaces-provisioning-gpo.html">WorkSpaces Personalの構築・接続</a>
+          <a href="workspaces-target-ou.html">WorkSpaces用ターゲットOUの作成・権限委任</a>
+          <a href="workspaces-gpo.html">WorkSpaces用GPOの作成・適用・運用</a>
+          <a href="workspaces-image-bundle.html">WorkSpacesカスタムイメージ作成・共有</a>
+          <a href="workspaces-systems-manager.html">Systems Manager環境構築</a>
+          <a href="workspaces-patch-manager.html">Patch Managerの設定</a>
+          <a href="workspaces-patch-operations.html">Patch Managerの実行・結果確認・運用</a>
+          <a href="workspaces-cost-optimizer.html">Cost Optimizerの構築・設定</a>
+          <a href="workspaces-cost-optimizer-dry-run.html">Cost OptimizerのDry Run解除</a>
+          <a href="workspaces-cost-optimizer-schedule.html">Cost Optimizerの実行スケジュール設定・変更</a>
+          <a href="workspaces-cost-optimizer-reports.html">Cost Optimizerのレポート・監視</a>
+          <a href="workspaces-cloudwatch-monitoring.html">CloudWatchのEC2・Windows OS監視とSNS通知</a>
+          <a href="workspaces-cloudwatch-workspaces.html">CloudWatchのWorkSpaces監視</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">⑂</span>Git / GitHub</p>
+      <a href="git-github.html">Git / GitHub 概要</a>
+      <a href="git-utilities.html">Gitトラブルシューティング</a>
+      <a class="active" aria-current="page" href="github-slack-integration.html">GitHubとSlackの連携・通知設定</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">◈</span>Terraform</p>
+      <a href="terraform.html">Terraform 概要</a>
+      <a href="hcp-terraform.html">HCP Terraform（Terraform Cloud）</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">☁︎</span>AWS</p>
+      <a href="cloudformation.html">CloudFormation 運用手順集</a>
+      <a href="aws-cli.html">AWS CLI 特殊対応</a>
+      <a href="aws-cli-reference.html">AWS CLI コマンドリファレンス</a>
+      <a href="eventbridge-scheduler.html">EventBridge Scheduler</a>
+      <a href="aws-directory-service.html">AWS Directory Service 運用手順</a>
+      <a href="amazon-workspaces.html">Amazon WorkSpaces</a>
+      <a href="amazon-ses.html">Amazon SES SMTPリレー</a>
+      <a href="amazon-ses-monitoring.html">Amazon SES 配信監視</a>
+      <a href="amazon-rds-blue-green.html">Amazon RDS Blue/Green Deployments</a>
+      <a href="apache-acm-certificate-update.html">証明書更新（ACMエクスポート）</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">⚙︎</span>OS／ミドルウェア</p>
+      <a href="rhel9.html">Red Hat Enterprise Linux 9</a>
+      <a href="rhel10.html">Red Hat Enterprise Linux 10</a>
+      <a href="amazon-linux-2023.html">Amazon Linux 2023</a>
+      <a href="windows-server-2022.html">Windows Server 2022</a>
+      <a href="windows-server-2025.html">Windows Server 2025</a>
+      <a href="windows-server-2016-upgrade.html">Windows Server 2016 インプレースアップグレード</a>
+      <a href="storage.html">ストレージ管理</a>
+      <a href="apache.html">Apache</a>
+      <a href="apache-self-signed-ssl-termination.html">Apache SSL終端（自己署名証明書）</a>
+      <a href="redis.html">Redis（KVS）</a>
+      <a href="nfs.html">NFS</a>
+      <a href="samba.html">Samba</a>
+      <a href="mariadb.html">MariaDB</a>
+      <a href="postgresql.html">PostgreSQL</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">▤</span>リファレンス</p>
+      <a href="../writing-style-guide.html">[GitHub Pages] 記法・テンプレート</a>
+      <a href="troubleshooting.html">障害切り分けチェックリスト</a>
+      <a href="eol.html">EOL / ライフサイクル一覧表</a>
+    </aside>
+
+    <main class="content">
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="../"><span class="nav-icon" aria-hidden="true">⌂</span>Home</a>
+        <span>トピック</span>
+      </nav>
+      <h1>GitHubとSlackの連携・通知設定</h1>
+
+      <section>
+        <h2 id="scope">対象と確認ポイント</h2>
+        <p>Slackの非公開チャンネル<code>#github-updates</code>で、<code>hsmts2/Documentation</code>の更新通知を受け取る。Slackでの本人認証、GitHub側のアプリインストール、チャンネルでの購読は別の操作。本人認証だけでは購読できない</p>
+        <table>
+          <thead><tr><th>項目</th><th>今回の設定</th></tr></thead>
+          <tbody>
+            <tr><td>Slackチャンネル</td><td><code>#github-updates</code>（非公開）</td></tr>
+            <tr><td>GitHubアカウント</td><td><code>hsmts2</code></td></tr>
+            <tr><td>GitHub Appのアクセス対象</td><td><code>hsmts2/Documentation</code>のみ</td></tr>
+            <tr><td>購読対象</td><td><code>hsmts2/Documentation</code></td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section>
+        <h2 id="invite">1. 非公開チャンネルにGitHubアプリを追加</h2>
+        <p><code>#github-updates</code>を開き、メッセージ入力欄で次を実行する。非公開チャンネルではアプリを明示的に招待する必要がある</p>
+        <div class="code"><div class="code-header"><span>Slackのチャンネル</span><button class="copy" type="button">Copy</button></div><pre><code>/invite @github</code></pre></div>
+        <p>メンションだけでは参加せず、Slackbotの確認からアプリを追加する。追加確認には、チャンネルのファイルや履歴にアクセス可能になる旨が表示されるため、対象チャンネルを確認してから承認する</p>
+        <figure class="screenshot-medium">
+          <figcaption>図1　GitHubアプリが非公開チャンネルに未参加の場合の案内</figcaption>
+          <img src="../assets/img/github-slack-integration/01-private-channel-invite.png" alt="SlackbotがGitHubアプリを非公開チャンネルへ追加するよう案内する画面" loading="lazy">
+        </figure>
+        <figure class="screenshot-compact">
+          <figcaption>図2　追加前にSlackの履歴共有範囲を確認</figcaption>
+          <img src="../assets/img/github-slack-integration/02-private-channel-history-warning.png" alt="Slackで新しいメンバーが共有ファイルとチャンネル履歴を閲覧できる旨の確認画面" loading="lazy">
+        </figure>
+      </section>
+
+      <section>
+        <h2 id="signin">2. GitHubアカウントを接続</h2>
+        <p>SlackのGitHubアプリとのDMでサインインを開始し、ブラウザに表示されるアカウントと権限を確認して認証する。これはSlackユーザーとGitHubアカウントを結び付ける操作で、リポジトリへのアプリ導入とは別</p>
+        <div class="code"><div class="code-header"><span>SlackのGitHubアプリとのDM</span><button class="copy" type="button">Copy</button></div><pre><code>/github signin</code></pre></div>
+        <figure class="screenshot-wide">
+          <figcaption>図3　GitHub側でSlackアカウント連携の権限を確認</figcaption>
+          <img src="../assets/img/github-slack-integration/03-github-account-authorization.png" alt="GitHubでSlack by GitHubへのアクセス権限を確認する画面" loading="lazy">
+        </figure>
+        <div class="callout callout-warning"><strong>認証画面の取り扱い</strong><p>確認コード、認証URL、トークン、セッション情報を含むスクリーンショットは公開しない。掲載した図に確認コードは含めていない</p></div>
+      </section>
+
+      <section>
+        <h2 id="install">3. GitHub Appを対象リポジトリへインストール</h2>
+        <p>サインイン後も購読できず、GitHubアプリから「まずGitHub Appをインストール」と案内された場合、GitHub側でリポジトリへのアクセス許可がまだ完了していない</p>
+        <figure class="screenshot-medium">
+          <figcaption>図4　アカウント接続済みでもリポジトリへのアプリ導入が必要な状態</figcaption>
+          <img src="../assets/img/github-slack-integration/04-repository-install-required.png" alt="GitHubアプリが接続済みだが対象リポジトリへのインストールが必要というSlackの案内" loading="lazy">
+        </figure>
+        <ol>
+          <li>案内の<code>Install the GitHub app</code>からGitHubのインストール画面を開く</li>
+          <li><code>Only select repositories</code>を選び、<code>hsmts2/Documentation</code>だけを指定</li>
+          <li>表示された権限を確認し、<code>Install</code>を選択。追加の本人確認が求められた場合はGitHub側で完了</li>
+          <li>Slackへ戻り、インストール成功の応答を確認</li>
+        </ol>
+        <figure class="screenshot-wide">
+          <figcaption>図5　アクセス対象をDocumentationリポジトリのみに限定</figcaption>
+          <img src="../assets/img/github-slack-integration/05-selected-repository-only.png" alt="GitHub Appのインストール先をhsmts2/Documentationのみに限定した画面" loading="lazy">
+        </figure>
+        <div class="callout callout-warning"><strong>権限の確認</strong><p>この画面にはコード、Actions、デプロイ、Issue、Pull Requestなどへの読み書き権限が表示される。通知だけを使う場合も権限内容を確認し、<code>All repositories</code>を安易に選ばない。対象リポジトリを追加するときもGitHub側のアクセス範囲を再確認する</p></div>
+      </section>
+
+      <section>
+        <h2 id="subscribe">4. チャンネルで購読して確認</h2>
+        <p>GitHubアプリが参加している<code>#github-updates</code>で実行する。GitHubアプリとのDMではなく、通知を受けるチャンネルの入力欄を使う</p>
+        <div class="code"><div class="code-header"><span>Slackの #github-updates</span><button class="copy" type="button">Copy</button></div><pre><code>/github subscribe hsmts2/Documentation</code></pre></div>
+        <p>購読成功の応答を確認したら、同じチャンネルで登録一覧を確認する</p>
+        <div class="code"><div class="code-header"><span>Slackの #github-updates</span><button class="copy" type="button">Copy</button></div><pre><code>/github subscribe list</code></pre></div>
+        <p>今回の設定では、GitHubアプリから<code>Subscribed to hsmts2/Documentation</code>と返され、一覧にも同リポジトリが表示された。これで購読設定を確認できる。実際の通知配送は、対象リポジトリで対象イベントが発生したときに別途確認する</p>
+        <p>標準の購読ではIssue、Pull Request、デフォルトブランチへのコミット、リリース、デプロイなどが通知対象。GitHub Actionsのワークフロー実行通知は標準では無効のため、必要なら個別に設定する</p>
+      </section>
+
+      <section>
+        <h2 id="manage">5. 通知範囲の変更・解除</h2>
+        <p>たとえばIssue通知だけを外す場合は次を実行する。通知種別を変更したら<code>/github subscribe list</code>で設定を再確認する</p>
+        <div class="code"><div class="code-header"><span>Slackの #github-updates</span><button class="copy" type="button">Copy</button></div><pre><code>/github unsubscribe hsmts2/Documentation issues</code></pre></div>
+        <p>チャンネルからリポジトリ全体の購読を解除する場合は次を実行する。GitHub側のアプリインストールやSlackユーザーのサインインは、これだけでは解除されない</p>
+        <div class="code"><div class="code-header"><span>Slackの #github-updates</span><button class="copy" type="button">Copy</button></div><pre><code>/github unsubscribe hsmts2/Documentation</code></pre></div>
+        <h3 id="channel-name">チャンネル名の考え方</h3>
+        <p>今後、複数リポジトリを同じチャンネルで購読するなら<code>#github-updates</code>のままが分かりやすい。Documentation専用にするなら<code>#documentation-updates</code>へ変更すると用途が明確になる。チャンネル名とリポジトリ名を一致させる必要はなく、名称を変えても購読設定そのものは変わらない</p>
+      </section>
+
+      <section>
+        <h2 id="references">参考資料</h2>
+        <ul>
+          <li>出典：<a href="https://docs.github.com/en/integrations/how-tos/slack/use-github-in-slack">GitHub Docs: Using GitHub in Slack</a></li>
+          <li>出典：<a href="https://docs.github.com/en/integrations/how-tos/slack/customize-notifications">GitHub Docs: Customizing notifications for GitHub in Slack</a></li>
+          <li>出典：<a href="https://github.com/integrations/slack">GitHub公式のSlack連携README</a></li>
+        </ul>
+      </section>
+    </main>
+
+    <aside class="toc" aria-label="Table of contents">
+      <h2>ページ内</h2>
+      <a href="#scope">対象と確認ポイント</a>
+      <a href="#invite">1. 非公開チャンネルにGitHubアプリを追加</a>
+      <a href="#signin">2. GitHubアカウントを接続</a>
+      <a href="#install">3. GitHub Appを対象リポジトリへインストール</a>
+      <a href="#subscribe">4. チャンネルで購読して確認</a>
+      <a href="#manage">5. 通知範囲の変更・解除</a>
+      <a href="#references">参考資料</a>
+    </aside>
+  </div>
+  <script src="../assets/app.js"></script>
+</body>
+</html>
