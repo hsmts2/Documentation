@@ -12,7 +12,7 @@ $groups = @(
         Icon = '✎'
         Pages = @(
             [pscustomobject]@{ File = 'cloudflare-private-site.html'; Label = 'Private GitHubリポジトリをCloudflare Workersで認証付き公開してみた' }
-            [pscustomobject]@{ File = 'aws-daily-cost-slack.html'; Label = 'AWS利用料を毎朝3時にSlackへ通知する' }
+            [pscustomobject]@{ File = 'aws-daily-cost-slack.html'; Label = 'AWS利用料を毎朝3時にSlackへ通知してみた' }
             [pscustomobject]@{
                 Label = '[PoC] マルチVPC・閉域VDI基盤案件'
                 Children = @(

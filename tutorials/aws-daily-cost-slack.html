@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AWS利用料を毎朝3時にSlackへ通知する | Documentation</title>
+  <title>AWS利用料を毎朝3時にSlackへ通知してみた | Documentation</title>
   <meta name="description" content="Cost Explorer、Lambda、EventBridge Scheduler、SSM Parameter Store、Slack Incoming Webhookで前日のAWS利用料と当月累計を毎朝3時に通知する構築手順">
   <link rel="stylesheet" href="../assets/styles.css">
 </head>
@@ -26,7 +26,7 @@
       </div>
       <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">✎</span>記事</p>
       <a href="cloudflare-private-site.html">Private GitHubリポジトリをCloudflare Workersで認証付き公開してみた</a>
-      <a class="active" href="aws-daily-cost-slack.html">AWS利用料を毎朝3時にSlackへ通知する</a>
+      <a class="active" href="aws-daily-cost-slack.html">AWS利用料を毎朝3時にSlackへ通知してみた</a>
       <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">☁︎</span>[PoC] マルチVPC・閉域VDI基盤案件</p>
           <a href="workspaces-skill-transfer.html">全体構築・運用順序</a>
           <a href="workspaces-managed-ad.html">Managed Microsoft ADの構築</a>
@@ -90,11 +90,11 @@
         <a href="../"><span class="nav-icon" aria-hidden="true">⌂</span>Home</a>
         <span>トピック</span>
       </nav>
-      <h1>AWS利用料を毎朝3時にSlackへ通知する</h1>
-      <p class="lead">Cost Explorerの前日利用料、サービス別内訳、当月累計を毎日03:00 JSTにSlackへ送る構成をまとめる<br>Slack Incoming Webhook、IAM、Parameter Store、Lambda、EventBridge Schedulerの設定と検証手順を実際の構成に沿って示す</p>
+      <h1>AWS利用料を毎朝3時にSlackへ通知してみた</h1>
+      <p class="lead">Cost Explorerの前日利用料、サービス別内訳、当月累計を毎日03:00 JSTにSlackへ送る構成をまとめます。<br>Slack Incoming Webhook、IAM、Parameter Store、Lambda、EventBridge Schedulerの設定と検証手順を実際の構成に沿って示します。</p>
 
       <h2 id="overview">今回実現した構成</h2>
-      <p>EventBridge Schedulerが毎日03:00 JSTにLambdaを起動する。LambdaはCost ExplorerからUSD建ての概算利用料を取得し、月ごとに固定したECB参考レートで円換算して、Slackの表ブロックで投稿する</p>
+      <p>EventBridge Schedulerが毎日03:00 JSTにLambdaを起動します。LambdaはCost ExplorerからUSD建ての概算利用料を取得し、月ごとに固定したECB参考レートで円換算して、Slackの表ブロックで投稿します。</p>
       <table>
         <thead><tr><th>項目</th><th>設定値</th></tr></thead>
         <tbody>
@@ -110,31 +110,58 @@
         </tbody>
       </table>
       <figure class="screenshot-wide">
-        <figcaption>Slackの通知例。サービス、USD建て利用料、日本円の列は表ブロックで揃える</figcaption>
+        <figcaption>Slackの通知例。サービス、USD建て利用料、日本円の列は表ブロックで揃えます。</figcaption>
         <img src="../assets/img/aws-daily-cost-slack/01-slack-daily-cost-table.png" alt="AWS Daily Costが前日料金、サービス別の表、今月累計をSlackへ通知した画面" loading="lazy">
       </figure>
-      <div class="callout callout-warning"><strong>⚠️ 注意</strong><p>Cost Explorerの数値は概算で、反映遅延や後日の調整がある。円換算はECB参考レートによる表示で、税やAWSの確定請求額とは一致しない</p></div>
+      <div class="callout callout-warning"><strong>⚠️ 注意</strong><p>Cost Explorerの数値は概算で、反映遅延や後日の調整があります。円換算はECB参考レートによる表示で、税やAWSの確定請求額とは一致しません。</p></div>
 
       <h2 id="slack-webhook">1. Slack Incoming Webhookを作成</h2>
       <ol>
-        <li>Slack APIのアプリ管理画面で<code>AWS Daily Cost</code>アプリを作成し、対象ワークスペースを選択</li>
-        <li><code>Incoming Webhooks</code>を開いて<code>Activate Incoming Webhooks</code>を有効化</li>
-        <li><code>Add New Webhook</code>から投稿先の<code>#aws-costs</code>を選択して許可</li>
-        <li>発行されたWebhook URLを安全な一時保管場所へ控え、次の手順でParameter Storeへ登録</li>
+        <li>Slack APIのアプリ管理画面で<code>AWS Daily Cost</code>アプリを作成し、対象ワークスペースを選択します。</li>
+        <li><code>Incoming Webhooks</code>を開いて<code>Activate Incoming Webhooks</code>を有効にします。</li>
+        <li><code>Add New Webhook</code>から投稿先の<code>#aws-costs</code>を選択して許可します。</li>
+        <li>発行されたWebhook URLを安全な一時保管場所へ控え、次の手順でParameter Storeへ登録します。</li>
       </ol>
       <figure class="screenshot-wide">
-        <figcaption>Incoming Webhooksの有効化と投稿先チャンネルを確認する画面。Webhook URLはマスク済み</figcaption>
+        <figcaption>Incoming Webhooksの有効化と投稿先チャンネルを確認する画面です。Webhook URLはマスク済みです。</figcaption>
         <img src="../assets/img/aws-daily-cost-slack/02-slack-incoming-webhook-redacted.png" alt="Slack APIのIncoming Webhooks画面。AWS Daily CostアプリでWebhookが有効で、aws-costsチャンネルが選ばれている" loading="lazy">
       </figure>
-      <div class="callout callout-warning"><strong>⚠️ 注意</strong><p>Webhook URLそのものが投稿権限を持つ秘密情報。URL、コピー用curlコマンド、Parameter Storeの値をスクリーンショットやGitへ載せない</p></div>
+      <div class="callout callout-warning"><strong>⚠️ 注意</strong><p>Webhook URLそのものが投稿権限を持つ秘密情報です。URL、コピー用curlコマンド、Parameter Storeの値をスクリーンショットやGitへ載せないでください。</p></div>
 
       <h2 id="parameter-store">2. WebhookをParameter Storeへ保存</h2>
-      <p>Systems ManagerのParameter Storeでパラメータを作成する。名前は<code>/daily-cost-slack/webhook</code>、タイプは<code>SecureString</code>、暗号化キーはAWS管理キー<code>aws/ssm</code>とする。値欄へ前手順で取得したWebhook URLを入力して保存する</p>
-      <p>月次レートの<code>/daily-cost-slack/fx/YYYY-MM</code>はLambdaが初回実行時に<code>String</code>として作成するため、手動で作らない</p>
+      <p>発行したWebhook URLをSystems ManagerのParameter Storeに保存します。</p>
+      <ol>
+        <li>Systems Managerで<strong>Parameter Store</strong>を開き、<strong>パラメータの作成</strong>を選択します。</li>
+        <li>以下の設定値を入力し、前手順で取得したWebhook URLを値に設定します。</li>
+        <li>保存後、パラメータ名とタイプが指定どおりであることを確認します。値は記事やスクリーンショットに表示しません。</li>
+      </ol>
+      <table>
+        <thead><tr><th>設定項目</th><th>設定値</th></tr></thead>
+        <tbody>
+          <tr><td>名前</td><td><code>/daily-cost-slack/webhook</code></td></tr>
+          <tr><td>タイプ</td><td><code>SecureString</code></td></tr>
+          <tr><td>暗号化キー</td><td>AWS管理キー <code>aws/ssm</code></td></tr>
+          <tr><td>値</td><td>Slackで発行したWebhook URL（非公開）</td></tr>
+        </tbody>
+      </table>
+      <p>月次レート用の<code>/daily-cost-slack/fx/YYYY-MM</code>は、Lambdaが報告対象月の初回実行時に<code>String</code>として作成します。手動で作成する必要はありません。</p>
 
       <h2 id="iam">3. Lambda実行ロールを作成</h2>
-      <p>IAMで信頼されたエンティティに<code>Lambda</code>を選び、ロール名<code>aws-costs-role</code>を作成する。AWS管理ポリシー<code>AWSLambdaBasicExecutionRole</code>でCloudWatch Logsへの出力を許可する</p>
-      <p>料金の読み取り、Webhookと月次レートの読み取り、月次レートの保存に必要なアクションだけをインラインポリシーへ追加する。次の<code>&lt;AWS_ACCOUNT_ID&gt;</code>は自分のAWSアカウントIDへ置き換える</p>
+      <p>Lambdaが料金とパラメータを取得するための実行ロールを作成します。</p>
+      <table>
+        <thead><tr><th>設定項目</th><th>設定値</th></tr></thead>
+        <tbody>
+          <tr><td>信頼されたエンティティ</td><td><code>Lambda</code></td></tr>
+          <tr><td>ロール名</td><td><code>aws-costs-role</code></td></tr>
+          <tr><td>AWS管理ポリシー</td><td><code>AWSLambdaBasicExecutionRole</code>（CloudWatch Logsへの出力）</td></tr>
+          <tr><td>追加する権限</td><td><code>ce:GetCostAndUsage</code>、<code>ssm:GetParameter</code>、<code>ssm:PutParameter</code></td></tr>
+        </tbody>
+      </table>
+      <ol>
+        <li>IAMで<strong>ロールを作成</strong>し、信頼されたエンティティに<code>Lambda</code>を選択します。</li>
+        <li>ロール名を<code>aws-costs-role</code>とし、<code>AWSLambdaBasicExecutionRole</code>をアタッチします。</li>
+        <li>以下のJSONをインラインポリシーとして追加します。<code>&lt;AWS_ACCOUNT_ID&gt;</code>は自分のAWSアカウントIDに置き換えます。</li>
+      </ol>
       <div class="code"><div class="code-header"><span>json</span><button class="copy" type="button">Copy</button></div><pre><code>{
   "Version": "2012-10-17",
   "Statement": [
@@ -147,10 +174,10 @@
       "Resource": "arn:aws:ssm:ap-northeast-1:&lt;AWS_ACCOUNT_ID&gt;:parameter/daily-cost-slack/fx/*"}
   ]
 }</code></pre></div>
-      <p><code>aws/ssm</code>管理キーを使用した今回の構成では、別途カスタマー管理KMSキーの復号権限は付けていない。カスタマー管理キーへ変える場合は、そのキーのポリシーと<code>kms:Decrypt</code>を再確認する</p>
+      <p>今回の構成では<code>aws/ssm</code>管理キーを使用し、カスタマー管理KMSキーの復号権限は別途付けていません。カスタマー管理キーに変更する場合は、そのキーのポリシーと<code>kms:Decrypt</code>を再確認します。</p>
 
       <h2 id="sam">4. SAMでLambdaとスケジュールを配置</h2>
-      <p>SAM CLIを導入し、<code>app.py</code>と<code>template.yaml</code>を同じディレクトリに置く。実際に配置した定義は次のとおり</p>
+      <p>SAM CLIを導入し、<code>app.py</code>と<code>template.yaml</code>を同じディレクトリに置きます。実際に配置した定義は次のとおりです。</p>
       <div class="code"><div class="code-header"><span>yaml</span><button class="copy" type="button">Copy</button></div><pre><code>AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Description: Daily estimated AWS costs to a private Slack channel
@@ -180,14 +207,32 @@ Resources:
             ScheduleExpressionTimezone: Asia/Tokyo
             FlexibleTimeWindow:
               Mode: 'OFF'</code></pre></div>
-      <p>ローカルの作業ディレクトリでビルドし、AWSアカウントとリージョンを確認してから配置する</p>
+      <p>ローカルの作業ディレクトリでビルドし、AWSアカウントとリージョンを確認してから配置します。</p>
       <div class="code"><div class="code-header"><span>powershell</span><button class="copy" type="button">Copy</button></div><pre><code>aws sts get-caller-identity</code></pre></div>
       <div class="code"><div class="code-header"><span>powershell</span><button class="copy" type="button">Copy</button></div><pre><code>sam build</code></pre></div>
       <div class="code"><div class="code-header"><span>powershell</span><button class="copy" type="button">Copy</button></div><pre><code>sam deploy --guided</code></pre></div>
-      <p><code>sam deploy --guided</code>ではスタック名<code>aws-daily-cost-slack</code>、リージョン<code>ap-northeast-1</code>を指定し、変更セットとIAM関連の確認を行う。配置後、EventBridge Schedulerのスケジュールが<code>ENABLED</code>で、時刻が<code>cron(0 3 * * ? *)</code>／<code>Asia/Tokyo</code>か確認する</p>
+      <p><code>sam deploy --guided</code>ではスタック名<code>aws-daily-cost-slack</code>、リージョン<code>ap-northeast-1</code>を指定し、変更セットとIAM関連の確認を行います。配置後、EventBridge Schedulerのスケジュールが<code>ENABLED</code>で、時刻が<code>cron(0 3 * * ? *)</code>／<code>Asia/Tokyo</code>か確認します。</p>
 
       <h2 id="lambda-code">5. Lambdaで料金を集計し、表形式で送信</h2>
-      <p>配置した<code>app.py</code>の全コードを以下に掲載する。<code>template.yaml</code>は前節に掲載した。リポジトリの<a href="https://github.com/hsmts2/Documentation/blob/main/assets/code/aws-daily-cost-slack/app.py">app.py</a>と<a href="https://github.com/hsmts2/Documentation/blob/main/assets/code/aws-daily-cost-slack/template.yaml">template.yaml</a>からも確認できる</p>
+      <p>Lambdaでは次の順に料金を集計し、Slackへ送信します。</p>
+      <ol>
+        <li>Cost Explorerから報告対象月の初日以降の日次料金をサービス別に取得します。</li>
+        <li>前日の料金と月初から前日までの累計を計算し、前日の上位5サービスと残りの「その他」をまとめます。</li>
+        <li>対象月の固定レートで円換算し、Slackの表ブロックとフォールバック用テキストを作成します。</li>
+        <li>Parameter StoreからWebhook URLを復号して取得し、Slackに投稿します。</li>
+      </ol>
+      <table>
+        <thead><tr><th>項目</th><th>設定・表示内容</th></tr></thead>
+        <tbody>
+          <tr><td>料金指標</td><td>Cost Explorer <code>UnblendedCost</code>（日次・サービス別）</td></tr>
+          <tr><td>日次内訳</td><td>上位5サービスと残額の「その他」</td></tr>
+          <tr><td>月次累計</td><td>報告対象月の初日から前日まで</td></tr>
+          <tr><td>表示名</td><td><code>Amazon Virtual Private Cloud</code> → <code>Amazon VPC</code>、<code>AWS Secrets Manager</code> → <code>Secrets Manager</code></td></tr>
+          <tr><td>参考換算レート</td><td>ECB公表のUSD・JPYの値から算出し、対象月の初回投稿時にSSMへ保存。同じ月は保存済みレートを再利用</td></tr>
+          <tr><td>レート取得失敗時</td><td>USDのみを表示</td></tr>
+        </tbody>
+      </table>
+      <p>配置した<code>app.py</code>の全コードを以下に掲載します。<code>template.yaml</code>は前節に掲載しました。リポジトリの<a href="https://github.com/hsmts2/Documentation/blob/main/assets/code/aws-daily-cost-slack/app.py">app.py</a>と<a href="https://github.com/hsmts2/Documentation/blob/main/assets/code/aws-daily-cost-slack/template.yaml">template.yaml</a>からも確認できます。</p>
       <details class="example-details">
         <summary>Lambdaの全コード（app.py）</summary>
         <div class="code"><div class="code-header"><span>python</span><button class="copy" type="button">Copy</button></div><pre><code>
@@ -374,7 +419,7 @@ def lambda_handler(_event, _context):
     return {"status": "sent", "date": yesterday.isoformat()}
 </code></pre></div>
       </details>
-      <p>以下はSlackの列ずれをなくすために使用した表ブロックの部分</p>
+      <p>Slackの列ずれをなくすために使用した表ブロックの部分を抜粋します。</p>
       <div class="code"><div class="code-header"><span>python</span><button class="copy" type="button">Copy</button></div><pre><code>rows = [["サービス", "利用料", "日本円"]]
 rows.extend([SERVICE_NAMES.get(name, name), f"${amount:.2f}",
              f"{yen(amount, rate):,}円" if rate else "-"] for name, amount in shown)
@@ -383,18 +428,16 @@ blocks.append({
     "column_settings": [{"align": "left"}] * 3,
     "rows": [[{"type": "raw_text", "text": cell} for cell in row] for row in rows],
 })</code></pre></div>
-      <p>半角スペースの個数で表を揃える方式は、日本語と英数字が混在するとSlackの表示環境によってずれる。Slackの<code>table</code> Block Kitブロックなら、見出しと金額をそれぞれの列に配置できる。<code>text</code>には表非対応環境向けのフォールバックも含める</p>
-      <p>Cost Explorerでは<code>UnblendedCost</code>を日次・サービス別に取得し、前日の上位5サービスと残額の「その他」、その月の前日までの合計を算出する。表示名が長い<code>Amazon Virtual Private Cloud</code>は<code>Amazon VPC</code>、<code>AWS Secrets Manager</code>は<code>Secrets Manager</code>へ短縮する</p>
-      <p>参考換算レートはECBのUSDとJPYの公表値から計算し、報告対象月の初回投稿時にSSMへ保存する。同じ月の通知では保存済みレートを再利用する。ECB取得に失敗したときはUSDのみを表示する</p>
+      <p>半角スペースの個数で表を揃える方式は、日本語と英数字が混在するとSlackの表示環境によってずれます。Slackの<code>table</code> Block Kitブロックなら、見出しと金額をそれぞれの列に配置できます。<code>text</code>には表非対応環境向けのフォールバックも含めます。</p>
 
       <h2 id="verification">6. テスト送信と運用確認</h2>
       <ol>
-        <li>Lambdaのテストイベントに<code>{}</code>を設定して実行</li>
-        <li>実行結果が<code>status: sent</code>で、<code>#aws-costs</code>に1件届いたことを確認</li>
-        <li>サービス、利用料、日本円の列がSlackで縦に揃い、前日の日付と月次累計が表示されることを確認</li>
-        <li>CloudWatch Logsでエラーがないことと、Schedulerが<code>ENABLED</code>であることを確認</li>
+        <li>Lambdaのテストイベントに<code>{}</code>を設定して実行します。</li>
+        <li>実行結果が<code>status: sent</code>で、<code>#aws-costs</code>に1件届いたことを確認します。</li>
+        <li>サービス、利用料、日本円の列がSlackで縦に揃い、前日の日付と月次累計が表示されることを確認します。</li>
+        <li>CloudWatch Logsでエラーがないことと、Schedulerが<code>ENABLED</code>であることを確認します。</li>
       </ol>
-      <p>Lambdaの手動テストもCost Explorer APIを呼び、実際にSlackへ投稿する。テストのたびに通知が増え、APIリクエストにも料金が発生し得るため、連続実行には注意する</p>
+      <p>Lambdaの手動テストもCost Explorer APIを呼び、実際にSlackへ投稿します。テストのたびに通知が増え、APIリクエストにも料金が発生し得るため、連続実行には注意してください。</p>
       <p class="source">出典：<a href="https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-property-function-schedulev2.html">AWS SAM ScheduleV2</a>、<a href="https://docs.slack.dev/messaging/sending-messages-using-incoming-webhooks/">Slack Incoming Webhooks</a>、<a href="https://docs.slack.dev/reference/block-kit/blocks/table-block/">Slack Table Block</a></p>
     </main>
 
