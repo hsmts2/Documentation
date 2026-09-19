@@ -95,7 +95,9 @@
       <p class="eyebrow">Git / GitHub</p>
       <h1>Gitトラブルシューティング</h1>
 <section><h2 id="amend">コミットメッセージの修正</h2><h3>1. 追記とコミット</h3>
+<p>1. profile.mdの末尾に「- 学習中: Git」の行を追記（&gt;&gt;は既存内容を残して末尾へ追加する指定）</p>
 <div class="code" data-git-transcript><div class="code-header"><span>Git Bash</span><button class="copy" type="button">Copy</button></div><pre><code>$ echo "- 学習中: Git" &gt;&gt; profile.md</code></pre></div>
+<p>2. インデックスと作業ファイルを比較し、まだステージングしていない変更内容を確認</p>
 <div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git diff
 diff --git a/profile.md b/profile.md
 index b5e2b13..59f6485 100644
@@ -106,25 +108,34 @@ index b5e2b13..59f6485 100644
  - 職業: エンジニア
  - スキル: AWS, Linux
 +- 学習中: Git</code></pre></div>
+<p>3. profile.mdの現在の内容を、次のコミットに含める内容としてステージング</p>
 <div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git add profile.md</code></pre></div>
+<p>4. ステージングした変更を「Udpate profile」というメッセージでコミット（次の手順で誤記を修正）</p>
 <div class="code"><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>git commit -m "Udpate profile"
 [main 71dd282] Udpate profile
  1 file changed, 1 insertion(+)</code></pre></div>
+<p>5. 直近2件のコミットIDとメッセージを、1件につき1行で確認</p>
 <div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git log --oneline -2
 71dd282 (HEAD -&gt; main) Udpate profile
-73318e4 Initial practice files</code></pre></div><p>Udpateは修正を試すための意図的な誤記。71dd282としてファイルの追記を保存</p><h3>2. 修正前の位置を保存してamend</h3>
+73318e4 Initial practice files</code></pre></div><p>Udpateは修正を試すための意図的な誤記。71dd282としてファイルの追記を保存</p><h3>2. 修正前のコミットを残し、直前のコミットメッセージを変更</h3>
+<p>1. 現在のコミットを指すoriginal_mainブランチを作成し、修正前の履歴を保持（作業ブランチの切り替えなし）</p>
 <div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git branch original_main</code></pre></div>
+<p>2. ローカルブランチとリモート追跡ブランチの一覧を確認（*は現在のブランチ）</p>
 <div class="code"><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>git branch -a
 * main
   original_main</code></pre></div>
+<p>3. 直前のコミットを置き換え、メッセージを「Update profile」に修正（ステージングした追加変更がない状態で実行）</p>
 <div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git commit --amend -m "Update profile"
 [main 638cd67] Update profile
  Date: Thu Sep 17 00:53:52 2026 +0900
  1 file changed, 1 insertion(+)</code></pre></div>
+<p>4. 直近2件のコミットIDとメッセージを、1件につき1行で確認</p>
 <div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git log --oneline -2
 638cd67 (HEAD -&gt; main) Update profile
 73318e4 Initial practice files</code></pre></div><p>original_mainは修正前の位置を残す目印。mainは638cd67へ移動し、Update profileというメッセージの新しいコミットへ置き換え。今回はファイル内容の変更なし</p></section><section><h2 id="restore">作業ファイルの変更を取り消す</h2><h3>1. 未ステージングの変更を確認</h3>
+<p>1. profile.mdの末尾に「- 練習用: この行は取り消す」の行を追記（&gt;&gt;は既存内容を残して末尾へ追加する指定）</p>
 <div class="code" data-git-transcript><div class="code-header"><span>Git Bash</span><button class="copy" type="button">Copy</button></div><pre><code>$ echo "- 練習用: この行は取り消す" &gt;&gt; profile.md</code></pre></div>
+<p>2. インデックスと作業ファイルを比較し、まだステージングしていない変更内容を確認</p>
 <div class="code"><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>git diff
 diff --git a/profile.md b/profile.md
 index 59f6485..20472c9 100644
@@ -135,9 +146,12 @@ index 59f6485..20472c9 100644
  - スキル: AWS, Linux
  - 学習中: Git
 +- 練習用: この行は取り消す</code></pre></div>
+<p>3. 変更状態を短縮表示で確認（左列はインデックス、右列は作業ファイルの状態）</p>
 <div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git status -s
  M profile.md</code></pre></div><p>右側のMはワーキングツリーに未ステージングの変更あり。今回はgit addを実行していない状態</p><h3>2. 変更を取り消して確認</h3>
+<p>1. profile.mdの未ステージングの変更を破棄し、インデックスと同じ内容に復元（破棄対象をgit diffで事前確認）</p>
 <div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git restore profile.md</code></pre></div>
+<p>2. profile.mdの内容をターミナルに表示し、追記・取り消しの結果を確認</p>
 <div class="code"><div class="code-header"><span>Git Bash</span><button class="copy" type="button">Copy</button></div><pre><code>cat profile.md
 # 自己紹介
 
@@ -145,11 +159,15 @@ index 59f6485..20472c9 100644
 - 職業: エンジニア
 - スキル: AWS, Linux
 - 学習中: Git</code></pre></div>
+<p>3. インデックスと作業ファイルを比較し、まだステージングしていない変更内容を確認</p>
 <div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git diff</code></pre></div><p>出力なし</p>
+<p>4. 現在のブランチと、未ステージング・ステージング済み・未追跡ファイルの状態を確認</p>
 <div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git status
 On branch main
 nothing to commit, working tree clean</code></pre></div><p>git restoreは既定でインデックスの内容を作業ファイルへ復元。今回は練習用の行が消え、コミット済みの「学習中: Git」は保持</p></section><section><h2 id="unstage">ステージングを取り消す</h2><h3>1. 編集・ステージングと差分確認</h3>
+<p>1. profile.mdの末尾に「- 練習用: ステージングを取り消す」の行を追記（&gt;&gt;は既存内容を残して末尾へ追加する指定）</p>
 <div class="code" data-git-transcript><div class="code-header"><span>Git Bash</span><button class="copy" type="button">Copy</button></div><pre><code>$ echo "- 練習用: ステージングを取り消す" &gt;&gt; profile.md</code></pre></div>
+<p>2. インデックスと作業ファイルを比較し、まだステージングしていない変更内容を確認</p>
 <div class="code"><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>git diff
 diff --git a/profile.md b/profile.md
 index 59f6485..6bc5660 100644
@@ -160,12 +178,17 @@ index 59f6485..6bc5660 100644
  - スキル: AWS, Linux
  - 学習中: Git
 +- 練習用: ステージングを取り消す</code></pre></div>
+<p>3. 変更状態を短縮表示で確認（左列はインデックス、右列は作業ファイルの状態）</p>
 <div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git status -s
  M profile.md</code></pre></div>
+<p>4. profile.mdの現在の内容を、次のコミットに含める内容としてステージング</p>
 <div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git add profile.md</code></pre></div>
+<p>5. 変更状態を短縮表示で確認（左列はインデックス、右列は作業ファイルの状態）</p>
 <div class="code"><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>git status -s
 M  profile.md</code></pre></div>
+<p>6. インデックスと作業ファイルを比較し、まだステージングしていない変更内容を確認</p>
 <div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git diff</code></pre></div><p>出力なし</p>
+<p>7. 直前のコミット（HEAD）とインデックスを比較し、次のコミットに含まれる変更を確認</p>
 <div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git diff --cached
 diff --git a/profile.md b/profile.md
 index 59f6485..6bc5660 100644
@@ -176,10 +199,14 @@ index 59f6485..6bc5660 100644
  - スキル: AWS, Linux
  - 学習中: Git
 +- 練習用: ステージングを取り消す</code></pre></div><p>add前の右側Mから、add後は左側Mへ変化。git diffは出力なし、git diff --cachedには次のコミットに入る追記を表示</p><h3>2. 登録だけを取り消す</h3>
+<p>1. profile.mdのステージングを解除し、インデックスをHEADの内容に復元（作業ファイルの変更は保持）</p>
 <div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git restore --staged profile.md</code></pre></div>
+<p>2. 変更状態を短縮表示で確認（左列はインデックス、右列は作業ファイルの状態）</p>
 <div class="code"><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>git status -s
  M profile.md</code></pre></div>
+<p>3. 直前のコミット（HEAD）とインデックスを比較し、次のコミットに含まれる変更を確認</p>
 <div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git diff --cached</code></pre></div><p>出力なし</p>
+<p>4. インデックスと作業ファイルを比較し、まだステージングしていない変更内容を確認</p>
 <div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git diff
 diff --git a/profile.md b/profile.md
 index 59f6485..6bc5660 100644
@@ -190,6 +217,7 @@ index 59f6485..6bc5660 100644
  - スキル: AWS, Linux
  - 学習中: Git
 +- 練習用: ステージングを取り消す</code></pre></div>
+<p>5. profile.mdの内容をターミナルに表示し、追記・取り消しの結果を確認</p>
 <div class="code" data-git-transcript><div class="code-header"><span>Git Bash</span><button class="copy" type="button">Copy</button></div><pre><code>$ cat profile.md
 # 自己紹介
 
@@ -198,36 +226,54 @@ index 59f6485..6bc5660 100644
 - スキル: AWS, Linux
 - 学習中: Git
 - 練習用: ステージングを取り消す</code></pre></div><p>--stagedはインデックスをHEADの内容へ戻す指定。作業ファイルの追記は残り、git diff --cachedは出力なし、git diffには追記を表示</p><h3>3. 練習用の追記を片付ける</h3>
+<p>1. profile.mdの未ステージングの変更を破棄し、インデックスと同じ内容に復元（破棄対象をgit diffで事前確認）</p>
 <div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git restore profile.md</code></pre></div>
+<p>2. 現在のブランチと、未ステージング・ステージング済み・未追跡ファイルの状態を確認</p>
 <div class="code"><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>git status
 On branch main
 nothing to commit, working tree clean</code></pre></div><p>ここからは登録解除とは別の操作。練習用の追記だけと確認したうえで、作業ファイルの変更も破棄</p></section><section><h2 id="remote">リモートを間違えて登録した場合</h2><p>書籍のHTTPSからSSHへの変更例を、PC内の間違ったパスから正しいパスへの再登録に置き換え。最初からmainのためgit branch -M mainは省略し、別履歴の共有先へのgit push -u origin mainも未実施</p><h3>1. 接続先を登録・確認</h3>
+<p>1. 登録済みのリモート名と取得・送信先を確認（登録がなければ出力なし）</p>
 <div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git remote -v</code></pre></div><p>出力なし</p>
+<p>2. originという名前で../02-push/wrong.gitを登録（接続先を誤って指定した状態の再現）</p>
 <div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git remote add origin ../02-push/wrong.git</code></pre></div>
+<p>3. 登録済みのリモート名と取得・送信先を確認（登録がなければ出力なし）</p>
 <div class="code"><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>git remote -v
 origin  ../02-push/wrong.git (fetch)
 origin  ../02-push/wrong.git (push)</code></pre></div><p>remote addは現在のリポジトリの.git/configに接続先を登録する操作。接続確認は行わないため、存在しないwrong.gitでも登録可能</p><h3>2. 重複エラーと登録の削除</h3>
+<p>1. 同名のoriginが存在する状態で別の接続先を追加し、重複エラーを確認</p>
 <div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git remote add origin ../02-push/remote.git
 error: remote origin already exists.</code></pre></div>
+<p>2. 現在のリポジトリからoriginの登録を削除（接続先のフォルダやリポジトリ自体は保持）</p>
 <div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git remote remove origin</code></pre></div>
+<p>3. 登録済みのリモート名と取得・送信先を確認（登録がなければ出力なし）</p>
 <div class="code"><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>git remote -v</code></pre></div><p>出力なし</p><p>origin already existsは今回意図的に確認するエラー。同名のoriginが既にあるため追加できない状態。removeは手元の接続先登録だけを削除し、共有先自体は削除しない操作</p><h3>3. 正しい接続先の登録・確認・片付け</h3>
+<p>1. originの接続先として、PC内の共有リポジトリ../02-push/remote.git/を登録</p>
 <div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git remote add origin ../02-push/remote.git/</code></pre></div>
+<p>2. 登録済みのリモート名と取得・送信先を確認（登録がなければ出力なし）</p>
 <div class="code"><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>git remote -v
 origin  ../02-push/remote.git/ (fetch)
 origin  ../02-push/remote.git/ (push)</code></pre></div>
+<p>3. originに接続し、共有先のブランチ名と先端のコミットIDを確認（作業ファイルへの取り込みなし）</p>
 <div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git ls-remote --heads origin
 4d8a764042de03661ae21c0d6380c8ee2ab14b98        refs/heads/main</code></pre></div>
+<p>4. 現在のリポジトリからoriginの登録を削除（接続先のフォルダやリポジトリ自体は保持）</p>
 <div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git remote remove origin</code></pre></div>
+<p>5. 登録済みのリモート名と取得・送信先を確認（登録がなければ出力なし）</p>
 <div class="code"><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>git remote -v</code></pre></div><p>出力なし</p>
+<p>6. 現在のブランチと、未ステージング・ステージング済み・未追跡ファイルの状態を確認</p>
 <div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git status
 On branch main
 nothing to commit, working tree clean</code></pre></div><p>ls-remoteで共有先のmainとコミットIDを確認。接続先はPC内の../02-push/remote.git/で、GitHub認証は不要。今回は登録の練習だけのためpushは未実施</p></section><section><h2 id="stash">mainで始めた作業を別ブランチへ移す</h2><p>ログで作成されたブランチ名は<code class="inline-code">feature/cahpter6-profile</code>。chapter6とは綴りが異なるもののGitの操作には問題がないため、本ページでは実際の名前を保持</p><h3>1. main上で追記</h3>
+<p>1. 現在作業中のブランチ名を確認</p>
 <div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git branch --show-current
 main</code></pre></div>
+<p>2. 現在のブランチと、未ステージング・ステージング済み・未追跡ファイルの状態を確認</p>
 <div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git status
 On branch main
 nothing to commit, working tree clean</code></pre></div>
+<p>3. profile.mdの末尾に「- 次に学ぶ内容: Terraform」の行を追記（&gt;&gt;は既存内容を残して末尾へ追加する指定）</p>
 <div class="code" data-git-transcript><div class="code-header"><span>Git Bash</span><button class="copy" type="button">Copy</button></div><pre><code>$ echo "- 次に学ぶ内容: Terraform" &gt;&gt; profile.md</code></pre></div>
+<p>4. インデックスと作業ファイルを比較し、まだステージングしていない変更内容を確認</p>
 <div class="code"><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>git diff
 diff --git a/profile.md b/profile.md
 index 59f6485..ea35167 100644
@@ -238,13 +284,17 @@ index 59f6485..ea35167 100644
  - スキル: AWS, Linux
  - 学習中: Git
 +- 次に学ぶ内容: Terraform</code></pre></div>
+<p>5. 変更状態を短縮表示で確認（左列はインデックス、右列は作業ファイルの状態）</p>
 <div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git status -s
  M profile.md</code></pre></div><p>Terraformの追記は未コミット。現在のmainの履歴にはまだ含まれていない状態</p><h3>2. 変更を一時退避</h3>
+<p>1. 追跡済みファイルの未コミット変更を一時退避し、作業ファイルとインデックスをHEADの状態に復元</p>
 <div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git stash
 Saved working directory and index state WIP on main: 638cd67 Update profile</code></pre></div>
+<p>2. 現在のブランチと、未ステージング・ステージング済み・未追跡ファイルの状態を確認</p>
 <div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git status
 On branch main
 nothing to commit, working tree clean</code></pre></div>
+<p>3. profile.mdの内容をターミナルに表示し、追記・取り消しの結果を確認</p>
 <div class="code" data-git-transcript><div class="code-header"><span>Git Bash</span><button class="copy" type="button">Copy</button></div><pre><code>$ cat profile.md
 # 自己紹介
 
@@ -252,14 +302,18 @@ nothing to commit, working tree clean</code></pre></div>
 - 職業: エンジニア
 - スキル: AWS, Linux
 - 学習中: Git</code></pre></div>
+<p>4. 一時退避した変更の一覧を確認（退避がなければ出力なし）</p>
 <div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git stash list
 stash@{0}: WIP on main: 638cd67 Update profile</code></pre></div><p>stash後はcleanに戻り、Terraformの追記は退避領域へ保存。ファイルから消えても変更を失ったわけではない状態</p><h3>3. ブランチを作成して復元</h3>
+<p>1. 現在のコミットからfeature/cahpter6-profileブランチを作成し、そのブランチへ切り替え</p>
 <div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git switch -c feature/cahpter6-profile
 Switched to a new branch 'feature/cahpter6-profile'</code></pre></div>
+<p>2. ローカルブランチの一覧を確認（*は現在のブランチ）</p>
 <div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git branch
 * feature/cahpter6-profile
   main
   original_main</code></pre></div>
+<p>3. 最新の退避内容を現在の作業ファイルへ復元し、適用に成功した場合は退避一覧から削除</p>
 <div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git stash pop
 On branch feature/cahpter6-profile
 Changes not staged for commit:
@@ -269,6 +323,7 @@ Changes not staged for commit:
 
 no changes added to commit (use "git add" and/or "git commit -a")
 Dropped refs/stash@{0} (057830b4d554b43d5db01c6d42ec332fe134f456)</code></pre></div>
+<p>4. 現在のブランチと、未ステージング・ステージング済み・未追跡ファイルの状態を確認</p>
 <div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git status
 On branch feature/cahpter6-profile
 Changes not staged for commit:
@@ -277,6 +332,7 @@ Changes not staged for commit:
         modified:   profile.md
 
 no changes added to commit (use "git add" and/or "git commit -a")</code></pre></div>
+<p>5. profile.mdの内容をターミナルに表示し、追記・取り消しの結果を確認</p>
 <div class="code" data-git-transcript><div class="code-header"><span>Git Bash</span><button class="copy" type="button">Copy</button></div><pre><code>$ cat profile.md
 # 自己紹介
 
@@ -285,17 +341,23 @@ no changes added to commit (use "git add" and/or "git commit -a")</code></pre></
 - スキル: AWS, Linux
 - 学習中: Git
 - 次に学ぶ内容: Terraform</code></pre></div>
+<p>6. 一時退避した変更の一覧を確認（退避がなければ出力なし）</p>
 <div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git stash list</code></pre></div><p>出力なし</p><p>pop成功後は作業ブランチに追記を復元し、stash一覧から退避を削除。まだ未ステージングのため、コミットは別途必要</p><h3>4. 作業ブランチでコミット</h3>
+<p>1. profile.mdの現在の内容を、次のコミットに含める内容としてステージング</p>
 <div class="code"><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>git add profile.md</code></pre></div>
+<p>2. ステージングした追記を「Add next study topic」というメッセージでコミット</p>
 <div class="code"><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>git commit -m "Add next study topic"
 [feature/cahpter6-profile 00b2eb8] Add next study topic
  1 file changed, 1 insertion(+)</code></pre></div>
+<p>3. 直近2件のコミットIDとメッセージを、1件につき1行で確認</p>
 <div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git log --oneline -2
 00b2eb8 (HEAD -&gt; feature/cahpter6-profile) Add next study topic
 638cd67 (main) Update profile</code></pre></div>
+<p>4. 現在のブランチと、未ステージング・ステージング済み・未追跡ファイルの状態を確認</p>
 <div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git status
 On branch feature/cahpter6-profile
-nothing to commit, working tree clean</code></pre></div><p>00b2eb8としてTerraformの追記を保存。mainは638cd67のまま、終了時点の作業ブランチはfeature/cahpter6-profile</p><details><summary><strong>補足：stashが履歴に見える理由</strong></summary><div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git log --all --graph --oneline
+nothing to commit, working tree clean</code></pre></div><p>00b2eb8としてTerraformの追記を保存。mainは638cd67のまま、終了時点の作業ブランチはfeature/cahpter6-profile</p><details><summary><strong>補足：stashが履歴に見える理由</strong></summary><p>1. 各ブランチやstashなどの参照からたどれる履歴を、つながりが分かるグラフ形式で確認（以下はstash直後・pop前の表示）</p>
+<div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git log --all --graph --oneline
 *   057830b (refs/stash) WIP on main: 638cd67 Update profile
 |\
 | * 6fd2e3b index on main: 638cd67 Update profile
@@ -304,4 +366,7 @@ nothing to commit, working tree clean</code></pre></div><p>00b2eb8としてTerra
 | * 71dd282 (original_main) Udpate profile
 |/
 * 73318e4 Initial practice files</code></pre></div><p>refs/stashやindex on mainは退避内容を保持するための内部コミット。通常のgit commitでmainに追記したわけではなく、mainは638cd67のまま</p></details>
-<h3>5. mainへ戻る操作（ログ終了後の補足）</h3><p>送付ログではmainへの切り替えは成功しておらず、最後もfeature上でcleanの状態。以下は追加の確認手順であり、実施済み結果とは区別</p><div class="code"><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>git switch main</code></pre></div><div class="code"><div class="code-header"><span>Git Bash</span><button class="copy" type="button">Copy</button></div><pre><code>cat profile.md</code></pre></div><div class="code"><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>git status</code></pre></div><p>期待する状態はmain上でclean、Terraformの追記なし。追記はfeatureのコミットに保存済み</p></section></main><aside class="toc" aria-label="Table of contents"><h2>ページ内</h2><a href="#amend">コミットメッセージの修正</a><a href="#restore">作業ファイルの変更を取り消す</a><a href="#unstage">ステージングを取り消す</a><a href="#remote">リモートを間違えて登録した場合</a><a href="#stash">mainで始めた作業を別ブランチへ移す</a></aside></div><script src="../assets/app.js"></script><script src="../assets/git-github.js"></script></body></html>
+<h3>5. mainへ戻る操作（ログ終了後の補足）</h3><p>送付ログではmainへの切り替えは成功しておらず、最後もfeature上でcleanの状態。以下は追加の確認手順であり、実施済み結果とは区別</p><p>1. 作業ブランチをmainへ切り替え、作業ファイルをmainの内容に更新</p>
+<div class="code"><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>git switch main</code></pre></div><p>2. profile.mdの内容をターミナルに表示し、追記・取り消しの結果を確認</p>
+<div class="code"><div class="code-header"><span>Git Bash</span><button class="copy" type="button">Copy</button></div><pre><code>cat profile.md</code></pre></div><p>3. 現在のブランチと、未ステージング・ステージング済み・未追跡ファイルの状態を確認</p>
+<div class="code"><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>git status</code></pre></div><p>期待する状態はmain上でclean、Terraformの追記なし。追記はfeatureのコミットに保存済み</p></section></main><aside class="toc" aria-label="Table of contents"><h2>ページ内</h2><a href="#amend">コミットメッセージの修正</a><a href="#restore">作業ファイルの変更を取り消す</a><a href="#unstage">ステージングを取り消す</a><a href="#remote">リモートを間違えて登録した場合</a><a href="#stash">mainで始めた作業を別ブランチへ移す</a></aside></div><script src="../assets/app.js"></script><script src="../assets/git-github.js"></script></body></html>
