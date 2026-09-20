@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Gitトラブルシューティング | Documentation</title>
-  <meta name="description" content="Gitのコミットメッセージ修正、変更の取り消し、リモート設定、stashの操作と実行結果">
+  <meta name="description" content="Gitの変更取り消し、stash、push拒否への対処、detached HEAD、blame、bisectの操作と実行結果">
   <link rel="stylesheet" href="../assets/styles.css">
   <link rel="stylesheet" href="../assets/git-github.css">
 </head>
@@ -369,4 +369,278 @@ nothing to commit, working tree clean</code></pre></div><p>00b2eb8としてTerra
 <h3>5. mainへ戻る操作（ログ終了後の補足）</h3><p>送付ログではmainへの切り替えは成功しておらず、最後もfeature上でcleanの状態。以下は追加の確認手順であり、実施済み結果とは区別</p><p>1. 作業ブランチをmainへ切り替え、作業ファイルをmainの内容に更新</p>
 <div class="code"><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>git switch main</code></pre></div><p>2. profile.mdの内容をターミナルに表示し、追記・取り消しの結果を確認</p>
 <div class="code"><div class="code-header"><span>Git Bash</span><button class="copy" type="button">Copy</button></div><pre><code>cat profile.md</code></pre></div><p>3. 現在のブランチと、未ステージング・ステージング済み・未追跡ファイルの状態を確認</p>
-<div class="code"><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>git status</code></pre></div><p>期待する状態はmain上でclean、Terraformの追記なし。追記はfeatureのコミットに保存済み</p></section></main><aside class="toc" aria-label="Table of contents"><h2>ページ内</h2><a href="#amend">コミットメッセージの修正</a><a href="#restore">作業ファイルの変更を取り消す</a><a href="#unstage">ステージングを取り消す</a><a href="#remote">リモートを間違えて登録した場合</a><a href="#stash">mainで始めた作業を別ブランチへ移す</a></aside></div><script src="../assets/app.js"></script><script src="../assets/git-github.js"></script></body></html>
+<div class="code"><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>git status</code></pre></div><p>期待する状態はmain上でclean、Terraformの追記なし。追記はfeatureのコミットに保存済み</p></section>
+<section><h2 id="push-rejected">プッシュしようとしたら拒否された</h2>
+<p>同じ共有先を使うofficeとhomeの例。共有先はGitHubではなくPC内のbareリポジトリremote.gitで、両方に共通の初期コミット4d8a764とorigin/mainの追跡設定がある状態から開始</p>
+<h3>1. officeから先に更新を送信</h3>
+<p>1. officeリポジトリへ移動</p>
+<div class="code" data-git-transcript><div class="code-header"><span>Git Bash</span><button class="copy" type="button">Copy</button></div><pre><code>$ cd ~/github-book/chapter6/02-push/office</code></pre></div>
+<p>2. 未コミットの変更がないことを確認</p>
+<div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git status
+On branch main
+Your branch is up to date with 'origin/main'.
+
+nothing to commit, working tree clean</code></pre></div>
+<p>3. originの取得先・送信先を確認</p>
+<div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git remote -v
+origin  ../remote.git (fetch)
+origin  ../remote.git (push)</code></pre></div>
+<p>4. office-note.txtを作成（同名ファイルがある場合は上書きに注意）</p>
+<div class="code" data-git-transcript><div class="code-header"><span>Git Bash</span><button class="copy" type="button">Copy</button></div><pre><code>$ echo "Office: reviewed AWS notes" &gt; office-note.txt</code></pre></div>
+<p>5. 作成したファイルをステージング</p>
+<div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git add office-note.txt</code></pre></div>
+<p>6. officeの変更をコミット</p>
+<div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git commit -m "Add office study note"
+[main 59ac5b5] Add office study note
+ 1 file changed, 1 insertion(+)
+ create mode 100644 office-note.txt</code></pre></div>
+<p>7. 共有先へ送信（以下は転送進捗を省略した出力）</p>
+<div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git push
+To ../remote.git
+   4d8a764..59ac5b5  main -&gt; main</code></pre></div>
+<h3>2. homeからの送信と拒否の確認</h3>
+<p>1. 別の作業コピーhomeへ移動</p>
+<div class="code" data-git-transcript><div class="code-header"><span>Git Bash</span><button class="copy" type="button">Copy</button></div><pre><code>$ cd ~/github-book/chapter6/02-push/home</code></pre></div>
+<p>2. homeが保持する履歴を確認</p>
+<div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git log --oneline -2
+4d8a764 (HEAD -&gt; main, origin/main) Initial practice files</code></pre></div>
+<p>homeのorigin/mainは前回取得時点の情報。officeが送信したコミットは、まだhomeで取得していない状態</p>
+<p>3. home-note.txtを作成（同名ファイルがある場合は上書きに注意）</p>
+<div class="code" data-git-transcript><div class="code-header"><span>Git Bash</span><button class="copy" type="button">Copy</button></div><pre><code>$ echo "Home: reviewed Linux notes" &gt; home-note.txt</code></pre></div>
+<p>4. homeのファイルをステージング</p>
+<div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git add home-note.txt</code></pre></div>
+<p>5. homeの変更をコミット</p>
+<div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git commit -m "Add home study note"
+[main 337aed1] Add home study note
+ 1 file changed, 1 insertion(+)
+ create mode 100644 home-note.txt</code></pre></div>
+<p>6. 共有先への送信を試し、拒否を確認（案内文は省略）</p>
+<div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git push
+To ../remote.git
+ ! [rejected]        main -&gt; main (fetch first)
+error: failed to push some refs to '../remote.git'</code></pre></div>
+<p>共有先にhome未取得のコミットがあるため拒否。作業ファイルがcleanでも、共有先と履歴が一致するとは限らない状態。強制pushではなく、共有先の変更を取得・統合してから再送信</p>
+<h3>3. 共有先の変更を取得・統合</h3>
+<p>1. 共有先の履歴を取得し、origin/mainを更新（転送進捗は省略）</p>
+<div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git fetch origin
+From ../remote
+   4d8a764..59ac5b5  main       -&gt; origin/main</code></pre></div>
+<p>2. 双方に異なるコミットが1件ずつある状態を確認</p>
+<div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git status
+On branch main
+Your branch and 'origin/main' have diverged,
+and have 1 and 1 different commits each, respectively.
+  (use "git pull" if you want to integrate the remote branch with yours)
+
+nothing to commit, working tree clean</code></pre></div>
+<p>3. homeと共有先の履歴の分岐を確認</p>
+<div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git log --all --graph --oneline
+* 337aed1 (HEAD -&gt; main) Add home study note
+| * 59ac5b5 (origin/main, origin/HEAD) Add office study note
+|/
+* 4d8a764 Initial practice files</code></pre></div>
+<p>4. 現在のmainへorigin/mainを統合。エディタが開いた場合はメッセージを保存して対象タブを閉じ、完了を確認</p>
+<div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git merge origin/main
+Merge made by the 'ort' strategy.
+ office-note.txt | 1 +
+ 1 file changed, 1 insertion(+)
+ create mode 100644 office-note.txt</code></pre></div>
+<p>5. 送信前の状態を確認</p>
+<div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git status
+On branch main
+Your branch is ahead of 'origin/main' by 2 commits.
+  (use "git push" to publish your local commits)
+
+nothing to commit, working tree clean</code></pre></div>
+<p>aheadの2件は、homeで作成した337aed1と統合時に作成したマージコミット4b09589。officeの変更も取り込み済み</p>
+<p>6. 両方のファイルがあることを確認</p>
+<div class="code" data-git-transcript><div class="code-header"><span>Git Bash</span><button class="copy" type="button">Copy</button></div><pre><code>$ ls
+home-note.txt  office-note.txt  profile.md</code></pre></div>
+<p>7. マージコミットと双方の履歴を確認</p>
+<div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git log --all --graph --oneline
+*   4b09589 (HEAD -&gt; main) Merge remote-tracking branch 'origin/main'
+|\
+| * 59ac5b5 (origin/main, origin/HEAD) Add office study note
+* | 337aed1 Add home study note
+|/
+* 4d8a764 Initial practice files</code></pre></div>
+<h3>4. 再送信と完了確認</h3>
+<p>1. 統合後のmainを共有先へ送信（転送進捗は省略）</p>
+<div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git push origin main
+To ../remote.git
+   59ac5b5..4b09589  main -&gt; main</code></pre></div>
+<p>2. push後にorigin/mainと一致し、未コミット変更がないことを確認</p>
+<div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git status
+On branch main
+Your branch is up to date with 'origin/main'.
+
+nothing to commit, working tree clean</code></pre></div>
+</section>
+<section><h2 id="detached-head">過去のファイルを確認する（detached HEAD）</h2>
+<p>ここからはgit-review-cafeの履歴を使用。フォルダ移動やコミットIDの入力だけでは、この例のファイルや履歴は作成されないため、別リポジトリでは自身の履歴に読み替え</p>
+<h3>1. 現在のブランチと履歴を確認</h3>
+<p>1. カフェメニューを管理するリポジトリへ移動</p>
+<div class="code" data-git-transcript><div class="code-header"><span>Git Bash</span><button class="copy" type="button">Copy</button></div><pre><code>$ cd ~/git-review-cafe</code></pre></div>
+<p>2. 切り替え前にmainと未コミット変更なしを確認</p>
+<div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git status
+On branch main
+nothing to commit, working tree clean</code></pre></div>
+<p>3. ブランチ一覧を確認（*は現在地）</p>
+<div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git branch
+  feature/add-cocoa
+  feature/add-dessert
+  feature/add-latte
+  feature/parfait-price
+* main</code></pre></div>
+<p>4. 現在地と過去のコミットIDを確認</p>
+<div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git log --oneline -5
+a3cb771 (HEAD -&gt; main, feature/add-latte) Add cafe latte
+cebe6b6 Ignore log files
+4cb3803 Merge parfait prices at 780
+69f5566 Update parfait price to 800
+6fd6a2a (feature/parfait-price) Update parfait price to 750</code></pre></div>
+<h3>2. カフェラテ追加前の状態へ移動</h3>
+<p>1. ブランチからHEADを離し、cebe6b6を直接指定</p>
+<div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git switch --detach cebe6b6
+HEAD is now at cebe6b6 Ignore log files</code></pre></div>
+<p>2. detached HEADの状態を確認</p>
+<div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git status
+HEAD detached at cebe6b6
+nothing to commit, working tree clean</code></pre></div>
+<p>3. 作業ファイルがカフェラテ追加前の内容であることを確認</p>
+<div class="code" data-git-transcript><div class="code-header"><span>Git Bash</span><button class="copy" type="button">Copy</button></div><pre><code>$ cat menu.md
+# カフェメニュー
+
+- コーヒー: 450円
+- 紅茶: 370円
+- ココア: 550円</code></pre></div>
+<p>4. HEADがコミットを直接指すことを確認</p>
+<div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git log --oneline -1
+cebe6b6 (HEAD) Ignore log files</code></pre></div>
+<p>HEADは現在地の目印。通常はmainなどのブランチを指し、detached HEADではコミットを直接参照。mainはa3cb771に残ったままで、過去への切り替えによる履歴の削除・取り消しはなし</p>
+<h3>3. mainへ戻る</h3>
+<p>1. mainへ切り替え</p>
+<div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git switch main
+Previous HEAD position was cebe6b6 Ignore log files
+Switched to branch 'main'</code></pre></div>
+<p>2. カフェラテ480円の行が戻ったことを確認</p>
+<div class="code" data-git-transcript><div class="code-header"><span>Git Bash</span><button class="copy" type="button">Copy</button></div><pre><code>$ cat menu.md
+# カフェメニュー
+
+- コーヒー: 450円
+- 紅茶: 370円
+- ココア: 550円
+- カフェラテ: 480円</code></pre></div>
+<p>3. HEADがmain経由で最新コミットを指すことを確認</p>
+<div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git log --oneline -1
+a3cb771 (HEAD -&gt; main, feature/add-latte) Add cafe latte</code></pre></div>
+<p>4. 未コミット変更がないことを確認</p>
+<div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git status
+On branch main
+nothing to commit, working tree clean</code></pre></div>
+<details><summary><strong>補足：切り替えずに過去の内容を表示</strong></summary>
+<p>1. 過去のコミットに保存されたmenu.mdを表示するコマンド例</p>
+<div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git show cebe6b6:menu.md</code></pre></div>
+<p>書式はgit show ブランチ名またはコミットID:ファイルパス。showの後に空白、コロンの前後は空白なし。main:menu.mdやHEAD:menu.mdも指定可能で、作業ファイルの変更なし</p>
+<p>2. detached HEAD中に作成したコミットを残したい場合は、移動前に未使用の名前でブランチを作成するコマンド例</p>
+<div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git switch -c feature/preserve-work</code></pre></div>
+<p>今回は閲覧のみのためブランチ作成は不要</p></details>
+<p>出典：<a href="https://git-scm.com/docs/git-switch" target="_blank" rel="noopener">Git公式：git switch</a></p></section>
+<section><h2 id="blame">この部分はいつ誰が書いたか</h2>
+<h3>1. 行ごとの変更履歴を確認</h3>
+<p>1. menu.mdの各行を最後に変更したコミット・作成者・日時を確認</p>
+<div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git blame menu.md
+^9c039d1 (thsmt 2026-09-20 23:05:42 +0900 1) # カフェメニュー
+^9c039d1 (thsmt 2026-09-20 23:05:42 +0900 2)
+eb000283 (thsmt 2026-09-20 23:16:54 +0900 3) - コーヒー: 450円
+855a21f4 (thsmt 2026-09-21 02:12:10 +0900 4) - 紅茶: 370円
+a3cb7712 (thsmt 2026-09-21 03:37:10 +0900 5) - ココア: 550円
+a3cb7712 (thsmt 2026-09-21 03:37:10 +0900 6) - カフェラテ: 480円</code></pre></div>
+<p>blameは英語で「責める」の意味。Gitでは変更の経緯を調べるための操作で、最初の執筆者ではなく基本的に各行の最終変更を表示。先頭の^は履歴をたどる境界を示し、この例では最初のコミット</p>
+<h3>2. コミットの差分を確認</h3>
+<p>1. ココアとカフェラテに対応するコミットのmenu.md差分を確認（メールは公開用の例示値）</p>
+<div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git show a3cb7712 -- menu.md
+commit a3cb77128f4015d7aed26f3dd1325dbd318d66ff (HEAD -&gt; main, feature/add-latte)
+Author: thsmt &lt;t_hashimoto@example.com&gt;
+Date:   Mon Sep 21 03:37:10 2026 +0900
+
+    Add cafe latte
+
+diff --git a/menu.md b/menu.md
+index 04372f7..9a570bd 100644
+--- a/menu.md
++++ b/menu.md
+@@ -2,4 +2,5 @@
+&#32;
+ - コーヒー: 450円
+ - 紅茶: 370円
+-- ココア: 550円
+\ No newline at end of file
++- ココア: 550円
++- カフェラテ: 480円
+\ No newline at end of file</code></pre></div>
+<p>変更前はココアが改行なしの最終行。カフェラテの追記でココアの後に改行が入り、価格が同じでも変更行として記録。変更後の末尾改行なしはカフェラテの行に対応</p>
+<p>git show ID:ファイルはその時点の内容、git show ID -- ファイルはそのコミットによる変更内容の確認</p>
+<p>出典：<a href="https://git-scm.com/docs/git-blame" target="_blank" rel="noopener">Git公式：git blame</a></p></section>
+<section><h2 id="bisect">このバグが入ったのはいつか</h2>
+<p>git bisectは正常なコミットと不具合のあるコミットを指定し、途中の状態をgood／badで判定して原因の候補を絞る操作。ここでは「いちごパフェが750円以上なら価格設定の不具合」という判定条件で確認</p>
+<h3>1. 正常・不具合の両端を確認</h3>
+<p>1. git-review-cafeのmain上で未コミット変更がないことを確認</p>
+<div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git status
+On branch main
+nothing to commit, working tree clean</code></pre></div>
+<p>2. 現在の780円が不具合の条件に該当することを確認</p>
+<div class="code" data-git-transcript><div class="code-header"><span>Git Bash</span><button class="copy" type="button">Copy</button></div><pre><code>$ cat dessert.md
+# デザートメニュー
+
+- いちごパフェ: 780円</code></pre></div>
+<p>3. 9d6ca16の700円が正常な条件に該当することを確認</p>
+<div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git show 9d6ca16:dessert.md
+# デザートメニュー
+
+- いちごパフェ: 700円</code></pre></div>
+<h3>2. 探索の開始と判定の登録</h3>
+<p>1. bisectを開始</p>
+<div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git bisect start
+status: waiting for both 'good' and 'bad' commits</code></pre></div>
+<p>2. 正常だった9d6ca16を登録</p>
+<div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git bisect good 9d6ca16
+status: waiting for 'bad' commit, 1 'good' commit known</code></pre></div>
+<p>goodだけの登録では現在地はmainのまま。goodとbadの両方がそろった時点で候補へ自動移動する仕組み</p>
+<p>3. 現在のmainを不具合ありと登録</p>
+<div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git bisect bad
+Bisecting: 1 revision left to test after this (roughly 1 step)
+[4cb38037d45862f22f7dae8ec57aea53fae63e2d] Merge parfait prices at 780</code></pre></div>
+<p>4. 調査対象のコミットを確認</p>
+<div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git log --oneline -1
+4cb3803 (HEAD) Merge parfait prices at 780</code></pre></div>
+<p>5. 780円のためbadに該当することを確認</p>
+<div class="code" data-git-transcript><div class="code-header"><span>Git Bash</span><button class="copy" type="button">Copy</button></div><pre><code>$ cat dessert.md
+# デザートメニュー
+
+- いちごパフェ: 780円</code></pre></div>
+<p>6. 現在調査中の4cb3803をbadと登録し、次の候補へ移動</p>
+<div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git bisect bad
+Bisecting: 1 revision left to test after this (roughly 1 step)
+[6fd6a2a80bc2b0d79a60a3e6908e6faf88466ebe] Update parfait price to 750</code></pre></div>
+<p>7. 次の調査対象を確認</p>
+<div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git log --oneline -1
+6fd6a2a (HEAD, feature/parfait-price) Update parfait price to 750</code></pre></div>
+<p>8. 750円も「750円以上」のためbadに該当することを確認</p>
+<div class="code" data-git-transcript><div class="code-header"><span>Git Bash</span><button class="copy" type="button">Copy</button></div><pre><code>$ cat dessert.md
+# デザートメニュー
+
+- いちごパフェ: 750円</code></pre></div>
+<h3>3. 判定の継続と終了（以降の操作）</h3>
+<p>実行結果の掲載範囲は6fd6a2aで750円を確認したところまで。以下は続きの操作で、原因特定・終了の実行済み出力は未掲載</p>
+<p>1. 確認した750円をbadとして登録する次のコマンド</p>
+<div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git bisect bad</code></pre></div>
+<p>first bad commitが表示されたら探索結果を確認。別の候補が表示された場合は、価格を確認して750円以上ならgit bisect bad、750円未満ならgit bisect goodで判定を継続</p>
+<p>2. 探索終了時、または途中で中止したい場合は開始前のブランチへ復帰</p>
+<div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git bisect reset</code></pre></div>
+<p>3. mainへ戻り未コミット変更がないことを確認するコマンド</p>
+<div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git status</code></pre></div>
+<p>git bisect resetは探索状態を片付ける操作で、コミットを削除するgit reset --hardとは別のコマンド</p>
+<details><summary><strong>補足：分岐した履歴と判定条件</strong></summary><p>この履歴ではmain側が800円、feature側が750円へ別々に変更され、どちらもbadの条件に該当。bisectはmainへ取り込んだ日時だけを調べる操作ではなく、通常は分岐先の履歴も探索対象。全履歴で同じ判定条件を使い、原因特定と修正作業は分けて実施</p></details>
+<p>出典：<a href="https://git-scm.com/docs/git-bisect" target="_blank" rel="noopener">Git公式：git bisect</a></p></section>
+</main><aside class="toc" aria-label="Table of contents"><h2>ページ内</h2><a href="#amend">コミットメッセージの修正</a><a href="#restore">作業ファイルの変更を取り消す</a><a href="#unstage">ステージングを取り消す</a><a href="#remote">リモートを間違えて登録した場合</a><a href="#stash">mainで始めた作業を別ブランチへ移す</a><a href="#push-rejected">プッシュしようとしたら拒否された</a><a href="#detached-head">過去のファイルを確認する（detached HEAD）</a><a href="#blame">この部分はいつ誰が書いたか</a><a href="#bisect">このバグが入ったのはいつか</a></aside></div><script src="../assets/app.js"></script><script src="../assets/git-github.js"></script></body></html>
