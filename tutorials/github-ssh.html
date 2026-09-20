@@ -86,6 +86,16 @@
         <span>トピック</span>
       </nav>
       <h1>GitHub認証</h1>
+      <div class="callout callout-info">
+        <strong>ℹ️ 認証方法の選択</strong>
+        <p>次の3方式から利用する方法を1つ選んで実施。通常のPCでの対話操作には、PATを手動で発行・管理せずに済む②を推奨。会社の環境では指定された認証方式を優先</p>
+        <ul>
+          <li><a href="#create-key">① 公開鍵認証</a>：SSH鍵で認証</li>
+          <li><a href="#https-cli">② HTTPS＋GitHub CLIのブラウザ認証</a>：通常のPC利用に推奨</li>
+          <li><a href="#https-pat">③ HTTPS＋PAT</a>：対象リポジトリ・権限・有効期限を指定したトークンで認証</li>
+        </ul>
+        <p>3方式すべての設定は不要。複数を設定した場合は、接続先URLと認証設定に応じて使い分け</p>
+      </div>
       <section><h2 id="create-key">① 公開鍵認証</h2>
       <h3>1. SSH鍵の作成</h3>
       <p>1. 既存の鍵や設定ファイルを確認し、新しい鍵の保存名と重複しないことを確認</p>
@@ -109,6 +119,7 @@ Your public key has been saved in /c/Users/hsmts/.ssh/id_ed25519_github.pub</cod
 -rw-r--r-- 1 hsmts 197609 444 Sep 21 06:27 /c/Users/hsmts/.ssh/id_ed25519_github
 -rw-r--r-- 1 hsmts 197609  88 Sep 21 06:27 /c/Users/hsmts/.ssh/id_ed25519_github.pub</code></pre></div>
       <h3 id="register-key">2. GitHubへ公開鍵を登録</h3>
+      <p>設定画面：<a href="https://github.com/settings/keys" target="_blank" rel="noopener">SSH and GPG keysを開く</a></p>
       <p>1. 公開鍵をWindowsのクリップボードへコピー</p>
       <div class="code" data-git-transcript><div class="code-header"><span>Git Bash</span><button class="copy" type="button">Copy</button></div><pre><code>$ clip.exe &lt; ~/.ssh/id_ed25519_github.pub</code></pre></div>
       <p>2. GitHubの個人設定で<code class="ui-value">Settings</code> → <code class="ui-value">SSH and GPG keys</code>を開き、<code class="ui-value">New SSH key</code>ボタンを押下</p>
@@ -157,7 +168,6 @@ Press Enter to open https://github.com/login/device in your browser...</code></p
       <p>1. <code class="ui-value">Device Activation</code>で対象が<code class="inline-code">hsmts2</code>であることを確認し、<code class="ui-value">Continue</code>ボタンを押下。別のアカウントの場合は<code class="ui-value">Use a different account</code>ボタンを押下</p>
       <figure class="screenshot-wide"><figcaption>認証するアカウントの確認</figcaption><img src="../assets/img/github-ssh/05-device-account.png" alt="Device Activationでhsmts2として続行する画面" loading="lazy"></figure>
       <p>2. <code class="ui-value">Authorize your device</code>の入力欄へ、Git Bashに表示された一時コードを入力。携帯アプリの通知を待つ操作ではない点に注意</p>
-      <figure class="screenshot-wide"><figcaption>一時コードの入力画面</figcaption><img src="../assets/img/github-ssh/06-device-code.png" alt="Authorize your deviceの空のコード入力欄" loading="lazy"></figure>
       <p>3. コードを入力後、<code class="ui-value">Continue</code>ボタンを押下</p>
       <figure class="screenshot-wide"><figcaption>使用済みコードによる操作記録</figcaption><img src="../assets/img/github-ssh/07-device-code-entered.png" alt="自分の端末に表示された一時コードを入力した画面" loading="lazy"></figure>
       <p>4. <code class="ui-value">Authorize GitHub CLI</code>で、自分が開始した要求・アカウント・アクセス権限を確認し、<code class="ui-value">Authorize github</code>ボタンを押下</p>
@@ -182,8 +192,40 @@ hsmts2</code></pre></div>
       <div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ gh auth status</code></pre></div>
       </details>
       </section>
+      <section><h2 id="https-pat">③ HTTPS＋PAT</h2>
+      <p>Fine-grained PATを使用し、非公開リポジトリ<code class="inline-code">profile-merge-practice</code>への読み取りを確認</p>
+      <h3>1. PATの作成</h3>
+      <p>1. <a href="https://github.com/settings/personal-access-tokens" target="_blank" rel="noopener">Fine-grained personal access tokensの設定画面を開く</a>。<code class="ui-value">Generate new token</code>ボタンを押下</p>
+      <p>2. トークン名・有効期限・対象リポジトリを設定し、<code class="ui-value">Add permissions</code>から読み取り権限を追加</p>
+      <table><thead><tr><th>項目</th><th>設定値</th></tr></thead><tbody>
+      <tr><td><code class="ui-value">Token name</code></td><td><code class="inline-code">PAT-For-GitBash</code></td></tr>
+      <tr><td><code class="ui-value">Resource owner</code></td><td><code class="inline-code">hsmts2</code></td></tr>
+      <tr><td><code class="ui-value">Expiration</code></td><td><code class="ui-value">7 days</code>（今回の期限は2026年9月28日）</td></tr>
+      <tr><td><code class="ui-value">Repository access</code></td><td><code class="ui-value">Only select repositories</code></td></tr>
+      <tr><td>対象リポジトリ</td><td><code class="inline-code">hsmts2/profile-merge-practice</code></td></tr>
+      <tr><td><code class="ui-value">Contents</code></td><td><code class="ui-value">Read-only</code></td></tr>
+      <tr><td><code class="ui-value">Metadata</code></td><td><code class="ui-value">Read-only</code>（必須として自動追加）</td></tr>
+      </tbody></table>
+      <figure class="screenshot-wide"><figcaption>対象を1リポジトリ・読み取り専用に限定</figcaption><img src="../assets/img/github-ssh/09-pat-settings.png" alt="PAT-For-GitBashの有効期限と対象リポジトリ、読み取り権限の設定" loading="lazy"></figure>
+      <p>3. <code class="ui-value">Generate token</code>ボタンを押下し、確認画面で期限・対象数・権限を確認後、再度<code class="ui-value">Generate token</code>ボタンを押下</p>
+      <figure class="screenshot-compact"><figcaption>PAT発行前の確認</figcaption><img src="../assets/img/github-ssh/10-pat-confirm.png" alt="1リポジトリにContentsとMetadataの読み取り権限を付与する確認画面" loading="lazy"></figure>
+      <p>4. 発行されたPATをコピーし、次のパスワード入力欄で使用。PAT本体は掲載せず、コマンドやURLにも埋め込まないこと</p>
+      <h3>2. PATで接続を確認</h3>
+      <p>1. 今回のコマンドに限り認証ヘルパーを無効にし、対象リポジトリの参照情報を取得</p>
+      <div class="code" data-git-transcript><div class="code-header"><span>Git Bash</span><button class="copy" type="button">Copy</button></div><pre><code>$ git -c credential.helper= -c credential.https://github.com.helper= ls-remote https://hsmts2@github.com/hsmts2/profile-merge-practice.git
+38ec6222e0c119bf4c2fbc97f97177cb5468a541        HEAD
+cd8dc1cd581365deeb4bd16e319203abae4c5fc5        refs/heads/feature/update-profile
+38ec6222e0c119bf4c2fbc97f97177cb5468a541        refs/heads/main</code></pre></div>
+      <p>実行途中に次の入力画面が表示されたら、GitHubのログインパスワードではなくPATを貼り付け、<code class="ui-value">OK</code>ボタンを押下。上記は入力後に取得できた出力</p>
+      <figure class="screenshot-compact"><figcaption>Git for Windowsのパスワード欄へPATを入力</figcaption><img src="../assets/img/github-ssh/11-pat-password.png" alt="PATを伏せ字で入力したGit for Windowsのパスワード画面" loading="lazy"></figure>
+      <p><code class="inline-code">HEAD</code>と2つのブランチのコミットIDを取得でき、読み取り成功を確認。今回は読み取り専用のためpush権限はなく、ファイルの変更・clone・pushは未実施</p>
+      <p>この<code class="inline-code">git ls-remote</code>が設定後の接続テストに相当。非公開リポジトリの参照情報をPATで取得できたため、今回の読み取り確認は完了</p>
+      <p>ホームフォルダなど接続先の設定がない場所では、<code class="inline-code">git ls-remote</code>だけでは接続先不明のエラー。上記のURL付きコマンド全体を実行すること。PATの発行や認証は、ローカルリポジトリへのリモート登録とは別の操作</p>
+      <p>出力の40桁の文字列はコミットIDで、PATや秘密鍵ではないため全文掲載可能。ただし、非公開案件ではブランチ名や履歴の識別情報も公開可否の確認対象</p>
+      <p><code class="inline-code">-c</code>による設定はこの実行だけに適用され、保存済みのGitHub CLI認証やSSH鍵の変更はなし</p>
+      </section>
     </main>
-    <aside class="toc" aria-label="Table of contents"><h2>ページ内</h2><a href="#create-key">① 公開鍵認証</a><a href="#https-cli">② HTTPS＋GitHub CLIのブラウザ認証</a></aside>
+    <aside class="toc" aria-label="Table of contents"><h2>ページ内</h2><a href="#create-key">① 公開鍵認証</a><a href="#https-cli">② HTTPS＋GitHub CLIのブラウザ認証</a><a href="#https-pat">③ HTTPS＋PAT</a></aside>
   </div>
   <script src="../assets/app.js"></script><script src="../assets/git-github.js"></script>
 </body>
