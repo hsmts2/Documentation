@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GitHub認証 | Documentation</title>
+  <meta name="description" content="GitHubのSSH公開鍵認証とHTTPS・GitHub CLIのブラウザ認証の手順・画面・実行結果">
+  <link rel="stylesheet" href="../assets/styles.css">
+  <link rel="stylesheet" href="../assets/git-github.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="../"><img src="../assets/icon.jpg" alt="Documentation icon"><span>Documentation</span></a>
+    <div class="header-actions"><button class="icon-button theme-toggle" type="button" title="テーマを切り替え" aria-label="テーマを切り替え">☀</button><nav class="nav" aria-label="Global navigation"><a href="https://github.com/hsmts2/Documentation"><span class="nav-icon" aria-hidden="true">◆</span>GitHub</a></nav></div>
+  </header>
+  <div class="layout">
+    <aside id="site-sidebar" class="sidebar" aria-label="Page list">
+      <div class="sidebar-heading">
+        <button class="icon-button sidebar-toggle sidebar-toggle-inline" type="button" aria-controls="site-sidebar" aria-expanded="true" title="ナビゲーションを閉じる" aria-label="ナビゲーションを閉じる">☰</button>
+      </div>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">✎</span>記事</p>
+      <a href="cloudflare-private-site.html">Private GitHubリポジトリをCloudflare Workersで認証付き公開してみた</a>
+      <a href="aws-daily-cost-slack.html">AWS利用料を毎朝3時にSlackへ通知してみた</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">☁︎</span>[PoC] マルチVPC・閉域VDI基盤案件</p>
+          <a href="workspaces-skill-transfer.html">全体構築・運用順序</a>
+          <a href="workspaces-managed-ad.html">Managed Microsoft ADの構築</a>
+          <a href="workspaces-managed-ad-users.html">Managed Microsoft ADのユーザー・グループ管理</a>
+          <a href="workspaces-management-ec2.html">管理用EC2の起動・接続・AD管理</a>
+          <a href="workspaces-ad-connector-account.html">AD Connector用サービスアカウント・権限委任</a>
+          <a href="workspaces-ad-connector.html">AD ConnectorのVPCピアリング・SG設定・作成</a>
+          <a href="workspaces-provisioning-gpo.html">WorkSpaces Personalの構築・接続</a>
+          <a href="workspaces-target-ou.html">WorkSpaces用ターゲットOUの作成・権限委任</a>
+          <a href="workspaces-gpo.html">WorkSpaces用GPOの作成・適用・運用</a>
+          <a href="workspaces-image-bundle.html">WorkSpacesカスタムイメージ作成・共有</a>
+          <a href="workspaces-systems-manager.html">Systems Manager環境構築</a>
+          <a href="workspaces-patch-manager.html">Patch Managerの設定</a>
+          <a href="workspaces-patch-operations.html">Patch Managerの実行・結果確認・運用</a>
+          <a href="workspaces-cost-optimizer.html">Cost Optimizerの構築・設定</a>
+          <a href="workspaces-cost-optimizer-dry-run.html">Cost OptimizerのDry Run解除</a>
+          <a href="workspaces-cost-optimizer-schedule.html">Cost Optimizerの実行スケジュール設定・変更</a>
+          <a href="workspaces-cost-optimizer-reports.html">Cost Optimizerのレポート・監視</a>
+          <a href="workspaces-cloudwatch-monitoring.html">CloudWatchのEC2・Windows OS監視とSNS通知</a>
+          <a href="workspaces-cloudwatch-workspaces.html">CloudWatchのWorkSpaces監視</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">⑂</span>Git / GitHub</p>
+      <a href="git-github.html">Git / GitHub 概要</a>
+      <a href="git-utilities.html">Gitトラブルシューティング</a>
+      <a class="active" aria-current="page" href="github-ssh.html">GitHub認証</a>
+      <a href="github-slack-integration.html">GitHubとSlackの連携・通知設定</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">◈</span>Terraform</p>
+      <a href="terraform.html">Terraform 概要</a>
+      <a href="hcp-terraform.html">HCP Terraform（Terraform Cloud）</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">☁︎</span>AWS</p>
+      <a href="cloudformation.html">CloudFormation 運用手順集</a>
+      <a href="aws-cli.html">AWS CLI 特殊対応</a>
+      <a href="aws-cli-reference.html">AWS CLI コマンドリファレンス</a>
+      <a href="eventbridge-scheduler.html">EventBridge Scheduler</a>
+      <a href="aws-directory-service.html">AWS Directory Service 運用手順</a>
+      <a href="amazon-workspaces.html">Amazon WorkSpaces</a>
+      <a href="amazon-ses.html">Amazon SES SMTPリレー</a>
+      <a href="amazon-ses-monitoring.html">Amazon SES 配信監視</a>
+      <a href="amazon-rds-blue-green.html">Amazon RDS Blue/Green Deployments</a>
+      <a href="apache-acm-certificate-update.html">証明書更新（ACMエクスポート）</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">⚙︎</span>OS／ミドルウェア</p>
+      <a href="rhel9.html">Red Hat Enterprise Linux 9</a>
+      <a href="rhel10.html">Red Hat Enterprise Linux 10</a>
+      <a href="amazon-linux-2023.html">Amazon Linux 2023</a>
+      <a href="windows-server-2022.html">Windows Server 2022</a>
+      <a href="windows-server-2025.html">Windows Server 2025</a>
+      <a href="windows-server-2016-upgrade.html">Windows Server 2016 インプレースアップグレード</a>
+      <a href="storage.html">ストレージ管理</a>
+      <a href="apache.html">Apache</a>
+      <a href="apache-self-signed-ssl-termination.html">Apache SSL終端（自己署名証明書）</a>
+      <a href="redis.html">Redis（KVS）</a>
+      <a href="nfs.html">NFS</a>
+      <a href="samba.html">Samba</a>
+      <a href="mariadb.html">MariaDB</a>
+      <a href="postgresql.html">PostgreSQL</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">▤</span>リファレンス</p>
+      <a href="../writing-style-guide.html">[GitHub Pages] 記法・テンプレート</a>
+      <a href="troubleshooting.html">障害切り分けチェックリスト</a>
+      <a href="eol.html">EOL / ライフサイクル一覧表</a>
+    </aside>
+    <main class="content git-guide">
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="../"><span class="nav-icon" aria-hidden="true">⌂</span>Home</a>
+        <span>トピック</span>
+      </nav>
+      <h1>GitHub認証</h1>
+      <p>自分のPCに秘密鍵を保管し、対応する公開鍵をGitHubへ登録して本人確認する仕組み。WindowsのGit Bashで作成した専用鍵を使い、hsmts2として接続できることを確認</p>
+      <section><h2 id="create-key">SSH鍵の作成</h2>
+      <p>1. 既存の鍵や設定ファイルを確認し、新しい鍵の保存名と重複しないことを確認</p>
+      <div class="code" data-git-transcript><div class="code-header"><span>Git Bash</span><button class="copy" type="button">Copy</button></div><pre><code>$ ls -la ~/.ssh</code></pre></div>
+      <p>既存のid_ed25519とid_ed25519.pubは削除せず、新しい名前id_ed25519_githubを使用。更新日時だけでは未使用かどうかは判断不可。configやknown_hostsも既存接続に関係するため、そのまま保持</p>
+      <p>2. Ed25519形式でGitHub用の鍵ペアを作成し、パスフレーズを2回入力（指紋とrandomartの出力は省略）</p>
+      <div class="code" data-git-transcript><div class="code-header"><span>Git Bash</span><button class="copy" type="button">Copy</button></div><pre><code>$ ssh-keygen -t ed25519 -C "github" -f ~/.ssh/id_ed25519_github
+Generating public/private ed25519 key pair.
+Enter passphrase for "/c/Users/hsmts/.ssh/id_ed25519_github" (empty for no passphrase):
+Enter same passphrase again:
+Your identification has been saved in /c/Users/hsmts/.ssh/id_ed25519_github
+Your public key has been saved in /c/Users/hsmts/.ssh/id_ed25519_github.pub</code></pre></div>
+      <p>同名ファイルの上書き確認が出た場合は中断し、別名を選択。パスフレーズは秘密鍵を保護する文字列で、入力中は画面に非表示</p>
+      <table><thead><tr><th>指定</th><th>意味</th></tr></thead><tbody>
+      <tr><td>-t ed25519</td><td>鍵の種類をEd25519に指定</td></tr>
+      <tr><td>-C "github"</td><td>鍵を識別するコメント。大文字のCで、小文字の-cとは別のオプション</td></tr>
+      <tr><td>-f ~/.ssh/id_ed25519_github</td><td>秘密鍵の保存先。公開鍵は同じ名前に.pubを付けて作成</td></tr>
+      </tbody></table>
+      <p>公開鍵の書式は「ssh-ed25519 鍵本体 github」。末尾のgithubがコメントであり、GitHubのアカウント名や認証先を指定するものではない点に注意</p>
+      <p>3. 秘密鍵と公開鍵の2ファイルが作成されたことを確認</p>
+      <div class="code" data-git-transcript><div class="code-header"><span>Git Bash</span><button class="copy" type="button">Copy</button></div><pre><code>$ ls -l ~/.ssh/id_ed25519_github*
+-rw-r--r-- 1 hsmts 197609 444 Sep 21 06:27 /c/Users/hsmts/.ssh/id_ed25519_github
+-rw-r--r-- 1 hsmts 197609  88 Sep 21 06:27 /c/Users/hsmts/.ssh/id_ed25519_github.pub</code></pre></div>
+      <p><strong>.pubなしは秘密鍵で、GitHubへの貼り付け・チャットへの送信・リポジトリへの保存は禁止。登録するのは.pub付きの公開鍵のみ</strong></p>
+      </section>
+      <section><h2 id="register-key">GitHubへ公開鍵を登録</h2>
+      <p>1. 公開鍵をWindowsのクリップボードへコピー（正常終了時の出力なし）</p>
+      <div class="code" data-git-transcript><div class="code-header"><span>Git Bash</span><button class="copy" type="button">Copy</button></div><pre><code>$ clip.exe &lt; ~/.ssh/id_ed25519_github.pub</code></pre></div>
+      <p>2. GitHubの個人Settings → SSH and GPG keysを開き、New SSH keyを選択</p>
+      <figure class="screenshot-wide"><figcaption>公開鍵の登録前</figcaption><img src="../assets/img/github-ssh/01-settings.png" alt="GitHubのSSH and GPG keys設定でNew SSH keyを選択する画面" loading="lazy"></figure>
+      <p>3. Titleに管理用の名前、Key typeにAuthentication Keyを指定し、Keyへコピーした公開鍵を貼り付けてAdd SSH keyを選択</p>
+      <figure class="screenshot-wide"><figcaption>公開鍵の入力</figcaption><img src="../assets/img/github-ssh/02-add-key.png" alt="Titleがid_ed25519、Key typeがAuthentication Keyの公開鍵登録画面" loading="lazy"></figure>
+      <p>画像のTitleはid_ed25519だが、これはGitHub上の表示名。PC側のファイル名id_ed25519_githubと一致させる必要はなく、今回使用する鍵は新しく作成した公開鍵</p>
+      <p>4. Confirm accessが表示された場合は、GitHub Mobileなど画面に案内された方法で本人確認</p>
+      <figure class="screenshot-compact"><figcaption>GitHubアカウントの本人確認</figcaption><img src="../assets/img/github-ssh/03-confirm-access.png" alt="GitHub MobileなどによるConfirm accessの画面" loading="lazy"></figure>
+      <p>5. 追加成功のメッセージとAuthentication keysの登録を確認</p>
+      <figure class="screenshot-wide"><figcaption>公開鍵の登録完了</figcaption><img src="../assets/img/github-ssh/04-registered.png" alt="SSHキーの追加成功とAuthentication keysに登録された鍵を示す画面" loading="lazy"></figure>
+      <p>画像のNever usedは接続テスト前の表示。公開鍵登録と、実際に秘密鍵を使った認証成功の確認は別の段階</p>
+      <p>出典：<a href="https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account" target="_blank" rel="noopener">GitHub公式：公開鍵の追加</a></p>
+      </section>
+      <section><h2 id="test">SSH接続テスト</h2>
+      <p>初回接続では相手が本物のGitHubかを確認するため、ホスト鍵の指紋を照合。鍵作成時に表示された自分の鍵の指紋とは別の値</p>
+      <p>出典：<a href="https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/githubs-ssh-key-fingerprints" target="_blank" rel="noopener">GitHub公式のSSHホスト鍵指紋</a>と一致した場合のみyesを入力。不一致やホスト鍵変更の警告が出た場合は接続を中断し、原因を確認</p>
+      <p>1. 作成した秘密鍵を指定してGitHubへ接続し、ホスト鍵を確認後、鍵のパスフレーズを入力</p>
+      <div class="code" data-git-transcript><div class="code-header"><span>Git Bash</span><button class="copy" type="button">Copy</button></div><pre><code>$ ssh -T -i ~/.ssh/id_ed25519_github -o IdentitiesOnly=yes git@github.com
+The authenticity of host 'github.com (20.27.177.113)' can't be established.
+ED25519 key fingerprint is: SHA256:+DiY3wvvV6TuJJhbpZisF/zLDA0zPMSvHdkr4UvCOqU
+This key is not known by any other names.
+Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
+Warning: Permanently added 'github.com' (ED25519) to the list of known hosts.
+Enter passphrase for key '/c/Users/hsmts/.ssh/id_ed25519_github':
+Hi hsmts2! You've successfully authenticated, but GitHub does not provide shell access.</code></pre></div>
+      <table><thead><tr><th>指定</th><th>意味</th></tr></thead><tbody>
+      <tr><td>-T</td><td>疑似端末を割り当てずに接続</td></tr>
+      <tr><td>-i</td><td>使用する秘密鍵ファイルの指定（.pubではない）</td></tr>
+      <tr><td>-o IdentitiesOnly=yes</td><td>明示・設定された鍵を使い、エージェント内の無関係な鍵の提示を抑制</td></tr>
+      <tr><td>git@github.com</td><td>接続先。SSHユーザー名は自分のアカウント名ではなくgit</td></tr>
+      </tbody></table>
+      <p>Hi hsmts2!が今回の認証先アカウント。successfully authenticatedは認証成功を示し、shell accessの案内は失敗ではなくGitHubが対話シェルを提供しないという意味。成功時も終了コードは1となる仕様</p>
+      <p>known_hostsにはGitHub側のホスト鍵が保存され、通常は次回以降の同じ確認が不要。接続先IPや表示内容は環境によって変化</p>
+      <p>出典：<a href="https://docs.github.com/en/authentication/connecting-to-github-with-ssh/testing-your-ssh-connection" target="_blank" rel="noopener">GitHub公式：SSH接続のテスト</a></p>
+      </section>
+      <section><h2 id="scope">認証成功とGitの接続方式</h2>
+      <p>ここまでで完了したのは、鍵の作成・公開鍵登録・指定した鍵でのSSH認証。既存リポジトリのHTTPS接続をSSHへ切り替えたり、pushしたりする操作は未実施</p>
+      <p>HTTPSのremote URLは、公開鍵を登録しただけでは変更なし。今後SSHでcloneやpushを行う場合はSSH形式のURLと、この専用鍵を使用するための設定が別途必要。既存のSSH設定や鍵は変更せず保持</p>
+      </section>
+      <section><h2 id="https-cli">HTTPSとGitHub CLIのブラウザ認証</h2>
+      <p>SSH鍵を使う方法とは別に、ブラウザでGitHub CLIを認可する方法。GitHub CLIをインストール済みのWindows環境で実施。SSH鍵の削除や事前ログアウトは不要で、リポジトリ外のホームフォルダからも実行可能</p>
+      <h3>1. ブラウザ認証の開始</h3>
+      <p>1. 接続先をgithub.com、Gitの接続方式をHTTPSに指定し、ブラウザ認証を開始（出典：GitHub CLIの実行ログ）</p>
+      <div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ gh auth login --hostname github.com --git-protocol https --web
+! First copy your one-time code: F4D2-D394
+Press Enter to open https://github.com/login/device in your browser...</code></pre></div>
+      <p>表示された一時コードを控え、Enterでブラウザを開く操作。掲載コードは使用済みの実行記録で、再利用不可。実際には自分が開始したコマンドに表示されるコードのみ使用し、他人から送られたコードは入力しないこと</p>
+      <h3>2. アカウント・コード・権限の確認</h3>
+      <p>1. Device Activationで対象がhsmts2であることを確認し、Continueを選択。別のアカウントの場合はUse a different accountを選択</p>
+      <figure class="screenshot-wide"><figcaption>認証するアカウントの確認</figcaption><img src="../assets/img/github-ssh/05-device-account.png" alt="Device Activationでhsmts2として続行する画面" loading="lazy"></figure>
+      <p>2. Authorize your deviceの入力欄へ、Git Bashに表示された一時コードを入力。携帯アプリの通知を待つ操作ではない点に注意</p>
+      <figure class="screenshot-wide"><figcaption>一時コードの入力画面</figcaption><img src="../assets/img/github-ssh/06-device-code.png" alt="Authorize your deviceの空のコード入力欄" loading="lazy"></figure>
+      <p>3. コードを入力後、Continueを選択</p>
+      <figure class="screenshot-wide"><figcaption>使用済みコードによる操作記録</figcaption><img src="../assets/img/github-ssh/07-device-code-entered.png" alt="自分の端末に表示された一時コードを入力した画面" loading="lazy"></figure>
+      <p>4. Authorize GitHub CLIで、自分が開始した要求・アカウント・アクセス権限を確認してAuthorize githubを選択</p>
+      <figure class="screenshot-wide"><figcaption>GitHub CLIへのアクセス許可</figcaption><img src="../assets/img/github-ssh/08-cli-authorize.png" alt="GitHub CLIの認可要求と既存アクセス権限を確認する画面" loading="lazy"></figure>
+      <p>画像のExisting accessはこのアカウントでの既存権限を含む表示で、すべてが今回新しく追加された権限とは限らない点に注意。会社の環境では指定されたアカウント・アプリ・権限方針に従うこと</p>
+      <h3>3. 認証完了とアカウント確認</h3>
+      <p>1. Git Bashへ戻り、先ほどのgh auth loginが認証成功で終了したことを確認（同じコマンドの続きの出力）</p>
+      <div class="code" data-git-transcript><div class="code-header"><span>実行結果</span><button class="copy" type="button">Copy</button></div><pre><code>✓ Authentication complete.
+- gh config set -h github.com git_protocol https
+✓ Configured git protocol
+✓ Logged in as hsmts2
+! You were already logged in to this account</code></pre></div>
+      <p>already logged inは以前から同じアカウントでログイン済みという案内で、エラーではない表示</p>
+      <p>2. 現在の認証情報でGitHub APIへ問い合わせ、実際のアカウント名を確認</p>
+      <div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ gh api user --jq .login
+hsmts2</code></pre></div>
+      <p>今回確認できたのはGitHub CLIのブラウザ認証とhsmts2へのAPIアクセス。リモートの登録・URL変更・pushはこの手順では未実施。--git-protocol httpsは既存リポジトリのremote URLを書き換える指定ではない点に注意</p>
+      <details><summary><strong>補足：新しいPCでGitからも認証情報を使う場合</strong></summary>
+      <p>1. GitHub CLIをGitの認証ヘルパーとして設定するコマンド例（今回の実行ログには含まれない操作）</p>
+      <div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ gh auth setup-git --hostname github.com</code></pre></div>
+      <p>2. 保存されたログイン状態を確認するコマンド例。gitではなくghのサブコマンドで、トークンを表示する--show-tokenは指定不要</p>
+      <div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ gh auth status</code></pre></div>
+      </details>
+      <p>出典：<a href="https://cli.github.com/manual/gh_auth_login" target="_blank" rel="noopener">GitHub CLI公式：gh auth login</a></p>
+      <p>出典：<a href="https://cli.github.com/manual/gh_auth_setup-git" target="_blank" rel="noopener">GitHub CLI公式：gh auth setup-git</a></p>
+      </section>
+    </main>
+    <aside class="toc" aria-label="Table of contents"><h2>ページ内</h2><a href="#create-key">SSH鍵の作成</a><a href="#register-key">GitHubへ公開鍵を登録</a><a href="#test">SSH接続テスト</a><a href="#scope">認証成功とGitの接続方式</a><a href="#https-cli">HTTPSとGitHub CLIのブラウザ認証</a></aside>
+  </div>
+  <script src="../assets/app.js"></script><script src="../assets/git-github.js"></script>
+</body>
+</html>

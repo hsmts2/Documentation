@@ -52,6 +52,7 @@
       <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">⑂</span>Git / GitHub</p>
       <a href="git-github.html">Git / GitHub 概要</a>
       <a class="active" aria-current="page" href="git-utilities.html">Gitトラブルシューティング</a>
+      <a href="github-ssh.html">GitHub認証</a>
       <a href="github-slack-integration.html">GitHubとSlackの連携・通知設定</a>
       <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">◈</span>Terraform</p>
       <a href="terraform.html">Terraform 概要</a>
@@ -631,15 +632,27 @@ Bisecting: 1 revision left to test after this (roughly 1 step)
 # デザートメニュー
 
 - いちごパフェ: 750円</code></pre></div>
-<h3>3. 判定の継続と終了（以降の操作）</h3>
-<p>実行結果の掲載範囲は6fd6a2aで750円を確認したところまで。以下は続きの操作で、原因特定・終了の実行済み出力は未掲載</p>
-<p>1. 確認した750円をbadとして登録する次のコマンド</p>
-<div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git bisect bad</code></pre></div>
+<h3>3. 原因候補の特定と終了</h3>
+<p>1. 確認した750円をbadとして登録し、探索結果を確認（メールは公開用の例示値）</p>
+<div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git bisect bad
+6fd6a2a80bc2b0d79a60a3e6908e6faf88466ebe is the first 'bad' commit
+commit 6fd6a2a80bc2b0d79a60a3e6908e6faf88466ebe (HEAD, feature/parfait-price)
+Author: thsmt &lt;t_hashimoto@example.com&gt;
+Date:   Mon Sep 21 02:33:27 2026 +0900
+
+    Update parfait price to 750
+
+ dessert.md | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)</code></pre></div>
 <p>first bad commitが表示されたら探索結果を確認。別の候補が表示された場合は、価格を確認して750円以上ならgit bisect bad、750円未満ならgit bisect goodで判定を継続</p>
 <p>2. 探索終了時、または途中で中止したい場合は開始前のブランチへ復帰</p>
-<div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git bisect reset</code></pre></div>
+<div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git bisect reset
+Previous HEAD position was 6fd6a2a Update parfait price to 750
+Switched to branch 'main'</code></pre></div>
 <p>3. mainへ戻り未コミット変更がないことを確認するコマンド</p>
-<div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git status</code></pre></div>
+<div class="code" data-git-transcript><div class="code-header"><span>Git Bash / PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$ git status
+On branch main
+nothing to commit, working tree clean</code></pre></div>
 <p>git bisect resetは探索状態を片付ける操作で、コミットを削除するgit reset --hardとは別のコマンド</p>
 <details><summary><strong>補足：分岐した履歴と判定条件</strong></summary><p>この履歴ではmain側が800円、feature側が750円へ別々に変更され、どちらもbadの条件に該当。bisectはmainへ取り込んだ日時だけを調べる操作ではなく、通常は分岐先の履歴も探索対象。全履歴で同じ判定条件を使い、原因特定と修正作業は分けて実施</p></details>
 <p>出典：<a href="https://git-scm.com/docs/git-bisect" target="_blank" rel="noopener">Git公式：git bisect</a></p></section>
