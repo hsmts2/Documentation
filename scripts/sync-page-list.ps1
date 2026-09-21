@@ -44,6 +44,8 @@ $groups = @(
         Icon = '⑂'
         Pages = @(
             [pscustomobject]@{ File = 'git-github.html'; Label = 'Git / GitHub 概要' }
+            [pscustomobject]@{ File = 'git-github-basics.html'; Label = 'Git / GitHub 基本編' }
+            [pscustomobject]@{ File = 'git-github-practical.html'; Label = 'Git / GitHub 実践編' }
             [pscustomobject]@{ File = 'git-utilities.html'; Label = 'Gitトラブルシューティング' }
             [pscustomobject]@{ File = 'github-ssh.html'; Label = 'GitHub認証' }
             [pscustomobject]@{ File = 'github-slack-integration.html'; Label = 'GitHubとSlackの連携・通知設定' }
