@@ -90,10 +90,27 @@
       </nav>
       <h1>GitHubのPull Requestとレビュー</h1><p>変更ブランチの送信からPR作成・レビュー修正・マージ後の同期までの手順</p>
       <section><h2 id="flow">Pull Requestの役割</h2><p>Pull Request（PR）は、作業ブランチの変更を取り込み先へ統合するための提案。pushはブランチの送信、PR作成はレビュー依頼、マージは変更の統合という別の操作</p>
-      <p>以下はPR作成・レビューの操作例。実施済みの記録ではなく、出力や画面はリポジトリの設定・権限によって異なる</p>
+      <p>issuetestで行ったIssue作成・PRのマージ・Issue終了確認を掲載。別の担当者による承認とレビュー修正は補足の操作例として記載</p>
       <p>認証は<a href="github-ssh.html">GitHub認証</a>、clone・追跡設定は<a href="git-remote.html">Gitリモート操作</a>を参照</p>
       <table><thead><tr><th>段階</th><th>担当・操作</th></tr></thead><tbody><tr><td>変更</td><td>作成者が作業ブランチで編集・確認・コミット</td></tr><tr><td>提案</td><td>作成者がpushし、baseとcompareを指定してPR作成</td></tr><tr><td>レビュー</td><td>レビュアーが差分・テスト結果を確認</td></tr><tr><td>修正</td><td>作成者が同じブランチへ追加push</td></tr><tr><td>統合</td><td>必要な承認・チェック完了後、権限を持つ人がマージ</td></tr></tbody></table></section>
-      <section><h2 id="branch-workflow">変更ブランチの作成とpush</h2><p>originへの書き込み権限とmainの追跡設定があるリポジトリでの操作例。docs/update-readmeが未作成であることを前提とし、README.mdだけを変更対象とする</p>
+<section><h2 id="repository">リポジトリ作成とクローン</h2>
+<p>GitHub CLIで認証済みの環境で実行。作成済みのリポジトリやフォルダがある場合は再実行しない</p>
+<p>1. README付きの非公開リポジトリをGitHubに作成</p>
+<div class="code"><div class="code-header"><span>Git Bash</span><button class="copy" type="button">Copy</button></div><pre><code>gh repo create hsmts2/issuetest --private --add-readme</code></pre></div>
+<p>2. 保存先へ移動</p><div class="code"><div class="code-header"><span>Git Bash</span><button class="copy" type="button">Copy</button></div><pre><code>cd ~/github-book</code></pre></div>
+<p>3. HTTPSでクローン</p><div class="code"><div class="code-header"><span>Git Bash</span><button class="copy" type="button">Copy</button></div><pre><code>git clone https://github.com/hsmts2/issuetest.git</code></pre></div>
+<p>4. クローンしたフォルダへ移動</p><div class="code"><div class="code-header"><span>Git Bash</span><button class="copy" type="button">Copy</button></div><pre><code>cd issuetest</code></pre></div>
+<p>5. mainの追跡先と未コミット変更がないことを確認</p><div class="code"><div class="code-header"><span>Git Bash</span><button class="copy" type="button">Copy</button></div><pre><code>git status</code></pre></div>
+<p>6. originがhsmts2/issuetestであることを確認</p><div class="code"><div class="code-header"><span>Git Bash</span><button class="copy" type="button">Copy</button></div><pre><code>git remote -v</code></pre></div>
+</section>
+<section><h2 id="issue">Issueの作成</h2>
+<p>1. リポジトリの<code class="ui-value">Issues</code>タブを押下し、<code class="ui-value">New issue</code>ボタンを押下</p>
+<p>2. タイトルに「READMEの修正」、<code class="ui-value">Add a description</code>に「README.mdにリポジトリの説明を追加する。」を入力。本文欄はコマンドの実行場所ではない</p>
+<p>3. <code class="ui-value">Labels</code>で<code class="ui-value">enhancement</code>を選択し、<code class="ui-value">Create</code>ボタンを押下</p>
+<figure class="screenshot-wide"><figcaption>Issueの入力内容・enhancementラベル・Createボタンを確認</figcaption><a href="../assets/img/github-issue-pr/issue.png"><img src="../assets/img/github-issue-pr/issue.png" alt="Issueの入力内容・enhancementラベル・Createボタンを確認" loading="lazy"></a></figure>
+<p>4. 作成されたIssueの番号を確認。以下はIssue #1の場合で、番号が異なる場合はブランチ名とClosesの番号を置き換える</p>
+</section>
+      <section><h2 id="branch-workflow">変更ブランチの作成とpush</h2><p>originへの書き込み権限とmainの追跡設定があるリポジトリでの操作例。enhancement/1/update-readmeが未作成であることを前提とし、README.mdだけを変更対象とする</p>
       <p>1. 未コミットの変更がないことを確認</p>
       <div class="code"><div class="code-header"><span>Git Bash（操作例）</span><button class="copy" type="button">Copy</button></div>
       <pre><code>git status</code></pre></div>
@@ -105,8 +122,8 @@
       <pre><code>git pull --ff-only</code></pre></div>
       <p>4. 変更用ブランチを新規作成して切り替え</p>
       <div class="code"><div class="code-header"><span>Git Bash（操作例）</span><button class="copy" type="button">Copy</button></div>
-      <pre><code>git switch -c docs/update-readme</code></pre></div>
-      <p>5. VS Codeを開きREADME.mdを編集・保存。存在しない場合は新規作成</p>
+      <pre><code>git switch -c enhancement/1/update-readme</code></pre></div>
+      <p>5. VS CodeでREADME.mdを開き、末尾に「GitHubのIssueとPull Requestの操作を確認するリポジトリです。」を追記して保存</p>
       <div class="code"><div class="code-header"><span>Git Bash（操作例）</span><button class="copy" type="button">Copy</button></div>
       <pre><code>code .</code></pre></div>
       <p>6. 変更・新規ファイルの一覧を確認</p>
@@ -123,25 +140,27 @@
       <pre><code>git diff --cached</code></pre></div>
       <p>10. 確認した変更をコミット</p>
       <div class="code"><div class="code-header"><span>Git Bash（操作例）</span><button class="copy" type="button">Copy</button></div>
-      <pre><code>git commit -m "Update README"</code></pre></div>
+      <pre><code>git commit -m "closes #1"</code></pre></div>
       <p>11. ブランチを送信し追跡先を設定</p>
       <div class="code"><div class="code-header"><span>Git Bash（操作例）</span><button class="copy" type="button">Copy</button></div>
-      <pre><code>git push -u origin docs/update-readme</code></pre></div></section>
+      <pre><code>git push -u origin enhancement/1/update-readme</code></pre></div></section>
       <section><h2 id="create-pr">Pull Requestの作成</h2><p>1. GitHubのリポジトリ画面で<code class="ui-value">Pull requests</code>タブを選択し、<code class="ui-value">New pull request</code>ボタンを押下</p>
-      <p>2. <code class="ui-value">base</code>を取り込み先のmain、<code class="ui-value">compare</code>を取り込み元のdocs/update-readmeに設定。差分と対象ブランチを確認</p>
+      <p>2. <code class="ui-value">base</code>を取り込み先のmain、<code class="ui-value">compare</code>を取り込み元のenhancement/1/update-readmeに設定。差分と対象ブランチを確認</p>
       <p>3. <code class="ui-value">Create pull request</code>ボタンを押下し、タイトル・本文を入力。内容を確認して<code class="ui-value">Create pull request</code>ボタンを押下</p>
+<p>タイトルは「READMEにリポジトリの説明を追加」。本文には変更内容と<code>Closes #1</code>を記載。デフォルトブランチmainへのマージでIssue #1が閉じる。作業ブランチへのpushだけでは閉じない</p>
+<figure class="screenshot-wide"><figcaption>base・compare、Closes #1、Create pull requestボタンを確認</figcaption><a href="../assets/img/github-issue-pr/pr.png"><img src="../assets/img/github-issue-pr/pr.png" alt="base・compare、Closes #1、Create pull requestボタンを確認" loading="lazy"></a></figure>
       <table><thead><tr><th>本文の項目</th><th>記載内容</th></tr></thead><tbody><tr><td>目的</td><td>なぜ変更が必要か</td></tr><tr><td>変更内容</td><td>対象ファイルと変更点</td></tr><tr><td>確認結果</td><td>実行した確認・テストと結果。未実施は未実施と記載</td></tr><tr><td>影響範囲</td><td>利用者・システム・運用への影響</td></tr><tr><td>戻し方</td><td>不具合時の復旧方法・注意点</td></tr></tbody></table>
       <p>CLIを使う場合は、上記の画面操作の代わりに次のコマンドで作成。両方実行して重複作成しないこと</p>
       <p>1. base・headを明示してPR作成を開始。対話入力でタイトルと本文を確認</p>
       <div class="code"><div class="code-header"><span>Git Bash（操作例）</span><button class="copy" type="button">Copy</button></div>
-      <pre><code>gh pr create --base main --head docs/update-readme</code></pre></div></section>
+      <pre><code>gh pr create --base main --head enhancement/1/update-readme</code></pre></div></section>
       <section><h2 id="review">レビューと修正</h2><p>1. レビュアーは<code class="ui-value">Files changed</code>タブで差分を確認し、必要な行にコメントを記入</p>
       <p>2. <code class="ui-value">Review changes</code>ボタンを押下し、<code class="ui-value">Comment</code>・<code class="ui-value">Approve</code>・<code class="ui-value">Request changes</code>から選択して<code class="ui-value">Submit review</code>ボタンを押下</p>
       <p>自分が作成したPRを自分で承認することはできない。個人での動作確認と、別のレビュアーによる承認を区別</p>
       <p>指摘修正はPRの取り込み元ブランチで行う。次の手順はREADME.mdを追加修正する場合の操作例</p>
       <p>1. 修正対象のブランチへ切り替え</p>
       <div class="code"><div class="code-header"><span>Git Bash（操作例）</span><button class="copy" type="button">Copy</button></div>
-      <pre><code>git switch docs/update-readme</code></pre></div>
+      <pre><code>git switch enhancement/1/update-readme</code></pre></div>
       <p>2. VS CodeでREADME.mdを修正・保存</p>
       <div class="code"><div class="code-header"><span>Git Bash（操作例）</span><button class="copy" type="button">Copy</button></div>
       <pre><code>code .</code></pre></div>
@@ -172,6 +191,12 @@
       <p>チェックが未設定の場合、表示がないことをテスト合格とはみなさない。承認・必須チェック・最新ブランチの条件はリポジトリのルールに従う</p></section>
       <section><h2 id="merge">マージとローカルの更新</h2><p>1. 差分・承認・必須チェックを確認後、利用可能なマージ方式を選択し、画面の確認ボタンを押下。権限不足やルールで禁止されている場合は管理者・担当者へ確認</p>
       <table><thead><tr><th>方式</th><th>履歴の扱い</th></tr></thead><tbody><tr><td>Create a merge commit</td><td>作業ブランチの履歴を残してマージコミットを作成</td></tr><tr><td>Squash and merge</td><td>作業ブランチの変更を1コミットにまとめる</td></tr><tr><td>Rebase and merge</td><td>作業ブランチのコミットを取り込み先へ付け直す。コミットIDは変化</td></tr></tbody></table>
+<p>2. 今回は<code class="ui-value">Files changed</code>でREADME.mdの差分を確認し、<code class="ui-value">Conversation</code>へ戻って<code class="ui-value">Merge pull request</code>ボタンを押下。コミットメッセージを確認して<code class="ui-value">Confirm merge</code>ボタンを押下</p>
+<figure class="screenshot-wide"><figcaption>マージコミットのメッセージとConfirm mergeボタンを確認</figcaption><a href="../assets/img/github-issue-pr/merge.png"><img src="../assets/img/github-issue-pr/merge.png" alt="マージコミットのメッセージとConfirm mergeボタンを確認" loading="lazy"></a></figure>
+<p>3. PRが<code class="ui-value">Merged</code>、Issue #1が<code class="ui-value">Closed</code>になったことを確認</p>
+<figure class="screenshot-wide"><figcaption>Issue #1のClosed表示とPR #2による終了履歴を確認</figcaption><a href="../assets/img/github-issue-pr/closed.png"><img src="../assets/img/github-issue-pr/closed.png" alt="Issue #1のClosed表示とPR #2による終了履歴を確認" loading="lazy"></a></figure>
+<p>CLIでもIssue #1の終了状態を確認</p>
+<div class="code"><div class="code-header"><span>Git Bash</span><button class="copy" type="button">Copy</button></div><pre><code>$ gh issue view 1 --json number,title,state\n{\n  "number": 1,\n  "state": "CLOSED",\n  "title": "READMEの修正"\n}</code></pre></div>
       <p>GitHubでのマージだけでは手元のmainは更新されない。以下はマージ完了後の操作例</p>
       <p>1. 未コミットの変更がないことを確認</p>
       <div class="code"><div class="code-header"><span>Git Bash（操作例）</span><button class="copy" type="button">Copy</button></div>
@@ -187,7 +212,7 @@
       <pre><code>git log --oneline -5</code></pre></div>
       <p>5. 統合済みで不要になったローカルブランチを削除</p>
       <div class="code"><div class="code-header"><span>Git Bash（操作例）</span><button class="copy" type="button">Copy</button></div>
-      <pre><code>git branch -d docs/update-readme</code></pre></div>
+      <pre><code>git branch -d enhancement/1/update-readme</code></pre></div>
       <p>Squash／Rebase方式では-dが未マージとして拒否する場合がある。強制削除せず、PRの統合結果と必要なコミットが残っているかを確認</p>
       <p>6. サーバーで削除済みのブランチに対応するリモート追跡参照を整理</p>
       <div class="code"><div class="code-header"><span>Git Bash（操作例）</span><button class="copy" type="button">Copy</button></div>
@@ -197,7 +222,7 @@
       <p>planや差分のログにも秘密値が含まれる可能性があるため、PRへ添付する前に公開範囲を確認。apply・deployはレビュー確認コマンドとは別の変更操作</p></section>
       <section><h2 id="vscode">VS Codeの操作との対応</h2><table><thead><tr><th>画面上の操作</th><th>Gitでの意味</th></tr></thead><tbody><tr><td>変更のステージング</td><td>git add</td></tr><tr><td>コミット</td><td>ステージング済み内容を記録</td></tr><tr><td>プッシュ</td><td>ローカルコミットをリモートへ送信</td></tr><tr><td>変更の同期（Sync Changes）</td><td>取得・取り込みと送信をまとめて行う操作。pushだけとは異なる</td></tr></tbody></table>
       <p>初めは取得・統合・送信を分けて状態を確認すると、エラーがどの段階で起きたかを把握しやすい</p></section></main>
-    <aside class="toc" aria-label="Table of contents"><h2>ページ内</h2><a href="#flow">Pull Requestの役割</a><a href="#branch-workflow">変更ブランチの作成とpush</a><a href="#create-pr">Pull Requestの作成</a><a href="#review">レビューと修正</a><a href="#merge">マージとローカルの更新</a><a href="#iac">インフラ変更のレビュー観点</a><a href="#vscode">VS Codeの操作との対応</a></aside>
+    <aside class="toc" aria-label="Table of contents"><h2>ページ内</h2><a href="#flow">Pull Requestの役割</a><a href="#repository">リポジトリ作成とクローン</a><a href="#issue">Issueの作成</a><a href="#branch-workflow">変更ブランチの作成とpush</a><a href="#create-pr">Pull Requestの作成</a><a href="#review">レビューと修正</a><a href="#merge">マージとローカルの更新</a><a href="#iac">インフラ変更のレビュー観点</a><a href="#vscode">VS Codeの操作との対応</a></aside>
   </div>
   <script src="../assets/app.js"></script><script src="../assets/git-github.js"></script>
 </body>
