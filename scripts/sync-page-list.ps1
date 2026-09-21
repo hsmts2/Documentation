@@ -43,9 +43,9 @@ $groups = @(
         Label = 'Git / GitHub'
         Icon = '⑂'
         Pages = @(
-            [pscustomobject]@{ File = 'git-github.html'; Label = 'Git / GitHub 概要' }
-            [pscustomobject]@{ File = 'git-github-basics.html'; Label = 'Git / GitHub 基本編' }
-            [pscustomobject]@{ File = 'git-github-practical.html'; Label = 'Git / GitHub 実践編' }
+            [pscustomobject]@{ File = 'git-github.html'; Label = 'Git 概要' }
+            [pscustomobject]@{ File = 'git-remote.html'; Label = 'Gitリモート操作' }
+            [pscustomobject]@{ File = 'github-pull-request.html'; Label = 'GitHubのPull Requestとレビュー' }
             [pscustomobject]@{ File = 'git-utilities.html'; Label = 'Gitトラブルシューティング' }
             [pscustomobject]@{ File = 'github-ssh.html'; Label = 'GitHub認証' }
             [pscustomobject]@{ File = 'github-slack-integration.html'; Label = 'GitHubとSlackの連携・通知設定' }
@@ -125,6 +125,8 @@ $hiddenAliasFiles = [System.Collections.Generic.HashSet[string]]::new(
 [void]$hiddenAliasFiles.Add('rhel9-apache-tls.html')
 [void]$hiddenAliasFiles.Add('apache-self-signed-https.html')
 [void]$hiddenAliasFiles.Add('aws-certificate-manager.html')
+[void]$hiddenAliasFiles.Add('git-github-basics.html')
+[void]$hiddenAliasFiles.Add('git-github-practical.html')
 
 $errors = [System.Collections.Generic.List[string]]::new()
 $pageFiles = [System.Collections.Generic.HashSet[string]]::new([System.StringComparer]::OrdinalIgnoreCase)

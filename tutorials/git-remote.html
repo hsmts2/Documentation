@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gitリモート操作 | Documentation</title>
+  <meta name="description" content="clone・リポジトリ作成・pushの実行記録と、fetch・pull・追跡ブランチの使い分け">
+  <link rel="stylesheet" href="../assets/styles.css">
+  <link rel="stylesheet" href="../assets/git-github.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="../"><img src="../assets/icon.jpg" alt="Documentation icon"><span>Documentation</span></a>
+    <div class="header-actions"><button class="icon-button theme-toggle" type="button" title="テーマを切り替え" aria-label="テーマを切り替え">☀</button><nav class="nav" aria-label="Global navigation"><a href="https://github.com/hsmts2/Documentation"><span class="nav-icon" aria-hidden="true">◆</span>GitHub</a></nav></div>
+  </header>
+  <div class="layout">
+    <aside id="site-sidebar" class="sidebar" aria-label="Page list">
+      <div class="sidebar-heading">
+        <button class="icon-button sidebar-toggle sidebar-toggle-inline" type="button" aria-controls="site-sidebar" aria-expanded="true" title="ナビゲーションを閉じる" aria-label="ナビゲーションを閉じる">☰</button>
+      </div>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">✎</span>記事</p>
+      <a href="cloudflare-private-site.html">Private GitHubリポジトリをCloudflare Workersで認証付き公開してみた</a>
+      <a href="aws-daily-cost-slack.html">AWS利用料を毎朝3時にSlackへ通知してみた</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">☁︎</span>[PoC] マルチVPC・閉域VDI基盤案件</p>
+          <a href="workspaces-skill-transfer.html">全体構築・運用順序</a>
+          <a href="workspaces-managed-ad.html">Managed Microsoft ADの構築</a>
+          <a href="workspaces-managed-ad-users.html">Managed Microsoft ADのユーザー・グループ管理</a>
+          <a href="workspaces-management-ec2.html">管理用EC2の起動・接続・AD管理</a>
+          <a href="workspaces-ad-connector-account.html">AD Connector用サービスアカウント・権限委任</a>
+          <a href="workspaces-ad-connector.html">AD ConnectorのVPCピアリング・SG設定・作成</a>
+          <a href="workspaces-provisioning-gpo.html">WorkSpaces Personalの構築・接続</a>
+          <a href="workspaces-target-ou.html">WorkSpaces用ターゲットOUの作成・権限委任</a>
+          <a href="workspaces-gpo.html">WorkSpaces用GPOの作成・適用・運用</a>
+          <a href="workspaces-image-bundle.html">WorkSpacesカスタムイメージ作成・共有</a>
+          <a href="workspaces-systems-manager.html">Systems Manager環境構築</a>
+          <a href="workspaces-patch-manager.html">Patch Managerの設定</a>
+          <a href="workspaces-patch-operations.html">Patch Managerの実行・結果確認・運用</a>
+          <a href="workspaces-cost-optimizer.html">Cost Optimizerの構築・設定</a>
+          <a href="workspaces-cost-optimizer-dry-run.html">Cost OptimizerのDry Run解除</a>
+          <a href="workspaces-cost-optimizer-schedule.html">Cost Optimizerの実行スケジュール設定・変更</a>
+          <a href="workspaces-cost-optimizer-reports.html">Cost Optimizerのレポート・監視</a>
+          <a href="workspaces-cloudwatch-monitoring.html">CloudWatchのEC2・Windows OS監視とSNS通知</a>
+          <a href="workspaces-cloudwatch-workspaces.html">CloudWatchのWorkSpaces監視</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">⑂</span>Git / GitHub</p>
+      <a href="git-github.html">Git 概要</a>
+      <a class="active" aria-current="page" href="git-remote.html">Gitリモート操作</a>
+      <a href="github-pull-request.html">GitHubのPull Requestとレビュー</a>
+      <a href="git-utilities.html">Gitトラブルシューティング</a>
+      <a href="github-ssh.html">GitHub認証</a>
+      <a href="github-slack-integration.html">GitHubとSlackの連携・通知設定</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">◈</span>Terraform</p>
+      <a href="terraform.html">Terraform 概要</a>
+      <a href="hcp-terraform.html">HCP Terraform（Terraform Cloud）</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">☁︎</span>AWS</p>
+      <a href="cloudformation.html">CloudFormation 運用手順集</a>
+      <a href="aws-cli.html">AWS CLI 特殊対応</a>
+      <a href="aws-cli-reference.html">AWS CLI コマンドリファレンス</a>
+      <a href="eventbridge-scheduler.html">EventBridge Scheduler</a>
+      <a href="aws-directory-service.html">AWS Directory Service 運用手順</a>
+      <a href="amazon-workspaces.html">Amazon WorkSpaces</a>
+      <a href="amazon-ses.html">Amazon SES SMTPリレー</a>
+      <a href="amazon-ses-monitoring.html">Amazon SES 配信監視</a>
+      <a href="amazon-rds-blue-green.html">Amazon RDS Blue/Green Deployments</a>
+      <a href="apache-acm-certificate-update.html">証明書更新（ACMエクスポート）</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">⚙︎</span>OS／ミドルウェア</p>
+      <a href="rhel9.html">Red Hat Enterprise Linux 9</a>
+      <a href="rhel10.html">Red Hat Enterprise Linux 10</a>
+      <a href="amazon-linux-2023.html">Amazon Linux 2023</a>
+      <a href="windows-server-2022.html">Windows Server 2022</a>
+      <a href="windows-server-2025.html">Windows Server 2025</a>
+      <a href="windows-server-2016-upgrade.html">Windows Server 2016 インプレースアップグレード</a>
+      <a href="storage.html">ストレージ管理</a>
+      <a href="apache.html">Apache</a>
+      <a href="apache-self-signed-ssl-termination.html">Apache SSL終端（自己署名証明書）</a>
+      <a href="redis.html">Redis（KVS）</a>
+      <a href="nfs.html">NFS</a>
+      <a href="samba.html">Samba</a>
+      <a href="mariadb.html">MariaDB</a>
+      <a href="postgresql.html">PostgreSQL</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">▤</span>リファレンス</p>
+      <a href="../writing-style-guide.html">[GitHub Pages] 記法・テンプレート</a>
+      <a href="troubleshooting.html">障害切り分けチェックリスト</a>
+      <a href="eol.html">EOL / ライフサイクル一覧表</a>
+    </aside>
+    <main class="content git-guide">
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="../"><span class="nav-icon" aria-hidden="true">⌂</span>Home</a>
+        <span>トピック</span>
+      </nav>
+      <h1>Gitリモート操作</h1><p>clone・リポジトリ作成・pushの実行記録と、fetch・pull・追跡ブランチの使い分け</p>
+      <section><h2 id="overview">ローカル・リモート・追跡ブランチ</h2><table><thead><tr><th>名前</th><th>場所・役割</th></tr></thead><tbody><tr><td>main</td><td>自分のPCにあるローカルブランチ</td></tr><tr><td>origin</td><td>接続先URLに付ける名前。認証情報やアカウント名ではない</td></tr><tr><td>origin/main</td><td>PC内に保存した、最後に取得・更新したリモートmainの位置</td></tr><tr><td>GitHub上のmain</td><td>サーバー側のブランチ。ほかの人のpushでも更新される</td></tr></tbody></table>
+      <p>git statusのahead／behindはPC内のorigin/mainとの比較。サーバーの最新状態を確認するにはfetchが必要。working tree cleanは未コミットの変更がない状態で、push済みかどうかとは別</p>
+      <p>Gitの初期設定は<a href="git-github.html">Git 概要</a>、HTTPS・SSHの設定は<a href="github-ssh.html">GitHub認証</a>を参照。以下の実行結果は作業時点の記録</p></section>
+      <section><h2 id="clone">既存リポジトリのclone</h2><p>1. 保存先フォルダへ移動</p>
+      <div class="code" data-git-transcript><div class="code-header"><span>Git Bash</span><button class="copy" type="button">Copy</button></div>
+      <pre><code>$ cd ~/github-book</code></pre></div>
+      <p>2. HTTPSでリポジトリを複製。履歴・ファイルとoriginの設定が作成される</p>
+      <div class="code" data-git-transcript><div class="code-header"><span>Git Bash</span><button class="copy" type="button">Copy</button></div>
+      <pre><code>$ git clone https://github.com/kspub-github-book/clone-sample.git
+Cloning into 'clone-sample'...
+remote: Enumerating objects: 4, done.
+remote: Counting objects: 100% (4/4), done.
+remote: Compressing objects: 100% (3/3), done.
+remote: Total 4 (delta 0), reused 4 (delta 0), pack-reused 0 (from 0)
+Receiving objects: 100% (4/4), done.</code></pre></div>
+      <p>3. cloneで作成されたフォルダへ移動</p>
+      <div class="code" data-git-transcript><div class="code-header"><span>Git Bash</span><button class="copy" type="button">Copy</button></div>
+      <pre><code>$ cd clone-sample/</code></pre></div>
+      <p>4. 現在のブランチと変更状態を確認</p>
+      <div class="code" data-git-transcript><div class="code-header"><span>Git Bash</span><button class="copy" type="button">Copy</button></div>
+      <pre><code>$ git status
+On branch main
+Your branch is up to date with 'origin/main'.
+
+nothing to commit, working tree clean</code></pre></div>
+      <p>5. 取得先・送信先に登録されたURLを確認</p>
+      <div class="code" data-git-transcript><div class="code-header"><span>Git Bash</span><button class="copy" type="button">Copy</button></div>
+      <pre><code>$ git remote -v
+origin  https://github.com/kspub-github-book/clone-sample.git (fetch)
+origin  https://github.com/kspub-github-book/clone-sample.git (push)</code></pre></div>
+      <p>(push)は送信先の設定で、書き込み権限の証明ではない。公開リポジトリは認証なしでもclone可能</p>
+      <p>6. 取り込まれたコミットと各参照の位置を確認</p>
+      <div class="code" data-git-transcript><div class="code-header"><span>Git Bash</span><button class="copy" type="button">Copy</button></div>
+      <pre><code>$ git log --oneline -5
+da6d8c9 (HEAD -&gt; main, origin/main, origin/HEAD) Initial commit</code></pre></div>
+      <p>7. 作業フォルダのファイルを確認</p>
+      <div class="code" data-git-transcript><div class="code-header"><span>Git Bash</span><button class="copy" type="button">Copy</button></div>
+      <pre><code>$ ls
+LICENSE  README.md</code></pre></div></section>
+      <section><h2 id="create-remote">ローカルの履歴をGitHubへ送る</h2><p>既存のローカルリポジトリgit-review-cafeから、空のGitHubリポジトリを作成してmainを初回pushした記録。同名のリポジトリが既にある場合、作成コマンドの再実行は不要</p>
+      <p>1. ローカルリポジトリへ移動</p>
+      <div class="code" data-git-transcript><div class="code-header"><span>Git Bash</span><button class="copy" type="button">Copy</button></div>
+      <pre><code>$ cd ~/git-review-cafe</code></pre></div>
+      <p>2. 未コミットの変更がないことを確認</p>
+      <div class="code" data-git-transcript><div class="code-header"><span>Git Bash</span><button class="copy" type="button">Copy</button></div>
+      <pre><code>$ git status
+On branch main
+nothing to commit, working tree clean</code></pre></div>
+      <p>3. リモートの登録状況を確認。この時点では未登録</p>
+      <div class="code" data-git-transcript><div class="code-header"><span>Git Bash</span><button class="copy" type="button">Copy</button></div>
+      <pre><code>$ git remote -v</code></pre></div>
+      <p>4. GitHub CLIが認証しているアカウントを確認</p>
+      <div class="code" data-git-transcript><div class="code-header"><span>Git Bash</span><button class="copy" type="button">Copy</button></div>
+      <pre><code>$ gh api user --jq .login
+hsmts2</code></pre></div>
+      <p>5. GitのHTTPS認証でGitHub CLIを利用する設定を登録</p>
+      <div class="code" data-git-transcript><div class="code-header"><span>Git Bash</span><button class="copy" type="button">Copy</button></div>
+      <pre><code>$ gh auth setup-git</code></pre></div>
+      <p>6. 非公開リポジトリを作成し、現在のフォルダにoriginを登録</p>
+      <div class="code" data-git-transcript><div class="code-header"><span>Git Bash</span><button class="copy" type="button">Copy</button></div>
+      <pre><code>$ gh repo create hsmts2/git-review-cafe --private --source=. --remote=origin
+✓ Created repository hsmts2/git-review-cafe on github.com
+  https://github.com/hsmts2/git-review-cafe
+✓ Added remote https://github.com/hsmts2/git-review-cafe.git</code></pre></div>
+      <p>--source=.は現在のローカルリポジトリを指定。--pushを付けていないため、この時点では履歴は未送信</p>
+      <p>7. 接続先がHTTPSになっていることを確認</p>
+      <div class="code" data-git-transcript><div class="code-header"><span>Git Bash</span><button class="copy" type="button">Copy</button></div>
+      <pre><code>$ git remote -v
+origin  https://github.com/hsmts2/git-review-cafe.git (fetch)
+origin  https://github.com/hsmts2/git-review-cafe.git (push)</code></pre></div>
+      <p>実際の作業では同じURLをset-urlで再設定したが、上記のURLであれば再設定は不要</p>
+      <p>8. 既存のoriginのURLを変更する場合のみ実行する操作例</p>
+      <div class="code"><div class="code-header"><span>Git Bash（操作例）</span><button class="copy" type="button">Copy</button></div>
+      <pre><code>git remote set-url origin https://github.com/hsmts2/git-review-cafe.git</code></pre></div>
+      <p>9. mainの履歴をGitHubへ送信</p>
+      <div class="code" data-git-transcript><div class="code-header"><span>Git Bash</span><button class="copy" type="button">Copy</button></div>
+      <pre><code>$ git push origin main
+Enumerating objects: 35, done.
+Counting objects: 100% (35/35), done.
+Delta compression using up to 16 threads
+Compressing objects: 100% (29/29), done.
+Writing objects: 100% (35/35), 3.11 KiB | 796.00 KiB/s, done.
+Total 35 (delta 5), reused 0 (delta 0), pack-reused 0 (from 0)
+remote: Resolving deltas: 100% (5/5), done.
+To https://github.com/hsmts2/git-review-cafe.git
+ * [new branch]      main -&gt; main</code></pre></div>
+      <p>送信したブランチはmainのみ。mainからたどれる過去のコミットも送信されるが、ローカルのfeatureブランチ名がすべて作成されるわけではない</p>
+      <p>10. mainとorigin/mainが同じコミットを指すことを確認</p>
+      <div class="code" data-git-transcript><div class="code-header"><span>Git Bash</span><button class="copy" type="button">Copy</button></div>
+      <pre><code>$ git log --oneline -3
+a3cb771 (HEAD -&gt; main, origin/main, feature/add-latte) Add cafe latte
+cebe6b6 Ignore log files
+4cb3803 Merge parfait prices at 780</code></pre></div>
+      <p>11. ブラウザで送信先のファイルを確認</p>
+      <div class="code" data-git-transcript><div class="code-header"><span>Git Bash</span><button class="copy" type="button">Copy</button></div>
+      <pre><code>$ gh repo view --web
+Opening https://github.com/hsmts2/git-review-cafe in your browser.</code></pre></div></section>
+      <section><h2 id="upstream">追跡ブランチの設定</h2><p>追跡先は「このローカルブランチが通常どのリモートブランチとやり取りするか」の設定。ファイルの送受信やマージは行わない</p>
+      <p>1. mainの追跡先をorigin/mainに設定</p>
+      <div class="code" data-git-transcript><div class="code-header"><span>Git Bash</span><button class="copy" type="button">Copy</button></div>
+      <pre><code>$ git branch --set-upstream-to=origin/main main
+branch 'main' set up to track 'origin/main'.</code></pre></div>
+      <p>2. 追跡先との関係を確認</p>
+      <div class="code" data-git-transcript><div class="code-header"><span>Git Bash</span><button class="copy" type="button">Copy</button></div>
+      <pre><code>$ git status
+On branch main
+Your branch is up to date with 'origin/main'.
+
+nothing to commit, working tree clean</code></pre></div>
+      <table><thead><tr><th>コマンド（使い分け）</th><th>意味</th></tr></thead><tbody><tr><td>git branch -u origin/main main</td><td>--set-upstream-toの短縮形。既存のorigin/mainを追跡先に設定</td></tr><tr><td>git push -u origin main</td><td>初回pushと追跡設定をまとめて実行する場合の操作例</td></tr><tr><td>git branch -vv</td><td>各ローカルブランチの追跡先・差分状態を表示</td></tr></tbody></table>
+      <p>通常の同名ブランチ運用では、設定後はgit pullやgit pushの引数を省略可能。push先の決定にはpush.defaultなどの設定も関係</p></section>
+      <section><h2 id="fetch-pull">fetch・merge・pullの違い</h2><table><thead><tr><th>操作</th><th>origin/main</th><th>現在のブランチ・作業ファイル</th></tr></thead><tbody><tr><td>git fetch origin</td><td>リモートの履歴を取得して更新</td><td>そのまま。mainへは取り込まない</td></tr><tr><td>git merge origin/main</td><td>新たな取得は行わない</td><td>取得済みのorigin/mainを現在のブランチへ統合</td></tr><tr><td>git pull --no-rebase</td><td>先にfetchで更新</td><td>取得後にmergeで統合</td></tr><tr><td>git pull --rebase</td><td>先にfetchで更新</td><td>取得後にローカルの独自コミットを付け直す</td></tr><tr><td>git pull --ff-only</td><td>先にfetchで更新</td><td>分岐していなければ前進。分岐していれば統合せず停止</td></tr></tbody></table>
+      <p>引数なしのgit pullの統合方法は設定・Gitのバージョンに依存するため、方式を明示すると意図が伝わる</p>
+      <p>次は追跡先設定済みのmainで、取得と内容確認を分ける操作例。実行結果は状態により変化</p>
+      <p>1. 未コミットの変更を確認。変更があればコミットまたはstashしてから続行</p>
+      <div class="code"><div class="code-header"><span>Git Bash（操作例）</span><button class="copy" type="button">Copy</button></div>
+      <pre><code>git status</code></pre></div>
+      <p>2. 取り込み先のmainへ切り替え</p>
+      <div class="code"><div class="code-header"><span>Git Bash（操作例）</span><button class="copy" type="button">Copy</button></div>
+      <pre><code>git switch main</code></pre></div>
+      <p>3. リモートの最新履歴を取得</p>
+      <div class="code"><div class="code-header"><span>Git Bash（操作例）</span><button class="copy" type="button">Copy</button></div>
+      <pre><code>git fetch origin</code></pre></div>
+      <p>4. ローカルとリモート追跡ブランチの履歴を確認</p>
+      <div class="code"><div class="code-header"><span>Git Bash（操作例）</span><button class="copy" type="button">Copy</button></div>
+      <pre><code>git log --all --graph --oneline</code></pre></div>
+      <p>5. mainとorigin/mainのファイル内容を比較</p>
+      <div class="code"><div class="code-header"><span>Git Bash（操作例）</span><button class="copy" type="button">Copy</button></div>
+      <pre><code>git diff main origin/main</code></pre></div>
+      <p>6. 取得済みのorigin/mainをmainへ取り込む</p>
+      <div class="code"><div class="code-header"><span>Git Bash（操作例）</span><button class="copy" type="button">Copy</button></div>
+      <pre><code>git merge origin/main</code></pre></div>
+      <p>競合時は編集・保存 → git add → git commitで完了。実際のfetch／merge／pushの出力は<a href="git-utilities.html#push-rejected">push拒否への対処</a>に掲載</p>
+      <p>取得と統合をまとめる場合は上記のfetch・mergeの代わりにgit pull --no-rebaseを使用。分岐を統合せずに更新だけしたい場合はgit pull --ff-onlyを使用</p></section>
+      <section><h2 id="force-push">強制pushの注意点</h2><p>git push -fは通常の履歴保護を無視してリモートブランチを更新する操作。ほかの人のコミットをブランチの履歴から外す可能性があるため、push拒否の一般的な解決策としては使用しない</p>
+      <p>通常の拒否はfetchで差分を確認し、mergeなどで統合してから再push。共有後のamendやrebaseは、チームの合意なしに実施しない</p>
+      <p>履歴を書き換える必要がある場合は、対象・他者の作業・保護ルールを確認し、期待するリモート位置を条件にする--force-with-leaseを検討。ただし無条件に安全になるわけではなく、バックグラウンドのfetchなどで期待値が変わる点にも注意</p></section>
+      <section><h2 id="bare">bareリポジトリとGitHubリポジトリ</h2><table><thead><tr><th>操作</th><th>作成場所</th><th>作成されるもの</th></tr></thead><tbody><tr><td>git init</td><td>自分のPC</td><td>作業ファイルを編集できる通常のリポジトリ</td></tr><tr><td>git init --bare project.git</td><td>実行したPC・サーバー</td><td>作業ツリーを持たない、共有先として使うリポジトリ</td></tr><tr><td>gh repo create</td><td>GitHub</td><td>GitHub上のリポジトリ。認証・権限が必要</td></tr></tbody></table>
+      <p>git init --bareだけではGitHub上にリポジトリは作成されない。office／homeで共有先に使ったremote.gitはbareリポジトリに該当</p>
+      <p>公開したブランチのレビューを依頼する流れは<a href="github-pull-request.html">GitHubのPull Requestとレビュー</a>を参照</p></section></main>
+    <aside class="toc" aria-label="Table of contents"><h2>ページ内</h2><a href="#overview">ローカル・リモート・追跡ブランチ</a><a href="#clone">既存リポジトリのclone</a><a href="#create-remote">ローカルの履歴をGitHubへ送る</a><a href="#upstream">追跡ブランチの設定</a><a href="#fetch-pull">fetch・merge・pullの違い</a><a href="#force-push">強制pushの注意点</a><a href="#bare">bareリポジトリとGitHubリポジトリ</a></aside>
+  </div>
+  <script src="../assets/app.js"></script><script src="../assets/git-github.js"></script>
+</body>
+</html>
