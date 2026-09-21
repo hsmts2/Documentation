@@ -45,6 +45,7 @@ $groups = @(
         Pages = @(
             [pscustomobject]@{ File = 'git-github.html'; Label = 'Git 概要' }
             [pscustomobject]@{ File = 'git-remote.html'; Label = 'Gitリモート操作' }
+            [pscustomobject]@{ File = 'github-pages.html'; Label = 'GitHub Pages' }
             [pscustomobject]@{ File = 'github-pull-request.html'; Label = 'GitHubのPull Requestとレビュー' }
             [pscustomobject]@{ File = 'git-utilities.html'; Label = 'Gitトラブルシューティング' }
             [pscustomobject]@{ File = 'github-ssh.html'; Label = 'GitHub認証' }

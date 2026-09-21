@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GitHub Pages | Documentation</title>
+  <meta name="description" content="GitHub Pagesの種類、リポジトリ名とURL、公開元の設定">
+  <link rel="stylesheet" href="../assets/styles.css">
+  <link rel="stylesheet" href="../assets/git-github.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="../"><img src="../assets/icon.jpg" alt="Documentation icon"><span>Documentation</span></a>
+    <div class="header-actions"><button class="icon-button theme-toggle" type="button" title="テーマを切り替え" aria-label="テーマを切り替え">☀</button><nav class="nav" aria-label="Global navigation"><a href="https://github.com/hsmts2/Documentation"><span class="nav-icon" aria-hidden="true">◆</span>GitHub</a></nav></div>
+  </header>
+  <div class="layout">
+    <aside id="site-sidebar" class="sidebar" aria-label="Page list">
+      <div class="sidebar-heading">
+        <button class="icon-button sidebar-toggle sidebar-toggle-inline" type="button" aria-controls="site-sidebar" aria-expanded="true" title="ナビゲーションを閉じる" aria-label="ナビゲーションを閉じる">☰</button>
+      </div>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">✎</span>記事</p>
+      <a href="cloudflare-private-site.html">Private GitHubリポジトリをCloudflare Workersで認証付き公開してみた</a>
+      <a href="aws-daily-cost-slack.html">AWS利用料を毎朝3時にSlackへ通知してみた</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">☁︎</span>[PoC] マルチVPC・閉域VDI基盤案件</p>
+          <a href="workspaces-skill-transfer.html">全体構築・運用順序</a>
+          <a href="workspaces-managed-ad.html">Managed Microsoft ADの構築</a>
+          <a href="workspaces-managed-ad-users.html">Managed Microsoft ADのユーザー・グループ管理</a>
+          <a href="workspaces-management-ec2.html">管理用EC2の起動・接続・AD管理</a>
+          <a href="workspaces-ad-connector-account.html">AD Connector用サービスアカウント・権限委任</a>
+          <a href="workspaces-ad-connector.html">AD ConnectorのVPCピアリング・SG設定・作成</a>
+          <a href="workspaces-provisioning-gpo.html">WorkSpaces Personalの構築・接続</a>
+          <a href="workspaces-target-ou.html">WorkSpaces用ターゲットOUの作成・権限委任</a>
+          <a href="workspaces-gpo.html">WorkSpaces用GPOの作成・適用・運用</a>
+          <a href="workspaces-image-bundle.html">WorkSpacesカスタムイメージ作成・共有</a>
+          <a href="workspaces-systems-manager.html">Systems Manager環境構築</a>
+          <a href="workspaces-patch-manager.html">Patch Managerの設定</a>
+          <a href="workspaces-patch-operations.html">Patch Managerの実行・結果確認・運用</a>
+          <a href="workspaces-cost-optimizer.html">Cost Optimizerの構築・設定</a>
+          <a href="workspaces-cost-optimizer-dry-run.html">Cost OptimizerのDry Run解除</a>
+          <a href="workspaces-cost-optimizer-schedule.html">Cost Optimizerの実行スケジュール設定・変更</a>
+          <a href="workspaces-cost-optimizer-reports.html">Cost Optimizerのレポート・監視</a>
+          <a href="workspaces-cloudwatch-monitoring.html">CloudWatchのEC2・Windows OS監視とSNS通知</a>
+          <a href="workspaces-cloudwatch-workspaces.html">CloudWatchのWorkSpaces監視</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">⑂</span>Git / GitHub</p>
+      <a href="git-github.html">Git 概要</a>
+      <a href="git-remote.html">Gitリモート操作</a>
+      <a class="active" aria-current="page" href="github-pages.html">GitHub Pages</a>
+      <a href="github-pull-request.html">GitHubのPull Requestとレビュー</a>
+      <a href="git-utilities.html">Gitトラブルシューティング</a>
+      <a href="github-ssh.html">GitHub認証</a>
+      <a href="github-slack-integration.html">GitHubとSlackの連携・通知設定</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">◈</span>Terraform</p>
+      <a href="terraform.html">Terraform 概要</a>
+      <a href="hcp-terraform.html">HCP Terraform（Terraform Cloud）</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">☁︎</span>AWS</p>
+      <a href="cloudformation.html">CloudFormation 運用手順集</a>
+      <a href="aws-cli.html">AWS CLI 特殊対応</a>
+      <a href="aws-cli-reference.html">AWS CLI コマンドリファレンス</a>
+      <a href="eventbridge-scheduler.html">EventBridge Scheduler</a>
+      <a href="aws-directory-service.html">AWS Directory Service 運用手順</a>
+      <a href="amazon-workspaces.html">Amazon WorkSpaces</a>
+      <a href="amazon-ses.html">Amazon SES SMTPリレー</a>
+      <a href="amazon-ses-monitoring.html">Amazon SES 配信監視</a>
+      <a href="amazon-rds-blue-green.html">Amazon RDS Blue/Green Deployments</a>
+      <a href="apache-acm-certificate-update.html">証明書更新（ACMエクスポート）</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">⚙︎</span>OS／ミドルウェア</p>
+      <a href="rhel9.html">Red Hat Enterprise Linux 9</a>
+      <a href="rhel10.html">Red Hat Enterprise Linux 10</a>
+      <a href="amazon-linux-2023.html">Amazon Linux 2023</a>
+      <a href="windows-server-2022.html">Windows Server 2022</a>
+      <a href="windows-server-2025.html">Windows Server 2025</a>
+      <a href="windows-server-2016-upgrade.html">Windows Server 2016 インプレースアップグレード</a>
+      <a href="storage.html">ストレージ管理</a>
+      <a href="apache.html">Apache</a>
+      <a href="apache-self-signed-ssl-termination.html">Apache SSL終端（自己署名証明書）</a>
+      <a href="redis.html">Redis（KVS）</a>
+      <a href="nfs.html">NFS</a>
+      <a href="samba.html">Samba</a>
+      <a href="mariadb.html">MariaDB</a>
+      <a href="postgresql.html">PostgreSQL</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">▤</span>リファレンス</p>
+      <a href="../writing-style-guide.html">[GitHub Pages] 記法・テンプレート</a>
+      <a href="troubleshooting.html">障害切り分けチェックリスト</a>
+      <a href="eol.html">EOL / ライフサイクル一覧表</a>
+    </aside>
+    <main class="content git-guide">
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="../"><span class="nav-icon" aria-hidden="true">⌂</span>Home</a>
+        <span>トピック</span>
+      </nav>
+      <h1>GitHub Pages</h1>
+<p class="lead">GitHub Pagesのサイト種類とリポジトリ名の条件、公開元の設定を整理する</p>
+<section><h2 id="site-types">GitHub Pagesの種類</h2>
+<div class="callout callout-info"><strong>ℹ️ 情報</strong><p><code class="inline-code">&lt;USERNAME&gt;.github.io</code>というリポジトリ名が必要なのはユーザーサイトの場合。プロジェクトサイトは任意のリポジトリ名で公開できる</p></div>
+<table><thead><tr><th>種類</th><th>リポジトリ名</th><th>標準の公開URL</th><th>作成数</th></tr></thead><tbody>
+<tr><td>ユーザーサイト</td><td><code>hsmts2.github.io</code></td><td><code>https://hsmts2.github.io/</code></td><td>個人アカウントにつき1サイト</td></tr>
+<tr><td>Organizationサイト</td><td><code>&lt;ORGANIZATION&gt;.github.io</code></td><td><code>https://&lt;ORGANIZATION&gt;.github.io/</code></td><td>Organizationにつき1サイト</td></tr>
+<tr><td>プロジェクトサイト</td><td>任意の名前（例：<code>sample-site</code>）</td><td><code>https://hsmts2.github.io/sample-site/</code></td><td>リポジトリにつき1サイト</td></tr>
+</tbody></table>
+</section>
+<section><h2 id="requirements">任意のリポジトリを公開する条件</h2>
+<p>リポジトリ名は任意でも、HTMLをpushするだけで自動的にWebサイトになるわけではない。Pagesの公開元設定とデプロイが必要</p>
+<ol>
+<li>利用プランとリポジトリの公開範囲がPagesの対象であることを確認</li>
+<li>公開元に入口となる<code>index.html</code>を配置。Jekyllを利用する場合は<code>index.md</code>や<code>README.md</code>も入口として使用可能</li>
+<li>リポジトリの<code class="ui-value">Settings</code> ＞ <code class="ui-value">Pages</code>で公開元を設定</li>
+<li>ビルド・デプロイ成功後に表示される公開URLで確認</li>
+</ol>
+<p>GitHub Freeでは公開リポジトリが対象。GitHub Pro・Teamなどでは非公開リポジトリも対象になるが、ソースが非公開でもPagesのサイトまで非公開になるとは限らない。公開前に掲載内容を確認</p>
+<p>HTML・CSS・ブラウザで動作するJavaScriptなどの静的サイトを公開可能。PHPやPythonなどのサーバー側処理をGitHub Pages上で実行することはできない</p>
+<p>出典：<a href="https://docs.github.com/en/pages/getting-started-with-github-pages/creating-a-github-pages-site">GitHub Pagesサイトの作成条件と公開ファイル</a></p>
+</section>
+<section><h2 id="publishing-source">サイトの種類とデプロイ方式は別</h2>
+<p>ユーザーサイト・プロジェクトサイトはURLと所有単位の分類。次の2つはファイルをビルド・公開する方式の分類で、別の軸で選択する</p>
+<table><thead><tr><th>公開方式</th><th>指定するもの</th><th>用途</th></tr></thead><tbody>
+<tr><td><code class="ui-value">Deploy from a branch</code></td><td>公開ブランチと<code>/(root)</code>または<code>/docs</code></td><td>配置済みの静的ファイルやJekyllサイトを公開</td></tr>
+<tr><td><code class="ui-value">GitHub Actions</code></td><td>ビルド・デプロイ用ワークフロー</td><td>独自のビルド工程で生成したサイトを公開</td></tr>
+</tbody></table>
+<p>ブランチ方式で<code>main</code>・<code>/docs</code>を選ぶ場合、入口は<code>docs/index.html</code>に配置。プロジェクトサイトの公開URLは<code>/sample-site/</code>から始まるため、CSS・画像へのリンクもその配下で解決されるように記載</p>
+<p>出典：<a href="https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site">GitHub Pagesの公開元の設定</a></p>
+</section>
+<section><h2 id="choose-site">用途による使い分け</h2>
+<table><thead><tr><th>用途</th><th>選択の目安</th></tr></thead><tbody>
+<tr><td>自分のプロフィール・ポートフォリオ・各サイトへの入口</td><td>ユーザーサイト</td></tr>
+<tr><td>ドキュメント・ツール・作品などをリポジトリ単位で公開</td><td>プロジェクトサイト</td></tr>
+</tbody></table>
+<p>機能の優劣ではなく、公開内容の単位とURLで選択する。ドキュメント集を独立して管理する用途には、プロジェクトサイトが合う</p>
+<p>DocumentationをGitHub Pagesで公開する場合はプロジェクトサイトに該当。ただし、現在のDocumentationはCloudflare WorkersのURLで公開しており、今回のGitHub Pagesとは公開基盤が異なる</p>
+</section>
+<section><h2 id="pages-settings">リポジトリ作成後のPages設定</h2>
+<p>以下は今回作成した2サイトに共通する設定。実際の作成はGitHub CLI・APIで行い、同じ設定をブラウザで行う手順を記載</p>
+<p>1. リポジトリのmainブランチに、公開するファイルがpush済みであることを確認</p>
+<div class="code"><div class="code-header"><span>ファイル構成</span><button class="copy" type="button">Copy</button></div><pre><code>/
+├── index.html
+├── style.css
+├── .nojekyll
+└── README.md</code></pre></div>
+<p>入口はindex.html。style.cssは見た目の指定、.nojekyllはJekyll処理を省略するためのファイル。README.mdは説明用で、今回のHTML公開に必須ではない</p>
+<div class="callout callout-info"><strong>ℹ️ 情報：.nojekyllの役割</strong>
+<p>JekyllはMarkdownやテンプレートからHTMLを生成する仕組み。ブランチから公開する場合は標準でJekyllによる処理が入るため、完成済みのHTML・CSSをそのまま配信したい場合は、公開元の最上位に<code>.nojekyll</code>を配置する</p>
+<p>ファイルの存在が「Jekyllを使わない」という目印になるため、中身は空でよく、設定値の記入は不要。名前は先頭のドットを含む<code>.nojekyll</code>で、<code>.nojekyll.txt</code>にはしない</p>
+<p>公開元が<code>/ (root)</code>ならリポジトリ直下、<code>/docs</code>なら<code>docs/.nojekyll</code>へ配置してcommit・pushする。このファイルだけでPagesが有効になるわけではなく、下記の公開元設定も必要</p>
+<p>今回の2サイトは完成済みHTMLを使うため配置済み。JekyllでMarkdownの変換やテーマを利用したい場合は配置しない。独自のGitHub Actionsで作るサイトは、そのワークフローに応じて判断する</p>
+</div>
+<p>出典：<a href="https://docs.github.com/en/pages/getting-started-with-github-pages/creating-a-github-pages-site#static-site-generators">静的サイトジェネレーターと.nojekyll</a></p>
+<p>2. リポジトリの<code class="ui-value">Settings</code>タブを選択し、左側の<code class="ui-value">Code, planning, and automation</code>内の<code class="ui-value">Pages</code>を押下</p>
+<p>設定画面：<a class="external-item" href="https://github.com/hsmts2/hsmts2.github.io/settings/pages">ユーザーサイトのPages設定</a> ／ <a class="external-item" href="https://github.com/hsmts2/pages-project-test/settings/pages">プロジェクトサイトのPages設定</a></p>
+<p>3. <code class="ui-value">Build and deployment</code>の各項目を次の値に設定</p>
+<table><thead><tr><th>項目</th><th>今回の設定値</th><th>意味</th></tr></thead><tbody>
+<tr><td><code class="ui-value">Source</code></td><td><code class="ui-value">Deploy from a branch</code></td><td>ブランチ内のファイルを公開元にする</td></tr>
+<tr><td><code class="ui-value">Branch</code></td><td><code class="ui-value">main</code></td><td>mainへpushした内容を公開する</td></tr>
+<tr><td>フォルダ</td><td><code class="ui-value">/ (root)</code></td><td>リポジトリ直下のindex.htmlを公開する</td></tr>
+</tbody></table>
+<p>4. <code class="ui-value">Branch</code>欄の<code class="ui-value">Save</code>ボタンを押下。今回の2サイトは設定済みのため、変更がなければ再保存は不要</p>
+<p>5. <code class="ui-value">Custom domain</code>は空欄のままにし、<code class="ui-value">Enforce HTTPS</code>が有効であることを確認。github.ioの標準ドメインを使うため、独自ドメイン購入・DNS設定・CNAMEファイルは不要</p>
+<p>6. <code class="ui-value">Actions</code>タブを選択し、<code class="ui-value">pages build and deployment</code>の完了を確認。ブランチ方式でも、GitHubが用意するActionsの実行履歴が表示される</p>
+<p>7. <code class="ui-value">Settings</code> ＞ <code class="ui-value">Pages</code>へ戻り、<code class="ui-value">Your site is live at</code>のURLを確認して<code class="ui-value">Visit site</code>ボタンを押下</p>
+<table><thead><tr><th>サイト</th><th>公開URL</th></tr></thead><tbody>
+<tr><td>ユーザーサイト</td><td><a class="external-item" href="https://hsmts2.github.io/">https://hsmts2.github.io/</a></td></tr>
+<tr><td>プロジェクトサイト</td><td><a class="external-item" href="https://hsmts2.github.io/pages-project-test/">https://hsmts2.github.io/pages-project-test/</a></td></tr>
+</tbody></table>
+<p>設定後はmainの公開元ファイルを変更してpushすると再デプロイされる。今回のような配置済みHTMLの公開では、自作のActionsワークフローや公開専用トークンを追加する必要はない</p>
+<p>出典：<a href="https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site">GitHub Pagesの公開元の設定</a></p>
+</section>
+<section><h2 id="general-settings">General設定とPages公開の関係</h2>
+<p>今回の公開のために、以下のGeneral設定を追加で有効化した項目はない。既にチェックされていてもPages公開の必須条件という意味ではなく、リポジトリの共同作業・管理機能の設定</p>
+<table><thead><tr><th>Generalの項目</th><th>用途</th><th>Pages公開のための変更</th></tr></thead><tbody>
+<tr><td>Wikis／Restrict editing to collaborators only</td><td>Wikiの提供と編集者の制限</td><td>不要</td></tr>
+<tr><td>Issues／Issue permissions／Issue templates</td><td>課題管理と投稿権限・ひな形</td><td>不要</td></tr>
+<tr><td>Sponsorships／Display a Sponsor button</td><td>支援先の案内</td><td>不要</td></tr>
+<tr><td>Preserve this repository</td><td>GitHub Archive Programへの保存</td><td>不要</td></tr>
+<tr><td>Discussions／Projects</td><td>議論・プロジェクト管理</td><td>不要</td></tr>
+<tr><td>Pull requests／Pull request permissions</td><td>変更提案と投稿権限</td><td>不要</td></tr>
+<tr><td>Allow merge commits／Allow squash merging／Allow rebase merging</td><td>PRで許可するマージ方式</td><td>Pagesの要件ではない。PR運用のルールに従う</td></tr>
+<tr><td>Always suggest updating pull request branches／Allow auto-merge／Automatically delete head branches</td><td>PRの更新案内・自動マージ・作業ブランチの整理</td><td>不要</td></tr>
+<tr><td>Require contributors to sign off on web-based commits／Allow comments on individual commits</td><td>コミットのsign-off・コメント</td><td>不要</td></tr>
+<tr><td>Include Git LFS objects in archives</td><td>ダウンロードするソースアーカイブへのLFSファイル収録</td><td>不要。Webサイト公開のスイッチではない</td></tr>
+<tr><td>Limit how many branches and tags can be updated in a single push</td><td>1回のpushで更新できる参照数の制限</td><td>不要</td></tr>
+<tr><td>Auto-close issues with merged linked pull requests</td><td>マージ時の関連Issueの自動終了</td><td>不要</td></tr>
+</tbody></table>
+<p>公開に直接関係するのは、利用プランに対応したリポジトリの公開範囲、公開ファイル、<code class="ui-value">Settings</code> ＞ <code class="ui-value">Pages</code>の公開元設定と、デプロイの成功。組織のポリシーなどでPagesや必要なActionsが制限されている場合は、管理者への確認が必要</p>
+<p>PR経由で更新する運用ではマージルールが変更の取り込みに影響するが、サイトを公開する機能そのものとは別。公開のためだけに既存のルールを無効化しないこと</p>
+</section>
+</main>
+    <aside class="toc" aria-label="Table of contents"><h2>ページ内</h2><a href="#site-types">GitHub Pagesの種類</a><a href="#requirements">任意のリポジトリを公開する条件</a><a href="#publishing-source">サイトの種類とデプロイ方式は別</a><a href="#choose-site">用途による使い分け</a><a href="#pages-settings">リポジトリ作成後のPages設定</a><a href="#general-settings">General設定とPages公開の関係</a></aside>
+  </div>
+  <script src="../assets/app.js"></script><script src="../assets/git-github.js"></script>
+</body>
+</html>
