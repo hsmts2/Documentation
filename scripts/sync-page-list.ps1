@@ -64,6 +64,7 @@ $groups = @(
         Label = 'AWS'
         Icon = '☁︎'
         Pages = @(
+            [pscustomobject]@{ File = 'iam-identity-center.html'; Label = 'IAM Identity Center' }
             [pscustomobject]@{ File = 'cloudformation.html'; Label = 'CloudFormation 運用手順集' }
             [pscustomobject]@{ File = 'aws-cli.html'; Label = 'AWS CLI 特殊対応' }
             [pscustomobject]@{ File = 'aws-cli-reference.html'; Label = 'AWS CLI コマンドリファレンス' }

@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IAM Identity Center | Documentation</title>
+  <meta name="description" content="IAM Identity Centerの有効化、許可セットとユーザーの作成、AWSアカウントへの割り当て手順">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="../"><img src="../assets/icon.jpg" alt="Documentation icon"><span>Documentation</span></a>
+    <div class="header-actions"><button class="icon-button theme-toggle" type="button" title="テーマを切り替え" aria-label="テーマを切り替え">☀</button><nav class="nav" aria-label="Global navigation"><a href="https://github.com/hsmts2/Documentation"><span class="nav-icon" aria-hidden="true">◆</span>GitHub</a></nav></div>
+  </header>
+  <div class="layout">
+    <aside id="site-sidebar" class="sidebar" aria-label="Page list">
+      <div class="sidebar-heading">
+        <button class="icon-button sidebar-toggle sidebar-toggle-inline" type="button" aria-controls="site-sidebar" aria-expanded="true" title="ナビゲーションを閉じる" aria-label="ナビゲーションを閉じる">☰</button>
+      </div>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">✎</span>記事</p>
+      <a href="cloudflare-private-site.html">Private GitHubリポジトリをCloudflare Workersで認証付き公開してみた</a>
+      <a href="aws-daily-cost-slack.html">AWS利用料を毎朝3時にSlackへ通知してみた</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">☁︎</span>[PoC] マルチVPC・閉域VDI基盤案件</p>
+          <a href="workspaces-skill-transfer.html">全体構築・運用順序</a>
+          <a href="workspaces-managed-ad.html">Managed Microsoft ADの構築</a>
+          <a href="workspaces-managed-ad-users.html">Managed Microsoft ADのユーザー・グループ管理</a>
+          <a href="workspaces-management-ec2.html">管理用EC2の起動・接続・AD管理</a>
+          <a href="workspaces-ad-connector-account.html">AD Connector用サービスアカウント・権限委任</a>
+          <a href="workspaces-ad-connector.html">AD ConnectorのVPCピアリング・SG設定・作成</a>
+          <a href="workspaces-provisioning-gpo.html">WorkSpaces Personalの構築・接続</a>
+          <a href="workspaces-target-ou.html">WorkSpaces用ターゲットOUの作成・権限委任</a>
+          <a href="workspaces-gpo.html">WorkSpaces用GPOの作成・適用・運用</a>
+          <a href="workspaces-image-bundle.html">WorkSpacesカスタムイメージ作成・共有</a>
+          <a href="workspaces-systems-manager.html">Systems Manager環境構築</a>
+          <a href="workspaces-patch-manager.html">Patch Managerの設定</a>
+          <a href="workspaces-patch-operations.html">Patch Managerの実行・結果確認・運用</a>
+          <a href="workspaces-cost-optimizer.html">Cost Optimizerの構築・設定</a>
+          <a href="workspaces-cost-optimizer-dry-run.html">Cost OptimizerのDry Run解除</a>
+          <a href="workspaces-cost-optimizer-schedule.html">Cost Optimizerの実行スケジュール設定・変更</a>
+          <a href="workspaces-cost-optimizer-reports.html">Cost Optimizerのレポート・監視</a>
+          <a href="workspaces-cloudwatch-monitoring.html">CloudWatchのEC2・Windows OS監視とSNS通知</a>
+          <a href="workspaces-cloudwatch-workspaces.html">CloudWatchのWorkSpaces監視</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">⑂</span>Git / GitHub</p>
+      <a href="git-github.html">Git 概要</a>
+      <a href="git-remote.html">Gitリモート操作</a>
+      <a href="github-pages.html">GitHub Pages</a>
+      <a href="github-pull-request.html">GitHubのPull Requestとレビュー</a>
+      <a href="git-utilities.html">Gitトラブルシューティング</a>
+      <a href="github-ssh.html">GitHub認証</a>
+      <a href="github-slack-integration.html">GitHubとSlackの連携・通知設定</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">◈</span>Terraform</p>
+      <a href="terraform.html">Terraform 概要</a>
+      <a href="hcp-terraform.html">HCP Terraform（Terraform Cloud）</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">☁︎</span>AWS</p>
+      <a class="active" aria-current="page" href="iam-identity-center.html">IAM Identity Center</a>
+      <a href="cloudformation.html">CloudFormation 運用手順集</a>
+      <a href="aws-cli.html">AWS CLI 特殊対応</a>
+      <a href="aws-cli-reference.html">AWS CLI コマンドリファレンス</a>
+      <a href="eventbridge-scheduler.html">EventBridge Scheduler</a>
+      <a href="aws-directory-service.html">AWS Directory Service 運用手順</a>
+      <a href="amazon-workspaces.html">Amazon WorkSpaces</a>
+      <a href="amazon-ses.html">Amazon SES SMTPリレー</a>
+      <a href="amazon-ses-monitoring.html">Amazon SES 配信監視</a>
+      <a href="amazon-rds-blue-green.html">Amazon RDS Blue/Green Deployments</a>
+      <a href="apache-acm-certificate-update.html">証明書更新（ACMエクスポート）</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">⚙︎</span>OS／ミドルウェア</p>
+      <a href="rhel9.html">Red Hat Enterprise Linux 9</a>
+      <a href="rhel10.html">Red Hat Enterprise Linux 10</a>
+      <a href="amazon-linux-2023.html">Amazon Linux 2023</a>
+      <a href="windows-server-2022.html">Windows Server 2022</a>
+      <a href="windows-server-2025.html">Windows Server 2025</a>
+      <a href="windows-server-2016-upgrade.html">Windows Server 2016 インプレースアップグレード</a>
+      <a href="storage.html">ストレージ管理</a>
+      <a href="apache.html">Apache</a>
+      <a href="apache-self-signed-ssl-termination.html">Apache SSL終端（自己署名証明書）</a>
+      <a href="redis.html">Redis（KVS）</a>
+      <a href="nfs.html">NFS</a>
+      <a href="samba.html">Samba</a>
+      <a href="mariadb.html">MariaDB</a>
+      <a href="postgresql.html">PostgreSQL</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">▤</span>リファレンス</p>
+      <a href="../writing-style-guide.html">[GitHub Pages] 記法・テンプレート</a>
+      <a href="troubleshooting.html">障害切り分けチェックリスト</a>
+      <a href="eol.html">EOL / ライフサイクル一覧表</a>
+    </aside>
+    <main class="content">
+      <nav class="breadcrumb" aria-label="Breadcrumb"><a href="../"><span class="nav-icon" aria-hidden="true">⌂</span>Home</a><span>トピック</span></nav>
+      <h1>IAM Identity Center</h1>
+      <section>
+        <h2 id="enable">① IAM Identity Centerを有効化</h2>
+        <p>1. AWSマネジメントコンソールで東京リージョンを選択し、<code class="ui-value">IAM Identity Center</code>を開いて<code class="ui-value">有効にする</code>ボタンを押下</p>
+        <figure class="screenshot-wide"><figcaption>IAM Identity Centerを開く</figcaption><img src="../assets/img/iam-identity-center-enable-start.png" alt="IAM Identity Centerを開くの画面" loading="lazy"></figure>
+        <p>2. <code class="ui-value">AWS Organizations で IAM Identity Center を有効にする</code>画面で<code class="ui-value">単一リージョンインスタンス</code>を選択し、次の設定を確認</p>
+        <table><thead><tr><th>項目</th><th>設定値</th></tr></thead><tbody>
+          <tr><td>保存時の暗号化</td><td>AWS 所有のキー</td></tr>
+          <tr><td>アクセス許可セット</td><td>有効</td></tr>
+          <tr><td>プライマリリージョン</td><td>アジアパシフィック (東京)</td></tr>
+          <tr><td>その他のリージョン</td><td>なし</td></tr>
+        </tbody></table>
+        <p>3. <code class="ui-value">有効にする</code>ボタンを押下</p>
+        <figure class="screenshot-wide"><figcaption>単一リージョンインスタンスの設定</figcaption><img src="../assets/img/iam-identity-center-enable-settings.png" alt="単一リージョンインスタンスの設定の画面" loading="lazy"></figure>
+        <p>4. ダッシュボードで組織インスタンスの作成完了を確認し、IDソースが<code class="ui-value">Identity Center ディレクトリ</code>、プライマリリージョンが<code class="inline-code">ap-northeast-1</code>であることを確認</p>
+        <figure class="screenshot-wide"><figcaption>組織インスタンスの作成完了</figcaption><img src="../assets/img/iam-identity-center-enable-complete.png" alt="組織インスタンスの作成完了の画面" loading="lazy"></figure>
+      </section>
+      <section>
+        <h2 id="permission-sets">② アクセス許可セットを作成</h2>
+        <p>1. 左メニューの<code class="ui-value">許可セット</code>を選択し、<code class="ui-value">アクセス許可セットを作成</code>ボタンを押下</p>
+        <figure class="screenshot-wide"><figcaption>アクセス許可セットを作成</figcaption><img src="../assets/img/iam-identity-center-permission-start.png" alt="アクセス許可セットを作成の画面" loading="lazy"></figure>
+        <p>2. <code class="ui-value">事前定義済みアクセス許可セット</code>を選択し、AWS管理ポリシーから<code class="inline-code">AdministratorAccess</code>を選択して<code class="ui-value">次へ</code>ボタンを押下</p>
+        <figure class="screenshot-wide"><figcaption>AdministratorAccessを選択</figcaption><img src="../assets/img/iam-identity-center-admin-policy.png" alt="事前定義済みアクセス許可セットでAdministratorAccessを選択した画面" loading="lazy"></figure>
+        <p>3. 詳細を次のように設定し、<code class="ui-value">次へ</code>ボタンを押下</p>
+        <table><thead><tr><th>項目</th><th>設定値</th></tr></thead><tbody>
+          <tr><td>アクセス許可セット名</td><td><code class="inline-code">AdministratorAccess</code></td></tr>
+          <tr><td>説明</td><td>空欄</td></tr>
+          <tr><td>セッション期間</td><td>1時間</td></tr>
+          <tr><td>リレー状態</td><td>空欄</td></tr>
+          <tr><td>タグ</td><td>追加しない</td></tr>
+        </tbody></table>
+        <p>4. 設定内容を確認してアクセス許可セットを作成</p>
+        <figure class="screenshot-wide"><figcaption>AdministratorAccessの詳細設定</figcaption><img src="../assets/img/iam-identity-center-admin-details.png" alt="AdministratorAccessの詳細設定の画面" loading="lazy"></figure>
+        <p>5. 再び<code class="ui-value">アクセス許可セットを作成</code>ボタンを押下し、事前定義済みアクセス許可セットの<code class="inline-code">ReadOnlyAccess</code>を選択して作成</p>
+        <p>6. 一覧に<code class="inline-code">AdministratorAccess</code>と<code class="inline-code">ReadOnlyAccess</code>の2件が表示されることを確認</p>
+        <figure class="screenshot-wide"><figcaption>アクセス許可セット2件の作成完了</figcaption><img src="../assets/img/iam-identity-center-permission-complete.png" alt="アクセス許可セット2件の作成完了の画面" loading="lazy"></figure>
+      </section>
+      <section>
+        <h2 id="user">③ ユーザーを作成</h2>
+        <p>1. 左メニューの<code class="ui-value">ユーザー</code>を選択し、<code class="ui-value">ユーザーを追加</code>ボタンを押下</p>
+        <p>2. ユーザーの詳細を次のように入力</p>
+        <table><thead><tr><th>項目</th><th>設定値</th></tr></thead><tbody>
+          <tr><td>ユーザー名</td><td><code class="inline-code">iac-admin</code></td></tr>
+          <tr><td>パスワード</td><td>パスワードの設定手順が記載されたEメールをこのユーザーに送信</td></tr>
+          <tr><td>Eメールアドレス／確認</td><td>招待メールを受信する同じメールアドレスを入力</td></tr>
+          <tr><td>名</td><td><code class="inline-code">admin</code></td></tr>
+          <tr><td>姓</td><td><code class="inline-code">iac</code></td></tr>
+          <tr><td>表示名</td><td><code class="inline-code">iac-admin</code></td></tr>
+        </tbody></table>
+        <p>3. <code class="ui-value">次へ</code>ボタンを押下し、確認画面まで進んでユーザーを追加</p>
+        <figure class="screenshot-wide"><figcaption>iac-adminのユーザー詳細</figcaption><img src="../assets/img/iam-identity-center-user-details.png" alt="iac-adminのユーザー詳細の画面" loading="lazy"></figure>
+      </section>
+      <section>
+        <h2 id="password">④ 招待メールからパスワードを設定</h2>
+        <p>1. 登録したメールアドレスで<code class="ui-value">Invitation to join AWS IAM Identity Center</code>メールを開き、<code class="ui-value">Accept invitation</code>ボタンを押下</p>
+        <figure class="screenshot-wide"><figcaption>招待メールのAccept invitation</figcaption><img src="../assets/img/iam-identity-center-invitation.png" alt="招待メールのAccept invitationの画面" loading="lazy"></figure>
+        <p>2. <code class="ui-value">New user sign up</code>画面でユーザー名が<code class="inline-code">iac-admin</code>であることを確認</p>
+        <p>3. <code class="ui-value">New password</code>と<code class="ui-value">Confirm password</code>に同じパスワードを入力し、<code class="ui-value">Set new password</code>ボタンを押下</p>
+        <figure class="screenshot-wide"><figcaption>新しいパスワードの設定</figcaption><img src="../assets/img/iam-identity-center-password.png" alt="新しいパスワードの設定の画面" loading="lazy"></figure>
+      </section>
+      <section>
+        <h2 id="assignment">⑤ AWSアカウントに割り当て</h2>
+        <p>1. IAM Identity Centerの左メニューから<code class="ui-value">AWS アカウント</code>を選択</p>
+        <p>2. <code class="ui-value">Root</code>配下のAWSアカウント<code class="inline-code">t_hashimoto</code>にチェックを入れ、<code class="ui-value">ユーザーまたはグループを割り当て</code>ボタンを押下</p>
+        <figure class="screenshot-wide"><figcaption>割り当て先のAWSアカウントを選択</figcaption><img src="../assets/img/iam-identity-center-account.png" alt="割り当て先のAWSアカウントを選択の画面" loading="lazy"></figure>
+        <p>3. <code class="ui-value">ユーザー</code>タブで<code class="inline-code">iac-admin</code>にチェックを入れ、<code class="ui-value">次へ</code>ボタンを押下</p>
+        <figure class="screenshot-wide"><figcaption>割り当てるユーザーを選択</figcaption><img src="../assets/img/iam-identity-center-user-selection.png" alt="割り当てるユーザーを選択の画面" loading="lazy"></figure>
+        <p>4. <code class="inline-code">AdministratorAccess</code>と<code class="inline-code">ReadOnlyAccess</code>の両方にチェックを入れ、<code class="ui-value">次へ</code>ボタンを押下</p>
+        <figure class="screenshot-wide"><figcaption>割り当てるアクセス許可セットを選択</figcaption><img src="../assets/img/iam-identity-center-assignment.png" alt="AdministratorAccessとReadOnlyAccessの両方を選択した画面" loading="lazy"></figure>
+        <p>5. <code class="ui-value">確認して送信</code>画面で対象のアカウント、ユーザー、アクセス許可セットを確認して送信</p>
+        <p>6. AWSアカウント一覧に戻り、<code class="inline-code">t_hashimoto</code>の許可セット欄に<code class="inline-code">AdministratorAccess</code>と<code class="inline-code">ReadOnlyAccess</code>が表示されることを確認</p>
+        <figure class="screenshot-wide"><figcaption>AWSアカウントへの割り当て完了</figcaption><img src="../assets/img/iam-identity-center-assignment-complete.png" alt="AWSアカウントへの割り当て完了の画面" loading="lazy"></figure>
+      </section>
+    </main>
+    <aside class="toc" aria-label="Table of contents"><h2>ページ内</h2><a href="#enable">① IAM Identity Centerを有効化</a><a href="#permission-sets">② アクセス許可セットを作成</a><a href="#user">③ ユーザーを作成</a><a href="#password">④ 招待メールからパスワードを設定</a><a href="#assignment">⑤ AWSアカウントに割り当て</a></aside>
+  </div>
+  <script src="../assets/app.js"></script>
+</body>
+</html>
