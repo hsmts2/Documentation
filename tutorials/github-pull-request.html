@@ -218,11 +218,9 @@
       <div class="code"><div class="code-header"><span>Git Bash（操作例）</span><button class="copy" type="button">Copy</button></div>
       <pre><code>git fetch --prune</code></pre></div>
       <p>--pruneはローカル作業ブランチやGitHub上のブランチを削除する操作ではない</p></section>
-      <section><h2 id="iac">インフラ変更のレビュー観点</h2><table><thead><tr><th>確認対象</th><th>観点</th></tr></thead><tbody><tr><td>Terraform</td><td>fmt・validate・planの結果、削除・置換されるリソース、実行先アカウント</td></tr><tr><td>CloudFormation / CDK</td><td>テンプレート検証・synth・差分、変更セット、IAM権限</td></tr><tr><td>共通</td><td>認証情報・tfstate・秘密値の混入、費用・停止時間・復旧手順</td></tr></tbody></table>
-      <p>planや差分のログにも秘密値が含まれる可能性があるため、PRへ添付する前に公開範囲を確認。apply・deployはレビュー確認コマンドとは別の変更操作</p></section>
-      <section><h2 id="vscode">VS Codeの操作との対応</h2><table><thead><tr><th>画面上の操作</th><th>Gitでの意味</th></tr></thead><tbody><tr><td>変更のステージング</td><td>git add</td></tr><tr><td>コミット</td><td>ステージング済み内容を記録</td></tr><tr><td>プッシュ</td><td>ローカルコミットをリモートへ送信</td></tr><tr><td>変更の同期（Sync Changes）</td><td>取得・取り込みと送信をまとめて行う操作。pushだけとは異なる</td></tr></tbody></table>
-      <p>初めは取得・統合・送信を分けて状態を確認すると、エラーがどの段階で起きたかを把握しやすい</p></section></main>
-    <aside class="toc" aria-label="Table of contents"><h2>ページ内</h2><a href="#flow">Pull Requestの役割</a><a href="#repository">リポジトリ作成とクローン</a><a href="#issue">Issueの作成</a><a href="#branch-workflow">変更ブランチの作成とpush</a><a href="#create-pr">Pull Requestの作成</a><a href="#review">レビューと修正</a><a href="#merge">マージとローカルの更新</a><a href="#iac">インフラ変更のレビュー観点</a><a href="#vscode">VS Codeの操作との対応</a></aside>
+
+</main>
+    <aside class="toc" aria-label="Table of contents"><h2>ページ内</h2><a href="#flow">Pull Requestの役割</a><a href="#repository">リポジトリ作成とクローン</a><a href="#issue">Issueの作成</a><a href="#branch-workflow">変更ブランチの作成とpush</a><a href="#create-pr">Pull Requestの作成</a><a href="#review">レビューと修正</a><a href="#merge">マージとローカルの更新</a></aside>
   </div>
   <script src="../assets/app.js"></script><script src="../assets/git-github.js"></script>
 </body>
