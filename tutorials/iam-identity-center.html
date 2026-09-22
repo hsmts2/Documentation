@@ -51,8 +51,10 @@
       <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">◈</span>Terraform</p>
       <a href="terraform.html">Terraform 概要</a>
       <a href="hcp-terraform.html">HCP Terraform（Terraform Cloud）</a>
-      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">☁︎</span>AWS</p>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">◈</span>IaC</p>
+      <a href="iac.html">IaC</a>
       <a class="active" aria-current="page" href="iam-identity-center.html">IAM Identity Center</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">☁︎</span>AWS</p>
       <a href="cloudformation.html">CloudFormation 運用手順集</a>
       <a href="aws-cli.html">AWS CLI 特殊対応</a>
       <a href="aws-cli-reference.html">AWS CLI コマンドリファレンス</a>
@@ -84,7 +86,7 @@
       <a href="eol.html">EOL / ライフサイクル一覧表</a>
     </aside>
     <main class="content">
-      <nav class="breadcrumb" aria-label="Breadcrumb"><a href="../"><span class="nav-icon" aria-hidden="true">⌂</span>Home</a><span>トピック</span></nav>
+      <nav class="breadcrumb" aria-label="Breadcrumb"><a href="../"><span class="nav-icon" aria-hidden="true">⌂</span>Home</a><a href="iac.html">IaC</a><span>IAM Identity Center</span></nav>
       <h1>IAM Identity Center</h1>
       <section>
         <h2 id="enable">① IAM Identity Centerを有効化</h2>
@@ -158,8 +160,58 @@
         <p>6. AWSアカウント一覧に戻り、<code class="inline-code">t_hashimoto</code>の許可セット欄に<code class="inline-code">AdministratorAccess</code>と<code class="inline-code">ReadOnlyAccess</code>が表示されることを確認</p>
         <figure class="screenshot-wide"><figcaption>AWSアカウントへの割り当て完了</figcaption><img src="../assets/img/iam-identity-center-assignment-complete.png" alt="AWSアカウントへの割り当て完了の画面" loading="lazy"></figure>
       </section>
+      <section>
+        <h2 id="cli-sso">⑥ ローカルPCのAWS CLIを設定</h2>
+        <p>1. WindowsのGit Bashを開き、AWS CLIのバージョンを確認</p>
+        <div class="code" data-prompt="$"><div class="code-header"><span>Git Bash</span><button class="copy" type="button">Copy</button></div><pre><code>aws --version</code></pre></div>
+        <div class="code"><div class="code-header"><span>実行結果</span><button class="copy" type="button">Copy</button></div><pre><code>aws-cli/2.35.9 Python/3.14.5 Windows/11 exe/AMD64</code></pre></div>
+        <p>2. プロファイル名を<code class="inline-code">iac-admin</code>としてSSO設定を開始</p>
+        <div class="code" data-prompt="$"><div class="code-header"><span>Git Bash</span><button class="copy" type="button">Copy</button></div><pre><code>aws configure sso --profile iac-admin</code></pre></div>
+        <p>3. 次の値を入力。SSO start URLにはダッシュボードに表示される自分のAWSアクセスポータルURLを入力し、登録スコープは<kbd>Enter</kbd>で既定値を使用</p>
+        <div class="code"><div class="code-header"><span>入力例</span><button class="copy" type="button">Copy</button></div><pre><code>SSO session name (Recommended): iac-sso
+SSO start URL [None]: https://d-956*******.awsapps.com/start
+SSO region [None]: ap-northeast-1
+SSO registration scopes [sso:account:access]:</code></pre></div>
+        <p>4. 自動で開いたブラウザで<code class="inline-code">iac-admin</code>としてサインイン</p>
+        <p>5. MFA登録画面で<code class="ui-value">Authenticator app</code>を選択し、<code class="ui-value">Next</code>ボタンを押下</p>
+        <figure class="screenshot-wide"><figcaption>MFAデバイスの種類を選択</figcaption><img src="../assets/img/iam-identity-center-mfa-select.png" alt="MFAデバイスの種類を選択の画面" loading="lazy"></figure>
+        <p>6. 認証アプリでQRコードを読み取り、表示された6桁のコードを<code class="ui-value">Authenticator code</code>に入力して<code class="ui-value">Assign MFA</code>ボタンを押下</p>
+        <figure class="screenshot-wide"><figcaption>認証アプリを登録</figcaption><img src="../assets/img/iam-identity-center-mfa-register.png" alt="認証アプリを登録の画面" loading="lazy"></figure>
+        <p>7. <code class="inline-code">botocore-client-iac-sso</code>のアクセス許可画面で<code class="ui-value">アクセスを許可</code>ボタンを押下</p>
+        <figure class="screenshot-wide"><figcaption>AWS CLIのアクセスを許可</figcaption><img src="../assets/img/iam-identity-center-cli-authorize.png" alt="AWS CLIのアクセスを許可の画面" loading="lazy"></figure>
+        <p>8. Git Bashへ戻り、対象アカウントを確認。ロールは<code class="inline-code">AdministratorAccess</code>を選択して<kbd>Enter</kbd></p>
+        <div class="code"><div class="code-header"><span>実行結果</span><button class="copy" type="button">Copy</button></div><pre><code>The only AWS account available to you is: 908*********
+Using the account ID 908*********
+There are 2 roles available to you.
+&gt; AdministratorAccess
+  ReadOnlyAccess</code></pre></div>
+        <p>9. 既定リージョンと出力形式を入力して設定を完了</p>
+        <div class="code"><div class="code-header"><span>入力例</span><button class="copy" type="button">Copy</button></div><pre><code>Default client Region [None]: ap-northeast-1
+CLI default output format (json if not specified) [None]: json</code></pre></div>
+      </section>
+      <section>
+        <h2 id="cli-check">⑦ 接続先と権限を確認</h2>
+        <p>1. 作成したプロファイルで接続先と使用中のロールを確認</p>
+        <div class="code" data-prompt="$"><div class="code-header"><span>Git Bash</span><button class="copy" type="button">Copy</button></div><pre><code>aws sts get-caller-identity --profile iac-admin</code></pre></div>
+        <div class="code"><div class="code-header"><span>実行結果</span><button class="copy" type="button">Copy</button></div><pre><code>{
+    "UserId": "AROA*******:iac-admin",
+    "Account": "908*********",
+    "Arn": "arn:aws:sts::908*********:assumed-role/AWSReservedSSO_AdministratorAccess_4c49************/iac-admin"
+}</code></pre></div>
+        <p>2. <code class="inline-code">Account</code>が対象アカウントであり、<code class="inline-code">Arn</code>に<code class="inline-code">AWSReservedSSO_AdministratorAccess_</code>と<code class="inline-code">iac-admin</code>が含まれることを確認</p>
+      </section>
+      <section>
+        <h2 id="cli-login">⑧ SSOへ再ログイン</h2>
+        <p>1. プロファイル名<code class="inline-code">iac-admin</code>を指定してログイン</p>
+        <div class="code" data-prompt="$"><div class="code-header"><span>Git Bash</span><button class="copy" type="button">Copy</button></div><pre><code>aws sso login --profile iac-admin</code></pre></div>
+        <p>2. ブラウザで認証とアクセス許可を完了し、Git Bashで成功メッセージを確認</p>
+        <figure class="screenshot-wide"><figcaption>SSOログイン完了</figcaption><img src="../assets/img/iam-identity-center-cli-success.png" alt="SSOログイン完了の画面" loading="lazy"></figure>
+        <div class="code"><div class="code-header"><span>実行結果</span><button class="copy" type="button">Copy</button></div><pre><code>Successfully logged into Start URL: https://d-956*******.awsapps.com/start</code></pre></div>
+        <p>3. セッション名を指定する場合は<code class="inline-code">iac-sso</code>を使用。<code class="inline-code">--sso-session=iac-admin</code>では指定したセッションが存在しないためエラーになる</p>
+        <table><thead><tr><th>指定する項目</th><th>設定した名前</th></tr></thead><tbody><tr><td><code class="inline-code">--profile</code></td><td><code class="inline-code">iac-admin</code></td></tr><tr><td><code class="inline-code">--sso-session</code></td><td><code class="inline-code">iac-sso</code></td></tr></tbody></table>
+      </section>
     </main>
-    <aside class="toc" aria-label="Table of contents"><h2>ページ内</h2><a href="#enable">① IAM Identity Centerを有効化</a><a href="#permission-sets">② アクセス許可セットを作成</a><a href="#user">③ ユーザーを作成</a><a href="#password">④ 招待メールからパスワードを設定</a><a href="#assignment">⑤ AWSアカウントに割り当て</a></aside>
+    <aside class="toc" aria-label="Table of contents"><h2>ページ内</h2><a href="#enable">① IAM Identity Centerを有効化</a><a href="#permission-sets">② アクセス許可セットを作成</a><a href="#user">③ ユーザーを作成</a><a href="#password">④ 招待メールからパスワードを設定</a><a href="#assignment">⑤ AWSアカウントに割り当て</a><a href="#cli-sso">⑥ ローカルPCのAWS CLIを設定</a><a href="#cli-check">⑦ 接続先と権限を確認</a><a href="#cli-login">⑧ SSOへ再ログイン</a></aside>
   </div>
   <script src="../assets/app.js"></script>
 </body>
