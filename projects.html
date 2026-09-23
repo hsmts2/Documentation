@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="設計構築の実績の公開範囲について。">
-  <title>設計構築の実績 | Documentation</title>
+  <meta name="description" content="現職でのAWS基盤の設計・構築実績。個別案件、専属顧客の主担当としての構築・運用、社内のドキュメント・ナレッジ整備を掲載。">
+  <title>現職での実績 | Documentation</title>
   <link rel="stylesheet" href="assets/styles.css?v=20260914-migration-card">
-  <link rel="stylesheet" href="assets/projects.css?v=20260923-callout">
+  <link rel="stylesheet" href="assets/projects.css?v=20260924-refined-summary">
 </head>
 <body data-user-value-highlighting="off">
   <header class="site-header case-site-header">
@@ -17,13 +17,165 @@
     </div>
   </header>
   <main class="content case-portfolio">
-    <h1>設計構築の実績</h1>
+    <h1>現職での実績</h1>
     <aside class="callout callout-warning" aria-label="公開範囲に関する注意">
       <strong><span aria-hidden="true">⚠️</span> 公開範囲に関する注意</strong>
-      <p>守秘義務に配慮し、顧客名・業務データ・実環境の識別情報は非掲載</p>
-      <p>構成図は担当領域を説明するために再構成した概念図であり、実際の台数・AZ・通信経路の全体を再現したものではない</p>
-      <p>設定項目は公開可能な技術要素と記入例を示すもので、実案件のパラメータシートではない</p>
+      <p>守秘義務に配慮し、顧客名・業務データ・実環境の識別情報は非掲載にしております</p>
+      <p>構成図は担当領域を説明するために再構成した概念図であり、実際の台数・AZ・通信経路の全体を再現したものではございません</p>
+      <p>設定項目は公開可能な技術要素と記入例を示しております。</p>
     </aside>
+
+    <section class="case-section" id="summary" aria-labelledby="summary-title">
+      <h2 id="summary-title">1. 実績サマリー</h2>
+      <table class="case-table case-summary-table" aria-describedby="summary-basis">
+        <thead><tr><th scope="col">実績・内訳</th><th scope="col">件数</th></tr></thead>
+        <tbody>
+          <tr class="case-total"><th scope="row">設計・構築の担当案件数（合計）</th><td><strong>17件</strong></td></tr>
+          <tr><th scope="row">新規基盤構築</th><td>6件</td></tr>
+          <tr><th scope="row">リプレイス・移行</th><td>3件</td></tr>
+          <tr><th scope="row">検証環境構築・環境複製</th><td>5件</td></tr>
+          <tr><th scope="row">ネットワーク・セキュリティ構築／設定変更</th><td>3件</td></tr>
+        </tbody>
+        <tbody>
+          <tr><th scope="row">問い合わせ対応チケット</th><td>762件</td></tr>
+          <tr><th scope="row">作業手順書の作成・整備および実作業</th><td>173件</td></tr>
+          <tr><th scope="row">AWSサポート連携・上限緩和等</th><td>20件</td></tr>
+        </tbody>
+        <tbody>
+          <tr><th scope="row">構築関連ドキュメントの新規作成</th><td>6件</td></tr>
+          <tr><th scope="row">ナレッジページの作成</th><td>約10件</td></tr>
+        </tbody>
+      </table>
+      <p class="case-note">問い合わせ対応・手順書作成および実作業・AWSサポート連携の件数は、2026年7月11日時点の実績です。</p>
+      <p class="case-note" id="summary-basis">案件の主目的で分類し、同一案件の開発・検証・本番環境は重複計上していません。2025年1～3月のAL2リプレイスは環境ごとの対応をまとめて1案件として集計。資料作成のみの実績は含めていません。</p>
+    </section>
+
+    <section class="case-section" id="individual" aria-labelledby="individual-title">
+      <h2 id="individual-title">2. 個別案件</h2>
+      <article class="case-entry" id="public-application">
+        <h3>2.1 Amazon Linux 2023へのリプレイス対応</h3>
+        <div class="case-split">
+          <figure class="case-diagram">
+            <a href="assets/career-architectures/architecture-public-application-production.png" title="構成図を原寸で開く"><img src="assets/career-architectures/architecture-public-application-production.png" width="1600" height="900" alt="公共系申請システムのAWS基盤。ロードバランサー、Linux・Windows Server、RDSの関係を示す概念図。" loading="lazy"></a>
+          </figure>
+          <div class="case-description">
+            <p class="case-lead">Linux・Windows Serverを組み合わせたシステムで、Amazon Linux 2023へのリプレイスに対応。</p>
+            <dl class="case-facts">
+              <dt>構成</dt><dd>VPC、EC2、ALB、RDS、NAT Gateway、Route 53、S3、SES、SNS</dd>
+              <dt>OS・監視</dt><dd>Amazon Linux 2023、Windows Server 2019／2022、CloudWatch Agent、Zabbix Agent2</dd>
+              <dt>担当範囲</dt><dd>ネットワーク・アクセス制御、OS・DBユーザー設定、監視・ログ設定、接続確認、構築エビデンス</dd>
+              <dt>環境展開</dt><dd>検証・本番で共通設定を展開し、ホスト名などの環境差分を反映</dd>
+            </dl>
+            <p class="case-note">類似する申請システムの構築実績をまとめて掲載しています。</p>
+          </div>
+        </div>
+      </article>
+      <article class="case-entry" id="business-web">
+        <h3>2.2 業務Webシステムの新規基盤構築</h3>
+        <div class="case-split">
+          <figure class="case-diagram">
+            <a href="assets/career-architectures/architecture-business-web-production-staging.png" title="構成図を原寸で開く"><img src="assets/career-architectures/architecture-business-web-production-staging.png" width="2400" height="1430" alt="業務Webシステムの本番・検証構成。本番EC2は2AZに冗長配置し、RHEL 9とRDS for MySQLを使用。ELBログはS3、VPC Flow LogsはCloudWatch Logsへ保管し、EC2とRDSをAWS Backupで保護。" loading="lazy"></a>
+          </figure>
+          <div class="case-description">
+            <p class="case-lead">業務Webシステムの本番・検証環境を新規構築。本番のWebサーバーは2つのAZに分散して配置しました。</p>
+            <dl class="case-facts">
+              <dt>基盤構成</dt><dd>VPC、ALB、EC2、RDS、Route 53、ACM、Amazon SES</dd>
+              <dt>OS・DB</dt><dd>Red Hat Enterprise Linux 9、Amazon RDS for MySQL</dd>
+              <dt>監視・監査</dt><dd>Amazon CloudWatchによる監視、AWS CloudTrailによるAPI操作の記録</dd>
+              <dt>ログ保管</dt><dd>ELBアクセスログはS3バケット、VPC Flow LogsはCloudWatch Logsに保管</dd>
+              <dt>バックアップ</dt><dd>AWS BackupでEC2・RDSを対象に設定</dd>
+            </dl>
+          </div>
+        </div>
+      </article>
+      <article class="case-entry">
+        <h3>2.3 オンプレミス・AWS間の閉域ファイル連携</h3>
+        <p>閉域接続を利用したS3とのファイル連携に向け、AWS側のネットワークとアクセス制御を設定しました。</p>
+        <dl class="case-facts">
+          <dt>主な技術</dt><dd>Direct Connect、VGW、VPC Endpoint、S3、IAM、Security Group、VPC Flow Logs</dd>
+          <dt>担当内容</dt><dd>AWS側の経路・アクセス制御設定、Reachability Analyzerとログによる経路確認、AWS CLIによるS3操作確認</dd>
+          <dt>成果物</dt><dd>設定通知書、技術・運用資料。回線事業者側の作業とは分けて担当しました。</dd>
+        </dl>
+      </article>
+    </section>
+
+    <section class="case-section" id="dedicated" aria-labelledby="dedicated-title">
+      <h2 id="dedicated-title">3. 専任案件</h2>
+      <p>特定のお客様の案件を2年2か月にわたり継続して担当し、先任エンジニアと私の2名が主担当として、AWS基盤の構築・運用を支援してきました。お客様の要件と既存環境を確認したうえで、構築・設定変更から試験、運用改善まで対応しています。</p>
+      <p>定例会では構成案や検証結果、作業の進捗を説明し、お客様と認識を合わせながら対応を進めました。また、設定書・構成図・運用資料を整備し、継続的な運用と引き継ぎに必要な情報をまとめています。</p>
+      <article class="case-entry">
+        <h3>3.1 WorkSpacesによるVDI環境の導入</h3>
+        <p>リモート開発用のVDI基盤を構築し、WorkSpacesの払い出しと運用に必要な設定を実施しました。</p>
+        <dl class="case-facts">
+          <dt>事前検証</dt><dd>VPC Peering経由で、別VPCのAWS Managed Microsoft ADをAD Connectorから利用する認証連携を検証</dd>
+          <dt>担当内容</dt><dd>WorkSpaces環境の構築・払い出し、ネットワーク・接続確認、ログ・監視設定</dd>
+        </dl>
+      </article>
+      <article class="case-entry" id="multi-vpc">
+        <h3>3.2 マルチVPC・閉域VDI基盤の構築</h3>
+        <div class="case-split">
+          <figure class="case-diagram">
+            <a href="assets/career-architectures/architecture-workspaces-six-vpc-observability.png" title="構成図を原寸で開く"><img src="assets/career-architectures/architecture-workspaces-six-vpc-observability.png" width="2500" height="1470" alt="6 VPCの閉域VDI基盤。VPC Peering、PrivateLink、WorkSpaces、認証・共有基盤と、Security Hub・GuardDuty・CloudTrail・CloudWatchを示す構成図。" loading="lazy"></a>
+            <figcaption>構成図②　マルチVPC・閉域VDI基盤。名称・CIDRは匿名化。PrivateLinkのエンドポイント配置とVGWの関連付けは最終照合前です。</figcaption>
+          </figure>
+          <div class="case-description">
+            <p class="case-lead">6 VPCにまたがるVDI・認証・ファイル共有基盤を構築。</p>
+            <dl class="case-facts">
+              <dt>接続・認証</dt><dd>VPC Peering、Direct Connect、VGW、AWS Managed Microsoft AD、AD Connector</dd>
+              <dt>VDI・共有</dt><dd>WorkSpaces、FSx for Windows File Server</dd>
+              <dt>担当範囲</dt><dd>VPC間の経路設定、閉域疎通・FSxマウント確認、Systems Managerによるパッチ管理・メンテナンス枠の設定</dd>
+              <dt>セキュリティ</dt><dd>AWS Security Hub・Amazon GuardDutyを有効化</dd>
+            </dl>
+          </div>
+        </div>
+      </article>
+      <article class="case-entry">
+        <h3>3.3 VPN・Network Firewallの構築と改善</h3>
+        <dl class="case-facts">
+          <dt>AWS Client VPN</dt><dd>サーバー複製に伴うVPN・内部ALBの構築。証明書不整合を調査し、VPNの再構築と接続・TLS疎通確認を実施</dd>
+          <dt>VGW・Network Firewall</dt><dd>既存構成と要件を確認し、設定設計・設定投入、関連経路・疎通確認、ログ確認、エビデンス取得を担当</dd>
+        </dl>
+      </article>
+      <article class="case-entry" id="cost-optimization">
+        <h3>3.4 WorkSpacesの運用コスト最適化</h3>
+        <div class="case-split">
+          <figure class="case-diagram">
+            <a href="assets/career-architectures/architecture-workspaces-cost-optimizer-approved.png" title="構成図を原寸で開く"><img src="assets/career-architectures/architecture-workspaces-cost-optimizer-approved.png" width="1586" height="992" alt="WorkSpacesコスト最適化基盤。AWS Cloud内のVPC、サブネット、NAT Gateway、Fargate、Gateway EndpointとVPC外のAWSサービスを示す構成図。" loading="lazy"></a>
+          </figure>
+          <div class="case-description">
+            <table class="case-table case-outcome-table">
+              <caption>コスト最適化の実績</caption>
+              <thead><tr><th scope="col">項目</th><th scope="col">実績</th></tr></thead>
+              <tbody>
+                <tr><th scope="row">対象台数</th><td>49台（2026年1月30日）<br>50台（2026年2月）</td></tr>
+                <tr><th scope="row">月額利用料金の減少額</th><td><strong>6,840.33 USD</strong></td></tr>
+                <tr><th scope="row">月額利用料金の減少率</th><td><strong>59.9％</strong></td></tr>
+                <tr><th scope="row">比較期間</th><td>2025年12月 → 2026年2月</td></tr>
+                <tr><th scope="row">評価対象</th><td>Cost Optimizer・コンピューティングタイプ・自動停止時間の見直しを含む、複数施策後の月額比較</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <details class="case-details">
+          <summary>課金切替閾値の見直し案と対象台数（2026年1月）</summary>
+          <table class="case-table">
+            <caption>時間課金から月額課金へ切り替える利用時間の閾値</caption>
+            <thead><tr><th scope="col">タイプ</th><th scope="col">棚卸台数</th><th scope="col">従来値</th><th scope="col">提案値</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">Power</th><td>45台</td><td>92時間</td><td>108時間</td></tr>
+              <tr><th scope="row">PowerPro</th><td>2台</td><td>78時間</td><td>82時間</td></tr>
+              <tr><th scope="row">Performance</th><td>2台</td><td>80時間</td><td>78時間</td></tr>
+            </tbody>
+          </table>
+          <p class="case-note">台数は2026年1月30日時点。提案値は当時の料金資料に基づきます。Powerは標準ストレージ44台と拡張ストレージ1台を含み、108時間の計算根拠は標準ストレージの料金です。提案後の実環境への適用値は照合前です。</p>
+        </details>
+      </article>
+      <article class="case-entry">
+        <h3>3.5 運用資料の整備・スキルトランスファー</h3>
+        <p>2026年8～9月に、専属顧客のVDI環境に関するスキルトランスファー用資料を18枚作成。構築・運用で扱う情報を整理し、引き継ぎに向けた資料整備を担当しました。</p>
+      </article>
+    </section>
+
   </main>
   <script src="assets/app.js?v=20260823-ref1"></script>
 </body>
