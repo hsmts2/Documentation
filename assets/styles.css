@@ -1244,6 +1244,10 @@ mark {
   font-size: 24px;
 }
 
+.home-page > .document-directory {
+  padding-top: 1lh;
+}
+
 .profile-directory + .document-directory {
   margin-top: 34px;
 }
