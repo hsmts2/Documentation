@@ -7,56 +7,18 @@
   letter-spacing: 0;
 }
 .case-portfolio h1 { font-size: 30px; line-height: 1.45; margin: 12px 0; }
-.case-portfolio h2 { font-size: 24px; line-height: 1.5; margin: 0 0 16px; }
-.case-portfolio h3 { font-size: 18px; margin: 24px 0 10px; }
-.case-portfolio p, .case-portfolio li, .case-portfolio td, .case-portfolio th { overflow-wrap: anywhere; }
-.case-portfolio .case-kicker { color: var(--muted); font-size: 14px; margin: 0 0 8px; }
-.case-portfolio .case-intro { max-width: 850px; }
-.case-portfolio .publication-note { border-left: 3px solid var(--line); padding: 8px 16px; margin: 22px 0 28px; color: var(--muted); font-size: 14px; }
-.case-portfolio .case-index { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin: 24px 0 36px; }
-.case-portfolio .case-index a { display: block; border: 1px solid var(--line); border-radius: 4px; padding: 20px; color: var(--text); }
-.case-portfolio .case-index a:hover { border-color: var(--accent); }
-.case-portfolio .case-index strong { display: block; color: var(--accent); margin: 6px 0; font-size: 18px; }
-.case-portfolio .case-index small { color: var(--muted); }
-.case-portfolio .case-index span { display: block; font-size: 14px; }
-.case-portfolio .case-study { padding: 36px 0; border-top: 2px solid var(--line); scroll-margin-top: 84px; }
-.case-portfolio .case-facts { display: grid; grid-template-columns: 1fr 2fr; gap: 16px; margin: 20px 0; }
-.case-portfolio .case-facts div { border-bottom: 1px solid var(--line); padding: 10px 0; }
-.case-portfolio dt { color: var(--muted); font-size: 13px; }
-.case-portfolio dd { margin: 4px 0 0; }
-.case-portfolio figure { margin: 24px 0; }
-.case-portfolio figcaption { font-size: 14px; color: var(--muted); margin-bottom: 10px; }
-.case-portfolio .diagram-link { display: block; }
-.case-portfolio .diagram-link img { display: block; width: 100%; height: auto; aspect-ratio: 1080 / 400; border: 1px solid var(--line); border-radius: 4px; background: white; }
-.case-portfolio .case-columns { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
-.case-portfolio .case-columns > div { min-width: 0; }
-.case-portfolio ul { padding-left: 22px; }
-.case-portfolio li { margin: 8px 0; }
-.case-portfolio .table-scroll { overflow-x: auto; margin: 12px 0 20px; }
-.case-portfolio table { width: 100%; border-collapse: collapse; table-layout: fixed; margin: 0; font-size: 14px; }
-.case-portfolio th, .case-portfolio td { text-align: left; vertical-align: top; padding: 12px; border: 1px solid var(--line); white-space: normal; }
-.case-portfolio th { background: var(--panel-soft); }
-.case-portfolio th:first-child { width: 23%; }
-.case-portfolio th:nth-child(2) { width: 33%; }
-.case-portfolio .related { display: flex; flex-wrap: wrap; gap: 8px 24px; font-size: 14px; }
-.case-portfolio .outcome { border-left: 3px solid #26836b; padding: 8px 16px; margin: 20px 0; }
-.case-portfolio .back-index { display: inline-block; margin-top: 20px; font-size: 14px; }
+.case-portfolio p { overflow-wrap: anywhere; }
+.case-portfolio .callout p:first-child { margin-top: 0; }
 .case-site-header .nav { flex-wrap: wrap; gap: 12px; }
 @media (max-width: 680px) {
   .case-portfolio { width: calc(100% - 32px); margin-top: 24px; }
   .case-portfolio h1 { font-size: 26px; }
-  .case-portfolio h2 { font-size: 21px; }
-  .case-portfolio .case-index, .case-portfolio .case-columns, .case-portfolio .case-facts { grid-template-columns: 1fr; gap: 12px; }
-  .case-portfolio .table-scroll table { min-width: 600px; }
   .case-site-header { padding: 0 16px; }
   .case-site-header .brand span { display: none; }
   .case-site-header .nav { font-size: 13px; }
 }
 @media print {
-  .case-site-header, .case-portfolio .back-index { display: none; }
+  .case-site-header { display: none; }
   body { padding-top: 0; }
   .case-portfolio { width: 100%; margin: 0; color: black; }
-  .case-portfolio .case-study { break-before: page; }
-  .case-portfolio figure, .case-portfolio tr { break-inside: avoid; }
-  .case-portfolio .table-scroll { overflow: visible; }
 }
