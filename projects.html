@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="橋本峻秀のAWSインフラ構築・運用実績。OSリプレイス、Web基盤、閉域接続、VDIと運用改善の担当範囲・概念構成図・設定項目を掲載。">
+  <title>構築・運用の案件実績 | Documentation</title>
+  <link rel="stylesheet" href="assets/styles.css?v=20260914-migration-card">
+  <link rel="stylesheet" href="assets/projects.css?v=20260923">
+</head>
+<body data-user-value-highlighting="off">
+  <header class="site-header case-site-header">
+    <a class="brand" href="./"><img src="assets/icon.jpg" alt="Documentation icon"><span>Documentation</span></a>
+    <div class="header-actions">
+      <button class="icon-button theme-toggle" type="button" title="テーマを切り替え" aria-label="テーマを切り替え">☀</button>
+      <nav class="nav" aria-label="Global navigation"><a href="./">Home</a><a href="career.html">職務経歴書</a><a href="#case-index">案件一覧</a></nav>
+    </div>
+  </header>
+  <main class="content case-portfolio">
+    <nav class="breadcrumb" aria-label="Breadcrumb"><a href="./">Home</a><span>プロフィール資料</span></nav>
+    <p class="case-kicker">橋本 峻秀 / AWSインフラ構築・運用 / 2026年9月23日更新</p>
+    <h1>構築・運用の案件実績</h1>
+    <p class="case-intro">AWSの構築から、OS・ミドルウェア設定、監視、運用変更、手順整備までを担当してきた代表案件を掲載する<br>各案件ではチーム内のインフラ担当として参画し、自身の担当作業とシステム全体の構成を区別して記載する</p>
+    <p class="publication-note">守秘義務に配慮し、顧客名・業務データ・実環境の識別情報は非掲載<br>構成図は担当領域を説明するために再構成した概念図であり、実際の台数・AZ・通信経路の全体を再現したものではない<br>設定項目は公開可能な技術要素と記入例を示すもので、実案件のパラメータシートではない</p>
+
+    <nav id="case-index" class="case-index" aria-label="代表案件">
+      <a href="#linux-replacement"><small>01 / OS・ミドルウェア</small><strong>Amazon Linuxのリプレイス</strong><span>開発・検証・本番の更改、Web実行環境、ストレージ、監視</span></a>
+      <a href="#web-platform"><small>02 / 新規構築</small><strong>検証・本番のWeb基盤</strong><span>ネットワークからWeb・DB、メール、監視・バックアップまで</span></a>
+      <a href="#private-network"><small>03 / ネットワーク</small><strong>閉域ファイル連携基盤</strong><span>Direct Connect経由のS3連携、アクセス制御、運用引き継ぎ</span></a>
+      <a href="#vdi-operations"><small>04 / VDI・運用改善</small><strong>WorkSpaces基盤と運用整備</strong><span>閉域接続、ファイル共有、パッチ管理、コスト最適化</span></a>
+    </nav>
+
+    <section id="linux-replacement" class="case-study" aria-labelledby="linux-title">
+      <p class="case-kicker">CASE 01 / OS REPLACEMENT</p>
+      <h2 id="linux-title">Amazon Linux 2からAmazon Linux 2023へのリプレイス</h2>
+      <p>既存WebシステムのOS更改に伴い、開発・検証・本番環境のインフラ構築と設定移行を担当<br>OSの入れ替えだけでなく、Web実行環境、ファイル配置、権限、監視を含めて新環境を整備した</p>
+      <dl class="case-facts"><div><dt>期間</dt><dd>2025年1月～3月</dd></div><div><dt>主な技術</dt><dd>EC2 / ALB / Amazon Linux 2023 / Apache / PHP-FPM / EFS / EBS / CloudWatch / Zabbix</dd></div></dl>
+      <figure><figcaption>図1：更改対象と関連領域の概念図。矢印は更改・確認の流れを示す</figcaption><a class="diagram-link" href="assets/project-cases/linux-replacement.png" target="_blank" rel="noopener" aria-label="図1を原寸で開く"><img src="assets/project-cases/linux-replacement.png" width="1080" height="400" alt="旧Amazon Linux 2環境から新Amazon Linux 2023環境へ更改し、ストレージと監視を確認する流れ"></a></figure>
+      <div class="case-columns">
+        <div><h3>自身の担当</h3><ul><li>各環境のEC2・OS設定とApache / PHP-FPMの実行環境を構築</li><li>EFS / EBSの移行に伴うマウント・権限設定を対応</li><li>Zabbix監視、SSH鍵・sudoersの設定を整備</li><li>構築手順・確認結果を整理し、レビュー指摘へ対応</li></ul></div>
+        <div><h3>実装・確認の焦点</h3><ul><li>OS変更とアプリケーション動作の確認を切り分け、設定差分を整理</li><li>Web実行ユーザーとファイル権限、PHP-FPM連携を確認</li><li>アプリケーションの改修・業務機能の受入判定と、担当したインフラ設定を区別</li><li>サービスが起動するだけでなく、監視と継続運用に必要な設定を整備</li></ul></div>
+      </div>
+      <h3>調査・改善例</h3>
+      <p>環境複製後に残る旧ドメイン・ログパスの設定を確認し、移行先に合わせて修正<br>logrotateの設定が重複して読み込まれる問題では、設定ディレクトリ内のバックアップファイルを切り分け、配置を修正して検証した<br>新旧環境でのホスト名重複によるZabbix登録競合も確認し、監視設定を調整した</p>
+      <h3>主な設定項目</h3>
+      <div class="table-scroll" role="region" aria-label="OS更改の設定項目" tabindex="0"><table><thead><tr><th scope="col">項目</th><th scope="col">公開用の内容・表記</th><th scope="col">担当内容・確認観点</th></tr></thead><tbody>
+        <tr><th scope="row">OS</th><td>Amazon Linux 2 → Amazon Linux 2023</td><td>パッケージ・サービス・設定ファイルの差分</td></tr>
+        <tr><th scope="row">Web実行環境</th><td>Apache + PHP-FPM</td><td>連携設定、実行ユーザー、プロセスの稼働確認</td></tr>
+        <tr><th scope="row">ストレージ</th><td>EFS / EBS<br>パス：<code>&lt;MOUNT_PATH&gt;</code></td><td>マウント、所有者・権限、データ配置</td></tr>
+        <tr><th scope="row">アクセス管理</th><td>SSH鍵 / sudoers<br>ユーザー：<code>&lt;OS_USER&gt;</code></td><td>作業ユーザーの権限と接続設定</td></tr>
+        <tr><th scope="row">監視</th><td>Zabbix / CloudWatch<br>閾値・通知先は非掲載</td><td>監視設定と構築後の確認</td></tr>
+      </tbody></table></div>
+      <p class="outcome"><strong>対応結果：</strong>複数環境のOS更改に伴う構築・設定移行を実施し、Web実行環境と運用監視を整備</p>
+      <p class="related"><a href="tutorials/amazon-linux-2023.html">関連技術：Amazon Linux 2023</a><a href="tutorials/apache.html">関連技術：Apache</a></p>
+      <a class="back-index" href="#case-index">案件一覧へ戻る ↑</a>
+    </section>
+
+    <section id="web-platform" class="case-study" aria-labelledby="web-title">
+      <p class="case-kicker">CASE 02 / WEB PLATFORM</p>
+      <h2 id="web-title">検証・本番のWebシステム基盤を新規構築</h2>
+      <p>新規AWS環境における検証・本番のインフラ構築を担当<br>VPC・サブネット、ALB、EC2、RDSに加え、メール送信、監視・通知、バックアップまでを設定した</p>
+      <dl class="case-facts"><div><dt>期間</dt><dd>2024年10月～11月</dd></div><div><dt>主な技術</dt><dd>VPC / ALB / EC2 / RDS for MySQL / RHEL 9 / Apache / PHP-FPM / SES / AWS Backup</dd></div></dl>
+      <figure><figcaption>図2：Web・DBと運用機能の概念構成。検証・本番の個別配置や台数は省略</figcaption><a class="diagram-link" href="assets/project-cases/web-platform.png" target="_blank" rel="noopener" aria-label="図2を原寸で開く"><img src="assets/project-cases/web-platform.png" width="1080" height="400" loading="lazy" alt="HTTPSを受け付けるALB、RHEL上のWebサーバー、RDS for MySQLと、メール・監視・バックアップの関係"></a></figure>
+      <div class="case-columns">
+        <div><h3>自身の担当</h3><ul><li>VPC・サブネット、EC2、ALB、RDSの構築</li><li>RHEL上でApache Event MPMとPHP-FPMを連携</li><li>Route 53 / ACMによるDNS・証明書設定、ALBのHTTPS終端を設定</li><li>SESのドメイン認証、CloudWatch / SNS、Zabbix、バックアップを設定</li></ul></div>
+        <div><h3>実装・確認の焦点</h3><ul><li>ネットワーク、Web、DBの各層に分けて疎通と設定を確認</li><li>ApacheとPHPの処理を分離した構成で、連携設定を整備</li><li>メール送信ではアプリケーション側の設定とDNSの認証設定を切り分け</li><li>検証・本番の環境差分をパラメータシートと構築エビデンスへ整理</li></ul></div>
+      </div>
+      <h3>主な設定項目</h3>
+      <div class="table-scroll" role="region" aria-label="Web基盤の設定項目" tabindex="0"><table><thead><tr><th scope="col">項目</th><th scope="col">公開用の内容・表記</th><th scope="col">担当内容・確認観点</th></tr></thead><tbody>
+        <tr><th scope="row">環境区分</th><td>検証 / 本番</td><td>環境ごとの構成・設定差分を管理</td></tr>
+        <tr><th scope="row">Web / OS</th><td>RHEL 9 / Apache Event MPM / PHP-FPM</td><td>ミドルウェアの設定と連携確認</td></tr>
+        <tr><th scope="row">TLS / DNS</th><td>ALB / ACM / Route 53<br>FQDN：<code>&lt;APP_FQDN&gt;</code></td><td>DNS検証、証明書、HTTPS終端</td></tr>
+        <tr><th scope="row">DB</th><td>Amazon RDS for MySQL<br>接続先：<code>&lt;DB_ENDPOINT&gt;</code></td><td>DB環境の構築・接続設定</td></tr>
+        <tr><th scope="row">メール認証</th><td>Amazon SES / DKIM / DMARC</td><td>送信ドメインのDNS認証設定</td></tr>
+        <tr><th scope="row">運用</th><td>AWS Backup / CloudWatch / SNS / Zabbix</td><td>バックアップ、監視項目、通知設定</td></tr>
+      </tbody></table></div>
+      <p class="outcome"><strong>対応結果：</strong>検証・本番のインフラを構築し、サービス提供に付随するメール送信・監視・バックアップを整備</p>
+      <p class="related"><a href="tutorials/rhel9.html">関連技術：RHEL 9</a><a href="tutorials/amazon-ses.html">関連技術：SES</a></p>
+      <a class="back-index" href="#case-index">案件一覧へ戻る ↑</a>
+    </section>
+
+    <section id="private-network" class="case-study" aria-labelledby="private-title">
+      <p class="case-kicker">CASE 03 / PRIVATE CONNECTIVITY</p>
+      <h2 id="private-title">Direct Connect経由の閉域ファイル連携基盤</h2>
+      <p>オンプレミスからAWSへ閉域でファイルを連携する環境の構築を担当<br>VPC Endpoint、ルーティング、アクセス制御を設定し、顧客側で運用を引き継ぐための資料を整備した</p>
+      <dl class="case-facts"><div><dt>期間</dt><dd>2024年12月</dd></div><div><dt>主な技術</dt><dd>Direct Connect / VGW / VPC Endpoint / AWS PrivateLink / S3 / IAM / VPC Flow Logs</dd></div></dl>
+      <figure><figcaption>図3：閉域S3アクセスの論理経路。DNS・中継構成などの詳細は省略</figcaption><a class="diagram-link" href="assets/project-cases/private-network.png" target="_blank" rel="noopener" aria-label="図3を原寸で開く"><img src="assets/project-cases/private-network.png" width="1080" height="400" loading="lazy" alt="オンプレミスからDirect Connectを経由してVPC内のS3用インターフェイスエンドポイントへ接続し、S3へアクセスする概念図"></a></figure>
+      <div class="case-columns">
+        <div><h3>自身の担当</h3><ul><li>VPC Endpointを使用した閉域連携のAWS側設定</li><li>VGW、ルート、Security Group、IAMなどのアクセス制御設定</li><li>Reachability Analyzer / VPC Flow Logsを用いた通信確認</li><li>構成・設定内容と運用手順を整理し、引き継ぎ資料を作成</li></ul></div>
+        <div><h3>実装・確認の焦点</h3><ul><li>通信経路が到達可能であることと、S3への操作が許可されることを分けて確認</li><li>ネットワーク、名前解決、権限の各層で確認内容を整理</li><li>接続元・接続先の設定差分や資料の不整合を確認</li><li>回線自体の敷設・事業者側設定ではなく、担当したAWS側の設定を説明</li></ul></div>
+      </div>
+      <h3>主な設定項目</h3>
+      <div class="table-scroll" role="region" aria-label="閉域接続の設定項目" tabindex="0"><table><thead><tr><th scope="col">項目</th><th scope="col">公開用の内容・表記</th><th scope="col">担当内容・確認観点</th></tr></thead><tbody>
+        <tr><th scope="row">接続方式</th><td>Direct Connect / VGW</td><td>AWS側のルーティングと接続経路</td></tr>
+        <tr><th scope="row">サービス接続</th><td>S3用Interface VPC Endpoint</td><td>プライベート接続の設定と到達性</td></tr>
+        <tr><th scope="row">アドレス</th><td><code>&lt;VPC_CIDR&gt;</code><br><code>&lt;ON_PREMISES_CIDR&gt;</code></td><td>実値は非掲載。接続範囲とルートの対応を管理</td></tr>
+        <tr><th scope="row">アクセス制御</th><td>Security Group / IAM / S3側の制御</td><td>通信許可とリソースへの操作権限を分離</td></tr>
+        <tr><th scope="row">調査・引き継ぎ</th><td>VPC Flow Logs / Reachability Analyzer / 運用手順</td><td>到達性・通信記録と設定内容を整理</td></tr>
+      </tbody></table></div>
+      <p class="outcome"><strong>対応結果：</strong>閉域ファイル連携のAWS側設定と確認を実施し、顧客側の運用に向けて技術資料・手順を整備</p>
+      <a class="back-index" href="#case-index">案件一覧へ戻る ↑</a>
+    </section>
+
+    <section id="vdi-operations" class="case-study" aria-labelledby="vdi-title">
+      <p class="case-kicker">CASE 04 / VDI &amp; OPERATIONS</p>
+      <h2 id="vdi-title">WorkSpaces基盤・閉域接続と運用改善</h2>
+      <p>継続的に担当した顧客環境で、VDIのコスト最適化と、後続のマルチVPC基盤構築に参画<br>関連する取り組みをまとめて掲載しており、単一時点の一つの構成を示すものではない</p>
+      <dl class="case-facts"><div><dt>期間</dt><dd>2025年4月：コスト最適化<br>2025年9月～10月：閉域VDI基盤</dd></div><div><dt>主な技術</dt><dd>WorkSpaces / AD Connector / FSx / VPC Peering / Direct Connect / Systems Manager / CloudFormation</dd></div></dl>
+      <figure><figcaption>図4：担当したVDI関連領域。破線の区分は別時期の改善テーマで、通信経路を示すものではない</figcaption><a class="diagram-link" href="assets/project-cases/vdi-operations.png" target="_blank" rel="noopener" aria-label="図4を原寸で開く"><img src="assets/project-cases/vdi-operations.png" width="1080" height="400" loading="lazy" alt="WorkSpaces基盤のディレクトリ連携・ファイル共有・閉域ネットワーク・パッチ管理と、別時期のコスト最適化を分けた担当領域図"></a></figure>
+      <div class="case-columns">
+        <div><h3>自身の担当</h3><ul><li>複数VPC間のルーティング、VPC Peering、Direct Connect接続に伴うAWS側設定</li><li>WorkSpaces / AD Connectorの連携、FSxのマウントを対応</li><li>SSM Patch Manager / Maintenance Windowsの設計・設定</li><li>CloudFormationによる既存ソリューションの展開とCost Optimizerの導入</li><li>顧客定例で技術検証結果・構成案・対応方針を説明</li></ul></div>
+        <div><h3>担当範囲の区別</h3><ul><li>Cost Optimizerをゼロから独自開発した実績ではなく、既存ソリューションの導入・設定として記載</li><li>VDI関連サービスの構築と、Windows内のAD・GPO設定変更の担当は区別</li><li>技術移管資料で扱う手順すべてを、本番環境で実施した業務とは扱わない</li><li>コスト削減額・削減率は確定値を掲載していない</li></ul></div>
+      </div>
+      <h3>主な設定項目</h3>
+      <div class="table-scroll" role="region" aria-label="VDI運用の設定項目" tabindex="0"><table><thead><tr><th scope="col">項目</th><th scope="col">公開用の内容・表記</th><th scope="col">担当内容・確認観点</th></tr></thead><tbody>
+        <tr><th scope="row">ネットワーク</th><td>複数VPC / VPC Peering / Direct Connect</td><td>経路・通信許可、閉域接続の設定</td></tr>
+        <tr><th scope="row">VDI・ファイル</th><td>WorkSpaces / AD Connector / FSx</td><td>ディレクトリ連携、ファイル共有のマウント</td></tr>
+        <tr><th scope="row">パッチ運用</th><td>Patch Manager / Maintenance Windows</td><td>対象ノード、メンテナンス枠、実行結果の確認</td></tr>
+        <tr><th scope="row">IaC</th><td>CloudFormation</td><td>既存テンプレートの展開とパラメータ設定</td></tr>
+        <tr><th scope="row">コスト最適化</th><td>Cost Optimizer for Amazon WorkSpaces</td><td>利用料高騰への対策として導入し、課金最適化を支援</td></tr>
+      </tbody></table></div>
+      <p class="outcome"><strong>対応結果：</strong>閉域VDI基盤の構築・運用設定に参画し、パッチ管理とコスト最適化の仕組みを導入</p>
+      <h3>技術移管・個人検証</h3>
+      <p>2026年8月～9月には、VDI環境のスキルトランスファー向け資料を作成<br>下記は公開用に整理したPoC・技術手順であり、実案件の画面・設定値をそのまま公開するものではない</p>
+      <p class="related"><a href="tutorials/workspaces-skill-transfer.html">関連PoC：マルチVPC・閉域VDI基盤</a><a href="tutorials/workspaces-cost-optimizer.html">関連手順：Cost Optimizer</a></p>
+      <a class="back-index" href="#case-index">案件一覧へ戻る ↑</a>
+    </section>
+
+    <section id="additional-experience" class="case-study" aria-labelledby="additional-title">
+      <h2 id="additional-title">その他の構築・改善経験</h2>
+      <div class="table-scroll" role="region" aria-label="その他の担当経験" tabindex="0"><table><thead><tr><th scope="col">領域</th><th scope="col">技術</th><th scope="col">担当内容</th></tr></thead><tbody>
+        <tr><th scope="row">構成管理・初期設定</th><td>AWX / Ansible / RHEL / Amazon Linux</td><td>既存の自動化を利用したOS・ミドルウェアの設定投入、構築後の調査・修正</td></tr>
+        <tr><th scope="row">DB移行・更新</th><td>EC2 / PostgreSQL / RDS / Aurora</td><td>DB移設用の環境構築、更新前の検証環境作成、ログ管理・監視の整備</td></tr>
+        <tr><th scope="row">リモートアクセス</th><td>AWS Client VPN / ACM / ALB</td><td>接続環境の構築、証明書不整合の調査、再構築と接続確認</td></tr>
+        <tr><th scope="row">標準化・技術共有</th><td>Windows Server / AMI / Zabbix / 手順書</td><td>構築・複製・監視設定手順の新規作成、チーム内レクチャーとレビュー</td></tr>
+      </tbody></table></div>
+      <p>職歴・資格・技術環境の一覧は<a href="career.html">職務経歴書</a>に掲載</p>
+    </section>
+  </main>
+  <script src="assets/app.js?v=20260823-ref1"></script>
+</body>
+</html>
