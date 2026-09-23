@@ -6,7 +6,7 @@
   <meta name="description" content="現職でのAWS基盤の設計・構築実績。個別案件、専属顧客の主担当としての構築・運用、社内のドキュメント・ナレッジ整備を掲載。">
   <title>現職での実績 | Documentation</title>
   <link rel="stylesheet" href="assets/styles.css?v=20260914-migration-card">
-  <link rel="stylesheet" href="assets/projects.css?v=20260924-bordered-cost-story">
+  <link rel="stylesheet" href="assets/projects.css?v=20260924-cost-comparison">
 </head>
 <body data-user-value-highlighting="off">
   <header class="site-header case-site-header">
@@ -28,21 +28,21 @@
     <section class="case-section" id="summary" aria-labelledby="summary-title">
       <h2 id="summary-title">1. 実績サマリー</h2>
       <table class="case-table case-summary-table" aria-describedby="summary-basis">
-        <thead><tr><th scope="col">実績・内訳</th><th scope="col">件数</th></tr></thead>
+        <thead><tr><th scope="col">区分</th><th scope="col">実績・内訳</th><th scope="col">件数</th></tr></thead>
         <tbody>
-          <tr class="case-total"><th scope="row">設計・構築の担当案件数（合計）</th><td><strong>17件</strong></td></tr>
+          <tr class="case-total"><th scope="rowgroup" rowspan="5">設計・構築</th><th scope="row">設計・構築の担当案件数（合計）</th><td><strong>17件</strong></td></tr>
           <tr><th scope="row">新規基盤構築</th><td>6件</td></tr>
           <tr><th scope="row">リプレイス・移行</th><td>3件</td></tr>
           <tr><th scope="row">検証環境構築・環境複製</th><td>5件</td></tr>
           <tr><th scope="row">ネットワーク・セキュリティ構築／設定変更</th><td>3件</td></tr>
         </tbody>
         <tbody>
-          <tr><th scope="row">問い合わせ対応チケット</th><td>762件</td></tr>
+          <tr><th scope="rowgroup" rowspan="3">運用対応</th><th scope="row">問い合わせ対応チケット</th><td>762件</td></tr>
           <tr><th scope="row">作業手順書の作成・整備および実作業</th><td>173件</td></tr>
           <tr><th scope="row">AWSサポート連携・上限緩和等</th><td>20件</td></tr>
         </tbody>
         <tbody>
-          <tr><th scope="row">構築関連ドキュメントの新規作成</th><td>6件</td></tr>
+          <tr><th scope="rowgroup" rowspan="2">社内活動</th><th scope="row">構築関連ドキュメントの新規作成</th><td>6件</td></tr>
           <tr><th scope="row">ナレッジページの作成</th><td>約10件</td></tr>
         </tbody>
       </table>
@@ -59,14 +59,15 @@
             <a href="assets/career-architectures/architecture-public-application-production.png" title="構成図を原寸で開く"><img src="assets/career-architectures/architecture-public-application-production.png" width="1600" height="900" alt="公共系申請システムのAWS基盤。ロードバランサー、Linux・Windows Server、RDSの関係を示す概念図。" loading="lazy"></a>
           </figure>
           <div class="case-description">
-            <p class="case-lead">Linux・Windows Serverを組み合わせたシステムで、Amazon Linux 2023へのリプレイスに対応。</p>
+            <p class="case-lead">Linux・Windows Serverで構成された申請システムにおいて、LinuxサーバーのAmazon Linux 2023へのリプレイスを担当しました。</p>
             <dl class="case-facts">
-              <dt>構成</dt><dd>VPC、EC2、ALB、RDS、NAT Gateway、Route 53、S3、SES、SNS</dd>
-              <dt>OS・監視</dt><dd>Amazon Linux 2023、Windows Server 2019／2022、CloudWatch Agent、Zabbix Agent2</dd>
-              <dt>担当範囲</dt><dd>ネットワーク・アクセス制御、OS・DBユーザー設定、監視・ログ設定、接続確認、構築エビデンス</dd>
-              <dt>環境展開</dt><dd>検証・本番で共通設定を展開し、ホスト名などの環境差分を反映</dd>
+              <dt>担当内容</dt><dd>ネットワーク・アクセス制御、OS・DBユーザー、監視・ログの設定を実施。接続確認と構築エビデンスの作成まで担当しました。</dd>
+              <dt>環境展開</dt><dd>検証・本番環境に共通設定を展開し、ホスト名などの環境ごとの差分を反映しました。</dd>
+              <dt>AWS構成</dt><dd>EC2・ALB・RDSを中心に、VPC、NAT Gateway、Route 53、S3、SES、SNSを利用</dd>
+              <dt>OS</dt><dd>Amazon Linux 2023、Windows Server 2019／2022</dd>
+              <dt>監視</dt><dd>CloudWatch Agent、Zabbix Agent2</dd>
             </dl>
-            <p class="case-note">類似する申請システムの構築実績をまとめて掲載しています。</p>
+            <p class="case-note">類似構成の申請システムで担当した実績を集約しています。</p>
           </div>
         </div>
       </article>
@@ -129,60 +130,54 @@
           </div>
         </div>
       </article>
-      <article class="case-entry">
-        <h3>3.3 VPN・Network Firewallの構築と改善</h3>
-        <dl class="case-facts">
-          <dt>AWS Client VPN</dt><dd>サーバー複製に伴うVPN・内部ALBの構築。証明書不整合を調査し、VPNの再構築と接続・TLS疎通確認を実施</dd>
-          <dt>VGW・Network Firewall</dt><dd>既存構成と要件を確認し、設定設計・設定投入、関連経路・疎通確認、ログ確認、エビデンス取得を担当</dd>
-        </dl>
-      </article>
       <article class="case-entry" id="cost-optimization">
-        <h3>3.4 WorkSpacesの運用コスト最適化</h3>
-        <p>Amazon WorkSpacesには、月額固定の課金と、月額の基本料金に利用時間分の料金を加える時間課金の2種類があります。AWSが提供するCost Optimizer for Amazon WorkSpacesは、利用状況を分析し、利用時間と設定した閾値に応じて課金モードを自動で切り替えるソリューションです。</p>
-        <p>約50台のWorkSpacesについて、利用状況を確認しながら1台ずつ課金形態を管理する負担を軽減するため、Cost Optimizerを導入しました。</p>
+        <h3>3.3 WorkSpacesの運用コスト最適化</h3>
+        <p>Amazon WorkSpacesには、時間課金（月額の基本料金＋利用時間分の料金）と月額固定の2つの料金体系があり、利用状況に合った課金モードを選ぶ必要があります。</p>
+        <p>お客様から、以前のEC2による運用と比べて料金が高くなったことに加え、約50台の利用状況を把握し、毎月1台ずつ課金モードを見直すことが難しいとのご相談をいただきました。</p>
+        <p>そこで、利用時間と設定した閾値に応じて課金モードを自動で切り替える「Cost Optimizer for Amazon WorkSpaces」を検討しました。私が仕様と動作条件を確認し、検証環境で課金モードの判定・切り替えやレポート出力を確認したうえで、お客様環境への導入を支援しました。</p>
         <p class="case-note">出典：<a href="https://docs.aws.amazon.com/solutions/latest/cost-optimizer-for-workspaces/overview.html" target="_blank" rel="noopener noreferrer">Cost Optimizer for Amazon WorkSpaces（AWS公式）</a><br>出典：<a href="https://aws.amazon.com/workspaces-family/workspaces/faqs/" target="_blank" rel="noopener noreferrer">WorkSpacesの課金に関するFAQ（AWS公式）</a></p>
           <figure class="case-diagram case-cost-diagram">
             <a href="assets/career-architectures/architecture-workspaces-cost-optimizer-approved.png" title="構成図を原寸で開く"><img src="assets/career-architectures/architecture-workspaces-cost-optimizer-approved.png" width="1586" height="992" alt="WorkSpacesコスト最適化基盤。AWS Cloud内のVPC、サブネット、NAT Gateway、Fargate、Gateway EndpointとVPC外のAWSサービスを示す構成図。" loading="lazy"></a>
           </figure>
-        <p>課金モードの自動切り替えに加え、自動停止までの時間を短縮し、利用状況に合わせてコンピューティングタイプを見直しました。課金切替閾値についても当時の料金条件をもとに見直し案を作成し、CloudWatchダッシュボードで稼働状況と課金モードを確認しました。</p>
-        <p>これらの取り組み後、月額利用料金は2025年12月の11,417.72 USDから2026年2月の4,577.39 USDへ減少しました。</p>
+        <p>導入支援に加え、自動停止までの時間を短縮し、利用状況に合わせたコンピューティングタイプの変更も支援しました。また、当時の料金条件に基づいて課金切替閾値の見直し案を作成しました。</p>
+        <p>CloudWatchダッシュボードで動作と課金モードを確認し、料金推移をお客様へ報告しました。これらの取り組み後、月額利用料金は2025年12月から2026年2月にかけて<strong>6,840.33 USD（59.9％）減少</strong>しました。</p>
         <table class="case-table case-cost-trend">
           <caption>WorkSpacesの月額利用料金の推移</caption>
-          <thead><tr><th scope="col">利用月</th><th scope="col">料金（USD）</th><th scope="col">前月比</th></tr></thead>
+          <thead><tr><th scope="col">項目</th><th scope="col">2025年12月</th><th scope="col">2026年1月</th><th scope="col">2026年2月</th></tr></thead>
           <tbody>
-            <tr><th scope="row">2025年12月</th><td>11,417.72</td><td>比較基準</td></tr>
-            <tr><th scope="row">2026年1月</th><td>8,976.10</td><td>21.4％減</td></tr>
-            <tr><th scope="row">2026年2月</th><td><strong>4,577.39</strong></td><td><strong>49.0％減</strong></td></tr>
+            <tr><th scope="row">月額利用料金（USD）</th><td>11,417.72</td><td>8,976.10</td><td><strong>4,577.39</strong></td></tr>
+            <tr><th scope="row">前月比</th><td>比較基準</td><td>21.4％減</td><td><strong>49.0％減</strong></td></tr>
           </tbody>
         </table>
-            <table class="case-table case-outcome-table">
-              <caption>コスト最適化の実績</caption>
-              <thead><tr><th scope="col">項目</th><th scope="col">実績</th></tr></thead>
-              <tbody>
-                <tr><th scope="row">対象台数</th><td>49台（2026年1月30日）<br>50台（2026年2月）</td></tr>
-                <tr><th scope="row">月額利用料金の減少額</th><td><strong>6,840.33 USD</strong></td></tr>
-                <tr><th scope="row">月額利用料金の減少率</th><td><strong>59.9％</strong></td></tr>
-                <tr><th scope="row">比較期間</th><td>2025年12月 → 2026年2月</td></tr>
-                <tr><th scope="row">評価対象</th><td>Cost Optimizer・コンピューティングタイプ・自動停止時間の見直しを含む、複数施策後の月額比較</td></tr>
-              </tbody>
-            </table>
-        <details class="case-details">
-          <summary>課金切替閾値の見直し案と対象台数（2026年1月）</summary>
-          <table class="case-table">
-            <caption>時間課金から月額課金へ切り替える利用時間の閾値</caption>
-            <thead><tr><th scope="col">タイプ</th><th scope="col">棚卸台数</th><th scope="col">従来値</th><th scope="col">提案値</th></tr></thead>
-            <tbody>
-              <tr><th scope="row">Power</th><td>45台</td><td>92時間</td><td>108時間</td></tr>
-              <tr><th scope="row">PowerPro</th><td>2台</td><td>78時間</td><td>82時間</td></tr>
-              <tr><th scope="row">Performance</th><td>2台</td><td>80時間</td><td>78時間</td></tr>
-            </tbody>
-          </table>
-          <p class="case-note">台数は2026年1月30日時点。提案値は当時の料金資料に基づきます。Powerは標準ストレージ44台と拡張ストレージ1台を含み、108時間の計算根拠は標準ストレージの料金です。提案後の実環境への適用値は照合前です。</p>
-        </details>
+        <p class="case-note">月額実績の比較であり、台数・利用時間・月の日数などの条件は同一ではありません。Cost Optimizerに加え、コンピューティングタイプと自動停止時間の見直しを含む複数施策後の推移です。</p>
       </article>
-      <article class="case-entry">
-        <h3>3.5 運用資料の整備・スキルトランスファー</h3>
-        <p>2026年8～9月に、専属顧客のVDI環境に関するスキルトランスファー用資料を18枚作成。構築・運用で扱う情報を整理し、引き継ぎに向けた資料整備を担当しました。</p>
+      <article class="case-entry" id="skill-transfer">
+        <h3>3.4 運用資料の整備・スキルトランスファー</h3>
+        <p>2026年8～9月に、お客様からのご依頼を受け、専任案件のVDI環境に関する仕様書・構築手順書など、計18件のドキュメントを作成しました。</p>
+        <table class="case-table case-document-table">
+          <caption>作成したドキュメントと主な内容</caption>
+          <thead><tr><th scope="col">No.</th><th scope="col">文書名</th><th scope="col">記載内容</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><th scope="row">AWS Managed Microsoft AD 構築手順書</th><td>ディレクトリの作成、配置先サブネットの設定、構築後の確認</td></tr>
+            <tr><td>2</td><th scope="row">AWS Directory Service ユーザー・グループ管理手順書</th><td>ユーザーとグループの作成・管理、パスワードの設定</td></tr>
+            <tr><td>3</td><th scope="row">Amazon EC2 管理サーバー構築・Active Directory管理手順書</th><td>管理用サーバーへの接続、ドメイン参加、AD管理ツールの利用</td></tr>
+            <tr><td>4</td><th scope="row">AD Connector サービスアカウント作成・権限委任手順書</th><td>サービスアカウントの作成と必要な権限の委任</td></tr>
+            <tr><td>5</td><th scope="row">Amazon VPC ピアリング接続・セキュリティグループ設定およびAD Connector構築手順書</th><td>VPC間接続、ルートとセキュリティグループの設定、認証連携</td></tr>
+            <tr><td>6</td><th scope="row">Amazon WorkSpaces 構築・バンドル設定手順書</th><td>ディレクトリ登録、バンドル選択、WorkSpacesの作成・接続確認</td></tr>
+            <tr><td>7</td><th scope="row">Amazon WorkSpaces OU作成・権限委任・ターゲットOU設定手順書</th><td>OUの作成、権限委任、ターゲットOUの指定</td></tr>
+            <tr><td>8</td><th scope="row">Amazon WorkSpaces グループポリシー作成・適用手順書</th><td>管理テンプレートの準備、GPOの設定と適用確認</td></tr>
+            <tr><td>9</td><th scope="row">Amazon WorkSpaces カスタムイメージ・バンドル作成および共有手順書</th><td>イメージの検証・作成、バンドル作成、別アカウントへの共有</td></tr>
+            <tr><td>10</td><th scope="row">AWS Systems Manager 環境構築手順書</th><td>マネージドノードの登録、SSM Agentと接続状態の確認</td></tr>
+            <tr><td>11</td><th scope="row">AWS Systems Manager Patch Manager 設定手順書</th><td>パッチ適用条件、対象グループ、メンテナンス時間帯の設定</td></tr>
+            <tr><td>12</td><th scope="row">AWS Systems Manager Patch Manager 実行・結果確認手順書</th><td>スキャン・インストールの実行、ログと適用結果の確認</td></tr>
+            <tr><td>13</td><th scope="row">Cost Optimizer for Amazon WorkSpaces 仕様・構築手順書</th><td>仕様とパラメータの確認、CloudFormationによるデプロイ</td></tr>
+            <tr><td>14</td><th scope="row">Cost Optimizer for Amazon WorkSpaces Dry Run解除・設定変更手順書</th><td>判定結果の確認、Dry Run設定の変更、変更後の動作確認</td></tr>
+            <tr><td>15</td><th scope="row">Cost Optimizer for Amazon WorkSpaces 実行スケジュール設定変更手順書</th><td>実行時刻の検証、EventBridgeのスケジュール設定と変更方針</td></tr>
+            <tr><td>16</td><th scope="row">Cost Optimizer for Amazon WorkSpaces レポート確認・監視運用手順書</th><td>S3のCSVレポート、実行ログ、ダッシュボードの確認</td></tr>
+            <tr><td>17</td><th scope="row">Amazon CloudWatch EC2・Windows OS監視および通知設定手順書</th><td>CloudWatch Agent、メトリクス・アラーム、SNS通知の設定</td></tr>
+            <tr><td>18</td><th scope="row">Amazon CloudWatch WorkSpaces監視設定手順書</th><td>WorkSpacesのメトリクス確認、アラーム・通知の設定</td></tr>
+          </tbody>
+        </table>
       </article>
     </section>
 

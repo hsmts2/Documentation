@@ -29,33 +29,33 @@
 .case-diagram a { display: block; }
 .case-diagram img { display: block; width: 100%; height: auto; background: #fff; border: 0; border-radius: 0; }
 .case-diagram figcaption { margin-top: 8px; font-size: 13px; line-height: 1.6; color: var(--muted); }
-.case-table { margin: 16px 0; width: 100%; border-collapse: collapse; border: 1px solid #8c959f; font-size: 14px; font-variant-numeric: tabular-nums; }
+.case-table { --case-table-line: #bcc8d2; --case-table-fill: #fff; --case-table-heading: #dceaf5; --case-table-heading-text: #173d59; margin: 16px 0; width: 100%; border-collapse: collapse; border: 1px solid var(--case-table-line); font-size: 14px; font-variant-numeric: tabular-nums; }
+html[data-theme="dark"] .case-table { --case-table-line: #62666b; --case-table-fill: #292b2e; --case-table-heading: #314553; --case-table-heading-text: #e4edf5; }
 .case-table caption { text-align: left; font-weight: 600; padding-bottom: 8px; }
-.case-table th, .case-table td { padding: 10px 14px; border: 1px solid #8c959f; vertical-align: top; }
+.case-table th, .case-table td { padding: 10px 14px; border: 1px solid var(--case-table-line); vertical-align: top; }
 .case-table td { text-align: right; white-space: nowrap; }
 .case-table th { text-align: left; }
-.case-table tbody th { background: transparent; }
-.case-table tbody tr:nth-child(even) { background: var(--panel-soft); }
-.case-summary-table { table-layout: fixed; max-width: 1000px; }
+.case-table tr, .case-table th, .case-table td, .case-table tbody tr:nth-child(even) { background: var(--case-table-fill); }
+.case-table thead th { background: var(--case-table-heading); color: var(--case-table-heading-text); text-align: center; vertical-align: middle; }
+.case-summary-table { table-layout: fixed; }
+.case-summary-table th[scope="col"]:first-child { width: 20%; }
 .case-summary-table th[scope="col"]:last-child { width: 18%; }
-.case-summary-table tr, .case-summary-table th, .case-summary-table td, .case-summary-table tbody th,
-.case-summary-table tbody tr:nth-child(even) { background: var(--bg); }
-.case-summary-table tbody + tbody { border-top: 2px solid #57606a; }
-html[data-theme="dark"] .case-summary-table tbody + tbody { border-color: #b9c1ca; }
+.case-summary-table th[scope="rowgroup"] { vertical-align: middle; }
 .case-summary-table th[scope="row"] { font-weight: 400; }
 .case-summary-table .case-total th[scope="row"] { font-weight: 700; }
 .case-summary-table th { overflow-wrap: anywhere; }
-.case-outcome-table { table-layout: fixed; }
-.case-outcome-table th[scope="col"]:first-child { width: 38%; }
-.case-outcome-table td { text-align: left; white-space: normal; overflow-wrap: anywhere; line-height: 1.7; }
-#cost-optimization { max-width: 1100px; }
+#cost-optimization { max-width: none; }
 .case-cost-diagram { max-width: 960px; margin: 20px 0; }
 .case-cost-trend { table-layout: fixed; }
-.case-cost-trend th[scope="col"]:first-child { width: 38%; }
+.case-cost-trend th[scope="col"]:first-child { width: 25%; }
 .case-cost-trend th, .case-cost-trend td { overflow-wrap: anywhere; white-space: normal; }
-.case-details { padding: 10px 0; margin-top: 14px; }
-.case-details summary { cursor: pointer; font-weight: 600; line-height: 1.6; }
-.case-details .case-table { max-width: 760px; }
+.case-document-table { table-layout: fixed; }
+.case-document-table th[scope="col"]:first-child { width: 6%; }
+.case-document-table th[scope="col"]:nth-child(2) { width: 44%; }
+.case-document-table th, .case-document-table td { overflow-wrap: anywhere; white-space: normal; line-height: 1.6; }
+.case-document-table td { text-align: left; }
+.case-document-table tbody th { font-weight: 400; }
+.case-document-table td:first-child { text-align: center; }
 @media (max-width: 1000px) {
   .case-portfolio { width: calc(100% - 40px); }
   .case-split { grid-template-columns: minmax(0, 1fr); gap: 18px; }
@@ -70,6 +70,7 @@ html[data-theme="dark"] .case-summary-table tbody + tbody { border-color: #b9c1c
   .case-table { font-size: 12px; }
   .case-table th, .case-table td { padding: 6px 4px; }
   .case-summary-table th[scope="col"]:last-child { width: 18%; }
+  .case-document-table th[scope="col"]:first-child { width: 9%; }
   .case-site-header { padding: 0 16px; }
   .case-site-header .brand span { display: none; }
   .case-site-header .nav { font-size: 13px; }
