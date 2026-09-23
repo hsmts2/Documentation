@@ -7,12 +7,12 @@
   letter-spacing: 0;
 }
 .case-portfolio h1 { font-size: 30px; line-height: 1.4; margin: 12px 0; }
-.case-portfolio p { overflow-wrap: anywhere; line-height: 1.7; margin: 10px 0; }
+.case-portfolio p { overflow-wrap: break-word; word-break: normal; line-break: strict; text-wrap: pretty; line-height: 1.7; margin: 10px 0; }
 .case-portfolio .callout { margin: 16px 0; padding: 12px 16px; border: 0; }
 .case-portfolio .callout p { margin: 4px 0; font-size: 14px; }
 .case-site-header .nav { flex-wrap: wrap; gap: 12px; }
 .case-site-header { border: 0; box-shadow: none; }
-.case-section { margin-top: 32px; scroll-margin-top: 88px; }
+.case-section { margin-top: 56px; scroll-margin-top: 88px; }
 .case-section h2 { font-size: 28px; line-height: 1.4; margin: 0 0 14px; padding: 0; border: 0; }
 .case-note { color: var(--muted); font-size: 13px; line-height: 1.7; }
 .case-entry { margin-top: 20px; padding: 16px 0 8px; scroll-margin-top: 88px; }
@@ -23,11 +23,13 @@
 .case-description > p:first-child { margin-top: 0; }
 .case-facts { display: grid; grid-template-columns: 112px minmax(0, 1fr); gap: 8px 16px; margin: 14px 0; }
 .case-facts dt { font-weight: 600; line-height: 1.7; }
-.case-facts dd { margin: 0; overflow-wrap: anywhere; line-height: 1.7; }
+.case-facts dd { margin: 0; overflow-wrap: break-word; word-break: normal; line-break: strict; text-wrap: pretty; line-height: 1.7; }
+.case-sentence { display: block; }
+.case-term { white-space: nowrap; }
 .case-split .case-facts { grid-template-columns: 88px minmax(0, 1fr); gap: 10px 12px; font-size: 14px; }
 .case-diagram { margin: 0; }
 .case-diagram a { display: block; }
-.case-diagram img { display: block; width: 100%; height: auto; background: #fff; border: 0; border-radius: 0; }
+.case-diagram img { display: block; box-sizing: border-box; width: 100%; height: auto; background: #fff; border: 1px solid #000; border-radius: 0; }
 .case-diagram figcaption { margin-top: 8px; font-size: 13px; line-height: 1.6; color: var(--muted); }
 .case-table { --case-table-line: #bcc8d2; --case-table-fill: #fff; --case-table-heading: #dceaf5; --case-table-heading-text: #173d59; margin: 16px 0; width: 100%; border-collapse: collapse; border: 1px solid var(--case-table-line); font-size: 14px; font-variant-numeric: tabular-nums; }
 html[data-theme="dark"] .case-table { --case-table-line: #62666b; --case-table-fill: #292b2e; --case-table-heading: #314553; --case-table-heading-text: #e4edf5; }
@@ -42,7 +44,6 @@ html[data-theme="dark"] .case-table { --case-table-line: #62666b; --case-table-f
 .case-summary-table th[scope="col"]:last-child { width: 18%; }
 .case-summary-table th[scope="rowgroup"] { vertical-align: middle; }
 .case-summary-table th[scope="row"] { font-weight: 400; }
-.case-summary-table .case-total th[scope="row"] { font-weight: 700; }
 .case-summary-table th { overflow-wrap: anywhere; }
 #cost-optimization { max-width: none; }
 .case-cost-diagram { max-width: 960px; margin: 20px 0; }
@@ -51,8 +52,9 @@ html[data-theme="dark"] .case-table { --case-table-line: #62666b; --case-table-f
 .case-cost-trend th, .case-cost-trend td { overflow-wrap: anywhere; white-space: normal; }
 .case-document-table { table-layout: fixed; }
 .case-document-table th[scope="col"]:first-child { width: 6%; }
-.case-document-table th[scope="col"]:nth-child(2) { width: 44%; }
-.case-document-table th, .case-document-table td { overflow-wrap: anywhere; white-space: normal; line-height: 1.6; }
+.case-document-table th[scope="col"]:nth-child(2) { width: 36%; }
+.case-document-table th, .case-document-table td { overflow-wrap: break-word; word-break: normal; line-break: strict; text-wrap: pretty; white-space: normal; line-height: 1.7; }
+.case-document-table .case-sentence + .case-sentence { margin-top: 4px; }
 .case-document-table td { text-align: left; }
 .case-document-table tbody th { font-weight: 400; }
 .case-document-table td:first-child { text-align: center; }

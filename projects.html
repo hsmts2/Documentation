@@ -6,7 +6,7 @@
   <meta name="description" content="現職でのAWS基盤の設計・構築実績。個別案件、専属顧客の主担当としての構築・運用、社内のドキュメント・ナレッジ整備を掲載。">
   <title>現職での実績 | Documentation</title>
   <link rel="stylesheet" href="assets/styles.css?v=20260914-migration-card">
-  <link rel="stylesheet" href="assets/projects.css?v=20260924-cost-comparison">
+  <link rel="stylesheet" href="assets/projects.css?v=20260924-section-spacing">
 </head>
 <body data-user-value-highlighting="off">
   <header class="site-header case-site-header">
@@ -30,7 +30,7 @@
       <table class="case-table case-summary-table" aria-describedby="summary-basis">
         <thead><tr><th scope="col">区分</th><th scope="col">実績・内訳</th><th scope="col">件数</th></tr></thead>
         <tbody>
-          <tr class="case-total"><th scope="rowgroup" rowspan="5">設計・構築</th><th scope="row">設計・構築の担当案件数（合計）</th><td><strong>17件</strong></td></tr>
+          <tr><th scope="rowgroup" rowspan="5">設計・構築</th><th scope="row">設計・構築の担当案件数（合計）</th><td>17件</td></tr>
           <tr><th scope="row">新規基盤構築</th><td>6件</td></tr>
           <tr><th scope="row">リプレイス・移行</th><td>3件</td></tr>
           <tr><th scope="row">検証環境構築・環境複製</th><td>5件</td></tr>
@@ -59,13 +59,15 @@
             <a href="assets/career-architectures/architecture-public-application-production.png" title="構成図を原寸で開く"><img src="assets/career-architectures/architecture-public-application-production.png" width="1600" height="900" alt="公共系申請システムのAWS基盤。ロードバランサー、Linux・Windows Server、RDSの関係を示す概念図。" loading="lazy"></a>
           </figure>
           <div class="case-description">
-            <p class="case-lead">Linux・Windows Serverで構成された申請システムにおいて、LinuxサーバーのAmazon Linux 2023へのリプレイスを担当しました。</p>
+            <p class="case-lead">申請システムのAmazon Linux 2023へのリプレイスにおいて、事前設計・顧客との調整から新環境の構築、DNS切り替え、旧環境の撤去まで担当しました。</p>
             <dl class="case-facts">
-              <dt>担当内容</dt><dd>ネットワーク・アクセス制御、OS・DBユーザー、監視・ログの設定を実施。接続確認と構築エビデンスの作成まで担当しました。</dd>
-              <dt>環境展開</dt><dd>検証・本番環境に共通設定を展開し、ホスト名などの環境ごとの差分を反映しました。</dd>
-              <dt>AWS構成</dt><dd>EC2・ALB・RDSを中心に、VPC、NAT Gateway、Route 53、S3、SES、SNSを利用</dd>
-              <dt>OS</dt><dd>Amazon Linux 2023、Windows Server 2019／2022</dd>
-              <dt>監視</dt><dd>CloudWatch Agent、Zabbix Agent2</dd>
+              <dt>設計・調整</dt><dd><span class="case-sentence">設計段階からお客様との打ち合わせに参加し、既存構成と要件をヒアリングの上、</span><span class="case-sentence"><span class="case-term">構成・設定内容</span>を整理いたしました。</span></dd>
+              <dt>構築・設定</dt><dd><span class="case-sentence">ネットワークとアクセス制御、<span class="case-term">OS・DBユーザー</span>、<span class="case-term">監視・ログ</span>を設定しました。</span><span class="case-sentence">検証・本番環境にはホスト名などの差分を反映し、接続を確認しました。</span></dd>
+              <dt>移行・撤去</dt><dd>DNS切り替えによる新環境への移行と、移行後の旧環境の削除を実施しました。</dd>
+              <dt>成果物</dt><dd>パラメータシート、設定書、構成図、構築エビデンスを作成しました。</dd>
+              <dt>AWS構成</dt><dd>EC2・ALB・RDSを中心に、VPC、<span class="case-term">NAT Gateway</span>、<span class="case-term">Route 53</span>、S3、SES、SNSを利用</dd>
+              <dt>OS</dt><dd><span class="case-term">Amazon Linux 2023</span>、<span class="case-term">Windows Server 2022</span></dd>
+              <dt>監視</dt><dd><span class="case-term">CloudWatch Agent</span>、<span class="case-term">Zabbix Agent2</span></dd>
             </dl>
             <p class="case-note">類似構成の申請システムで担当した実績を集約しています。</p>
           </div>
@@ -78,25 +80,22 @@
             <a href="assets/career-architectures/architecture-business-web-production-staging.png" title="構成図を原寸で開く"><img src="assets/career-architectures/architecture-business-web-production-staging.png" width="2400" height="1430" alt="業務Webシステムの本番・検証を別VPC・別Internet Gatewayで構成。本番EC2は2AZに冗長配置し、RDS for MySQLはMulti-AZ構成。ELBログはS3、VPC Flow LogsはCloudWatch Logsへ保管し、EC2とRDSをAWS Backupで保護。" loading="lazy"></a>
           </figure>
           <div class="case-description">
-            <p class="case-lead">業務Webシステムの本番・検証環境を別VPCに新規構築。本番のWebサーバーは2つのAZに分散して配置し、RDSはMulti-AZ構成としました。</p>
+            <p class="case-lead"><span class="case-sentence">業務Webシステムの本番・検証環境を新規構築しました。</span><span class="case-sentence">監視・ログ保管・バックアップまで設定しました。</span></p>
             <dl class="case-facts">
-              <dt>基盤構成</dt><dd>VPC、ALB、EC2、RDS、Route 53、ACM、Amazon SES</dd>
-              <dt>OS・DB</dt><dd>Red Hat Enterprise Linux 9、Amazon RDS for MySQL</dd>
-              <dt>監視・監査</dt><dd>Amazon CloudWatchによる監視、AWS CloudTrailによるAPI操作の記録</dd>
-              <dt>ログ保管</dt><dd>ELBアクセスログはS3バケット、VPC Flow LogsはCloudWatch Logsに保管</dd>
-              <dt>バックアップ</dt><dd>AWS BackupでEC2・RDSを対象に設定</dd>
+              <dt>環境構成</dt><dd>本番と検証を別VPCに分離し、それぞれにInternet Gatewayを配置しました。</dd>
+              <dt>冗長化</dt><dd><span class="case-sentence">本番のWebサーバーを2つのAZに分散して配置しました。</span><span class="case-sentence">RDSはMulti-AZ構成としました。</span></dd>
+              <dt>監視・監査</dt><dd><span class="case-sentence"><span class="case-term">Amazon CloudWatch</span>による監視を設定しました。</span><span class="case-sentence"><span class="case-term">AWS CloudTrail</span>でAPI操作を記録しました。</span></dd>
+              <dt>ログ保管</dt><dd><span class="case-sentence">ELBアクセスログはS3バケットに保管しました。</span><span class="case-sentence">VPC Flow LogsはCloudWatch Logsに保管しました。</span></dd>
+              <dt>バックアップ</dt><dd>AWS BackupでEC2・RDSを対象に設定しました。</dd>
+              <dt>AWS構成</dt><dd>VPC、ALB、EC2、RDS、<span class="case-term">Route 53</span>、ACM、<span class="case-term">Amazon SES</span></dd>
+              <dt>OS・DB</dt><dd><span class="case-sentence">Red Hat Enterprise Linux 9</span><span class="case-sentence">Amazon RDS for MySQL</span></dd>
             </dl>
           </div>
         </div>
       </article>
       <article class="case-entry">
-        <h3>2.3 オンプレミス・AWS間の閉域ファイル連携</h3>
-        <p>閉域接続を利用したS3とのファイル連携に向け、AWS側のネットワークとアクセス制御を設定しました。</p>
-        <dl class="case-facts">
-          <dt>主な技術</dt><dd>Direct Connect、VGW、VPC Endpoint、S3、IAM、Security Group、VPC Flow Logs</dd>
-          <dt>担当内容</dt><dd>AWS側の経路・アクセス制御設定、Reachability Analyzerとログによる経路確認、AWS CLIによるS3操作確認</dd>
-          <dt>成果物</dt><dd>設定通知書、技術・運用資料。回線事業者側の作業とは分けて担当しました。</dd>
-        </dl>
+        <h3>2.3 その他の案件</h3>
+        <p><strong>オンプレミス・AWS間の閉域ファイル連携</strong><br>Direct Connect・VGW・VPC Endpointを利用したS3連携で、AWS側の経路とアクセス制御を設定。Reachability Analyzer・VPC Flow Logsによる経路確認、AWS CLIによるS3操作確認を行い、設定通知書と技術・運用資料を作成しました。回線事業者側の作業とは分けて担当しています。</p>
       </article>
     </section>
 
@@ -145,37 +144,39 @@
           <caption>WorkSpacesの月額利用料金の推移</caption>
           <thead><tr><th scope="col">項目</th><th scope="col">2025年12月</th><th scope="col">2026年1月</th><th scope="col">2026年2月</th></tr></thead>
           <tbody>
+            <tr><th scope="row">WorkSpaces台数</th><td>未確認</td><td>49台</td><td>50台</td></tr>
             <tr><th scope="row">月額利用料金（USD）</th><td>11,417.72</td><td>8,976.10</td><td><strong>4,577.39</strong></td></tr>
             <tr><th scope="row">前月比</th><td>比較基準</td><td>21.4％減</td><td><strong>49.0％減</strong></td></tr>
           </tbody>
         </table>
+        <p class="case-note">台数は、2026年1月30日の棚卸結果と2026年2月のダッシュボード掲載値です。2025年12月の台数は未確認です。</p>
         <p class="case-note">月額実績の比較であり、台数・利用時間・月の日数などの条件は同一ではありません。Cost Optimizerに加え、コンピューティングタイプと自動停止時間の見直しを含む複数施策後の推移です。</p>
       </article>
       <article class="case-entry" id="skill-transfer">
-        <h3>3.4 運用資料の整備・スキルトランスファー</h3>
+        <h3>3.4 設計構築案件のドキュメント作成</h3>
         <p>2026年8～9月に、お客様からのご依頼を受け、専任案件のVDI環境に関する仕様書・構築手順書など、計18件のドキュメントを作成しました。</p>
         <table class="case-table case-document-table">
           <caption>作成したドキュメントと主な内容</caption>
           <thead><tr><th scope="col">No.</th><th scope="col">文書名</th><th scope="col">記載内容</th></tr></thead>
           <tbody>
-            <tr><td>1</td><th scope="row">AWS Managed Microsoft AD 構築手順書</th><td>ディレクトリの作成、配置先サブネットの設定、構築後の確認</td></tr>
-            <tr><td>2</td><th scope="row">AWS Directory Service ユーザー・グループ管理手順書</th><td>ユーザーとグループの作成・管理、パスワードの設定</td></tr>
-            <tr><td>3</td><th scope="row">Amazon EC2 管理サーバー構築・Active Directory管理手順書</th><td>管理用サーバーへの接続、ドメイン参加、AD管理ツールの利用</td></tr>
-            <tr><td>4</td><th scope="row">AD Connector サービスアカウント作成・権限委任手順書</th><td>サービスアカウントの作成と必要な権限の委任</td></tr>
-            <tr><td>5</td><th scope="row">Amazon VPC ピアリング接続・セキュリティグループ設定およびAD Connector構築手順書</th><td>VPC間接続、ルートとセキュリティグループの設定、認証連携</td></tr>
-            <tr><td>6</td><th scope="row">Amazon WorkSpaces 構築・バンドル設定手順書</th><td>ディレクトリ登録、バンドル選択、WorkSpacesの作成・接続確認</td></tr>
-            <tr><td>7</td><th scope="row">Amazon WorkSpaces OU作成・権限委任・ターゲットOU設定手順書</th><td>OUの作成、権限委任、ターゲットOUの指定</td></tr>
-            <tr><td>8</td><th scope="row">Amazon WorkSpaces グループポリシー作成・適用手順書</th><td>管理テンプレートの準備、GPOの設定と適用確認</td></tr>
-            <tr><td>9</td><th scope="row">Amazon WorkSpaces カスタムイメージ・バンドル作成および共有手順書</th><td>イメージの検証・作成、バンドル作成、別アカウントへの共有</td></tr>
-            <tr><td>10</td><th scope="row">AWS Systems Manager 環境構築手順書</th><td>マネージドノードの登録、SSM Agentと接続状態の確認</td></tr>
-            <tr><td>11</td><th scope="row">AWS Systems Manager Patch Manager 設定手順書</th><td>パッチ適用条件、対象グループ、メンテナンス時間帯の設定</td></tr>
-            <tr><td>12</td><th scope="row">AWS Systems Manager Patch Manager 実行・結果確認手順書</th><td>スキャン・インストールの実行、ログと適用結果の確認</td></tr>
-            <tr><td>13</td><th scope="row">Cost Optimizer for Amazon WorkSpaces 仕様・構築手順書</th><td>仕様とパラメータの確認、CloudFormationによるデプロイ</td></tr>
-            <tr><td>14</td><th scope="row">Cost Optimizer for Amazon WorkSpaces Dry Run解除・設定変更手順書</th><td>判定結果の確認、Dry Run設定の変更、変更後の動作確認</td></tr>
-            <tr><td>15</td><th scope="row">Cost Optimizer for Amazon WorkSpaces 実行スケジュール設定変更手順書</th><td>実行時刻の検証、EventBridgeのスケジュール設定と変更方針</td></tr>
-            <tr><td>16</td><th scope="row">Cost Optimizer for Amazon WorkSpaces レポート確認・監視運用手順書</th><td>S3のCSVレポート、実行ログ、ダッシュボードの確認</td></tr>
-            <tr><td>17</td><th scope="row">Amazon CloudWatch EC2・Windows OS監視および通知設定手順書</th><td>CloudWatch Agent、メトリクス・アラーム、SNS通知の設定</td></tr>
-            <tr><td>18</td><th scope="row">Amazon CloudWatch WorkSpaces監視設定手順書</th><td>WorkSpacesのメトリクス確認、アラーム・通知の設定</td></tr>
+            <tr><td>1</td><th scope="row">AWS Managed Microsoft AD 構築手順書</th><td><span class="case-sentence">ドメインコントローラーの構成、AWSと利用者の管理範囲、サービスの制約事項を整理。</span><span class="case-sentence">ディレクトリタイプ・ドメイン情報・管理者パスワード・VPC・サブネットの指定から、作成内容の確認までを記載。</span></td></tr>
+            <tr><td>2</td><th scope="row">AWS Directory Service ユーザー・グループ管理手順書</th><td><span class="case-sentence">管理機能の有効化、ユーザーの新規作成、グループへの追加・削除、アカウント削除の手順を記載。</span><span class="case-sentence">パスワードポリシーの設定と、ユーザー・グループの状態およびポリシー適用結果の確認方法を整理。</span></td></tr>
+            <tr><td>3</td><th scope="row">Amazon EC2 管理サーバー構築・Active Directory管理手順書</th><td><span class="case-sentence">起動条件の確認、AWS CLIによる管理用EC2の起動、Fleet Manager経由の接続、ドメイン参加確認を記載。</span><span class="case-sentence">GPMCの起動とGPOの確認、接続異常時の切り分け、参照先ドメインコントローラーの変更、利用終了時の操作を整理。</span></td></tr>
+            <tr><td>4</td><th scope="row">AD Connector サービスアカウント作成・権限委任手順書</th><td><span class="case-sentence">専用グループとサービスアカウントの作成、グループへの追加、WorkSpaces用OUへの権限委任を記載。</span><span class="case-sentence">パスワード更新、認証エラー時の確認、アカウント切り替えと旧アカウントの無効化・削除手順を整理。</span></td></tr>
+            <tr><td>5</td><th scope="row">Amazon VPC ピアリング接続・セキュリティグループ設定およびAD Connector構築手順書</th><td><span class="case-sentence">ピアリング接続の作成・承諾、双方のルート追加、ドメインコントローラー用SGの通信許可、経路・名前解決・疎通確認を記載。</span><span class="case-sentence">AD Connectorのサイズ、VPC・2サブネット、接続先AD情報の指定から作成までの手順を整理。</span></td></tr>
+            <tr><td>6</td><th scope="row">Amazon WorkSpaces 構築・バンドル設定手順書</th><td><span class="case-sentence">AD Connectorの登録、ターゲットOUの確認、バンドル選択、WorkSpaceの作成、OU所属・クライアント接続の確認を記載。</span><span class="case-sentence">作業の実施順序と、問い合わせ・作成失敗・誤作成時の切り分けおよび対応方法を整理。</span></td></tr>
+            <tr><td>7</td><th scope="row">Amazon WorkSpaces OU作成・権限委任・ターゲットOU設定手順書</th><td><span class="case-sentence">管理端末と既存環境の確認、WorkSpaces用OUの作成、専用グループへの権限委任、ターゲットOUの指定を記載。</span><span class="case-sentence">新規WorkSpaceが指定OUに配置されたことの確認と、設定を切り戻す手順を整理。</span></td></tr>
+            <tr><td>8</td><th scope="row">Amazon WorkSpaces グループポリシー作成・適用手順書</th><td><span class="case-sentence">DCV管理テンプレートの中央ストアへの配置、GPO作成、WorkSpaces OUへのリンク、設定反映・適用結果の確認を記載。</span><span class="case-sentence">検証用GPOでの管理操作、既定GPOのスコープ・継承の確認、設定の切り戻し手順を整理。</span></td></tr>
+            <tr><td>9</td><th scope="row">Amazon WorkSpaces カスタムイメージ・バンドル作成および共有手順書</th><td><span class="case-sentence">参照WorkSpaceの準備、Image Checkerの実行、カスタムイメージ・バンドルの作成と検証を記載。</span><span class="case-sentence">更新時の操作、ADグループによる展開対象管理、他アカウントへの共有・共有解除、切り戻し・削除手順を整理。</span></td></tr>
+            <tr><td>10</td><th scope="row">AWS Systems Manager 環境構築手順書</th><td><span class="case-sentence">EC2用IAMロールの作成、既存のログ保存用S3バケットの利用、検証用Windows EC2の作成手順を記載。</span><span class="case-sentence">SSM Agentの状態とマネージドノードへの登録状況を確認し、Systems Managerで管理を開始するための条件を整理。</span></td></tr>
+            <tr><td>11</td><th scope="row">AWS Systems Manager Patch Manager 設定手順書</th><td><span class="case-sentence">Windows用パッチベースラインの選定、Patch Groupとの関連付け、EC2への対象タグ付与を記載。</span><span class="case-sentence">Maintenance Windowの作成、ターゲットとRun Commandタスクの登録、任意のSNS通知設定を整理。</span></td></tr>
+            <tr><td>12</td><th scope="row">AWS Systems Manager Patch Manager 実行・結果確認手順書</th><td><span class="case-sentence">実行前チェック、Scan・Installテスト、実行ログと適用結果に基づく成功判定を記載。</span><span class="case-sentence">Systems Manager上の成功表示とWindows Update表示の違い、失敗時の対応、切り戻しと運用後の確認を整理。</span></td></tr>
+            <tr><td>13</td><th scope="row">Cost Optimizer for Amazon WorkSpaces 仕様・構築手順書</th><td><span class="case-sentence">課金モード判定の仕様と制約、CloudFormationテンプレート、ネットワーク・安全設定・料金閾値の指定を記載。</span><span class="case-sentence">スタック作成とデプロイ結果の確認に加え、利用バージョンの差分と作成リソースを整理。</span></td></tr>
+            <tr><td>14</td><th scope="row">Cost Optimizer for Amazon WorkSpaces Dry Run解除・設定変更手順書</th><td><span class="case-sentence">変更前のパラメータ確認、変更セットの作成・差分確認・実行、更新後の動作確認を記載。</span><span class="case-sentence">Dry Run解除、料金閾値変更時の注意点、ドリフト確認、設定の切り戻しと証跡の判定方法を整理。</span></td></tr>
+            <tr><td>15</td><th scope="row">Cost Optimizer for Amazon WorkSpaces 実行スケジュール設定変更手順書</th><td><span class="case-sentence">EventBridgeの実行時刻に関する仕様、検証した時刻・最終状態、直接編集による変更記録を記載。</span><span class="case-sentence">ルールの再有効化と初回実行確認、例外的なカスタマイズとして変更する場合の方針、運用上の注意点を整理。</span></td></tr>
+            <tr><td>16</td><th scope="row">Cost Optimizer for Amazon WorkSpaces レポート確認・監視運用手順書</th><td><span class="case-sentence">ECSタスクの実行結果、CloudWatchダッシュボード、S3レポートとCSVの主要列、CloudWatch Logsの確認方法を記載。</span><span class="case-sentence">対象台数と課金モードの変換結果を照合し、処理状況を判断するための確認項目を整理。</span></td></tr>
+            <tr><td>17</td><th scope="row">Amazon CloudWatch EC2・Windows OS監視および通知設定手順書</th><td><span class="case-sentence">SNSトピックの作成、メール購読の登録・承認・配信テスト、EC2ステータスチェック・CPU使用率アラームの設定を記載。</span><span class="case-sentence">CloudWatch AgentによるWindows OSメトリクス収集と、監視・通知の設定に必要な権限や前提条件を整理。</span></td></tr>
+            <tr><td>18</td><th scope="row">Amazon CloudWatch WorkSpaces監視設定手順書</th><td><span class="case-sentence">Unhealthy・ConnectionFailureアラームの作成、UserConnectedのダッシュボード追加、共通ダッシュボードの表示確認を記載。</span><span class="case-sentence">アラーム・通知の確認と、日常運用および障害発生時に確認する項目を整理。</span></td></tr>
           </tbody>
         </table>
       </article>
