@@ -1146,6 +1146,74 @@ mark {
   font-weight: 650;
 }
 
+.migration-status .migration-status-title {
+  margin: 0 0 18px;
+  padding: 0;
+  border: 0;
+  font-size: 18px;
+  line-height: 1.5;
+}
+
+.migration-status .migration-timeline {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  list-style: none;
+  margin: 0 0 24px;
+  padding: 0;
+}
+
+.migration-timeline li {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  min-width: 0;
+  margin: 0;
+  padding: 0 12px 0 0;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.migration-timeline li:not(:last-child)::before {
+  content: "";
+  position: absolute;
+  top: 9px;
+  left: 18px;
+  right: 0;
+  height: 2px;
+  background: var(--line);
+}
+
+.migration-step-marker {
+  position: relative;
+  flex: 0 0 20px;
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--muted);
+  border-radius: 50%;
+  background: var(--panel-soft);
+  box-sizing: border-box;
+}
+
+.migration-timeline li > span:last-child {
+  position: relative;
+  padding: 0 8px 0 0;
+  background: var(--panel-soft);
+  overflow-wrap: anywhere;
+}
+
+.migration-timeline [aria-current="step"] { color: var(--accent-strong); font-weight: 700; }
+.migration-timeline [aria-current="step"] .migration-step-marker { border-color: currentColor; background: var(--accent-strong); box-shadow: inset 0 0 0 4px var(--panel-soft); }
+.migration-timeline small { display: block; margin-top: 4px; font-size: 12px; font-weight: 400; }
+
+@media (max-width: 640px) {
+  .migration-status .migration-timeline { grid-template-columns: 1fr; gap: 20px; }
+  .migration-timeline li:not(:last-child)::before { top: 20px; left: 9px; right: auto; width: 2px; height: calc(100% + 20px); }
+  .migration-timeline li > span:last-child { padding-bottom: 2px; }
+  .migration-status-heading { flex-wrap: wrap; gap: 4px 12px; }
+}
+
 .migration-status-heading strong {
   color: var(--muted);
   font-size: 14px;

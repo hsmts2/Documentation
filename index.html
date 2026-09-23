@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Documentation</title>
-  <link rel="stylesheet" href="assets/styles.css?v=20260914-migration-card">
+  <link rel="stylesheet" href="assets/styles.css?v=20260923-migration-timeline">
 </head>
 <body>
   <header class="site-header">
@@ -103,6 +103,12 @@
       </nav>
 
       <div class="migration-status" role="status" aria-label="ドキュメント移行の進捗">
+        <h2 class="migration-status-title">移行状況</h2>
+        <ol class="migration-timeline" aria-label="移行工程">
+          <li aria-current="step"><span class="migration-step-marker" aria-hidden="true"></span><span>資料移行<small>進行中</small></span></li>
+          <li><span class="migration-step-marker" aria-hidden="true"></span><span>内容・表示確認</span></li>
+          <li><span class="migration-step-marker" aria-hidden="true"></span><span>移行完了</span></li>
+        </ol>
         <div class="migration-status-heading"><span>Confluence・Scrapbox.ioから移行中</span><strong>60%</strong></div>
         <progress value="60" max="100" aria-label="ドキュメント移行の進捗">60%</progress>
       </div>
@@ -118,7 +124,7 @@
             <p>職務概要・担当案件・技術環境をまとめた経歴書</p>
           </article>
           <article class="document-card">
-            <p class="document-card-category document-card-category-profile">担当案件</p>
+            <p class="document-card-category document-card-category-profile">プロフィール</p>
             <h3><a href="projects.html">設計構築の実績</a></h3>
           </article>
           <article class="document-card">
