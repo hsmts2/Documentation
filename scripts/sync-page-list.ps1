@@ -66,6 +66,8 @@ $groups = @(
         Pages = @(
             [pscustomobject]@{ File = 'iac.html'; Label = 'IaC' }
             [pscustomobject]@{ File = 'iam-identity-center.html'; Label = 'IAM Identity Center' }
+            [pscustomobject]@{ File = 'iac-vscode.html'; Label = 'VS Codeの設定' }
+            [pscustomobject]@{ File = 'iac-deploy.html'; Label = 'IaCによるリソースのデプロイ' }
         )
     }
     [pscustomobject]@{

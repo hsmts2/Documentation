@@ -57,6 +57,8 @@
       <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">◈</span>IaC</p>
       <a class="active" aria-current="page" href="iac.html">IaC</a>
       <a href="iam-identity-center.html">IAM Identity Center</a>
+      <a href="iac-vscode.html">VS Codeの設定</a>
+      <a href="iac-deploy.html">IaCによるリソースのデプロイ</a>
       <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">☁︎</span>AWS</p>
       <a href="cloudformation.html">CloudFormation 運用手順集</a>
       <a href="aws-cli.html">AWS CLI 特殊対応</a>
@@ -108,11 +110,27 @@
                 </ul>
               </td>
             </tr>
+            <tr><td>2</td><td><a href="iac-vscode.html">VS Codeの設定</a></td><td><ul><li>拡張機能の導入</li><li>自動整形・統合ターミナル</li><li>AWS・GitHub・HCPの接続</li></ul></td></tr>
+            <tr><td>3</td><td><a href="iac-deploy.html">IaCによるリソースのデプロイ</a></td><td><ul><li>Terraform・CloudFormation・AWS CDKの3タブ</li><li>SQSの作成・結果確認</li><li>実習中のエラーと対処</li></ul></td></tr>
           </tbody>
         </table>
+        <p><code class="inline-code">tenv</code>は、Terraform・OpenTofu・Terragruntなどのバージョンを管理するツール。<code class="inline-code">tenv tf use 1.16.3</code>では、<code class="inline-code">tf</code>でTerraformを選び、使用する既定バージョンを指定</p>
+      </section>
+      <section>
+        <h2 id="other-tools">その他のツール</h2>
+        <p>必要になった段階で導入する補助ツール。以下は用途のメモで、インストール・実行は未確認</p>
+        <table>
+          <thead><tr><th scope="col">No.</th><th scope="col">ツール</th><th scope="col">用途・使う場面</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td><code class="inline-code">cfn-lint</code></td><td><ul><li>CloudFormationテンプレートの記述を検査</li><li>テンプレートを直接編集した際のチェックに使用</li></ul></td></tr>
+            <tr><td>2</td><td><code class="inline-code">tfupdate</code></td><td><ul><li>Terraformコード内の本体・プロバイダーなどのバージョン指定を更新</li><li>依存バージョンの更新や、CIで更新PRを作る処理に活用</li></ul></td></tr>
+            <tr><td>3</td><td><code class="inline-code">hcledit</code></td><td><ul><li>コマンドラインからHCLの属性やブロックを編集</li><li>スクリプトでTerraformコードを繰り返し修正する場面に使用</li></ul></td></tr>
+          </tbody>
+        </table>
+        <p><code class="inline-code">tenv</code>は実行するツールのバージョン管理、<code class="inline-code">tfupdate</code>はコード内のバージョン指定の更新に使用。どちらも、それだけでAWSリソースを更新するものではない</p>
       </section>
     </main>
-    <aside class="toc" aria-label="Table of contents"><h2>ページ内</h2><a href="#preparation">環境準備</a></aside>
+    <aside class="toc" aria-label="Table of contents"><h2>ページ内</h2><a href="#preparation">環境準備</a><a href="#other-tools">その他のツール</a></aside>
   </div>
   <script src="../assets/app.js"></script>
 </body>

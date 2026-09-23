@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IaCによるリソースのデプロイ | Documentation</title>
+  <meta name="description" content="VS CodeのPowerShellからTerraform・CloudFormation・AWS CDKでSQSを作成する手順と、実際に発生したエラーの対処">
+  <link rel="stylesheet" href="../assets/styles.css?v=20260914-migration-card">
+</head>
+<body>
+  <header class="site-header"><a class="brand" href="../"><img src="../assets/icon.jpg" alt="Documentation icon"><span>Documentation</span></a><div class="header-actions"><button class="icon-button theme-toggle" type="button" title="テーマを切り替え" aria-label="テーマを切り替え">☀</button><nav class="nav" aria-label="Global navigation"><a href="https://github.com/hsmts2/Documentation">GitHub</a></nav></div></header>
+  <div class="layout">
+    <aside id="site-sidebar" class="sidebar" aria-label="Page list">
+      <div class="sidebar-heading">
+        <button class="icon-button sidebar-toggle sidebar-toggle-inline" type="button" aria-controls="site-sidebar" aria-expanded="true" title="ナビゲーションを閉じる" aria-label="ナビゲーションを閉じる">☰</button>
+      </div>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">✎</span>記事</p>
+      <a href="cloudflare-private-site.html">Private GitHubリポジトリをCloudflare Workersで認証付き公開してみた</a>
+      <a href="aws-daily-cost-slack.html">AWS利用料を毎朝3時にSlackへ通知してみた</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">☁︎</span>[PoC] マルチVPC・閉域VDI基盤案件</p>
+          <a href="workspaces-skill-transfer.html">全体構築・運用順序</a>
+          <a href="workspaces-managed-ad.html">Managed Microsoft ADの構築</a>
+          <a href="workspaces-managed-ad-users.html">Managed Microsoft ADのユーザー・グループ管理</a>
+          <a href="workspaces-management-ec2.html">管理用EC2の起動・接続・AD管理</a>
+          <a href="workspaces-ad-connector-account.html">AD Connector用サービスアカウント・権限委任</a>
+          <a href="workspaces-ad-connector.html">AD ConnectorのVPCピアリング・SG設定・作成</a>
+          <a href="workspaces-provisioning-gpo.html">WorkSpaces Personalの構築・接続</a>
+          <a href="workspaces-target-ou.html">WorkSpaces用ターゲットOUの作成・権限委任</a>
+          <a href="workspaces-gpo.html">WorkSpaces用GPOの作成・適用・運用</a>
+          <a href="workspaces-image-bundle.html">WorkSpacesカスタムイメージ作成・共有</a>
+          <a href="workspaces-systems-manager.html">Systems Manager環境構築</a>
+          <a href="workspaces-patch-manager.html">Patch Managerの設定</a>
+          <a href="workspaces-patch-operations.html">Patch Managerの実行・結果確認・運用</a>
+          <a href="workspaces-cost-optimizer.html">Cost Optimizerの構築・設定</a>
+          <a href="workspaces-cost-optimizer-dry-run.html">Cost OptimizerのDry Run解除</a>
+          <a href="workspaces-cost-optimizer-schedule.html">Cost Optimizerの実行スケジュール設定・変更</a>
+          <a href="workspaces-cost-optimizer-reports.html">Cost Optimizerのレポート・監視</a>
+          <a href="workspaces-cloudwatch-monitoring.html">CloudWatchのEC2・Windows OS監視とSNS通知</a>
+          <a href="workspaces-cloudwatch-workspaces.html">CloudWatchのWorkSpaces監視</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">⑂</span>Git / GitHub</p>
+      <a href="git-github.html">Git 概要</a>
+      <a href="git-remote.html">Gitリモート操作</a>
+      <a href="github-pages.html">GitHub Pages</a>
+      <a href="github-pull-request.html">GitHubのPull Requestとレビュー</a>
+      <a href="git-utilities.html">Gitトラブルシューティング</a>
+      <a href="github-ssh.html">GitHub認証</a>
+      <a href="github-slack-integration.html">GitHubとSlackの連携・通知設定</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">◈</span>Terraform</p>
+      <a href="terraform.html">Terraform 概要</a>
+      <a href="hcp-terraform.html">HCP Terraform（Terraform Cloud）</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">◈</span>IaC</p>
+      <a href="iac.html">IaC</a>
+      <a href="iam-identity-center.html">IAM Identity Center</a>
+      <a href="iac-vscode.html">VS Codeの設定</a>
+      <a class="active" aria-current="page" href="iac-deploy.html">IaCによるリソースのデプロイ</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">☁︎</span>AWS</p>
+      <a href="cloudformation.html">CloudFormation 運用手順集</a>
+      <a href="aws-cli.html">AWS CLI 特殊対応</a>
+      <a href="aws-cli-reference.html">AWS CLI コマンドリファレンス</a>
+      <a href="eventbridge-scheduler.html">EventBridge Scheduler</a>
+      <a href="aws-directory-service.html">AWS Directory Service 運用手順</a>
+      <a href="amazon-workspaces.html">Amazon WorkSpaces</a>
+      <a href="amazon-ses.html">Amazon SES SMTPリレー</a>
+      <a href="amazon-ses-monitoring.html">Amazon SES 配信監視</a>
+      <a href="amazon-rds-blue-green.html">Amazon RDS Blue/Green Deployments</a>
+      <a href="apache-acm-certificate-update.html">証明書更新（ACMエクスポート）</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">⚙︎</span>OS／ミドルウェア</p>
+      <a href="rhel9.html">Red Hat Enterprise Linux 9</a>
+      <a href="rhel10.html">Red Hat Enterprise Linux 10</a>
+      <a href="amazon-linux-2023.html">Amazon Linux 2023</a>
+      <a href="windows-server-2022.html">Windows Server 2022</a>
+      <a href="windows-server-2025.html">Windows Server 2025</a>
+      <a href="windows-server-2016-upgrade.html">Windows Server 2016 インプレースアップグレード</a>
+      <a href="storage.html">ストレージ管理</a>
+      <a href="apache.html">Apache</a>
+      <a href="apache-self-signed-ssl-termination.html">Apache SSL終端（自己署名証明書）</a>
+      <a href="redis.html">Redis（KVS）</a>
+      <a href="nfs.html">NFS</a>
+      <a href="samba.html">Samba</a>
+      <a href="mariadb.html">MariaDB</a>
+      <a href="postgresql.html">PostgreSQL</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">▤</span>リファレンス</p>
+      <a href="../writing-style-guide.html">[GitHub Pages] 記法・テンプレート</a>
+      <a href="troubleshooting.html">障害切り分けチェックリスト</a>
+      <a href="eol.html">EOL / ライフサイクル一覧表</a>
+    </aside>
+    <main class="content">
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="../"><span class="nav-icon" aria-hidden="true">⌂</span>Home</a>
+        <span>トピック</span>
+      </nav>
+      <h1>IaCによるリソースのデプロイ</h1>
+      <p>VS Codeの統合ターミナル（PowerShell）で実施。認証設定は<a href="iam-identity-center.html">IAM Identity Center</a>、拡張機能・整形設定は<a href="iac-vscode.html">VS Codeの設定</a>を参照</p>
+      <h2 id="terminal">実行場所・接続先の確認</h2>
+      <p>① <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>`</kbd>で新しいターミナルを開き、現在のフォルダーを確認。エディターで開いているファイルとターミナルの実行場所は別</p>
+      <div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>pwd</code></pre></div>
+      <p>② 使用するAWSプロファイルと東京リージョンを、このターミナルに設定</p>
+      <div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$env:AWS_PROFILE = "iac-admin"
+$env:AWS_REGION = "ap-northeast-1"
+$env:AWS_DEFAULT_REGION = "ap-northeast-1"</code></pre></div>
+      <p>③ 接続先アカウント・ロールを確認。意図した学習用アカウントでない場合はデプロイを中止</p>
+      <div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>aws sts get-caller-identity --profile iac-admin</code></pre></div>
+      <p>④ SSOセッションの期限が切れている場合のみ、再ログインして③を再実行</p>
+      <div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>aws sso login --profile iac-admin</code></pre></div>
+      <div class="callout callout-warning"><strong>⚠️ 作成対象</strong><p>各タブは別々のSQSキューを作成。既存の本番スタックやCDKToolkitは変更・削除しない。各方式のデプロイ操作ではAWSリソースが作成され、利用状況に応じた料金が発生</p></div>
+      <h2 id="deploy">デプロイ方法</h2>
+      <div class="tab-group" data-tabs>
+        <div class="tabs" role="tablist" aria-label="IaCのデプロイ方式">
+          <button class="tab" type="button" role="tab" id="tf-tab" aria-selected="true" aria-controls="tf-panel">Terraform</button>
+          <button class="tab" type="button" role="tab" id="cfn-tab" aria-selected="false" aria-controls="cfn-panel">CloudFormation</button>
+          <button class="tab" type="button" role="tab" id="cdk-tab" aria-selected="false" aria-controls="cdk-panel">AWS CDK</button>
+        </div>
+        <section class="tab-panel active" id="tf-panel" role="tabpanel" aria-labelledby="tf-tab">
+          <h3>1. 作業フォルダー・ファイルの準備</h3>
+          <p>① 作業フォルダーを用意して移動。既存のフォルダーはそのまま使用</p>
+          <div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>New-Item -ItemType Directory -Force C:\Users\hsmts\IaC\Terraform
+cd C:\Users\hsmts\IaC\Terraform</code></pre></div>
+          <p>VS Codeのエクスプローラーで上記フォルダーに<code class="inline-code">main.tf</code>を作成し、次を記載して<kbd>Ctrl</kbd> + <kbd>S</kbd>で保存</p>
+          <div class="code"><div class="code-header"><span>main.tf</span><button class="copy" type="button">Copy</button></div><pre><code>resource "aws_sqs_queue" "my_queue" {
+  name             = "test-queue-tf"
+  max_message_size = 2048
+  tags = {
+    Name = "test-queue-tf"
+  }
+}</code></pre></div>
+          <h3>2. 初期化・検証</h3>
+          <p>① AWSプロバイダーを導入。<code class="inline-code">.terraform</code>と<code class="inline-code">.terraform.lock.hcl</code>が生成され、再実行時は既存のプロバイダーを再利用</p>
+          <div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>terraform init</code></pre></div>
+          <p>② 設定を検証し、成功メッセージを確認</p>
+          <div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>terraform validate</code></pre></div>
+          <p>③ 作成予定を確認。今回の構成では<code class="inline-code">1 to add, 0 to change, 0 to destroy</code>で、対象名が<code class="inline-code">test-queue-tf</code>であることを確認</p>
+          <div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>terraform plan</code></pre></div>
+          <h3>3. デプロイ・結果確認</h3>
+          <p>① 再表示される変更内容を確認し、承認する場合は<code class="inline-code">yes</code>を入力。空欄のまま確定するとキャンセル</p>
+          <div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>terraform apply</code></pre></div>
+          <div class="code"><div class="code-header"><span>確認済みの出力</span><button class="copy" type="button">Copy</button></div><pre><code>Apply complete! Resources: 1 added, 0 changed, 0 destroyed.</code></pre></div>
+          <p>作成後は<code class="inline-code">terraform.tfstate</code>に管理情報を記録。状態ファイルは削除せず、認証情報を含む可能性があるため公開リポジトリへ登録しない</p>
+          <p>② AWSコンソールで<code class="ui-value">Amazon SQS</code>を開き、東京リージョンの<code class="inline-code">test-queue-tf</code>と最大メッセージサイズ<code class="ui-value">2 KiB</code>を確認</p>
+          <figure><img src="../assets/img/iac-tf-created.png" alt="Terraformで作成したtest-queue-tfと最大メッセージサイズ2 KiB" loading="lazy"><figcaption>SQSの作成結果</figcaption></figure>
+          <h3>4. エラーと対処</h3>
+          <table><thead><tr><th>表示・症状</th><th>対処</th></tr></thead><tbody><tr><td>Terraform initialized in an empty directory!</td><td>main.tfのあるフォルダーへ移動して再実行。空フォルダーのvalidate成功だけでは対象ファイルを検証したことにならない</td></tr><tr><td>PowerShellでls -laが失敗</td><td><code class="inline-code">Get-ChildItem -Force</code>または<code class="inline-code">ls -Force</code>を使用</td></tr></tbody></table>
+        </section>
+        <section class="tab-panel" id="cfn-panel" role="tabpanel" aria-labelledby="cfn-tab" hidden>
+          <h3>1. 作業フォルダー・ファイルの準備</h3>
+          <p>① 実習で使用した既存フォルダーへ移動。フォルダー名は実際の表記<code class="inline-code">CloudFromation</code>に合わせる</p>
+          <div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>New-Item -ItemType Directory -Force C:\Users\hsmts\IaC\CloudFromation
+cd C:\Users\hsmts\IaC\CloudFromation</code></pre></div>
+          <p>同フォルダーに<code class="inline-code">test-sqs-cfn.yml</code>を作成し、次を記載して保存。字下げはスペースを使用</p>
+          <div class="code"><div class="code-header"><span>test-sqs-cfn.yml</span><button class="copy" type="button">Copy</button></div><pre><code>Resources:
+  MyQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: test-queue-cfn
+      MaximumMessageSize: 2048
+      Tags:
+        - Key: Name
+          Value: test-queue-cfn</code></pre></div>
+          <h3>2. 検証</h3>
+          <p>① 保存したファイル名を指定してテンプレート形式を検証。<code class="inline-code">"Parameters": []</code>はパラメーター定義がないことを示す正常な応答</p>
+          <div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>aws cloudformation validate-template --template-body file://test-sqs-cfn.yml --profile iac-admin --region ap-northeast-1</code></pre></div>
+          <h3>3. デプロイ・結果確認</h3>
+          <p>① 学習用スタック<code class="inline-code">test-sqs-cfn</code>をデプロイ。このコマンドは確認入力を求めずに作成・更新を実行</p>
+          <div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>aws cloudformation deploy --template-file test-sqs-cfn.yml --stack-name test-sqs-cfn --profile iac-admin --region ap-northeast-1</code></pre></div>
+          <p>② デプロイ時と同じスタック名で状態を確認。初回作成では<code class="inline-code">CREATE_COMPLETE</code>を確認</p>
+          <div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>aws cloudformation describe-stacks --stack-name test-sqs-cfn --query "Stacks[0].StackStatus" --output text --profile iac-admin --region ap-northeast-1</code></pre></div>
+          <p>③ AWSコンソールの<code class="ui-value">CloudFormation</code>で<code class="inline-code">test-sqs-cfn</code>を検索し、作成完了を確認</p>
+          <figure><img src="../assets/img/iac-cfn-created.png" alt="test-sqs-cfnスタックのCREATE_COMPLETE" loading="lazy"><figcaption>CloudFormationの作成結果</figcaption></figure>
+          <h3>4. エラーと対処</h3>
+          <table><thead><tr><th>表示</th><th>原因・対処</th></tr></thead><tbody><tr><td>No such file or directory: template.yaml</td><td>実際のファイル名はtest-sqs-cfn.yml。コマンドの名前を合わせる</td></tr><tr><td>YAML not well-formed</td><td>Properties配下の項目を一段深くし、TagsのKeyとValueをそろえる。保存後に再検証</td></tr><tr><td>Stack with id iac-study-sqs-cfn does not exist</td><td>最終的に作成したスタック名はtest-sqs-cfn。確認時も同じ名前を指定</td></tr></tbody></table>
+        </section>
+        <section class="tab-panel" id="cdk-panel" role="tabpanel" aria-labelledby="cdk-tab" hidden>
+          <h3>1. プロジェクトの初期化</h3>
+          <p>① 既存のCDKフォルダーへ移動し、隠しファイルを含めて内容を確認</p>
+          <div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>cd C:\Users\hsmts\IaC\CDK
+Get-ChildItem -Force</code></pre></div>
+          <p>② 初回のみ、空フォルダーでTypeScriptのひな形を作成。先に作ったファイルがある場合は別の場所へ退避。既にcdk.jsonとpackage.jsonがある初期化済みプロジェクトでは再実行しない</p>
+          <div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>cdk init app --language typescript</code></pre></div>
+          <p><code class="inline-code">All done!</code>と、<code class="inline-code">bin</code>・<code class="inline-code">lib</code>・<code class="inline-code">cdk.json</code>・<code class="inline-code">package.json</code>の生成を確認</p>
+          <table><thead><tr><th>ファイル</th><th>編集する内容</th></tr></thead><tbody><tr><td>lib/cdk-stack.ts</td><td>SQSなどのリソース定義</td></tr><tr><td>bin/cdk.ts</td><td>アプリの起動・スタックの識別名</td></tr><tr><td>cdk.json</td><td>CDKアプリの実行方法。初期化で生成される設定を使用</td></tr></tbody></table>
+          <h3>2. SQS・スタック名の定義</h3>
+          <p><code class="inline-code">lib/cdk-stack.ts</code>を次の内容にして保存。クラス名は<code class="inline-code">CdkStack</code>のまま使用</p>
+          <div class="code"><div class="code-header"><span>lib/cdk-stack.ts</span><button class="copy" type="button">Copy</button></div><pre><code>import * as cdk from "aws-cdk-lib";
+import * as sqs from "aws-cdk-lib/aws-sqs";
+import { Construct } from "constructs";
+
+export class CdkStack extends cdk.Stack {
+  constructor(scope: Construct, id: string, props?: cdk.StackProps) {
+    super(scope, id, props);
+
+    const queue = new sqs.Queue(this, "MyQueue", {
+      queueName: "test-queue-cdk",
+      maxMessageSizeBytes: 2048,
+    });
+
+    cdk.Tags.of(queue).add("Name", "test-queue-cdk");
+  }
+}</code></pre></div>
+          <p><code class="inline-code">bin/cdk.ts</code>では、既存の<code class="inline-code">new CdkStack</code>の第2引数を<code class="inline-code">test-sqs-cdk</code>へ変更して保存。最小構成は次のとおり。既存の環境設定がある場合は保持</p>
+          <div class="code"><div class="code-header"><span>bin/cdk.ts</span><button class="copy" type="button">Copy</button></div><pre><code>#!/usr/bin/env node
+import * as cdk from "aws-cdk-lib/core";
+import { CdkStack } from "../lib/cdk-stack";
+
+const app = new cdk.App();
+new CdkStack(app, "test-sqs-cdk", {});</code></pre></div>
+          <p>クラス名は<code class="inline-code">CdkStack</code>、CDKの識別名・今回のAWSスタック名は<code class="inline-code">test-sqs-cdk</code>、キュー名は<code class="inline-code">test-queue-cdk</code></p>
+          <h3>3. テンプレート・対象名の確認</h3>
+          <p>① CDKが認識するスタック名を確認。<code class="inline-code">test-sqs-cdk</code>と表示されなければ、bin/cdk.tsの変更・保存を確認して中止</p>
+          <div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>cdk list --profile iac-admin</code></pre></div>
+          <p>② CloudFormationテンプレートへ変換。出力に<code class="inline-code">AWS::SQS::Queue</code>と<code class="inline-code">test-queue-cdk</code>があることを確認。synthだけではデプロイされない</p>
+          <div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>cdk synth --profile iac-admin</code></pre></div>
+          <p>③ 東京リージョンの既存ブートストラップを確認。今回の環境はCDKToolkitが作成済みのため、再作成せず使用。別の業務環境で存在しない場合は、管理者の方針に従って別途準備</p>
+          <div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>aws cloudformation describe-stacks --stack-name CDKToolkit --query "Stacks[0].StackStatus" --output text --profile iac-admin --region ap-northeast-1</code></pre></div>
+          <p>④ 変更内容を確認。意図しない変更・削除があればデプロイを中止</p>
+          <div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>cdk diff test-sqs-cdk --profile iac-admin</code></pre></div>
+          <h3>4. デプロイ・結果確認</h3>
+          <div class="callout callout-warning"><strong>⚠️ スタック名の変更</strong><p>デプロイ済みのスタックの識別名を変更すると別スタックとして扱われる。旧スタックに同名キューが残っている場合は衝突するため、そのままデプロイしない</p></div>
+          <p>① 対象スタックを指定してデプロイ。イベントをターミナルへ表示し、承認確認が表示された場合は内容を確認して回答</p>
+          <div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>cdk deploy test-sqs-cdk --profile iac-admin --progress events</code></pre></div>
+          <p>② 作成後の状態を確認。初回デプロイでは<code class="inline-code">CREATE_COMPLETE</code>を確認</p>
+          <div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>aws cloudformation describe-stacks --stack-name test-sqs-cdk --query "Stacks[0].StackStatus" --output text --profile iac-admin --region ap-northeast-1</code></pre></div>
+          <p>③ AWSコンソールの<code class="ui-value">CloudFormation</code>で<code class="inline-code">test-sqs-cdk</code>を検索し、作成完了を確認</p>
+          <figure><img src="../assets/img/iac-cdk-created.png" alt="test-sqs-cdkスタックのCREATE_COMPLETE" loading="lazy"><figcaption>CDKによるCloudFormationスタックの作成結果</figcaption></figure>
+          <h3>5. エラーと対処</h3>
+          <table><thead><tr><th>表示・症状</th><th>原因・対処</th></tr></thead><tbody><tr><td>cdk init cannot be run in a non-empty directory</td><td>手動作成したtest-sqs-cdk.tsが存在。必要な内容を退避し、空フォルダーで初期化</td></tr><tr><td>--app is required</td><td>初期化が失敗しcdk.jsonがない、または実行場所が違う。cdk.jsonのあるプロジェクト直下で実行</td></tr><tr><td>maxMessageSizeBites does not exist</td><td>実習環境の正しいプロパティはmaxMessageSizeBytes。BitesではなくBytes</td></tr><tr><td>No stacks match the name(s) test-sqs-cdk</td><td>bin/cdk.tsの第2引数がCdkStackのまま。保存後、cdk listで確認</td></tr><tr><td>クラス名をtest-sqs-cdkに変更してエラー</td><td>TypeScriptのクラス名にハイフンは使用不可。クラス名とスタック識別名を分ける</td></tr><tr><td>npmのallow-scripts警告</td><td>初期化完了とsynthの成功を確認。必要性を調べずにインストールスクリプトを一括許可しない</td></tr></tbody></table>
+        </section>
+      </div>
+    </main>
+    <aside class="toc" aria-label="Table of contents"><h2>ページ内</h2><a href="#terminal">実行場所・接続先の確認</a><a href="#deploy">デプロイ方法</a></aside>
+  </div>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

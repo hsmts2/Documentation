@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VS Codeの設定 | Documentation</title>
+  <meta name="description" content="IaC学習に使用したVS Code拡張機能、保存時の自動整形、統合ターミナル、AWS・GitHub・HCPの接続設定">
+  <link rel="stylesheet" href="../assets/styles.css?v=20260914-migration-card">
+</head>
+<body>
+  <header class="site-header"><a class="brand" href="../"><img src="../assets/icon.jpg" alt="Documentation icon"><span>Documentation</span></a><div class="header-actions"><button class="icon-button theme-toggle" type="button" title="テーマを切り替え" aria-label="テーマを切り替え">☀</button><nav class="nav" aria-label="Global navigation"><a href="https://github.com/hsmts2/Documentation">GitHub</a></nav></div></header>
+  <div class="layout">
+    <aside id="site-sidebar" class="sidebar" aria-label="Page list">
+      <div class="sidebar-heading">
+        <button class="icon-button sidebar-toggle sidebar-toggle-inline" type="button" aria-controls="site-sidebar" aria-expanded="true" title="ナビゲーションを閉じる" aria-label="ナビゲーションを閉じる">☰</button>
+      </div>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">✎</span>記事</p>
+      <a href="cloudflare-private-site.html">Private GitHubリポジトリをCloudflare Workersで認証付き公開してみた</a>
+      <a href="aws-daily-cost-slack.html">AWS利用料を毎朝3時にSlackへ通知してみた</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">☁︎</span>[PoC] マルチVPC・閉域VDI基盤案件</p>
+          <a href="workspaces-skill-transfer.html">全体構築・運用順序</a>
+          <a href="workspaces-managed-ad.html">Managed Microsoft ADの構築</a>
+          <a href="workspaces-managed-ad-users.html">Managed Microsoft ADのユーザー・グループ管理</a>
+          <a href="workspaces-management-ec2.html">管理用EC2の起動・接続・AD管理</a>
+          <a href="workspaces-ad-connector-account.html">AD Connector用サービスアカウント・権限委任</a>
+          <a href="workspaces-ad-connector.html">AD ConnectorのVPCピアリング・SG設定・作成</a>
+          <a href="workspaces-provisioning-gpo.html">WorkSpaces Personalの構築・接続</a>
+          <a href="workspaces-target-ou.html">WorkSpaces用ターゲットOUの作成・権限委任</a>
+          <a href="workspaces-gpo.html">WorkSpaces用GPOの作成・適用・運用</a>
+          <a href="workspaces-image-bundle.html">WorkSpacesカスタムイメージ作成・共有</a>
+          <a href="workspaces-systems-manager.html">Systems Manager環境構築</a>
+          <a href="workspaces-patch-manager.html">Patch Managerの設定</a>
+          <a href="workspaces-patch-operations.html">Patch Managerの実行・結果確認・運用</a>
+          <a href="workspaces-cost-optimizer.html">Cost Optimizerの構築・設定</a>
+          <a href="workspaces-cost-optimizer-dry-run.html">Cost OptimizerのDry Run解除</a>
+          <a href="workspaces-cost-optimizer-schedule.html">Cost Optimizerの実行スケジュール設定・変更</a>
+          <a href="workspaces-cost-optimizer-reports.html">Cost Optimizerのレポート・監視</a>
+          <a href="workspaces-cloudwatch-monitoring.html">CloudWatchのEC2・Windows OS監視とSNS通知</a>
+          <a href="workspaces-cloudwatch-workspaces.html">CloudWatchのWorkSpaces監視</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">⑂</span>Git / GitHub</p>
+      <a href="git-github.html">Git 概要</a>
+      <a href="git-remote.html">Gitリモート操作</a>
+      <a href="github-pages.html">GitHub Pages</a>
+      <a href="github-pull-request.html">GitHubのPull Requestとレビュー</a>
+      <a href="git-utilities.html">Gitトラブルシューティング</a>
+      <a href="github-ssh.html">GitHub認証</a>
+      <a href="github-slack-integration.html">GitHubとSlackの連携・通知設定</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">◈</span>Terraform</p>
+      <a href="terraform.html">Terraform 概要</a>
+      <a href="hcp-terraform.html">HCP Terraform（Terraform Cloud）</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">◈</span>IaC</p>
+      <a href="iac.html">IaC</a>
+      <a href="iam-identity-center.html">IAM Identity Center</a>
+      <a class="active" aria-current="page" href="iac-vscode.html">VS Codeの設定</a>
+      <a href="iac-deploy.html">IaCによるリソースのデプロイ</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">☁︎</span>AWS</p>
+      <a href="cloudformation.html">CloudFormation 運用手順集</a>
+      <a href="aws-cli.html">AWS CLI 特殊対応</a>
+      <a href="aws-cli-reference.html">AWS CLI コマンドリファレンス</a>
+      <a href="eventbridge-scheduler.html">EventBridge Scheduler</a>
+      <a href="aws-directory-service.html">AWS Directory Service 運用手順</a>
+      <a href="amazon-workspaces.html">Amazon WorkSpaces</a>
+      <a href="amazon-ses.html">Amazon SES SMTPリレー</a>
+      <a href="amazon-ses-monitoring.html">Amazon SES 配信監視</a>
+      <a href="amazon-rds-blue-green.html">Amazon RDS Blue/Green Deployments</a>
+      <a href="apache-acm-certificate-update.html">証明書更新（ACMエクスポート）</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">⚙︎</span>OS／ミドルウェア</p>
+      <a href="rhel9.html">Red Hat Enterprise Linux 9</a>
+      <a href="rhel10.html">Red Hat Enterprise Linux 10</a>
+      <a href="amazon-linux-2023.html">Amazon Linux 2023</a>
+      <a href="windows-server-2022.html">Windows Server 2022</a>
+      <a href="windows-server-2025.html">Windows Server 2025</a>
+      <a href="windows-server-2016-upgrade.html">Windows Server 2016 インプレースアップグレード</a>
+      <a href="storage.html">ストレージ管理</a>
+      <a href="apache.html">Apache</a>
+      <a href="apache-self-signed-ssl-termination.html">Apache SSL終端（自己署名証明書）</a>
+      <a href="redis.html">Redis（KVS）</a>
+      <a href="nfs.html">NFS</a>
+      <a href="samba.html">Samba</a>
+      <a href="mariadb.html">MariaDB</a>
+      <a href="postgresql.html">PostgreSQL</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">▤</span>リファレンス</p>
+      <a href="../writing-style-guide.html">[GitHub Pages] 記法・テンプレート</a>
+      <a href="troubleshooting.html">障害切り分けチェックリスト</a>
+      <a href="eol.html">EOL / ライフサイクル一覧表</a>
+    </aside>
+    <main class="content">
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="../"><span class="nav-icon" aria-hidden="true">⌂</span>Home</a>
+        <span>トピック</span>
+      </nav>
+      <h1>VS Codeの設定</h1>
+      <h2 id="extensions">拡張機能のインストール</h2>
+      <p>今回のPCで導入を確認した拡張機能から、IaC・Git操作に使用するものを選定。業務PCでは組織の許可範囲で導入し、AI機能や個人アカウントとの同期は社内ルールを確認</p>
+      <table><thead><tr><th>No.</th><th>拡張機能</th><th>用途</th><th>導入区分</th></tr></thead><tbody>
+        <tr><td>1</td><td>HashiCorp Terraform</td><td>Terraformの入力補完・構文診断・整形</td><td>Terraformで使用</td></tr>
+        <tr><td>2</td><td>YAML（Red Hat）</td><td>YAMLの編集・整形</td><td>CloudFormationで使用</td></tr>
+        <tr><td>3</td><td>Prettier</td><td>TypeScriptなどの自動整形</td><td>CDKで使用</td></tr>
+        <tr><td>4</td><td>AWS Toolkit</td><td>AWSプロファイル接続・リソース確認</td><td>AWS操作で使用</td></tr>
+        <tr><td>5</td><td>GitHub Pull Requests</td><td>GitHubのPR・レビュー操作</td><td>GitHubを使う場合</td></tr>
+        <tr><td>6</td><td>GitHub Actions</td><td>ワークフローの編集・実行状況確認</td><td>CI/CDを使う場合</td></tr>
+        <tr><td>7</td><td>Japanese Language Pack</td><td>VS Codeの日本語表示</td><td>任意</td></tr>
+        <tr><td>8</td><td>Live Preview</td><td>HTML手順書をローカル表示</td><td>既存導入済み・HTML編集時に便利</td></tr>
+        <tr><td>9</td><td>Codex</td><td>コードの相談・修正支援</td><td>任意・業務利用の承認後</td></tr>
+      </tbody></table>
+      <p>① <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>X</kbd>で拡張機能を開き、下記IDで検索して<code class="ui-value">インストール</code>ボタンを押下。コマンドで導入する場合は、VS Codeの統合ターミナルで必要な行のみ実行</p>
+      <div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>code --install-extension hashicorp.terraform
+code --install-extension redhat.vscode-yaml
+code --install-extension esbenp.prettier-vscode
+code --install-extension amazonwebservices.aws-toolkit-vscode
+code --install-extension github.vscode-pull-request-github
+code --install-extension github.vscode-github-actions
+code --install-extension ms-ceintl.vscode-language-pack-ja</code></pre></div>
+      <p>② HTML編集・AI支援が必要な場合のみ、任意の拡張機能を導入</p>
+      <div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>code --install-extension ms-vscode.live-server
+code --install-extension openai.chatgpt</code></pre></div>
+      <p>③ 導入結果を確認。Amazon Qは今回の導入確認一覧には含めず、上記編集機能の利用に必須としない</p>
+      <div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>code --list-extensions --show-versions</code></pre></div>
+      <h2 id="format">自動整形の設定</h2>
+      <p>① <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>P</kbd>を押し、<code class="ui-value">Preferences: Open User Settings (JSON)</code>を選択</p>
+      <p>② 既存の設定を消さず、次の項目を統合して保存。同じ言語の設定がある場合は重複作成せず、その中の項目を変更。以下は実際のPCで確認した整形設定</p>
+      <div class="code"><div class="code-header"><span>settings.json（整形部分）</span><button class="copy" type="button">Copy</button></div><pre><code>{
+  "[terraform]": {
+    "editor.defaultFormatter": "hashicorp.terraform",
+    "editor.formatOnSave": true
+  },
+  "[terraform-vars]": {
+    "editor.defaultFormatter": "hashicorp.terraform",
+    "editor.formatOnSave": true
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true
+  },
+  "[yaml]": {
+    "editor.defaultFormatter": "redhat.vscode-yaml"
+  }
+}</code></pre></div>
+      <p>③ Terraform・TypeScriptは<kbd>Ctrl</kbd> + <kbd>S</kbd>で保存時に整形。YAMLは<kbd>Shift</kbd> + <kbd>Alt</kbd> + <kbd>F</kbd>で手動整形し、選択画面が出た場合は<code class="ui-value">YAML</code>を選択</p>
+      <p>④ YAMLも保存時に整形したい場合は、上記の<code class="inline-code">[yaml]</code>を次に変更（任意の追加設定）</p>
+      <div class="code"><div class="code-header"><span>settings.jsonの[yaml]部分</span><button class="copy" type="button">Copy</button></div><pre><code>"[yaml]": {
+  "editor.defaultFormatter": "redhat.vscode-yaml",
+  "editor.formatOnSave": true
+}</code></pre></div>
+      <p>整形は空白・字下げなどの統一。YAMLの誤った親子関係や、意図しないAWS設定値を自動修正するものではない。変更後は各ツールの検証を実行</p>
+      <h2 id="terminal">統合ターミナルの使用</h2>
+      <p>① <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>`</kbd>で新しいターミナルを開く。画面下部が<code class="ui-value">PowerShell</code>であることを確認。別ウィンドウのPowerShellやGit Bashは不要</p>
+      <p>② 実行するプロジェクトへ移動して現在位置を確認。開いている.tsや.tfファイルの場所へ自動で移動するわけではない</p>
+      <div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>cd C:\Users\hsmts\IaC\CDK
+pwd
+Get-ChildItem -Force</code></pre></div>
+      <p>③ ファイルを保存してからコマンドを入力。結果は同じターミナルに表示される。コマンドパレット実行の結果が見つからない場合も、この方法で確認</p>
+      <table><thead><tr><th>操作</th><th>ショートカット・注意点</th></tr></thead><tbody><tr><td>保存</td><td>Ctrl + S</td></tr><tr><td>候補の表示</td><td>Ctrl + Space</td></tr><tr><td>ドキュメントの整形</td><td>Shift + Alt + F</td></tr><tr><td>エラー・警告を確認</td><td>Ctrl + Shift + M</td></tr><tr><td>隠しファイルも表示</td><td>PowerShellではls -Force。ls -laは使用しない</td></tr></tbody></table>
+      <h2 id="accounts">拡張機能の接続</h2>
+      <table><thead><tr><th>対象</th><th>操作</th></tr></thead><tbody>
+        <tr><td>Terraform・YAML・Prettier</td><td>編集・整形の利用にログインは不要</td></tr>
+        <tr><td>AWS Toolkit</td><td>AWSビューから接続を選択し、SSOプロファイルiac-adminで接続。ターミナル側も--profileまたはAWS_PROFILEで指定</td></tr>
+        <tr><td>GitHub</td><td>PRなどを使う際にGitHubへサインイン。Microsoftの設定同期アカウントとは別の用途</td></tr>
+        <tr><td>HCP Terraform</td><td>HCP TerraformビューのLogin to HCP Terraformを押下し、APIトークンで接続後にOrganizationを選択。ブラウザログインだけでは拡張機能の接続は完了しない</td></tr>
+        <tr><td>Codex</td><td>Codexビューで利用するアカウントへサインイン。VS CodeのGitHub・Microsoftサインインとは別</td></tr>
+      </tbody></table>
+      <p>APIトークンは拡張機能の指定する入力欄へ登録し、settings.jsonやコードへ書き込まない。ローカルTerraformからAWSを操作する学習では、HCP Terraformへの接続は必須ではない</p>
+      <p><a href="iac-deploy.html">IaCによるリソースのデプロイへ進む</a></p>
+    </main>
+    <aside class="toc" aria-label="Table of contents"><h2>ページ内</h2><a href="#extensions">拡張機能のインストール</a><a href="#format">自動整形の設定</a><a href="#terminal">統合ターミナルの使用</a><a href="#accounts">拡張機能の接続</a></aside>
+  </div>
+  <script src="../assets/app.js"></script>
+</body>
+</html>
