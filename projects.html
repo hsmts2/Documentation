@@ -6,7 +6,7 @@
   <meta name="description" content="現職でのAWS基盤の設計・構築実績。個別案件、専属顧客の主担当としての構築・運用、社内のドキュメント・ナレッジ整備を掲載。">
   <title>現職での実績 | Documentation</title>
   <link rel="stylesheet" href="assets/styles.css?v=20260914-migration-card">
-  <link rel="stylesheet" href="assets/projects.css?v=20260924-refined-summary">
+  <link rel="stylesheet" href="assets/projects.css?v=20260924-bordered-cost-story">
 </head>
 <body data-user-value-highlighting="off">
   <header class="site-header case-site-header">
@@ -138,11 +138,23 @@
       </article>
       <article class="case-entry" id="cost-optimization">
         <h3>3.4 WorkSpacesの運用コスト最適化</h3>
-        <div class="case-split">
-          <figure class="case-diagram">
+        <p>Amazon WorkSpacesには、月額固定の課金と、月額の基本料金に利用時間分の料金を加える時間課金の2種類があります。AWSが提供するCost Optimizer for Amazon WorkSpacesは、利用状況を分析し、利用時間と設定した閾値に応じて課金モードを自動で切り替えるソリューションです。</p>
+        <p>約50台のWorkSpacesについて、利用状況を確認しながら1台ずつ課金形態を管理する負担を軽減するため、Cost Optimizerを導入しました。</p>
+        <p class="case-note">出典：<a href="https://docs.aws.amazon.com/solutions/latest/cost-optimizer-for-workspaces/overview.html" target="_blank" rel="noopener noreferrer">Cost Optimizer for Amazon WorkSpaces（AWS公式）</a><br>出典：<a href="https://aws.amazon.com/workspaces-family/workspaces/faqs/" target="_blank" rel="noopener noreferrer">WorkSpacesの課金に関するFAQ（AWS公式）</a></p>
+          <figure class="case-diagram case-cost-diagram">
             <a href="assets/career-architectures/architecture-workspaces-cost-optimizer-approved.png" title="構成図を原寸で開く"><img src="assets/career-architectures/architecture-workspaces-cost-optimizer-approved.png" width="1586" height="992" alt="WorkSpacesコスト最適化基盤。AWS Cloud内のVPC、サブネット、NAT Gateway、Fargate、Gateway EndpointとVPC外のAWSサービスを示す構成図。" loading="lazy"></a>
           </figure>
-          <div class="case-description">
+        <p>課金モードの自動切り替えに加え、自動停止までの時間を短縮し、利用状況に合わせてコンピューティングタイプを見直しました。課金切替閾値についても当時の料金条件をもとに見直し案を作成し、CloudWatchダッシュボードで稼働状況と課金モードを確認しました。</p>
+        <p>これらの取り組み後、月額利用料金は2025年12月の11,417.72 USDから2026年2月の4,577.39 USDへ減少しました。</p>
+        <table class="case-table case-cost-trend">
+          <caption>WorkSpacesの月額利用料金の推移</caption>
+          <thead><tr><th scope="col">利用月</th><th scope="col">料金（USD）</th><th scope="col">前月比</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">2025年12月</th><td>11,417.72</td><td>比較基準</td></tr>
+            <tr><th scope="row">2026年1月</th><td>8,976.10</td><td>21.4％減</td></tr>
+            <tr><th scope="row">2026年2月</th><td><strong>4,577.39</strong></td><td><strong>49.0％減</strong></td></tr>
+          </tbody>
+        </table>
             <table class="case-table case-outcome-table">
               <caption>コスト最適化の実績</caption>
               <thead><tr><th scope="col">項目</th><th scope="col">実績</th></tr></thead>
@@ -154,8 +166,6 @@
                 <tr><th scope="row">評価対象</th><td>Cost Optimizer・コンピューティングタイプ・自動停止時間の見直しを含む、複数施策後の月額比較</td></tr>
               </tbody>
             </table>
-          </div>
-        </div>
         <details class="case-details">
           <summary>課金切替閾値の見直し案と対象台数（2026年1月）</summary>
           <table class="case-table">

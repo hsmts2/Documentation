@@ -29,18 +29,18 @@
 .case-diagram a { display: block; }
 .case-diagram img { display: block; width: 100%; height: auto; background: #fff; border: 0; border-radius: 0; }
 .case-diagram figcaption { margin-top: 8px; font-size: 13px; line-height: 1.6; color: var(--muted); }
-.case-table { margin: 12px 0; width: 100%; font-size: 14px; font-variant-numeric: tabular-nums; }
+.case-table { margin: 16px 0; width: 100%; border-collapse: collapse; border: 1px solid #8c959f; font-size: 14px; font-variant-numeric: tabular-nums; }
 .case-table caption { text-align: left; font-weight: 600; padding-bottom: 8px; }
-.case-table th, .case-table td { padding: 8px; border: 0; }
+.case-table th, .case-table td { padding: 10px 14px; border: 1px solid #8c959f; vertical-align: top; }
 .case-table td { text-align: right; white-space: nowrap; }
 .case-table th { text-align: left; }
 .case-table tbody th { background: transparent; }
 .case-table tbody tr:nth-child(even) { background: var(--panel-soft); }
-.case-summary-table { table-layout: fixed; }
+.case-summary-table { table-layout: fixed; max-width: 1000px; }
 .case-summary-table th[scope="col"]:last-child { width: 18%; }
 .case-summary-table tr, .case-summary-table th, .case-summary-table td, .case-summary-table tbody th,
 .case-summary-table tbody tr:nth-child(even) { background: var(--bg); }
-.case-summary-table tbody + tbody { border-top: 2px solid #000; }
+.case-summary-table tbody + tbody { border-top: 2px solid #57606a; }
 html[data-theme="dark"] .case-summary-table tbody + tbody { border-color: #b9c1ca; }
 .case-summary-table th[scope="row"] { font-weight: 400; }
 .case-summary-table .case-total th[scope="row"] { font-weight: 700; }
@@ -48,6 +48,11 @@ html[data-theme="dark"] .case-summary-table tbody + tbody { border-color: #b9c1c
 .case-outcome-table { table-layout: fixed; }
 .case-outcome-table th[scope="col"]:first-child { width: 38%; }
 .case-outcome-table td { text-align: left; white-space: normal; overflow-wrap: anywhere; line-height: 1.7; }
+#cost-optimization { max-width: 1100px; }
+.case-cost-diagram { max-width: 960px; margin: 20px 0; }
+.case-cost-trend { table-layout: fixed; }
+.case-cost-trend th[scope="col"]:first-child { width: 38%; }
+.case-cost-trend th, .case-cost-trend td { overflow-wrap: anywhere; white-space: normal; }
 .case-details { padding: 10px 0; margin-top: 14px; }
 .case-details summary { cursor: pointer; font-weight: 600; line-height: 1.6; }
 .case-details .case-table { max-width: 760px; }
