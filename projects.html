@@ -74,10 +74,10 @@
         <h3>2.2 業務Webシステムの新規基盤構築</h3>
         <div class="case-split">
           <figure class="case-diagram">
-            <a href="assets/career-architectures/architecture-business-web-production-staging.png" title="構成図を原寸で開く"><img src="assets/career-architectures/architecture-business-web-production-staging.png" width="2400" height="1430" alt="業務Webシステムの本番・検証構成。本番EC2は2AZに冗長配置し、RHEL 9とRDS for MySQLを使用。ELBログはS3、VPC Flow LogsはCloudWatch Logsへ保管し、EC2とRDSをAWS Backupで保護。" loading="lazy"></a>
+            <a href="assets/career-architectures/architecture-business-web-production-staging.png" title="構成図を原寸で開く"><img src="assets/career-architectures/architecture-business-web-production-staging.png" width="2400" height="1430" alt="業務Webシステムの本番・検証を別VPC・別Internet Gatewayで構成。本番EC2は2AZに冗長配置し、RDS for MySQLはMulti-AZ構成。ELBログはS3、VPC Flow LogsはCloudWatch Logsへ保管し、EC2とRDSをAWS Backupで保護。" loading="lazy"></a>
           </figure>
           <div class="case-description">
-            <p class="case-lead">業務Webシステムの本番・検証環境を新規構築。本番のWebサーバーは2つのAZに分散して配置しました。</p>
+            <p class="case-lead">業務Webシステムの本番・検証環境を別VPCに新規構築。本番のWebサーバーは2つのAZに分散して配置し、RDSはMulti-AZ構成としました。</p>
             <dl class="case-facts">
               <dt>基盤構成</dt><dd>VPC、ALB、EC2、RDS、Route 53、ACM、Amazon SES</dd>
               <dt>OS・DB</dt><dd>Red Hat Enterprise Linux 9、Amazon RDS for MySQL</dd>
