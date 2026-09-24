@@ -39,6 +39,7 @@ html[data-theme="dark"] .case-table { --case-table-line: #62666b; --case-table-f
 .case-table th { text-align: left; }
 .case-table tr, .case-table th, .case-table td, .case-table tbody tr:nth-child(even) { background: var(--case-table-fill); }
 .case-table thead th { background: var(--case-table-heading); color: var(--case-table-heading-text); text-align: center; vertical-align: middle; }
+.case-summary-table, .case-service-table { max-width: 760px; }
 .case-summary-table { table-layout: fixed; }
 .case-summary-table th[scope="col"]:first-child { width: 20%; }
 .case-summary-table th[scope="col"]:last-child { width: 18%; }
@@ -49,6 +50,7 @@ html[data-theme="dark"] .case-table { --case-table-line: #62666b; --case-table-f
 .case-cost-diagram, .case-cost-trend { max-width: 960px; }
 .case-cost-diagram { margin: 20px 0; }
 .case-cost-trend { table-layout: fixed; }
+.case-cost-trend caption, .case-cost-trend th { font-weight: 400; }
 .case-cost-trend th[scope="col"]:first-child { width: 25%; }
 .case-cost-trend th, .case-cost-trend td { overflow-wrap: anywhere; white-space: normal; }
 .case-document-table { table-layout: fixed; }
@@ -65,12 +67,9 @@ html[data-theme="dark"] .case-table { --case-table-line: #62666b; --case-table-f
 .case-work-table th, .case-work-table td { overflow-wrap: break-word; word-break: normal; line-break: strict; text-wrap: pretty; white-space: normal; line-height: 1.7; }
 .case-work-table td { text-align: left; }
 .case-service-table { table-layout: fixed; }
-.case-service-table th[scope="col"]:first-child { width: 24%; }
+.case-service-table th[scope="col"]:first-child { width: 30%; }
 .case-service-table th, .case-service-table td { white-space: normal; overflow-wrap: break-word; word-break: normal; line-break: strict; line-height: 1.7; }
 .case-service-table td { text-align: left; }
-.case-checks { display: flex; flex-wrap: wrap; gap: 4px 24px; list-style: none; margin: 0; padding: 0; }
-.case-checks li { position: relative; box-sizing: border-box; max-width: 100%; margin: 0; padding-left: 18px; text-wrap: pretty; }
-.case-checks li::before { content: "✓"; position: absolute; left: 0; color: var(--case-table-heading-text); }
 @media (max-width: 1000px) {
   .case-portfolio { width: calc(100% - 40px); }
   .case-split { grid-template-columns: minmax(0, 1fr); gap: 18px; }
