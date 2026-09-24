@@ -58,6 +58,11 @@ html[data-theme="dark"] .case-table { --case-table-line: #62666b; --case-table-f
 .case-document-table td { text-align: left; }
 .case-document-table tbody th { font-weight: 400; }
 .case-document-table td:first-child { text-align: center; }
+.case-work-table { table-layout: fixed; }
+.case-work-table th[scope="col"]:first-child { width: 20%; }
+.case-work-table th[scope="col"]:nth-child(2) { width: 28%; }
+.case-work-table th, .case-work-table td { overflow-wrap: break-word; word-break: normal; line-break: strict; text-wrap: pretty; white-space: normal; line-height: 1.7; }
+.case-work-table td { text-align: left; }
 @media (max-width: 1000px) {
   .case-portfolio { width: calc(100% - 40px); }
   .case-split { grid-template-columns: minmax(0, 1fr); gap: 18px; }
