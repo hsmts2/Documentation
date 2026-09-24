@@ -6,7 +6,7 @@
   <meta name="description" content="現職でのAWS基盤の設計・構築、運用・テクニカルサポートの実績。個別案件、専任案件の構築・運用改善、ドキュメント整備を掲載。">
   <title>現職での実績 | Documentation</title>
   <link rel="stylesheet" href="assets/styles.css?v=20260914-migration-card">
-  <link rel="stylesheet" href="assets/projects.css?v=20260924-operations">
+  <link rel="stylesheet" href="assets/projects.css?v=20260924-vdi-support">
 </head>
 <body data-user-value-highlighting="off">
   <header class="site-header case-site-header">
@@ -53,18 +53,37 @@
     <section class="case-section" id="operations" aria-labelledby="operations-title">
       <h2 id="operations-title">2. 運用作業・<span class="case-term">テクニカルサポート</span></h2>
       <p>本番・検証環境の更新、セキュリティ対応、監視設定など、AWS基盤の継続運用を担当。作業手順書の作成・整備と実作業に加え、お客様からの問い合わせ対応、AWSサポートとの連携、サービスの上限緩和申請に対応</p>
-      <table class="case-table case-work-table">
-        <thead><tr><th scope="col">領域</th><th scope="col">技術・<span class="case-term">サービス</span></th><th scope="col">主な対応内容</th></tr></thead>
+      <table class="case-table case-service-table">
+        <thead><tr><th scope="col">サービス</th><th scope="col">対応した作業</th></tr></thead>
         <tbody>
-          <tr><th scope="row">DBエンジンの更新</th><td>Amazon RDS for MySQL／PostgreSQL／MariaDB</td><td>MySQL・PostgreSQLのメジャーバージョンアップと、PostgreSQL・MariaDBのマイナー更新に対応。更新前のスナップショット取得やパラメータ確認、切り戻しを考慮した手順を整備</td></tr>
-          <tr><th scope="row">DBリソースの変更</th><td>Amazon RDS、Amazon Aurora</td><td>RDSのインスタンスタイプ変更、Auroraのインスタンスクラス変更に対応。変更前後の確認と切り戻し手順を整理</td></tr>
-          <tr><th scope="row">OS・ミドルウェアの保守</th><td>Amazon EC2、Linux、Apache、Amazon ElastiCache</td><td>Linuxカーネルの更新、Apacheの脆弱性対応・設定変更、CentOSの延長サポート対応、ElastiCacheのセキュリティアップデートを実施</td></tr>
-          <tr><th scope="row">証明書の更新</th><td>Amazon EC2、Elastic Load Balancing、Amazon CloudFront</td><td>Webサーバー・ロードバランサー・CDNのSSL/TLS証明書を更新。有効期限の確認と、切り戻しを含む更新手順を整備</td></tr>
-          <tr><th scope="row">スケール用イメージの更新</th><td>Amazon EC2、AMI、起動テンプレート</td><td>オートスケール用AMIを更新し、起動テンプレートへ反映</td></tr>
-          <tr><th scope="row">監視・管理エージェント</th><td>Amazon CloudWatch、Amazon S3、Zabbix、Amazon SNS、AWS Systems Manager</td><td>S3バケットのメトリクス監視・アラーム設定、Zabbixの監視・通知先変更、SNSトピック作成に対応。CloudWatch Agentの更新とSSM Agentの導入を実施</td></tr>
-          <tr><th scope="row">アクセス制御・保護</th><td>AWS IAM、Security Group、AWS WAF、Deep Security</td><td>IAMポリシーとセキュリティグループの変更、接続元IPの追加・修正、WAFの禁止IP追加に対応。Deep Securityの導入を実施</td></tr>
-          <tr><th scope="row">DNS・メール関連</th><td>Amazon Route 53、DNS、SPF</td><td>DNSレコードの作成・変更、SPFレコードの編集、逆引きDNSの更新に対応</td></tr>
-          <tr><th scope="row">旧環境の撤去</th><td>Amazon EC2、Amazon RDS、AMI、スナップショット、監視設定</td><td>解約・移行に伴う旧環境の削除と、関連するバックアップ・監視設定の整理に対応。削除対象を確認し、作業手順書に沿って撤去</td></tr>
+          <tr><th scope="row">AWS IAM</th><td><ul class="case-checks"><li>ユーザー・ポリシー・アクセスキーの作成</li><li>アクセス不可の原因調査・個別の権限設定</li><li>S3アクセス権限・接続元IP制限の設定</li><li>IAMアクセスキーの更新・削除</li><li>ルートユーザーのアクセスキー削除</li><li>お客様へのMFA設定手順の案内</li></ul></td></tr>
+          <tr><th scope="row">AWS Security Hub</th><td><ul class="case-checks"><li>検出に関する設定</li><li>検出内容に関するお客様からの問い合わせへの回答</li><li>Jiraでお客様への確認を経て検出結果の非表示対応</li></ul></td></tr>
+          <tr><th scope="row">Amazon GuardDuty</th><td><ul class="case-checks"><li>有効化・検出内容の調査</li><li>お客様への説明・検出内容への対応</li><li>検出結果の抑制対応</li></ul></td></tr>
+          <tr><th scope="row">AWS CloudTrail</th><td><ul class="case-checks"><li>操作履歴から設定変更の日時・操作主体を調査</li><li>原因調査・お客様への回答</li><li>AWS Configの変更履歴と照合して追跡</li></ul></td></tr>
+          <tr><th scope="row">AWS Config</th><td><ul class="case-checks"><li>リソースの構成・変更履歴を調査</li><li>CloudTrailと組み合わせた設定変更の追跡</li></ul></td></tr>
+          <tr><th scope="row">AWS Compute Optimizer</th><td><ul class="case-checks"><li>サービスの有効化・EC2の推奨事項の確認</li><li>推奨内容を踏まえたEC2インスタンスタイプの変更</li></ul></td></tr>
+          <tr><th scope="row">AWS Trusted Advisor</th><td><ul class="case-checks"><li>コスト最適化の推奨事項を表示するための設定</li><li>設定前後の推奨事項の表示確認</li></ul></td></tr>
+          <tr><th scope="row">AWS Cost Optimization Hub</th><td><ul class="case-checks"><li>オプトインによる有効化</li><li>Trusted Advisorのチェックに必要な設定の確認</li></ul></td></tr>
+          <tr><th scope="row">Amazon RDS</th><td><ul class="case-checks"><li>MySQL・PostgreSQLのメジャー更新</li><li>PostgreSQL・MariaDBのマイナー更新</li><li>性能問題・接続エラーの調査</li><li>パラメータ・インスタンスタイプ変更</li><li>スナップショット取得・復元試験</li><li>Blue/Green Deploymentsを利用した更新対応</li><li>PostgreSQLのDBユーザー作成・権限設定</li><li>切り戻し手順の整備・旧環境の削除</li></ul></td></tr>
+          <tr><th scope="row">Amazon Aurora</th><td><ul class="case-checks"><li>インスタンスクラス変更・切り戻し手順の整備</li><li>ログ出力の停止・関連ロググループの削除</li></ul></td></tr>
+          <tr><th scope="row">Amazon EC2</th><td><ul class="case-checks"><li>Linuxカーネル更新・Apache脆弱性対応</li><li>CentOS延長サポート対応</li><li>オートスケール用AMI・起動テンプレート更新</li><li>WebサーバーのSSL/TLS証明書更新</li><li>逆引きDNS更新</li><li>旧環境・関連AMIの撤去</li></ul></td></tr>
+          <tr><th scope="row">Amazon EBS</th><td><ul class="case-checks"><li>ボリューム容量の拡張・タイプ変更</li><li>Linux・Windows双方でOS側の領域拡張</li></ul></td></tr>
+          <tr><th scope="row">Amazon S3</th><td><ul class="case-checks"><li>バケットポリシー・パブリックアクセス設定の変更</li><li>暗号化・ライフサイクル・バージョニング設定</li><li>イベント通知の設定</li><li>アクセスログを別バケットへ保存</li><li>Direct Connect・Interface Endpointを利用した閉域ファイル連携のAWS側設定</li></ul></td></tr>
+          <tr><th scope="row">AWS Backup</th><td><ul class="case-checks"><li>バックアップ設定・失敗時の調査</li><li>EC2・RDSの復元試験</li><li>大阪リージョンへのバックアップコピー設定</li><li>SNSによる通知設定・Jiraと連携した通知運用</li></ul></td></tr>
+          <tr><th scope="row">Amazon ElastiCache</th><td><ul class="case-checks"><li>検証・開発環境のセキュリティアップデート</li><li>切り戻し手順の整備</li></ul></td></tr>
+          <tr><th scope="row">Elastic Load Balancing</th><td><ul class="case-checks"><li>リスナー作成・ヘルスチェック設定</li><li>ヘルスチェック用ファイルの確認・作成</li><li>Basic認証とヘルスチェックを両立するWebサーバー側設定</li><li>タイムアウト設定・アクセスログの調査</li><li>SSL/TLS証明書更新・セキュリティグループ変更</li></ul></td></tr>
+          <tr><th scope="row">Amazon CloudFront</th><td><ul class="case-checks"><li>キャッシュ・ヘッダー設定の調査・変更</li><li>アクセスログの調査</li><li>SSL/TLS証明書更新・有効期限の確認</li><li>更新時の切り戻し手順の整備</li></ul></td></tr>
+          <tr><th scope="row">Amazon CloudWatch</th><td><ul class="case-checks"><li>S3バケットのメトリクス監視・アラーム設定</li><li>CloudWatch Agentの更新</li><li>不要なロググループ・監視設定の整理</li></ul></td></tr>
+          <tr><th scope="row">Amazon SNS</th><td><ul class="case-checks"><li>監視通知用トピックの作成</li><li>AWS Backupの通知設定・Jira連携による通知確認</li></ul></td></tr>
+          <tr><th scope="row">Amazon SES</th><td><ul class="case-checks"><li>配信・バウンス・苦情の通知設定</li><li>VDM設定・配信状況の確認</li><li>カスタム MAIL FROM・関連DNSレコードの設定</li><li>テストメール送信・From変更結果の確認</li><li>変更後の到達状況をお客様へ確認</li></ul></td></tr>
+          <tr><th scope="row">AWS Systems Manager</th><td><ul class="case-checks"><li>SSM Agentの導入</li><li>パッチ運用に伴うcron設定変更</li></ul></td></tr>
+          <tr><th scope="row">Amazon VPC</th><td><ul class="case-checks"><li>セキュリティグループの通信許可設定</li><li>接続元グローバルIPの追加・変更</li><li>S3 Interface Endpointの作成・アクセス制御設定</li></ul></td></tr>
+          <tr><th scope="row">AWS WAF</th><td><ul class="case-checks"><li>禁止IPの追加によるアクセス制御変更</li></ul></td></tr>
+          <tr><th scope="row">Amazon Route 53</th><td><ul class="case-checks"><li>DNSレコードの作成・変更</li><li>メール送信に関するSPFレコードの編集</li></ul></td></tr>
+          <tr><th scope="row">Amazon Lightsail</th><td><ul class="case-checks"><li>環境構築</li><li>個別のヘルスチェック設定</li></ul></td></tr>
+          <tr><th scope="row">AWSサポート</th><td><ul class="case-checks"><li>問い合わせ連携・サービスの上限緩和申請</li></ul></td></tr>
+          <tr><th scope="row">Zabbix</th><td><ul class="case-checks"><li>監視設定の導入・変更</li><li>通知先変更・旧環境の監視削除</li></ul></td></tr>
+          <tr><th scope="row">Deep Security</th><td><ul class="case-checks"><li>EC2への導入・設定</li></ul></td></tr>
         </tbody>
       </table>
     </section>
@@ -88,7 +107,6 @@
               <dt>OS</dt><dd><span class="case-term">Amazon Linux 2023</span>、<span class="case-term">Windows Server 2022</span></dd>
               <dt>監視</dt><dd><span class="case-term">CloudWatch Agent</span>、<span class="case-term">Zabbix Agent2</span></dd>
             </dl>
-            <p class="case-note">類似構成の申請システムでの担当実績を集約</p>
           </div>
         </div>
       </article>
@@ -108,7 +126,7 @@
               <dt>バックアップ</dt><dd>AWS BackupでEC2・RDSを対象としたバックアップを設定</dd>
               <dt>AWS構成</dt><dd>VPC、ALB、EC2、RDS、<span class="case-term">Route 53</span>、ACM、<span class="case-term">Amazon SES</span></dd>
               <dt>OS・DB</dt><dd><span class="case-sentence">Red Hat Enterprise Linux 9</span><span class="case-sentence">Amazon RDS for MySQL</span></dd>
-              <dt>納品後の運用</dt><dd><span class="case-sentence">Amazon SESの通知設定と、Virtual Deliverability Manager（VDM）の設定に対応。</span><span class="case-sentence">カスタム MAIL FROMの設定と、関連するDNSレコードの登録を実施</span></dd>
+              <dt>納品後の運用</dt><dd><span class="case-sentence">Amazon SESの配信・バウンス・苦情通知を設定。</span><span class="case-sentence">VDMで配信状況を確認。</span><span class="case-sentence">カスタム MAIL FROMと関連DNSレコードを設定し、テストメールで変更結果を確認</span></dd>
             </dl>
           </div>
         </div>
@@ -127,12 +145,16 @@
             <figcaption>構成図②　マルチVPC・閉域VDI基盤。名称・CIDRは匿名化。PrivateLinkのエンドポイント配置とVGWの関連付けは最終照合前です。</figcaption>
           </figure>
           <div class="case-description">
-            <p class="case-lead">6 VPCにまたがるVDI・認証・ファイル共有基盤を構築。</p>
+            <p class="case-lead"><span class="case-sentence">6 VPCにまたがるVDI・認証・ファイル共有基盤を構築。</span><span class="case-sentence">構築後もセキュリティ機能の追加と、AD・VDIの運用支援を継続</span></p>
             <dl class="case-facts">
-              <dt>接続・認証</dt><dd>VPC Peering、Direct Connect、VGW、AWS Managed Microsoft AD、AD Connector</dd>
-              <dt>VDI・共有</dt><dd>WorkSpaces、FSx for Windows File Server</dd>
-              <dt>担当範囲</dt><dd>VPC間の経路設定、閉域疎通・FSxマウント確認、Systems Managerによるパッチ管理・メンテナンス枠の設定</dd>
-              <dt>セキュリティ</dt><dd>AWS Security Hub・Amazon GuardDutyを有効化</dd>
+              <dt>構築・接続</dt><dd><span class="case-sentence">VPC Peering・Direct Connect・VGWで接続。</span><span class="case-sentence">VPC間の経路を設定し、閉域接続の疎通を確認</span></dd>
+              <dt>VDI・認証</dt><dd>WorkSpacesとAWS Managed Microsoft AD・AD Connectorを組み合わせ、VDI・認証基盤を構築</dd>
+              <dt>ファイル共有</dt><dd><span class="case-sentence">FSx for Windows File Serverを構築。</span><span class="case-sentence">マウント・接続を確認</span></dd>
+              <dt>パッチ管理</dt><dd>Systems Managerによるパッチ管理と、<span class="case-term">Maintenance Window</span>の実行枠を設定</dd>
+              <dt>追加構築</dt><dd><span class="case-sentence">構築後にAWS Network Firewallを追加。</span><span class="case-sentence">通信ルールの設定・変更を担当</span></dd>
+              <dt>検出対応</dt><dd><span class="case-sentence">Security Hub・GuardDutyを有効化。</span><span class="case-sentence">検出内容を調査し、お客様からの問い合わせに回答</span></dd>
+              <dt>AD運用支援</dt><dd><span class="case-sentence">ADの操作・ポリシーに関する問い合わせに回答。</span><span class="case-sentence">42日でのパスワード期限切れに対応。</span><span class="case-sentence">更新方法・対処手順をお客様に案内</span></dd>
+              <dt>成果物</dt><dd>設定書・構成図・運用手順書を整備し、お客様への説明と引き継ぎに活用</dd>
             </dl>
           </div>
         </div>

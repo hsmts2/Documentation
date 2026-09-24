@@ -46,7 +46,8 @@ html[data-theme="dark"] .case-table { --case-table-line: #62666b; --case-table-f
 .case-summary-table th[scope="row"] { font-weight: 400; }
 .case-summary-table th { overflow-wrap: anywhere; }
 #cost-optimization { max-width: none; }
-.case-cost-diagram { max-width: 960px; margin: 20px 0; }
+.case-cost-diagram, .case-cost-trend { max-width: 960px; }
+.case-cost-diagram { margin: 20px 0; }
 .case-cost-trend { table-layout: fixed; }
 .case-cost-trend th[scope="col"]:first-child { width: 25%; }
 .case-cost-trend th, .case-cost-trend td { overflow-wrap: anywhere; white-space: normal; }
@@ -63,6 +64,13 @@ html[data-theme="dark"] .case-table { --case-table-line: #62666b; --case-table-f
 .case-work-table th[scope="col"]:nth-child(2) { width: 28%; }
 .case-work-table th, .case-work-table td { overflow-wrap: break-word; word-break: normal; line-break: strict; text-wrap: pretty; white-space: normal; line-height: 1.7; }
 .case-work-table td { text-align: left; }
+.case-service-table { table-layout: fixed; }
+.case-service-table th[scope="col"]:first-child { width: 24%; }
+.case-service-table th, .case-service-table td { white-space: normal; overflow-wrap: break-word; word-break: normal; line-break: strict; line-height: 1.7; }
+.case-service-table td { text-align: left; }
+.case-checks { display: flex; flex-wrap: wrap; gap: 4px 24px; list-style: none; margin: 0; padding: 0; }
+.case-checks li { position: relative; box-sizing: border-box; max-width: 100%; margin: 0; padding-left: 18px; text-wrap: pretty; }
+.case-checks li::before { content: "✓"; position: absolute; left: 0; color: var(--case-table-heading-text); }
 @media (max-width: 1000px) {
   .case-portfolio { width: calc(100% - 40px); }
   .case-split { grid-template-columns: minmax(0, 1fr); gap: 18px; }
@@ -78,6 +86,7 @@ html[data-theme="dark"] .case-table { --case-table-line: #62666b; --case-table-f
   .case-table th, .case-table td { padding: 6px 4px; }
   .case-summary-table th[scope="col"]:last-child { width: 18%; }
   .case-document-table th[scope="col"]:first-child { width: 9%; }
+  .case-service-table th[scope="col"]:first-child { width: 32%; }
   .case-site-header { padding: 0 16px; }
   .case-site-header .brand span { display: none; }
   .case-site-header .nav { font-size: 13px; }
