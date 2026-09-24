@@ -6,7 +6,7 @@
   <meta name="description" content="現職でのAWS基盤の設計・構築、運用・テクニカルサポートの実績。個別案件、専任案件の構築・運用改善、ドキュメント整備を掲載。">
   <title>現職での実績 | Documentation</title>
   <link rel="stylesheet" href="assets/styles.css?v=20260914-migration-card">
-  <link rel="stylesheet" href="assets/projects.css?v=20260924-dedicated-operations">
+  <link rel="stylesheet" href="assets/projects.css?v=20260924-service-highlights">
 </head>
 <body data-user-value-highlighting="off">
   <header class="site-header case-site-header">
@@ -27,14 +27,12 @@
 
     <section class="case-section" id="summary" aria-labelledby="summary-title">
       <h2 id="summary-title">1. 実績サマリー</h2>
-      <table class="case-table case-summary-table" aria-describedby="summary-basis">
+      <table class="case-table case-summary-table">
         <thead><tr><th scope="col">区分</th><th scope="col">実績・内訳</th><th scope="col">件数</th></tr></thead>
         <tbody>
-          <tr><th scope="rowgroup" rowspan="5">設計・構築</th><th scope="row">設計・構築の担当案件数（合計）</th><td>17件</td></tr>
-          <tr><th scope="row">新規基盤構築</th><td>6件</td></tr>
-          <tr><th scope="row">リプレイス・移行</th><td>3件</td></tr>
-          <tr><th scope="row">検証環境構築・環境複製</th><td>5件</td></tr>
-          <tr><th scope="row">ネットワーク・セキュリティ構築／設定変更</th><td>3件</td></tr>
+          <tr><th scope="rowgroup" rowspan="3">設計・構築</th><th scope="row">設計・構築の担当案件数（合計）</th><td>17件</td></tr>
+          <tr><th scope="row">基盤構築・リプレイス／移行</th><td>9件</td></tr>
+          <tr><th scope="row">検証・複製／ネットワーク・セキュリティ対応</th><td>8件</td></tr>
         </tbody>
         <tbody>
           <tr><th scope="rowgroup" rowspan="3">運用対応</th><th scope="row">問い合わせ対応チケット</th><td>762件</td></tr>
@@ -47,27 +45,26 @@
         </tbody>
       </table>
       <p class="case-note">問い合わせ対応・手順書作成および実作業・AWSサポート連携の件数は、2026年7月11日時点の実績です。</p>
-      <p class="case-note" id="summary-basis">案件の主目的で分類し、同一案件の開発・検証・本番環境は重複計上していません。2025年1～3月のAL2リプレイスは環境ごとの対応をまとめて1案件として集計。資料作成のみの実績は含めていません。</p>
     </section>
 
     <section class="case-section" id="operations" aria-labelledby="operations-title">
       <h2 id="operations-title">2. 運用作業・<span class="case-term">テクニカルサポート</span></h2>
       <p>本番・検証環境の更新、セキュリティ対応、監視設定など、AWS基盤の継続運用を担当。作業手順書の作成・整備と実作業に加え、お客様からの問い合わせ対応、AWSサポートとの連携、サービスの上限緩和申請に対応</p>
       <table class="case-table case-service-table">
-        <thead><tr><th scope="col">区分</th><th scope="col">利用したサービス・製品</th></tr></thead>
+        <thead><tr><th scope="col">区分</th><th scope="col">主な対応</th><th scope="col">利用したサービス・製品</th></tr></thead>
         <tbody>
-          <tr><th scope="row">コンピューティング</th><td>Amazon EC2、AWS Auto Scaling、Amazon Lightsail</td></tr>
-          <tr><th scope="row">ストレージ・バックアップ</th><td>Amazon EBS、Amazon S3、AWS Backup</td></tr>
-          <tr><th scope="row">データベース・キャッシュ</th><td>Amazon RDS、Amazon Aurora、Amazon ElastiCache</td></tr>
-          <tr><th scope="row">ネットワーク・配信</th><td>Amazon VPC、Elastic Load Balancing、Amazon CloudFront、Amazon Route 53</td></tr>
-          <tr><th scope="row">セキュリティ・監査</th><td>AWS IAM、AWS WAF、AWS Security Hub、Amazon GuardDuty、AWS CloudTrail、AWS Config</td></tr>
-          <tr><th scope="row">監視・運用管理</th><td>Amazon CloudWatch、AWS Systems Manager、Amazon SNS</td></tr>
-          <tr><th scope="row">メール配信</th><td>Amazon SES</td></tr>
-          <tr><th scope="row">コスト管理</th><td>AWS Compute Optimizer、AWS Trusted Advisor、AWS Cost Optimization Hub</td></tr>
-          <tr><th scope="row">OS</th><td>Red Hat Enterprise Linux 8／9、Amazon Linux 2／2023、CentOS 7、Windows Server 2019／2022／2025</td></tr>
-          <tr><th scope="row">ミドルウェア・DBエンジン</th><td>Apache HTTP Server、Apache Tomcat、PHP／PHP-FPM、Postfix、MySQL、PostgreSQL、MariaDB</td></tr>
-          <tr><th scope="row">監視・セキュリティ製品</th><td>Zabbix、Deep Security</td></tr>
-          <tr><th scope="row">サポート</th><td>AWSサポート</td></tr>
+          <tr><th scope="row">コンピューティング</th><td>AMI・起動テンプレートの更新</td><td>Amazon EC2、AWS Auto Scaling、Amazon Lightsail</td></tr>
+          <tr><th scope="row">ストレージ・バックアップ</th><td>別リージョンへのコピー・復元試験</td><td>Amazon EBS、Amazon S3、AWS Backup</td></tr>
+          <tr><th scope="row">データベース・キャッシュ</th><td>Blue/Green更新・性能問題の調査</td><td>Amazon RDS、Amazon Aurora、Amazon ElastiCache</td></tr>
+          <tr><th scope="row">ネットワーク・配信</th><td>閉域接続・ヘルスチェックの調整</td><td>Amazon VPC、Elastic Load Balancing、Amazon CloudFront、Amazon Route 53</td></tr>
+          <tr><th scope="row">セキュリティ・監査</th><td>検出内容の調査・設定変更の追跡</td><td>AWS IAM、AWS WAF、AWS Security Hub、Amazon GuardDuty、AWS CloudTrail、AWS Config</td></tr>
+          <tr><th scope="row">監視・運用管理</th><td>パッチ適用の自動化・個別調整</td><td>Amazon CloudWatch、AWS Systems Manager、Amazon SNS</td></tr>
+          <tr><th scope="row">メール配信</th><td>MAIL FROM設定・配信状況の確認</td><td>Amazon SES</td></tr>
+          <tr><th scope="row">コスト管理</th><td>推奨に基づくEC2タイプ変更</td><td>AWS Compute Optimizer、AWS Trusted Advisor、AWS Cost Optimization Hub</td></tr>
+          <tr><th scope="row">OS</th><td>カーネル更新・OS領域拡張</td><td>Red Hat Enterprise Linux 8／9、Amazon Linux 2／2023、CentOS 7、Windows Server 2019／2022／2025</td></tr>
+          <tr><th scope="row">ミドルウェア・DBエンジン</th><td>Apache脆弱性対応・設定変更</td><td>Apache HTTP Server、Apache Tomcat、PHP／PHP-FPM、Postfix、MySQL、PostgreSQL、MariaDB</td></tr>
+          <tr><th scope="row">監視・セキュリティ製品</th><td>監視設定の導入・通知先変更</td><td>Zabbix、Deep Security</td></tr>
+          <tr><th scope="row">サポート</th><td>技術問い合わせ・上限緩和申請</td><td>AWSサポート</td></tr>
         </tbody>
       </table>
     </section>
@@ -126,7 +123,6 @@
         <div class="case-split">
           <figure class="case-diagram">
             <a href="assets/career-architectures/architecture-workspaces-six-vpc-observability.png" title="構成図を原寸で開く"><img src="assets/career-architectures/architecture-workspaces-six-vpc-observability.png" width="2500" height="1470" alt="6 VPCの閉域VDI基盤。VPC Peering、PrivateLink、WorkSpaces、認証・共有基盤と、Security Hub・GuardDuty・CloudTrail・CloudWatchを示す構成図。" loading="lazy"></a>
-            <figcaption>構成図②　マルチVPC・閉域VDI基盤。名称・CIDRは匿名化。PrivateLinkのエンドポイント配置とVGWの関連付けは最終照合前です。</figcaption>
           </figure>
           <div class="case-description">
             <p class="case-lead"><span class="case-sentence">6 VPCにまたがるVDI・認証・ファイル共有基盤を構築。</span><span class="case-sentence">構築後もセキュリティ機能の追加と、AD・VDIの運用支援を継続</span></p>
@@ -137,7 +133,7 @@
               <dt>パッチ管理</dt><dd>Systems Managerによるパッチ管理と、<span class="case-term">Maintenance Window</span>の実行枠を設定</dd>
               <dt>追加構築</dt><dd><span class="case-sentence">構築後にAWS Network Firewallを追加。</span><span class="case-sentence">通信ルールの設定・変更を担当</span></dd>
               <dt>検出対応</dt><dd><span class="case-sentence">Security Hub・GuardDutyを有効化。</span><span class="case-sentence">検出内容を調査し、お客様からの問い合わせに回答</span></dd>
-              <dt>AD運用支援</dt><dd><span class="case-sentence">ADの操作・ポリシーに関する問い合わせに回答。</span><span class="case-sentence">42日でのパスワード期限切れに対応。</span><span class="case-sentence">更新方法・対処手順をお客様に案内</span></dd>
+              <dt>AD運用支援</dt><dd><span class="case-sentence">ADの操作・ポリシーに関する問い合わせに回答。</span><span class="case-sentence">更新方法・対処手順をお客様に案内</span></dd>
               <dt>成果物</dt><dd>設定書・構成図・運用手順書を整備し、お客様への説明と引き継ぎに活用</dd>
             </dl>
           </div>
@@ -153,17 +149,16 @@
             <a href="assets/career-architectures/architecture-workspaces-cost-optimizer-approved.png" title="構成図を原寸で開く"><img src="assets/career-architectures/architecture-workspaces-cost-optimizer-approved.png" width="1586" height="992" alt="WorkSpacesコスト最適化基盤。AWS Cloud内のVPC、サブネット、NAT Gateway、Fargate、Gateway EndpointとVPC外のAWSサービスを示す構成図。" loading="lazy"></a>
           </figure>
         <p>導入支援に加え、自動停止までの時間を短縮し、利用状況に合わせたコンピューティングタイプの変更も支援しました。また、当時の料金条件に基づいて課金切替閾値の見直し案を作成しました。</p>
-        <p>CloudWatchダッシュボードで動作と課金モードを確認し、料金推移をお客様へ報告しました。これらの取り組み後、月額利用料金は2025年12月から2026年2月にかけて<strong>6,840.33 USD（59.9％）減少</strong>しました。</p>
+        <p>CloudWatchダッシュボードで動作と課金モードを確認し、料金推移をお客様へ報告しました。これらの取り組み後、月額利用料金は2025年12月から2026年2月にかけて6,840.33 USD（59.9％）減少しました。</p>
         <table class="case-table case-cost-trend">
           <caption>WorkSpacesの月額利用料金の推移</caption>
           <thead><tr><th scope="col">項目</th><th scope="col">2025年12月</th><th scope="col">2026年1月</th><th scope="col">2026年2月</th></tr></thead>
           <tbody>
-            <tr><th scope="row">WorkSpaces台数</th><td>未確認</td><td>49台</td><td>50台</td></tr>
+            <tr><th scope="row">WorkSpaces台数</th><td>49台</td><td>49台</td><td>50台</td></tr>
             <tr><th scope="row">月額利用料金（USD）</th><td>11,417.72</td><td>8,976.10</td><td>4,577.39</td></tr>
             <tr><th scope="row">前月比</th><td>比較基準</td><td>21.4％減</td><td>49.0％減</td></tr>
           </tbody>
         </table>
-        <p class="case-note">台数は、2026年1月30日の棚卸結果と2026年2月のダッシュボード掲載値です。2025年12月の台数は未確認です。</p>
         <p class="case-note">月額実績の比較であり、台数・利用時間・月の日数などの条件は同一ではありません。Cost Optimizerに加え、コンピューティングタイプと自動停止時間の見直しを含む複数施策後の推移です。</p>
       </article>
       <article class="case-entry" id="dedicated-operations">
@@ -185,7 +180,8 @@
       </article>
       <article class="case-entry" id="skill-transfer">
         <h3>4.4 設計構築案件のドキュメント作成</h3>
-        <p>2026年8～9月に、お客様からのご依頼を受け、専任案件のVDI環境に関する仕様書・構築手順書など、計18件のドキュメントを作成しました。</p>
+        <p>お客様がエンドユーザー向けにVDI環境を構築するための技術支援を担当。セキュリティ・商流上の制約により、エンドユーザー環境の構築は弊社ではなくお客様が実施する体制でした。</p>
+        <p>弊社で事前に環境を構築し、要件への適合性、構築手順、改善点を確認。その結果を踏まえ、お客様が環境を構築できるよう、2026年8～9月にご依頼に基づく仕様書・構築手順書など計18件のドキュメントを作成しました。</p>
         <table class="case-table case-document-table">
           <caption>作成したドキュメントと主な内容</caption>
           <thead><tr><th scope="col">No.</th><th scope="col">文書名</th><th scope="col">記載内容</th></tr></thead>

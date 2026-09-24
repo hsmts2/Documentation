@@ -39,7 +39,7 @@ html[data-theme="dark"] .case-table { --case-table-line: #62666b; --case-table-f
 .case-table th { text-align: left; }
 .case-table tr, .case-table th, .case-table td, .case-table tbody tr:nth-child(even) { background: var(--case-table-fill); }
 .case-table thead th { background: var(--case-table-heading); color: var(--case-table-heading-text); text-align: center; vertical-align: middle; }
-.case-summary-table, .case-service-table { max-width: 760px; }
+.case-summary-table { max-width: 760px; }
 .case-summary-table { table-layout: fixed; }
 .case-summary-table th[scope="col"]:first-child { width: 20%; }
 .case-summary-table th[scope="col"]:last-child { width: 18%; }
@@ -67,7 +67,8 @@ html[data-theme="dark"] .case-table { --case-table-line: #62666b; --case-table-f
 .case-work-table th, .case-work-table td { overflow-wrap: break-word; word-break: normal; line-break: strict; text-wrap: pretty; white-space: normal; line-height: 1.7; }
 .case-work-table td { text-align: left; }
 .case-service-table { table-layout: fixed; }
-.case-service-table th[scope="col"]:first-child { width: 30%; }
+.case-service-table th[scope="col"]:first-child { width: 18%; }
+.case-service-table th[scope="col"]:nth-child(2) { width: 28%; }
 .case-service-table th, .case-service-table td { white-space: normal; overflow-wrap: break-word; word-break: normal; line-break: strict; line-height: 1.7; }
 .case-service-table td { text-align: left; }
 @media (max-width: 1000px) {
@@ -85,7 +86,8 @@ html[data-theme="dark"] .case-table { --case-table-line: #62666b; --case-table-f
   .case-table th, .case-table td { padding: 6px 4px; }
   .case-summary-table th[scope="col"]:last-child { width: 18%; }
   .case-document-table th[scope="col"]:first-child { width: 9%; }
-  .case-service-table th[scope="col"]:first-child { width: 32%; }
+  .case-service-table th[scope="col"]:first-child { width: 22%; }
+  .case-service-table th[scope="col"]:nth-child(2) { width: 34%; }
   .case-site-header { padding: 0 16px; }
   .case-site-header .brand span { display: none; }
   .case-site-header .nav { font-size: 13px; }
