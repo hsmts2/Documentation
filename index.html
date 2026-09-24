@@ -102,18 +102,20 @@
         <span>トピック</span>
       </nav>
 
-      <div class="migration-status" role="status" aria-label="ドキュメント移行の進捗">
-        <h2 class="migration-status-title">移行状況</h2>
-        <ol class="migration-timeline" aria-label="移行工程">
-          <li aria-current="step"><span class="migration-step-marker" aria-hidden="true"></span><span>資料移行<small>進行中</small></span></li>
-          <li><span class="migration-step-marker" aria-hidden="true"></span><span>内容・表示確認</span></li>
-          <li><span class="migration-step-marker" aria-hidden="true"></span><span>移行完了</span></li>
-        </ol>
-        <div class="migration-status-heading"><span>Confluence・Scrapbox.ioから移行中</span><strong>60%</strong></div>
-        <progress value="60" max="100" aria-label="ドキュメント移行の進捗">60%</progress>
-      </div>
-
       <h1 class="visually-hidden">Documentation</h1>
+
+      <section class="document-directory migration-directory" aria-labelledby="migration-status-title">
+        <h2 id="migration-status-title" class="home-section-title">移行状況</h2>
+        <div class="migration-status" role="status" aria-label="ドキュメント移行の進捗">
+          <ol class="migration-timeline" aria-label="移行工程">
+            <li aria-current="step"><span class="migration-step-marker" aria-hidden="true"></span><span>資料移行<small>進行中</small></span></li>
+            <li><span class="migration-step-marker" aria-hidden="true"></span><span>内容・表示確認</span></li>
+            <li><span class="migration-step-marker" aria-hidden="true"></span><span>移行完了</span></li>
+          </ol>
+          <div class="migration-status-heading"><span>Confluence・Scrapbox.ioから移行中</span><strong>60%</strong></div>
+          <progress value="60" max="100" aria-label="ドキュメント移行の進捗">60%</progress>
+        </div>
+      </section>
 
       <section class="document-directory profile-directory" aria-labelledby="profile-documents-title">
         <h2 id="profile-documents-title" class="home-section-title">プロフィール資料</h2>
