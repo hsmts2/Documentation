@@ -59,17 +59,17 @@
             <a href="assets/career-architectures/architecture-public-application-production.png" title="構成図を原寸で開く"><img src="assets/career-architectures/architecture-public-application-production.png" width="1600" height="900" alt="公共系申請システムのAWS基盤。ロードバランサー、Linux・Windows Server、RDSの関係を示す概念図。" loading="lazy"></a>
           </figure>
           <div class="case-description">
-            <p class="case-lead">申請システムのAmazon Linux 2023へのリプレイスにおいて、事前設計・顧客との調整から新環境の構築、DNS切り替え、旧環境の撤去まで担当しました。</p>
+            <p class="case-lead"><span class="case-sentence">申請システムのLinux基盤をAmazon Linux 2023へリプレイス。</span><span class="case-sentence">設計・顧客調整から構築、切り替え、旧環境撤去まで担当</span></p>
             <dl class="case-facts">
-              <dt>設計・調整</dt><dd><span class="case-sentence">設計段階からお客様との打ち合わせに参加し、既存構成と要件をヒアリングの上、</span><span class="case-sentence"><span class="case-term">構成・設定内容</span>を整理いたしました。</span></dd>
-              <dt>構築・設定</dt><dd><span class="case-sentence">ネットワークとアクセス制御、<span class="case-term">OS・DBユーザー</span>、<span class="case-term">監視・ログ</span>を設定しました。</span><span class="case-sentence">検証・本番環境にはホスト名などの差分を反映し、接続を確認しました。</span></dd>
-              <dt>移行・撤去</dt><dd>DNS切り替えによる新環境への移行と、移行後の旧環境の削除を実施しました。</dd>
-              <dt>成果物</dt><dd>パラメータシート、設定書、構成図、構築エビデンスを作成しました。</dd>
+              <dt>設計・調整</dt><dd><span class="case-sentence">設計段階からお客様との打ち合わせに参加し、既存構成と要件をヒアリング。</span><span class="case-sentence"><span class="case-term">構成・設定内容</span>を整理</span></dd>
+              <dt>構築・設定</dt><dd><span class="case-sentence">ネットワークとアクセス制御、<span class="case-term">OS・DBユーザー</span>、<span class="case-term">監視・ログ</span>を設定。</span><span class="case-sentence">検証・本番環境の差分を反映し、接続確認を実施</span></dd>
+              <dt>移行・撤去</dt><dd><span class="case-sentence">DNS切り替えにより新環境へ移行。</span><span class="case-sentence">移行後に旧環境の削除を実施</span></dd>
+              <dt>成果物</dt><dd><span class="case-sentence">パラメータシート・設定書を作成</span><span class="case-sentence">構成図・構築エビデンスを作成</span></dd>
               <dt>AWS構成</dt><dd>EC2・ALB・RDSを中心に、VPC、<span class="case-term">NAT Gateway</span>、<span class="case-term">Route 53</span>、S3、SES、SNSを利用</dd>
               <dt>OS</dt><dd><span class="case-term">Amazon Linux 2023</span>、<span class="case-term">Windows Server 2022</span></dd>
               <dt>監視</dt><dd><span class="case-term">CloudWatch Agent</span>、<span class="case-term">Zabbix Agent2</span></dd>
             </dl>
-            <p class="case-note">類似構成の申請システムで担当した実績を集約しています。</p>
+            <p class="case-note">類似構成の申請システムでの担当実績を集約</p>
           </div>
         </div>
       </article>
@@ -80,22 +80,18 @@
             <a href="assets/career-architectures/architecture-business-web-production-staging.png" title="構成図を原寸で開く"><img src="assets/career-architectures/architecture-business-web-production-staging.png" width="2400" height="1430" alt="業務Webシステムの本番・検証を別VPC・別Internet Gatewayで構成。本番EC2は2AZに冗長配置し、RDS for MySQLはMulti-AZ構成。ELBログはS3、VPC Flow LogsはCloudWatch Logsへ保管し、EC2とRDSをAWS Backupで保護。" loading="lazy"></a>
           </figure>
           <div class="case-description">
-            <p class="case-lead"><span class="case-sentence">業務Webシステムの本番・検証環境を新規構築しました。</span><span class="case-sentence">監視・ログ保管・バックアップまで設定しました。</span></p>
+            <p class="case-lead"><span class="case-sentence">本番・検証環境を分離した業務Web基盤を新規構築。</span><span class="case-sentence">冗長化・監視・監査・ログ保管・バックアップを整備</span></p>
             <dl class="case-facts">
-              <dt>環境構成</dt><dd>本番と検証を別VPCに分離し、それぞれにInternet Gatewayを配置しました。</dd>
-              <dt>冗長化</dt><dd><span class="case-sentence">本番のWebサーバーを2つのAZに分散して配置しました。</span><span class="case-sentence">RDSはMulti-AZ構成としました。</span></dd>
-              <dt>監視・監査</dt><dd><span class="case-sentence"><span class="case-term">Amazon CloudWatch</span>による監視を設定しました。</span><span class="case-sentence"><span class="case-term">AWS CloudTrail</span>でAPI操作を記録しました。</span></dd>
-              <dt>ログ保管</dt><dd><span class="case-sentence">ELBアクセスログはS3バケットに保管しました。</span><span class="case-sentence">VPC Flow LogsはCloudWatch Logsに保管しました。</span></dd>
-              <dt>バックアップ</dt><dd>AWS BackupでEC2・RDSを対象に設定しました。</dd>
+              <dt>環境分離</dt><dd>本番・検証ごとにVPCを分離し、各VPCに<span class="case-term">Internet Gateway</span>を配置</dd>
+              <dt>冗長化</dt><dd><span class="case-sentence">本番Webサーバーを2つのAZに分散配置。</span><span class="case-sentence">本番RDSをMulti-AZ構成で構築</span></dd>
+              <dt>監視・監査</dt><dd><span class="case-sentence"><span class="case-term">Amazon CloudWatch</span>で稼働状況を監視。</span><span class="case-sentence"><span class="case-term">AWS CloudTrail</span>でAPI操作の監査ログを記録</span></dd>
+              <dt>ログ保管</dt><dd><span class="case-sentence">ELBアクセスログはS3バケットに保管。</span><span class="case-sentence">VPC Flow LogsはCloudWatch Logsに保管</span></dd>
+              <dt>バックアップ</dt><dd>AWS BackupでEC2・RDSを対象としたバックアップを設定</dd>
               <dt>AWS構成</dt><dd>VPC、ALB、EC2、RDS、<span class="case-term">Route 53</span>、ACM、<span class="case-term">Amazon SES</span></dd>
               <dt>OS・DB</dt><dd><span class="case-sentence">Red Hat Enterprise Linux 9</span><span class="case-sentence">Amazon RDS for MySQL</span></dd>
             </dl>
           </div>
         </div>
-      </article>
-      <article class="case-entry">
-        <h3>2.3 その他の案件</h3>
-        <p><strong>オンプレミス・AWS間の閉域ファイル連携</strong><br>Direct Connect・VGW・VPC Endpointを利用したS3連携で、AWS側の経路とアクセス制御を設定。Reachability Analyzer・VPC Flow Logsによる経路確認、AWS CLIによるS3操作確認を行い、設定通知書と技術・運用資料を作成しました。回線事業者側の作業とは分けて担当しています。</p>
       </article>
     </section>
 
@@ -103,16 +99,8 @@
       <h2 id="dedicated-title">3. 専任案件</h2>
       <p>特定のお客様の案件を2年2か月にわたり継続して担当し、先任エンジニアと私の2名が主担当として、AWS基盤の構築・運用を支援してきました。お客様の要件と既存環境を確認したうえで、構築・設定変更から試験、運用改善まで対応しています。</p>
       <p>定例会では構成案や検証結果、作業の進捗を説明し、お客様と認識を合わせながら対応を進めました。また、設定書・構成図・運用資料を整備し、継続的な運用と引き継ぎに必要な情報をまとめています。</p>
-      <article class="case-entry">
-        <h3>3.1 WorkSpacesによるVDI環境の導入</h3>
-        <p>リモート開発用のVDI基盤を構築し、WorkSpacesの払い出しと運用に必要な設定を実施しました。</p>
-        <dl class="case-facts">
-          <dt>事前検証</dt><dd>VPC Peering経由で、別VPCのAWS Managed Microsoft ADをAD Connectorから利用する認証連携を検証</dd>
-          <dt>担当内容</dt><dd>WorkSpaces環境の構築・払い出し、ネットワーク・接続確認、ログ・監視設定</dd>
-        </dl>
-      </article>
       <article class="case-entry" id="multi-vpc">
-        <h3>3.2 マルチVPC・閉域VDI基盤の構築</h3>
+        <h3>3.1 マルチVPC・閉域VDI基盤の構築</h3>
         <div class="case-split">
           <figure class="case-diagram">
             <a href="assets/career-architectures/architecture-workspaces-six-vpc-observability.png" title="構成図を原寸で開く"><img src="assets/career-architectures/architecture-workspaces-six-vpc-observability.png" width="2500" height="1470" alt="6 VPCの閉域VDI基盤。VPC Peering、PrivateLink、WorkSpaces、認証・共有基盤と、Security Hub・GuardDuty・CloudTrail・CloudWatchを示す構成図。" loading="lazy"></a>
@@ -130,7 +118,7 @@
         </div>
       </article>
       <article class="case-entry" id="cost-optimization">
-        <h3>3.3 WorkSpacesの運用コスト最適化</h3>
+        <h3>3.2 WorkSpacesの運用コスト最適化</h3>
         <p>Amazon WorkSpacesには、時間課金（月額の基本料金＋利用時間分の料金）と月額固定の2つの料金体系があり、利用状況に合った課金モードを選ぶ必要があります。</p>
         <p>お客様から、以前のEC2による運用と比べて料金が高くなったことに加え、約50台の利用状況を把握し、毎月1台ずつ課金モードを見直すことが難しいとのご相談をいただきました。</p>
         <p>そこで、利用時間と設定した閾値に応じて課金モードを自動で切り替える「Cost Optimizer for Amazon WorkSpaces」を検討しました。私が仕様と動作条件を確認し、検証環境で課金モードの判定・切り替えやレポート出力を確認したうえで、お客様環境への導入を支援しました。</p>
@@ -153,7 +141,7 @@
         <p class="case-note">月額実績の比較であり、台数・利用時間・月の日数などの条件は同一ではありません。Cost Optimizerに加え、コンピューティングタイプと自動停止時間の見直しを含む複数施策後の推移です。</p>
       </article>
       <article class="case-entry" id="skill-transfer">
-        <h3>3.4 設計構築案件のドキュメント作成</h3>
+        <h3>3.3 設計構築案件のドキュメント作成</h3>
         <p>2026年8～9月に、お客様からのご依頼を受け、専任案件のVDI環境に関する仕様書・構築手順書など、計18件のドキュメントを作成しました。</p>
         <table class="case-table case-document-table">
           <caption>作成したドキュメントと主な内容</caption>
