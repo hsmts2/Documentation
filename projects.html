@@ -6,7 +6,7 @@
   <meta name="description" content="現職でのAWS基盤の設計・構築、運用・テクニカルサポートの実績。個別案件、専任案件の構築・運用改善、ドキュメント整備を掲載。">
   <title>現職での実績 | Documentation</title>
   <link rel="stylesheet" href="assets/styles.css?v=20260914-migration-card">
-  <link rel="stylesheet" href="assets/projects.css?v=20260924-services-only">
+  <link rel="stylesheet" href="assets/projects.css?v=20260924-technology-width">
 </head>
 <body data-user-value-highlighting="off">
   <header class="site-header case-site-header">
@@ -48,25 +48,34 @@
     </section>
 
     <section class="case-section" id="operations" aria-labelledby="operations-title">
-      <h2 id="operations-title">2. 運用作業・<span class="case-term">テクニカルサポート</span></h2>
-      <p>本番・検証環境の更新、セキュリティ対応、監視設定など、AWS基盤の継続運用を担当。作業手順書の作成・整備と実作業に加え、お客様からの問い合わせ対応、AWSサポートとの連携、サービスの上限緩和申請に対応</p>
-      <table class="case-table case-service-table">
-        <thead><tr><th scope="col">区分</th><th scope="col">利用したサービス・製品</th></tr></thead>
+      <h2 id="operations-title">2. 設計・構築・運用で利用した技術</h2>
+      <p>AWS基盤の設計・構築から、運用変更、障害調査、お客様からの技術的な問い合わせ対応まで担当</p>
+      <table class="case-table case-service-table" aria-describedby="technology-scope">
+        <thead><tr><th scope="col">区分</th><th scope="col">利用した技術・サービス・製品</th></tr></thead>
         <tbody>
           <tr><th scope="row">コンピューティング</th><td>Amazon EC2、AWS Auto Scaling、Amazon Lightsail</td></tr>
-          <tr><th scope="row">ストレージ・バックアップ</th><td>Amazon EBS、Amazon S3、AWS Backup</td></tr>
+          <tr><th scope="row">VDI・認証</th><td>Amazon WorkSpaces、AWS Managed Microsoft AD、AD Connector</td></tr>
+          <tr><th scope="row">ストレージ・バックアップ</th><td>Amazon EBS、Amazon S3、Amazon FSx for Windows File Server、AWS Backup</td></tr>
           <tr><th scope="row">データベース・キャッシュ</th><td>Amazon RDS、Amazon Aurora、Amazon ElastiCache</td></tr>
-          <tr><th scope="row">ネットワーク・配信</th><td>Amazon VPC、Elastic Load Balancing、Amazon CloudFront、Amazon Route 53</td></tr>
-          <tr><th scope="row">セキュリティ・監査</th><td>AWS IAM、AWS WAF、AWS Security Hub、Amazon GuardDuty、AWS CloudTrail、AWS Config</td></tr>
-          <tr><th scope="row">監視・運用管理</th><td>Amazon CloudWatch、AWS Systems Manager、Amazon SNS</td></tr>
+          <tr><th scope="row">ネットワーク・接続</th><td>Amazon VPC、AWS Direct Connect、AWS Client VPN、AWS PrivateLink</td></tr>
+          <tr><th scope="row">ネットワーク構成要素</th><td>VPC Peering、NAT Gateway、VGW、VPC Endpoint</td></tr>
+          <tr><th scope="row">負荷分散・配信・DNS</th><td>Elastic Load Balancing、Amazon CloudFront、Amazon Route 53</td></tr>
+          <tr><th scope="row">アクセス制御・暗号化</th><td>AWS IAM、AWS WAF、AWS Network Firewall、AWS KMS、AWS Certificate Manager（ACM）</td></tr>
+          <tr><th scope="row">セキュリティ・監査</th><td>AWS Security Hub、Amazon GuardDuty、AWS CloudTrail、AWS Config</td></tr>
+          <tr><th scope="row">監視・ログ</th><td>Amazon CloudWatch、CloudWatch Agent、VPC Flow Logs、Amazon SNS</td></tr>
+          <tr><th scope="row">運用・パッチ管理</th><td>AWS Systems Manager、Patch Manager、Maintenance Windows</td></tr>
+          <tr><th scope="row">自動化</th><td>AWS Lambda、Amazon EventBridge Scheduler</td></tr>
+          <tr><th scope="row">IaC・構成管理</th><td>AWS CloudFormation、AWS CDK、Terraform、AWX／Ansible、AWS CLI</td></tr>
           <tr><th scope="row">メール配信</th><td>Amazon SES</td></tr>
-          <tr><th scope="row">コスト管理</th><td>AWS Compute Optimizer、AWS Trusted Advisor、AWS Cost Optimization Hub</td></tr>
+          <tr><th scope="row">コスト管理</th><td>AWS Compute Optimizer、AWS Trusted Advisor、AWS Cost Optimization Hub、Cost Optimizer for Amazon WorkSpaces</td></tr>
+          <tr><th scope="row">ソリューション構成要素</th><td>Amazon ECS／AWS Fargate、Amazon DynamoDB</td></tr>
           <tr><th scope="row">OS</th><td>Red Hat Enterprise Linux 8／9、Amazon Linux 2／2023、CentOS 7、Windows Server 2019／2022／2025</td></tr>
           <tr><th scope="row">ミドルウェア・DBエンジン</th><td>Apache HTTP Server、Apache Tomcat、PHP／PHP-FPM、Postfix、MySQL、PostgreSQL、MariaDB</td></tr>
           <tr><th scope="row">監視・セキュリティ製品</th><td>Zabbix、Deep Security</td></tr>
           <tr><th scope="row">サポート</th><td>AWSサポート</td></tr>
         </tbody>
       </table>
+      <p class="case-note" id="technology-scope">一覧にはサービス内の機能・構成要素も含みます。Amazon ECS／AWS Fargate・Amazon DynamoDBは、Cost Optimizer for Amazon WorkSpacesの導入・運用で利用しています。</p>
     </section>
 
     <section class="case-section" id="individual" aria-labelledby="individual-title">
