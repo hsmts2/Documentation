@@ -6,7 +6,7 @@
   <meta name="description" content="AWS基盤の設計・構築、運用改善、顧客への技術支援の実績を紹介する">
   <title>AWS基盤の構築・運用実績 | Documentation</title>
   <link rel="stylesheet" href="assets/styles.css?v=20260914-migration-card">
-  <link rel="stylesheet" href="assets/projects.css?v=20260924-technology-width">
+  <link rel="stylesheet" href="assets/projects.css?v=20260925-unified-cases">
 </head>
 <body data-user-value-highlighting="off">
   <header class="site-header case-site-header">
@@ -81,21 +81,18 @@
     <section class="case-section" id="individual" aria-labelledby="individual-title">
       <h2 id="individual-title">3. 個別案件</h2>
       <article class="case-entry" id="public-application">
-        <h3>3.1 Amazon Linux 2023へのリプレイス対応</h3>
+        <h3>3.1 申請システムの基盤リプレイス</h3>
         <div class="case-split">
           <figure class="case-diagram">
             <a href="assets/career-architectures/architecture-public-application-production.png" title="構成図を原寸で開く"><img src="assets/career-architectures/architecture-public-application-production.png" width="1600" height="900" alt="公共系申請システムのAWS基盤。ロードバランサー、Linux・Windows Server、RDSの関係を示す概念図。" loading="lazy"></a>
           </figure>
           <div class="case-description">
-            <p class="case-lead"><span class="case-sentence">申請システムのLinux基盤をAmazon Linux 2023へリプレイス。</span><span class="case-sentence">設計・顧客調整から構築、切り替え、旧環境撤去まで担当</span></p>
-            <dl class="case-facts">
-              <dt>設計・調整</dt><dd><span class="case-sentence">設計段階からお客様との打ち合わせに参加し、既存構成と要件をヒアリング。</span><span class="case-sentence"><span class="case-term">構成・設定内容</span>を整理</span></dd>
-              <dt>構築・設定</dt><dd><span class="case-sentence">ネットワークとアクセス制御、<span class="case-term">OS・DBユーザー</span>、<span class="case-term">監視・ログ</span>を設定。</span><span class="case-sentence">検証・本番環境の差分を反映し、接続確認を実施</span></dd>
-              <dt>移行・撤去</dt><dd><span class="case-sentence">DNS切り替えにより新環境へ移行。</span><span class="case-sentence">移行後に旧環境の削除を実施</span></dd>
-              <dt>成果物</dt><dd><span class="case-sentence">パラメータシート・設定書を作成</span><span class="case-sentence">構成図・構築エビデンスを作成</span></dd>
-              <dt>AWS構成</dt><dd>EC2・ALB・RDSを中心に、VPC、<span class="case-term">NAT Gateway</span>、<span class="case-term">Route 53</span>、S3、SES、SNSを利用</dd>
-              <dt>OS</dt><dd><span class="case-term">Amazon Linux 2023</span>、<span class="case-term">Windows Server 2022</span></dd>
-              <dt>監視</dt><dd><span class="case-term">CloudWatch Agent</span>、<span class="case-term">Zabbix Agent2</span></dd>
+            <dl class="case-facts case-facts-unified">
+              <dt>背景・目的</dt><dd>Amazon Linux 2のサポート終了に伴い、申請システムのLinux基盤をAmazon Linux 2023へリプレイス。顧客との要件確認から新環境の構築、切り替え、旧環境の撤去まで担当</dd>
+              <dt>設計・構築</dt><dd>お客様へのヒアリングを通じて既存構成と要件を整理し、ネットワーク・アクセス制御、OS・DBユーザーを設定。検証・本番環境の差分を反映して接続検証を実施し、パラメータシート、設定書、構成図、構築エビデンスを作成</dd>
+              <dt>監視・運用設定</dt><dd>CloudWatch Agent・Zabbixによる監視とログ収集を設定し、新環境の運用に必要な監視設定を整備</dd>
+              <dt>移行・運用支援</dt><dd>DNS切り替えによる新環境への移行を実施。移行後に旧環境を撤去</dd>
+              <dt>技術環境</dt><dd><span class="case-sentence">AWS：VPC、EC2、ALB、RDS、NAT Gateway、Route 53、S3、SNS</span><span class="case-sentence">OS：Amazon Linux 2023、Windows Server 2022</span><span class="case-sentence">監視：CloudWatch Agent、Zabbix</span></dd>
             </dl>
           </div>
         </div>
@@ -107,16 +104,12 @@
             <a href="assets/career-architectures/architecture-business-web-production-staging.png" title="構成図を原寸で開く"><img src="assets/career-architectures/architecture-business-web-production-staging.png" width="2400" height="1430" alt="業務Webシステムの本番・検証を別VPC・別Internet Gatewayで構成。本番EC2は2AZに冗長配置し、RDS for MySQLはMulti-AZ構成。ELBログはS3、VPC Flow LogsはCloudWatch Logsへ保管し、EC2とRDSをAWS Backupで保護。" loading="lazy"></a>
           </figure>
           <div class="case-description">
-            <p class="case-lead"><span class="case-sentence">本番・検証環境を分離した業務Web基盤を新規構築。</span><span class="case-sentence">冗長化・監視・監査・ログ保管・バックアップを整備</span></p>
-            <dl class="case-facts">
-              <dt>環境分離</dt><dd>本番・検証ごとにVPCを分離し、各VPCに<span class="case-term">Internet Gateway</span>を配置</dd>
-              <dt>冗長化</dt><dd><span class="case-sentence">本番Webサーバーを2つのAZに分散配置。</span><span class="case-sentence">本番RDSをMulti-AZ構成で構築</span></dd>
-              <dt>監視・監査</dt><dd><span class="case-sentence"><span class="case-term">Amazon CloudWatch</span>で稼働状況を監視。</span><span class="case-sentence"><span class="case-term">AWS CloudTrail</span>でAPI操作の監査ログを記録</span></dd>
-              <dt>ログ保管</dt><dd><span class="case-sentence">ELBアクセスログはS3バケットに保管。</span><span class="case-sentence">VPC Flow LogsはCloudWatch Logsに保管</span></dd>
-              <dt>バックアップ</dt><dd>AWS BackupでEC2・RDSを対象としたバックアップを設定</dd>
-              <dt>AWS構成</dt><dd>VPC、ALB、EC2、RDS、<span class="case-term">Route 53</span>、ACM、<span class="case-term">Amazon SES</span></dd>
-              <dt>OS・DB</dt><dd><span class="case-sentence">Red Hat Enterprise Linux 9</span><span class="case-sentence">Amazon RDS for MySQL</span></dd>
-              <dt>納品後の運用</dt><dd><span class="case-sentence">Amazon SESの配信・バウンス・苦情通知を設定。</span><span class="case-sentence">VDMで配信状況を確認。</span><span class="case-sentence">カスタム MAIL FROMと関連DNSレコードを設定し、テストメールで変更結果を確認</span></dd>
+            <dl class="case-facts case-facts-unified">
+              <dt>背景・目的</dt><dd>業務Webシステムの本番・検証基盤を新規構築。環境分離と本番環境の冗長化に加え、監視・監査、ログ保管、バックアップまで整備</dd>
+              <dt>設計・構築</dt><dd>本番・検証を別VPCに分離し、各環境のネットワーク、ALB、Web・DB基盤を構築。本番Webサーバーは2つのAZに分散配置し、本番RDSはMulti-AZ構成で冗長化</dd>
+              <dt>監視・運用設定</dt><dd>CloudWatchによる監視とCloudTrailによるAPI操作記録を設定。ELBアクセスログはS3、VPC Flow LogsはCloudWatch Logsへ保存し、AWS BackupでEC2・RDSのバックアップを設定</dd>
+              <dt>移行・運用支援</dt><dd>納品後のメール配信運用を支援。SESの配信・バウンス・苦情通知とVDMを設定し、配信状況を確認。カスタムMAIL FROMと関連DNSレコードを設定し、テストメールで変更結果を確認</dd>
+              <dt>技術環境</dt><dd><span class="case-sentence">AWS：VPC、EC2、ALB、RDS、Route 53、ACM、SES、CloudWatch、CloudWatch Logs、CloudTrail、S3、AWS Backup</span><span class="case-sentence">OS・DB：Red Hat Enterprise Linux 9、Amazon RDS for MySQL</span></dd>
             </dl>
           </div>
         </div>

@@ -27,6 +27,7 @@
 .case-sentence { display: block; }
 .case-term { white-space: nowrap; }
 .case-split .case-facts { grid-template-columns: 88px minmax(0, 1fr); gap: 10px 12px; font-size: 14px; }
+.case-split .case-facts-unified { grid-template-columns: 7em minmax(0, 1fr); margin-top: 0; }
 .case-diagram { margin: 0; }
 .case-diagram a { display: block; }
 .case-diagram img { display: block; box-sizing: border-box; width: 100%; height: auto; background: #fff; border: 1px solid #000; border-radius: 0; }
