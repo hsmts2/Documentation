@@ -91,7 +91,7 @@
               <dt>背景・目的</dt><dd>Amazon Linux 2のサポート終了に伴い、申請システムのLinux基盤をAmazon Linux 2023へリプレイス。顧客との要件確認から新環境の構築、切り替え、旧環境の撤去まで担当</dd>
               <dt>設計・構築</dt><dd>お客様へのヒアリングを通じて既存構成と要件を整理し、ネットワーク・アクセス制御、OS・DBユーザーを設定。検証・本番環境の差分を反映して接続検証を実施し、パラメータシート、設定書、構成図、構築エビデンスを作成</dd>
               <dt>監視・運用設定</dt><dd>CloudWatch Agent・Zabbixによる監視とログ収集を設定し、新環境の運用に必要な監視設定を整備</dd>
-              <dt>移行・運用支援</dt><dd>DNS切り替えによる新環境への移行を実施。移行後に旧環境を撤去</dd>
+              <dt>導入後の対応</dt><dd>DNS切り替えによる新環境への移行を実施。移行後に旧環境を撤去</dd>
               <dt>技術環境</dt><dd><span class="case-sentence">AWS：VPC、EC2、ALB、RDS、NAT Gateway、Route 53、S3、SNS</span><span class="case-sentence">OS：Amazon Linux 2023、Windows Server 2022</span><span class="case-sentence">監視：CloudWatch Agent、Zabbix</span></dd>
             </dl>
           </div>
@@ -108,7 +108,7 @@
               <dt>背景・目的</dt><dd>業務Webシステムの本番・検証基盤を新規構築。環境分離と本番環境の冗長化に加え、監視・監査、ログ保管、バックアップまで整備</dd>
               <dt>設計・構築</dt><dd>本番・検証を別VPCに分離し、各環境のネットワーク、ALB、Web・DB基盤を構築。本番Webサーバーは2つのAZに分散配置し、本番RDSはMulti-AZ構成で冗長化</dd>
               <dt>監視・運用設定</dt><dd>CloudWatchによる監視とCloudTrailによるAPI操作記録を設定。ELBアクセスログはS3、VPC Flow LogsはCloudWatch Logsへ保存し、AWS BackupでEC2・RDSのバックアップを設定</dd>
-              <dt>移行・運用支援</dt><dd>納品後のメール配信運用を支援。SESの配信・バウンス・苦情通知とVDMを設定し、配信状況を確認。カスタムMAIL FROMと関連DNSレコードを設定し、テストメールで変更結果を確認</dd>
+              <dt>導入後の対応</dt><dd>納品後のメール配信運用を支援。SESの配信・バウンス・苦情通知とVDMを設定し、配信状況を確認。カスタムMAIL FROMと関連DNSレコードを設定し、テストメールで変更結果を確認</dd>
               <dt>技術環境</dt><dd><span class="case-sentence">AWS：VPC、EC2、ALB、RDS、Route 53、ACM、SES、CloudWatch、CloudWatch Logs、CloudTrail、S3、AWS Backup</span><span class="case-sentence">OS・DB：Red Hat Enterprise Linux 9、Amazon RDS for MySQL</span></dd>
             </dl>
           </div>
@@ -127,16 +127,12 @@
             <a href="assets/career-architectures/architecture-workspaces-six-vpc-observability.png" title="構成図を原寸で開く"><img src="assets/career-architectures/architecture-workspaces-six-vpc-observability.png" width="2500" height="1470" alt="6 VPCの閉域VDI基盤。VPC Peering、PrivateLink、WorkSpaces、認証・共有基盤と、Security Hub・GuardDuty・CloudTrail・CloudWatchを示す構成図。" loading="lazy"></a>
           </figure>
           <div class="case-description">
-            <p class="case-lead"><span class="case-sentence">6 VPCにまたがるVDI・認証・ファイル共有基盤を構築。</span><span class="case-sentence">構築後もセキュリティ機能の追加と、AD・VDIの運用支援を継続</span></p>
-            <dl class="case-facts">
-              <dt>構築・接続</dt><dd><span class="case-sentence">VPC Peering・Direct Connect・VGWで接続。</span><span class="case-sentence">VPC間の経路を設定し、閉域接続の疎通を確認</span></dd>
-              <dt>VDI・認証</dt><dd>WorkSpacesとAWS Managed Microsoft AD・AD Connectorを組み合わせ、VDI・認証基盤を構築</dd>
-              <dt>ファイル共有</dt><dd><span class="case-sentence">FSx for Windows File Serverを構築。</span><span class="case-sentence">マウント・接続を確認</span></dd>
-              <dt>パッチ管理</dt><dd>Systems Managerによるパッチ管理と、<span class="case-term">Maintenance Window</span>の実行枠を設定</dd>
-              <dt>追加構築</dt><dd><span class="case-sentence">構築後にAWS Network Firewallを追加。</span><span class="case-sentence">通信ルールの設定・変更を担当</span></dd>
-              <dt>検出対応</dt><dd><span class="case-sentence">Security Hub・GuardDutyを有効化。</span><span class="case-sentence">検出内容を調査し、お客様からの問い合わせに回答</span></dd>
-              <dt>AD運用支援</dt><dd><span class="case-sentence">ADの操作・ポリシーに関する問い合わせに回答。</span><span class="case-sentence">更新方法・対処手順をお客様に案内</span></dd>
-              <dt>成果物</dt><dd>設定書・構成図・運用手順書を整備し、お客様への説明と引き継ぎに活用</dd>
+            <dl class="case-facts case-facts-unified">
+              <dt>背景・目的</dt><dd>VDI・認証・ファイル共有を支えるAWS基盤を、6 VPCにまたがる構成で構築。構築後もセキュリティ機能の追加、設定変更、技術的な問い合わせ対応を継続して担当</dd>
+              <dt>設計・構築</dt><dd>VPC PeeringによるVPC間接続と、Direct Connect・VGWを利用した閉域接続の経路を設定。WorkSpaces、AWS Managed Microsoft AD、AD ConnectorによるVDI・認証基盤と、FSx for Windows File Serverによるファイル共有基盤を構築し、疎通・認証・共有接続を検証</dd>
+              <dt>監視・運用設定</dt><dd>Systems Managerによるパッチ管理とMaintenance Windowsの実行スケジュールを設定。構築後にNetwork Firewallを追加し、ルート変更・通信ルールの管理を担当。Security Hub・GuardDutyの検出結果を調査し、お客様への説明と対応を実施</dd>
+              <dt>導入後の対応</dt><dd>ADの操作・ポリシーやVDI運用に関する問い合わせに対応し、設定・更新方法と対処手順を案内。環境変更に合わせて設定書・構成図・パラメータシートを更新して定期的に提出し、運用手順書の整備と引き継ぎも担当</dd>
+              <dt>技術環境</dt><dd><span class="case-sentence">ネットワーク：Amazon VPC、VPC Peering、Direct Connect、VGW</span><span class="case-sentence">VDI・認証・共有：WorkSpaces、AWS Managed Microsoft AD、AD Connector、FSx for Windows File Server</span><span class="case-sentence">運用・セキュリティ：Systems Manager（Patch Manager、Maintenance Windows）、Network Firewall、Security Hub、GuardDuty</span></dd>
             </dl>
           </div>
         </div>
