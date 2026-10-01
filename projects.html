@@ -88,11 +88,11 @@
           </figure>
           <div class="case-description">
             <dl class="case-facts case-facts-unified">
-              <dt>背景・目的</dt><dd>Amazon Linux 2のサポート終了に伴い、申請システムのLinux基盤をAmazon Linux 2023へリプレイス。顧客との要件確認から新環境の構築、切り替え、旧環境の撤去まで担当</dd>
-              <dt>設計・構築</dt><dd>お客様へのヒアリングを通じて既存構成と要件を整理し、ネットワーク・アクセス制御、OS・DBユーザーを設定。検証・本番環境の差分を反映して接続検証を実施し、パラメータシート、設定書、構成図、構築エビデンスを作成</dd>
-              <dt>監視・運用設定</dt><dd>CloudWatch Agent・Zabbixによる監視とログ収集を設定し、新環境の運用に必要な監視設定を整備</dd>
-              <dt>導入後の対応</dt><dd>DNS切り替えによる新環境への移行を実施。移行後に旧環境を撤去</dd>
-              <dt>技術環境</dt><dd><span class="case-sentence">AWS：VPC、EC2、ALB、RDS、NAT Gateway、Route 53、S3、SNS</span><span class="case-sentence">OS：Amazon Linux 2023、Windows Server 2022</span><span class="case-sentence">監視：CloudWatch Agent、Zabbix</span></dd>
+              <dt>背景・目的</dt><dd>Amazon Linux 2が2026年6月30日にサポート終了を迎えるため、継続してセキュリティ更新を受けられるOSへの移行が必要となった。RHEL固有の製品要件がなく、既存の監視・パッチ適用などもAmazon Linuxを前提としていたため、後継OSとしてAmazon Linux 2023を採用</dd>
+              <dt>設計上の判断</dt><dd>既存サーバーのパッケージ・ミドルウェア・設定を棚卸しし、Amazon Linux 2023での提供状況、互換性、設定差分を事前に調査。既存のファイル単位のログ監視と保管運用を継続するためrsyslogを導入し、定期処理はお客様の運用方法に合わせてcronieを採用。ALBのTLS証明書はACMで管理し、アクセス経路、セキュリティグループ、バックアップ方針を設計</dd>
+              <dt>構築・検証</dt><dd>検証・本番環境にAmazon Linux 2023のEC2を構築し、必要なパッケージ、OS・DBユーザー、CloudWatch Agent、Zabbix、ログ出力、定期処理を設定。環境ごとのパラメータを反映し、ALBから各サーバー、RDSまでの接続、監視、ログ収集、バックアップの動作を確認</dd>
+              <dt>移行・運用</dt><dd>DNS切り替えによる移行手順と確認項目を整理し、新環境への切り替え後に接続、監視、ログを確認。安定稼働を確認したうえで旧環境を撤去し、設定書、構成図、パラメータシート、構築エビデンスを更新</dd>
+              <dt>技術環境</dt><dd><span class="case-sentence">AWS：VPC、EC2、ALB、RDS、NAT Gateway、Route 53、ACM、S3、SNS、CloudWatch、CloudWatch Logs、CloudTrail、AWS Backup</span><span class="case-sentence">OS：Amazon Linux 2023、Windows Server 2022</span><span class="case-sentence">監視・運用：CloudWatch Agent、Zabbix、rsyslog、cronie</span></dd>
             </dl>
           </div>
         </div>
@@ -105,10 +105,10 @@
           </figure>
           <div class="case-description">
             <dl class="case-facts case-facts-unified">
-              <dt>背景・目的</dt><dd>業務Webシステムの本番・検証基盤を新規構築。環境分離と本番環境の冗長化に加え、監視・監査、ログ保管、バックアップまで整備</dd>
-              <dt>設計・構築</dt><dd>本番・検証を別VPCに分離し、各環境のネットワーク、ALB、Web・DB基盤を構築。本番Webサーバーは2つのAZに分散配置し、本番RDSはMulti-AZ構成で冗長化</dd>
-              <dt>監視・運用設定</dt><dd>CloudWatchによる監視とCloudTrailによるAPI操作記録を設定。ELBアクセスログはS3、VPC Flow LogsはCloudWatch Logsへ保存し、AWS BackupでEC2・RDSのバックアップを設定</dd>
-              <dt>導入後の対応</dt><dd>納品後のメール配信運用を支援。SESの配信・バウンス・苦情通知とVDMを設定し、配信状況を確認。カスタムMAIL FROMと関連DNSレコードを設定し、テストメールで変更結果を確認</dd>
+              <dt>背景・目的</dt><dd>業務Webシステムの本番・検証基盤を新規構築。本番環境の可用性を確保するとともに、環境分離、通信制御、監視・監査、ログ保管、バックアップを含めた運用基盤を整備</dd>
+              <dt>設計上の判断</dt><dd>本番・検証環境を別VPC・別Internet Gatewayに分離し、環境間の誤接続や変更影響を抑制。ALBをパブリックサブネット、WebサーバーとRDSをプライベートサブネットに配置し、セキュリティグループで必要な通信だけを許可。ALBのTLS証明書はACMで管理し、本番Webサーバーは2つのAZ、本番RDSはMulti-AZ構成として可用性を確保</dd>
+              <dt>構築・検証</dt><dd>各環境のVPC、サブネット、ルート、ALB、EC2、RDSを構築し、ALBのヘルスチェック、Web・DB間の接続、名前解決を確認。CloudWatch、CloudTrail、VPC Flow Logs、ALBアクセスログ、AWS Backupを設定し、監視、監査ログ、通信ログ、バックアップの取得を確認</dd>
+              <dt>移行・運用</dt><dd>設定書、構成図、パラメータシート、構築エビデンスを整備して運用担当へ引き継ぎ。納品後はSESの配信・バウンス・苦情通知、VDM、カスタムMAIL FROM、関連DNSレコードを設定し、テストメールで変更結果を確認</dd>
               <dt>技術環境</dt><dd><span class="case-sentence">AWS：VPC、EC2、ALB、RDS、Route 53、ACM、SES、CloudWatch、CloudWatch Logs、CloudTrail、S3、AWS Backup</span><span class="case-sentence">OS・DB：Red Hat Enterprise Linux 9、Amazon RDS for MySQL</span></dd>
             </dl>
           </div>
