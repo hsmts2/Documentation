@@ -87,12 +87,24 @@
             <a href="assets/career-architectures/architecture-public-application-production.png" title="構成図を原寸で開く"><img src="assets/career-architectures/architecture-public-application-production.png" width="1600" height="900" alt="公共系申請システムのAWS基盤。ロードバランサー、Linux・Windows Server、RDSの関係を示す概念図。" loading="lazy"></a>
           </figure>
           <div class="case-description">
-            <dl class="case-facts case-facts-unified">
+            <dl class="case-facts case-facts-unified case-facts-spaced">
               <dt>背景・目的</dt><dd>Amazon Linux 2が2026年6月30日にサポート終了を迎えるため、継続してセキュリティ更新を受けられるOSへの移行が必要となった。RHEL固有の製品要件がなく、既存の監視・パッチ適用などもAmazon Linuxを前提としていたため、後継OSとしてAmazon Linux 2023を採用</dd>
-              <dt>設計上の判断</dt><dd>既存サーバーのパッケージ・ミドルウェア・設定を棚卸しし、Amazon Linux 2023での提供状況、互換性、設定差分を事前に調査。既存のファイル単位のログ監視と保管運用を継続するためrsyslogを導入し、定期処理はお客様の運用方法に合わせてcronieを採用。ALBのTLS証明書はACMで管理し、アクセス経路、セキュリティグループ、バックアップ方針を設計</dd>
-              <dt>構築・検証</dt><dd>検証・本番環境にAmazon Linux 2023のEC2を構築し、必要なパッケージ、OS・DBユーザー、CloudWatch Agent、Zabbix、ログ出力、定期処理を設定。環境ごとのパラメータを反映し、ALBから各サーバー、RDSまでの接続、監視、ログ収集、バックアップの動作を確認</dd>
-              <dt>移行・運用</dt><dd>DNS切り替えによる移行手順と確認項目を整理し、新環境への切り替え後に接続、監視、ログを確認。安定稼働を確認したうえで旧環境を撤去し、設定書、構成図、パラメータシート、構築エビデンスを更新</dd>
-              <dt>技術環境</dt><dd><span class="case-sentence">AWS：VPC、EC2、ALB、RDS、NAT Gateway、Route 53、ACM、S3、SNS、CloudWatch、CloudWatch Logs、CloudTrail、AWS Backup</span><span class="case-sentence">OS：Amazon Linux 2023、Windows Server 2022</span><span class="case-sentence">監視・運用：CloudWatch Agent、Zabbix、rsyslog、cronie</span></dd>
+              <dt>設計上の判断</dt>
+              <dd>
+                <ol class="case-detail-list">
+                  <li>互換性確認：既存サーバーのパッケージ・ミドルウェア・設定を棚卸しし、Amazon Linux 2023での提供状況、互換性、設定差分を事前に調査</li>
+                  <li>ログ管理：既存のファイル単位のログ監視と保管運用を継続するため、rsyslogを導入</li>
+                  <li>定期処理：お客様の運用方法に合わせ、systemd timerではなくcronieを採用</li>
+                </ol>
+              </dd>
+              <dt>構築・検証</dt>
+              <dd>
+                <ol class="case-detail-list">
+                  <li>環境構築：検証・本番環境にAmazon Linux 2023のEC2を構築し、必要なパッケージ、OS・DBユーザーを設定</li>
+                  <li>監視・運用設定：CloudWatch Agent、Zabbix、ログ出力、定期処理を設定</li>
+                  <li>動作確認：環境ごとのパラメータを反映し、ALBから各サーバー、RDSまでの接続、監視、ログ収集、バックアップの動作を確認</li>
+                </ol>
+              </dd>
             </dl>
           </div>
         </div>

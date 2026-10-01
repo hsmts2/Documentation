@@ -17,17 +17,21 @@
 .case-note { color: var(--muted); font-size: 13px; line-height: 1.7; }
 .case-entry { margin-top: 20px; padding: 16px 0 8px; scroll-margin-top: 88px; }
 .case-entry h3 { margin: 0 0 14px; font-size: 21px; line-height: 1.5; }
-.case-split { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); gap: 28px; align-items: start; }
+.case-split { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px; align-items: start; }
 .case-split > * { min-width: 0; }
 .case-lead { font-weight: 600; }
 .case-description > p:first-child { margin-top: 0; }
 .case-facts { display: grid; grid-template-columns: 112px minmax(0, 1fr); gap: 8px 16px; margin: 14px 0; }
 .case-facts dt { font-weight: 600; line-height: 1.7; }
 .case-facts dd { margin: 0; overflow-wrap: break-word; word-break: normal; line-break: strict; text-wrap: pretty; line-height: 1.7; }
+.case-detail-list { margin: 0; padding-left: 1.25em; }
+.case-detail-list li { color: inherit; font-size: inherit; font-weight: 400; line-height: inherit; }
+.case-detail-list li + li { margin-top: 4px; }
 .case-sentence { display: block; }
 .case-term { white-space: nowrap; }
 .case-split .case-facts { grid-template-columns: 88px minmax(0, 1fr); gap: 10px 12px; font-size: 14px; }
 .case-split .case-facts-unified { grid-template-columns: 7em minmax(0, 1fr); margin-top: 0; }
+.case-split .case-facts-spaced { row-gap: 20px; }
 .case-diagram { margin: 0; }
 .case-diagram a { display: block; }
 .case-diagram img { display: block; box-sizing: border-box; width: 100%; height: auto; background: #fff; border: 1px solid #000; border-radius: 0; }
@@ -97,5 +101,5 @@ html[data-theme="dark"] .case-table { --case-table-line: #62666b; --case-table-f
   body { padding-top: 0; }
   .case-portfolio { width: 100%; margin: 0; color: black; }
   .case-entry { break-inside: avoid; }
-  .case-split { grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); }
+  .case-split { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
