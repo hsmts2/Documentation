@@ -116,12 +116,28 @@
             <a href="assets/career-architectures/architecture-business-web-production-staging.png" title="構成図を原寸で開く"><img src="assets/career-architectures/architecture-business-web-production-staging.png" width="2400" height="1430" alt="業務Webシステムの本番・検証を別VPC・別Internet Gatewayで構成。本番EC2は2AZに冗長配置し、RDS for MySQLはMulti-AZ構成。ELBログはS3、VPC Flow LogsはCloudWatch Logsへ保管し、EC2とRDSをAWS Backupで保護。" loading="lazy"></a>
           </figure>
           <div class="case-description">
-            <dl class="case-facts case-facts-unified">
-              <dt>背景・目的</dt><dd>業務Webシステムの本番・検証基盤を新規構築。本番環境の可用性を確保するとともに、環境分離、通信制御、監視・監査、ログ保管、バックアップを含めた運用基盤を整備</dd>
-              <dt>設計上の判断</dt><dd>本番・検証環境を別VPC・別Internet Gatewayに分離し、環境間の誤接続や変更影響を抑制。ALBをパブリックサブネット、WebサーバーとRDSをプライベートサブネットに配置し、セキュリティグループで必要な通信だけを許可。ALBのTLS証明書はACMで管理し、本番Webサーバーは2つのAZ、本番RDSはMulti-AZ構成として可用性を確保</dd>
-              <dt>構築・検証</dt><dd>各環境のVPC、サブネット、ルート、ALB、EC2、RDSを構築し、ALBのヘルスチェック、Web・DB間の接続、名前解決を確認。CloudWatch、CloudTrail、VPC Flow Logs、ALBアクセスログ、AWS Backupを設定し、監視、監査ログ、通信ログ、バックアップの取得を確認</dd>
-              <dt>移行・運用</dt><dd>設定書、構成図、パラメータシート、構築エビデンスを整備して運用担当へ引き継ぎ。納品後はSESの配信・バウンス・苦情通知、VDM、カスタムMAIL FROM、関連DNSレコードを設定し、テストメールで変更結果を確認</dd>
-              <dt>技術環境</dt><dd><span class="case-sentence">AWS：VPC、EC2、ALB、RDS、Route 53、ACM、SES、CloudWatch、CloudWatch Logs、CloudTrail、S3、AWS Backup</span><span class="case-sentence">OS・DB：Red Hat Enterprise Linux 9、Amazon RDS for MySQL</span></dd>
+            <dl class="case-facts case-facts-unified case-facts-spaced">
+              <dt>背景・目的</dt><dd>業務Webシステムの新規導入に伴い、本番・検証基盤をAWS上に構築。本番環境の可用性と環境分離を前提に、通信制御、監視・監査、ログ保管、バックアップまでを含む運用基盤を整備</dd>
+              <dt>設計上の判断</dt>
+              <dd>
+                <ol class="case-detail-list">
+                  <li>環境分離：本番・検証環境を別VPCに分離し、設定変更や障害による影響範囲を環境ごとに分離</li>
+                  <li>配置・通信制御：ALBをパブリックサブネット、WebサーバーとRDSをプライベートサブネットに配置し、セキュリティグループで必要な通信だけを許可</li>
+                  <li>可用性：本番Webサーバーを2つのAZに分散し、本番RDSをMulti-AZ構成として単一障害点を回避</li>
+                  <li>証明書管理：ALBにACM証明書を設定し、HTTPS通信と証明書の自動更新に対応</li>
+                </ol>
+              </dd>
+              <dt>構築・検証</dt>
+              <dd>
+                <ol class="case-detail-list">
+                  <li>基盤構築：各環境のVPC、サブネット、ルート、ALB、EC2、RDSを構築</li>
+                  <li>接続確認：ALBのヘルスチェック、WebサーバーとRDS間の接続、名前解決を確認</li>
+                  <li>監視・監査：CloudWatchによる監視とCloudTrailによるAWS API操作の記録を設定</li>
+                  <li>ログ保管：ALBアクセスログをS3、VPC Flow LogsをCloudWatch Logsへ保存</li>
+                  <li>バックアップ：AWS BackupでEC2とRDSを対象に保管期間30日のバックアップを設定し、取得結果を確認</li>
+                  <li>メール配信：Amazon SESの送信クォータを200通から2,000通へ引き上げ、バウンス・苦情通知、VDM、カスタムMAIL FROM、関連DNSレコードを設定してテスト送信を実施</li>
+                </ol>
+              </dd>
             </dl>
           </div>
         </div>
