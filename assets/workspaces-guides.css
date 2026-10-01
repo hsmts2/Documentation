@@ -18,6 +18,12 @@
 .workspaces-skill-transfer-guide .overview-steps p { line-height: 1.7; }
 .workspaces-skill-transfer-guide .overview-steps small { display: block; padding-top: 12px; border-top: 1px solid var(--line); line-height: 1.6; }
 .workspaces-skill-transfer-guide .overview-detail-figure { max-width: 920px; }
+.workspaces-skill-transfer-guide .overview-architecture-figure { max-width: none; }
+.workspaces-skill-transfer-guide .overview-architecture-figure a { display: block; }
+.workspaces-skill-transfer-guide .overview-role-table td:first-child,
+.workspaces-skill-transfer-guide .overview-requirement-table td:first-child,
+.workspaces-skill-transfer-guide .overview-check-table td:first-child { font-weight: 700; }
+.workspaces-skill-transfer-guide .overview-section > h3 { margin: 34px 0 12px; }
 .workspaces-skill-transfer-guide .overview-diagrams { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 20px; align-items: start; }
 .workspaces-skill-transfer-guide .architecture-figure { margin: 28px 0; }
 .workspaces-skill-transfer-guide .architecture-figure img { display: block; width: 100%; height: auto; border: 1px solid var(--line); border-radius: 8px; }

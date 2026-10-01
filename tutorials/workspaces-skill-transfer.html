@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>全体構築・運用順序 | Documentation</title>
-  <meta name="description" content="全体構築・運用順序の操作手順と設定例">
+  <title>マルチVPC・閉域VDI基盤の設計・構築・運用 | Documentation</title>
+  <meta name="description" content="Windows ServerからAmazon WorkSpacesへの移行検討を背景に、6 VPCへ分離した閉域VDI基盤の設計判断、構築順序、検証、運用を整理">
   <link rel="stylesheet" href="../assets/styles.css?v=20260908-skill-transfer1">
 <link rel="stylesheet" href="../assets/workspaces-guides.css?v=20260912-split">
 <script src="../assets/workspaces-legacy-routes.js?v=20260912-split"></script>
@@ -28,7 +28,7 @@
       <a href="cloudflare-private-site.html">Private GitHubリポジトリをCloudflare Workersで認証付き公開してみた</a>
       <a href="aws-daily-cost-slack.html">AWS利用料を毎朝3時にSlackへ通知してみた</a>
       <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">☁︎</span>[PoC] マルチVPC・閉域VDI基盤案件</p>
-          <a class="active" aria-current="page" href="workspaces-skill-transfer.html">全体構築・運用順序</a>
+          <a class="active" aria-current="page" href="workspaces-skill-transfer.html">全体設計・構築・運用</a>
           <a href="workspaces-managed-ad.html">Managed Microsoft ADの構築</a>
           <a href="workspaces-managed-ad-users.html">Managed Microsoft ADのユーザー・グループ管理</a>
           <a href="workspaces-management-ec2.html">管理用EC2の起動・接続・AD管理</a>
@@ -97,31 +97,105 @@
     <main class="content workspaces-skill-transfer-guide">
       <nav class="breadcrumb" aria-label="Breadcrumb"><a href="../">Home</a><span>トピック</span></nav>
 <p><strong>マルチVPC・閉域VDI基盤案件</strong></p>
-<h1>全体構築・運用順序</h1>
-<p>認証基盤からVDIの利用開始、継続運用までを、依存関係と確認ポイントで整理します。各工程の詳細は個別ページに分け、このページを全体の道筋として使用します。</p>
+<h1>マルチVPC・閉域VDI基盤の設計・構築・運用</h1>
+<p>既存のWindows Server上で提供していたデスクトップ環境について、Office製品のサポート期限を見据え、後継候補としてAmazon WorkSpaces Personalを検証・構築しました。このページでは、6 VPCの役割分担、認証・共有基盤、構築の依存関係、利用開始後の運用までをまとめます。</p>
+
+<section class="overview-section" id="background">
+  <h2>背景・要件と設計方針</h2>
+  <p>従来はWindows Server上でOfficeを含む業務環境を提供していました。Office製品のサポート期限を見据え、同じ方式を延命するのではなく、利用者単位でデスクトップを払い出し、認証・ポリシー・パッチ・利用状況を継続的に管理できるVDI方式へ移行する方針としました。</p>
+  <p>要件を機能要件と非機能要件に分け、利用者が必要とする操作だけでなく、可用性、拡張性、セキュリティ、監視、コスト、運用、移行、バックアップの観点から構成を検討しました。</p>
+
+  <h3>機能要件</h3>
+  <div class="guide-table-scroll">
+    <table class="guide-table overview-requirement-table">
+      <colgroup><col style="width:31%"><col style="width:69%"></colgroup>
+      <thead><tr><th>要件</th><th>設計への反映</th></tr></thead>
+      <tbody>
+        <tr><td>利用者がVDIへ接続できる</td><td>利用者単位でAmazon WorkSpaces Personalを払い出し、WorkSpacesクライアントから業務デスクトップへ接続できる構成としました。</td></tr>
+        <tr><td>ADでユーザー認証できる</td><td>共通基盤にAWS Managed Microsoft ADを配置し、各チームのVPCからAD Connectorを介して同じディレクトリを利用する構成としました。</td></tr>
+        <tr><td>チーム単位で環境を利用できる</td><td>チームごとにWorkSpaces用VPC、AD Connector、OU、GPOを分け、利用者・端末・ポリシーをチーム単位で管理できるようにしました。</td></tr>
+        <tr><td>FSxの共有フォルダを利用できる</td><td>共通基盤にFSx for Windows File Serverを配置し、AD認証を利用してWorkSpacesから共有フォルダへ接続する構成としました。</td></tr>
+        <tr><td>業務に必要なサービスへ接続できる</td><td>認証・DNS・ファイル共有はVPC Peering、VPC 001の受信サーバーはPrivateLinkを利用し、用途ごとに必要な通信経路だけを構成しました。</td></tr>
+        <tr><td>監視結果をメール通知できる</td><td>Amazon CloudWatchでEC2とWorkSpacesを監視し、しきい値超過や状態変化をAmazon SNSから運用担当者へ通知する構成としました。</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>非機能要件</h3>
+  <div class="guide-table-scroll">
+    <table class="guide-table overview-requirement-table">
+      <colgroup><col style="width:20%"><col style="width:34%"><col style="width:46%"></colgroup>
+      <thead><tr><th>観点</th><th>要件</th><th>設計への反映</th></tr></thead>
+      <tbody>
+        <tr><td>可用性・性能</td><td>認証経路を単一AZへ依存させず、利用者が安定して接続できること</td><td>Directory ServiceとAD Connectorには異なるAZのサブネットを指定し、認証、名前解決、FSx接続の疎通を確認しました。</td></tr>
+        <tr><td>拡張性</td><td>チームや利用者の追加に対応できること</td><td>チームごとにVPCとAD Connectorを分離し、WorkSpaces用サブネットには将来の利用者増加を考慮したIPアドレス数を確保しました。構築前にService Quotasを確認し、必要な2項目の上限緩和を申請しました。</td></tr>
+        <tr><td>セキュリティ</td><td>チーム間の影響を分離し、必要な通信だけを許可すること</td><td>全VPCをフルメッシュ接続せず、認証・DNS・ファイル共有に必要なVPC間だけVPC Peeringを設定しました。受信サーバーはPrivateLinkでサービス単位に公開しました。</td></tr>
+        <tr><td>監視・ログ</td><td>障害やセキュリティ上の変化を検知し、調査できること</td><td>CloudWatch・SNSによる監視通知に加え、Security Hub・GuardDutyの検出内容とNetwork Firewallの通信ログを確認できる運用としました。</td></tr>
+        <tr><td>コスト</td><td>利用状況に応じてWorkSpacesの課金を最適化できること</td><td>Cost Optimizer for Amazon WorkSpacesを導入し、利用時間を基に時間課金と月額課金を判定できるようにしました。</td></tr>
+        <tr><td>運用性・保守性</td><td>パッチ適用、設定変更、問い合わせ対応を継続できること</td><td>Systems Manager、Patch Manager、Maintenance Windowsを利用し、実行結果を確認できる運用を整備しました。設定書、構成図、パラメータシート、手順書も更新しました。</td></tr>
+        <tr><td>移行性</td><td>既存環境から段階的にVDIへ移行できること</td><td>認証・共有基盤を先に構築し、チームごとにOU・GPO、カスタムイメージ、バンドルを準備して、接続試験後に利用者へ展開する順序としました。</td></tr>
+        <tr><td>バックアップ・復旧</td><td>認証・共有データとVDI環境を復旧できること</td><td>Directory ServiceとFSxのバックアップ方針を確認し、WorkSpacesはカスタムイメージ、バンドル、設定資料から再展開できるように整理しました。</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>VPCと接続方式の役割</h3>
+  <p>複数チームが利用するため、チームごとにWorkSpaces用VPCを分離し、認証とファイル共有は共通基盤へ集約しました。ネットワーク全体を相互接続するのではなく、業務上必要な通信経路だけをVPC PeeringまたはPrivateLinkで構成しています。</p>
+  <div class="guide-table-scroll">
+    <table class="guide-table overview-role-table">
+      <colgroup><col style="width:24%"><col style="width:28%"><col style="width:48%"></colgroup>
+      <thead><tr><th>区分</th><th>対象</th><th>役割</th></tr></thead>
+      <tbody>
+        <tr><td>共通基盤</td><td>VPC 002</td><td>Managed Microsoft AD、管理用EC2、FSx、Cost Optimizerを配置</td></tr>
+        <tr><td>チーム別VDI</td><td>VPC 003～006</td><td>チーム単位でAD ConnectorとWorkSpacesを分離して配置</td></tr>
+        <tr><td>業務サービス連携</td><td>VPC 001</td><td>受信サーバーを配置し、必要なサービスだけをPrivateLinkで公開</td></tr>
+        <tr><td>閉域接続</td><td>Direct Connect・VGW</td><td>AWSとオンプレミス拠点間の閉域経路を提供</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="overview-section" id="architecture">
+  <h2>全体構成と接続方式</h2>
+  <p>共有サービス用VPCとチーム別VDI用VPCを分離し、各VPCへ重複しないCIDRを割り当てました。WorkSpacesを配置するVPCには、利用者増加とディレクトリ用サブネットを考慮して、共有サービス用VPCより広いアドレス範囲を確保しています。</p>
+  <figure class="architecture-figure overview-architecture-figure">
+    <a href="../assets/career-architectures/architecture-workspaces-six-vpc-observability.png" title="構成図を原寸で開く"><img src="../assets/career-architectures/architecture-workspaces-six-vpc-observability.png" alt="6 VPCに分離したWorkSpaces、Managed Microsoft AD、AD Connector、FSx、Direct Connect、PrivateLinkの全体構成" loading="lazy"></a>
+    <figcaption>6 VPCの役割分担。名称とCIDRは公開用に匿名化しています。</figcaption>
+  </figure>
+  <aside class="overview-note"><strong>経路設計の前提</strong><p>VPC Peeringは推移的ルーティングに対応しません。共有サービス用VPCを経由して別のVPCやオンプレミスへ自動的に中継できるものとして扱わず、通信元・通信先ごとに必要な接続、往路・復路のルート、セキュリティグループ、DNS経路を確認します。</p></aside>
+</section>
 
 <section class="overview-section" id="network">
-  <h2>ネットワーク・認証基盤を整える</h2>
-  <p>VPC間の接続とDNS通信を確認してから、Managed Microsoft ADを配置します。管理用EC2からディレクトリを操作できる状態を作り、AD Connector用のアカウントと権限委任を設定します。</p>
+  <h2>ネットワーク・認証・共有基盤を整える</h2>
+  <p>VDIを払い出す前に、VPC、閉域経路、名前解決、認証、ファイル共有を順番に整備します。接続確認では到達できることだけでなく、不要なVPCやポートへ到達しないことも確認します。</p>
+  <div class="overview-steps">
+    <article><span>01</span><h3>VPC・閉域経路</h3><p>CIDR、サブネット、ルートテーブル、Direct Connect・VGW、Service Quotasを確認。</p><small>確認：CIDR重複、往復経路、閉域疎通、NAT・EIPの必要数</small></article>
+    <article><span>02</span><h3><a href="workspaces-managed-ad.html">Managed Microsoft AD</a></h3><p>共通VPCの異なるAZへディレクトリを配置し、DNSと管理経路を構成。</p><small>確認：ディレクトリ状態、DNS IP、管理用EC2からの接続</small></article>
+    <article><span>03</span><h3><a href="workspaces-management-ec2.html">管理用EC2・FSx</a></h3><p>管理用EC2をドメイン参加させ、FSxを認証基盤と連携して共有領域を作成。</p><small>確認：AD管理ツール、ドメイン参加、FSxマウント、共有アクセス</small></article>
+  </div>
 </section>
 
 <section class="overview-section" id="workspace">
-  <h2>WorkSpacesを展開する</h2>
-  <p>ディレクトリ登録後にWorkSpaces用OUとGPOを整え、バンドルを指定して利用者へ割り当てます。カスタムイメージの作成・他アカウント共有は、基本構成の確認後に進めます。</p>
+  <h2>チーム別にWorkSpacesを展開する</h2>
+  <p>各チームのVPCから共通のManaged Microsoft ADへ接続するため、VPC Peering、双方向ルート、DNS・認証通信を設定してからAD Connectorを作成します。その後、OU・GPO、イメージ、バンドルを整備して利用者へWorkSpaceを割り当てます。</p>
   <figure class="architecture-figure overview-detail-figure"><img src="../assets/img/workspaces-skill-transfer/workspaces-ou-gpo-ad.png" alt="ad.example.comのWorkSpaces用OU、AD Connector用アカウント、専用GPOの関係図" loading="lazy"><figcaption>OU・GPOの関係。ドメイン表記は <code>ad.example.com</code> に統一した模式図です。</figcaption></figure>
   <div class="overview-steps">
-    <article><span>04</span><h3><a href="workspaces-provisioning-gpo.html">WorkSpaces・OU・GPO</a></h3><p>ターゲットOUと専用GPOのリンクを確認し、WorkSpaceを作成。</p><small>確認：意図したOUへのコンピューター配置、GPOの適用</small></article>
-    <article><span>05</span><h3><a href="workspaces-image-bundle.html">カスタムイメージ・バンドル</a></h3><p>Image Checkerで検査し、イメージとバンドルを作成・共有。</p><small>確認：共有先アカウントでの利用可否</small></article>
+    <article><span>04</span><h3><a href="workspaces-ad-connector-account.html">サービスアカウント・権限委任</a></h3><p>AD Connector用アカウントを作成し、接続に必要な権限を対象OUへ委任。</p><small>確認：アカウント状態、権限範囲、パスワード管理</small></article>
+    <article><span>05</span><h3><a href="workspaces-ad-connector.html">VPC Peering・AD Connector</a></h3><p>チームVPCと共通VPCを接続し、ルート・SG・DNSを設定してConnectorを作成。</p><small>確認：双方向ルート、DNS・Kerberos・LDAP、Directory登録</small></article>
+    <article><span>06</span><h3><a href="workspaces-provisioning-gpo.html">WorkSpaces・OU・GPO</a></h3><p>ターゲットOUと専用GPOを関連付け、利用者へWorkSpaceを払い出し。</p><small>確認：コンピューター配置、GPO適用、クライアント接続</small></article>
+    <article><span>07</span><h3><a href="workspaces-image-bundle.html">カスタムイメージ・バンドル</a></h3><p>Officeなど業務に必要なソフトウェアと設定を組み込み、Image Checkerで検査。</p><small>確認：イメージ作成条件、バンドル利用、共有先での可用性</small></article>
   </div>
 </section>
 
 <section class="overview-section" id="operations">
-  <h2>パッチ・コスト・監視を運用に載せる</h2>
-  <p>VDIの利用開始後も、パッチ適用、課金モード判定、監視通知を独立した運用として管理します。変更作業では実行結果と通知到達を確認し、次回の判断に使える記録を残します。</p>
+  <h2>パッチ・コスト・監視・セキュリティを運用に載せる</h2>
+  <p>利用開始後は、パッチ適用、課金モード判定、監視通知、セキュリティ検出を継続運用として管理します。変更作業では設定値だけでなく、実行結果と通知到達まで確認し、次回作業へ引き継げる記録を残します。</p>
   <div class="overview-steps">
-    <article><span>06</span><h3><a href="workspaces-patch-manager.html">Systems Manager Patch Manager</a></h3><p>対象タグ、ベースライン、メンテナンスウィンドウを設定。</p><small>確認：実行履歴、成功・失敗と対象インスタンス</small></article>
-    <article><span>07</span><h3><a href="workspaces-cost-optimizer.html">WorkSpaces Cost Optimizer</a></h3><p>ハブアカウントの構成、Dry Run、実行時刻とレポートを確認。</p><small>確認：判定結果、S3レポート、課金モード変更の条件</small></article>
-    <article><span>08</span><h3><a href="workspaces-cloudwatch-monitoring.html">CloudWatch・SNS</a></h3><p>EC2とWorkSpacesのメトリクス、アラーム、通知先を設定。</p><small>確認：SNS購読、アラーム遷移、メール受信</small></article>
+    <article><span>08</span><h3><a href="workspaces-systems-manager.html">Systems Manager</a></h3><p>管理対象ノード、IAMロール、SSM Agent、必要な通信経路を整備。</p><small>確認：マネージドノード登録、接続、実行権限</small></article>
+    <article><span>09</span><h3><a href="workspaces-patch-manager.html">Patch Manager</a></h3><p>対象タグ、パッチベースライン、Maintenance Windowsを設定。</p><small>確認：実行履歴、成功・失敗、再実行対象</small></article>
+    <article><span>10</span><h3><a href="workspaces-cost-optimizer.html">WorkSpaces Cost Optimizer</a></h3><p>利用時間を基に時間課金と月額課金を判定するソリューションを展開。</p><small>確認：Dry Run、S3レポート、課金モード変更条件</small></article>
+    <article><span>11</span><h3><a href="workspaces-cloudwatch-monitoring.html">CloudWatch・SNS</a></h3><p>EC2とWorkSpacesのメトリクス、アラーム、通知先を設定。</p><small>確認：アラーム遷移、SNS購読、メール受信</small></article>
+    <article><span>12</span><h3>セキュリティ運用</h3><p>Security Hub・GuardDutyの検出を調査し、Network Firewallの追加と通信ルール変更に対応。</p><small>確認：検出内容、経路の対称性、許可・拒否ログ、疎通</small></article>
   </div>
   <div class="overview-diagrams">
     <figure class="architecture-figure"><img src="../assets/img/workspaces-skill-transfer/cost-optimizer-hub-v2.9.10.png" alt="WorkSpaces Cost Optimizerのハブアカウント単一構成図" loading="lazy"><figcaption>Cost Optimizer：ハブアカウント単一構成（v2.9.10）</figcaption></figure>
@@ -129,7 +203,29 @@
   </div>
 </section>
 
-<aside class="overview-note"><strong>構成図の読み方</strong><p>全体図は複数VPCの役割分担を示す構成例です。OU・GPO図はディレクトリ設定、Cost Optimizer図は単一ハブアカウント、監視図はメトリクスから通知までの流れをそれぞれ示します。別の検証環境の設定値を同一のデプロイ構成として扱わないでください。</p></aside>
+<section class="overview-section" id="verification">
+  <h2>構築後の確認項目</h2>
+  <div class="guide-table-scroll">
+    <table class="guide-table overview-check-table">
+      <colgroup><col style="width:22%"><col style="width:38%"><col style="width:40%"></colgroup>
+      <thead><tr><th>確認レイヤー</th><th>主な確認内容</th><th>確認結果として残すもの</th></tr></thead>
+      <tbody>
+        <tr><td>ネットワーク</td><td>VPC Peering、閉域経路、PrivateLink、往路・復路、名前解決</td><td>ルートテーブル、SG、疎通結果、Flow Logs</td></tr>
+        <tr><td>認証</td><td>Managed AD、AD Connector、ドメイン参加、OU、GPO</td><td>Directory状態、ユーザー認証、GPO適用結果</td></tr>
+        <tr><td>VDI</td><td>WorkSpace払い出し、クライアント接続、イメージ・バンドル</td><td>接続結果、配置先OU、Image Checker結果</td></tr>
+        <tr><td>ファイル共有</td><td>FSxのDNS解決、マウント、共有・NTFS権限</td><td>接続結果、読み書き、アクセス制御結果</td></tr>
+        <tr><td>運用</td><td>パッチ、監視、通知、コスト判定、セキュリティ検出</td><td>実行履歴、アラーム通知、レポート、調査記録</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="overview-section" id="support">
+  <h2>構築後の継続対応</h2>
+  <p>構築後も、ADの操作・ポリシー、WorkSpacesの接続・更新、パッチ適用、セキュリティ検出に関する問い合わせへ対応しました。環境変更に合わせて設定書、構成図、パラメータシート、運用手順書を更新し、変更内容と確認結果を継続的に共有しています。</p>
+</section>
+
+<aside class="overview-note"><strong>公開情報について</strong><p>構成図の名称、CIDR、アカウント情報は公開用に匿名化しています。個別手順の設定値は対象工程を説明するための記入例であり、すべてを同一環境へそのまま適用するものではありません。</p></aside>
 
     </main>
   </div>
