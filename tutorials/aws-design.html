@@ -116,13 +116,11 @@
 <h2 id="patterns">代表的な構成と採用条件</h2>
 <figure><figcaption>構成A：静的コンテンツはCloudFrontから非公開のS3バケットへ配信経路を限定する／図を選択すると拡大表示できる</figcaption><a href="../assets/aws-design/static.svg"><img src="../assets/aws-design/static.svg" alt="構成A：静的コンテンツはCloudFrontから非公開のS3バケットへ配信経路を限定する" loading="lazy"></a></figure>
 <p>企業の案内サイトや静的ドキュメントでは、サーバー側の処理が不要であればS3とCloudFrontを候補にする<br>フォーム、認証、検索、CMS編集機能は別の処理として設計し、静的配信だけで満たせる範囲を明確にする</p>
-<p class="source">出典：<a href="https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/private-content-restricting-access-to-s3.html">CloudFrontによるS3オリジンへのアクセス制限</a></p>
 <figure><figcaption>構成B：ALBと2つのAZに分散したEC2、RDS for MySQLのMulti-AZ DBインスタンスを組み合わせる／図を選択すると拡大表示できる</figcaption><a href="../assets/aws-design/web.svg"><img src="../assets/aws-design/web.svg" alt="構成B：ALBと2つのAZに分散したEC2、RDS for MySQLのMulti-AZ DBインスタンスを組み合わせる" loading="lazy"></a></figure>
 <p>既存のPHPアプリケーションやOS設定への依存が大きいシステムでは、EC2を候補にする<br>図は論理構成であり、DB待機系への接続はRDSが切り替える／アプリケーションはエンドポイントへの再接続を実装する</p>
 <p>Webサーバーを複数にする場合は、アップロード・セッション・バッチの状態を各サーバーのローカルディスクへ閉じ込めない<br>共有ファイルはEFS、オブジェクト対応の保存処理はS3など、アプリケーションの対応状況に合わせて外部化する</p>
 <figure><figcaption>構成C：ALBから複数AZのECSサービスへ接続し、Fargateタスクの永続データを外部へ保存する／図を選択すると拡大表示できる</figcaption><a href="../assets/aws-design/containers.svg"><img src="../assets/aws-design/containers.svg" alt="構成C：ALBから複数AZのECSサービスへ接続し、Fargateタスクの永続データを外部へ保存する" loading="lazy"></a></figure>
 <p>コンテナ化と継続的なリリースが前提なら、ECSとFargateを候補にする<br>各AZへ必要数のタスクを配置し、1つのAZを失っても残存側が必要な負荷を処理できるかを検証する</p>
-<p class="source">出典：<a href="https://docs.aws.amazon.com/AmazonECS/latest/developerguide/Welcome.html">Amazon ECSの概要と実行基盤</a></p>
 <h2 id="decision">判断を残す設計記録の例</h2>
 <p class="design-table-hint">表は横にスクロールして確認できる</p><div class="table-scroll" tabindex="0" role="region" aria-label="比較表：横スクロール対応"><table><thead><tr><th>項目</th><th>例：WordPressを使う企業サイト</th></tr></thead><tbody>
 <tr><td>前提</td><td>既存プラグインを継続し、PHPとMySQL互換DBを使う／運用チームはLinux運用に対応する</td></tr>

@@ -107,22 +107,17 @@
 
 <main class="content aws-design-guide"><nav class="breadcrumb" aria-label="Breadcrumb"><a href="../">Home</a><span>AWS設計</span></nav><h1>データベース設計</h1><p class="lead">アプリケーション互換性を起点に、DBの可用性・性能・復旧方式を決める</p><h2 id="compatibility">DB製品より先にアプリケーション互換性を確認する</h2>
 <p>WordPressの標準的なDB要件はMySQLまたはMariaDBであり、Aurora PostgreSQLをそのまま対応DBとして選定しない<br>PostgreSQLを使う独自の互換対応を検討する場合は、対応層・プラグイン制約・更新時の検証・障害時の保守責任を別途説明する</p>
-<p class="source">出典：<a href="https://wordpress.org/about/requirements/">WordPress公式要件</a></p>
 <p class="design-table-hint">表は横にスクロールして確認できる</p><div class="table-scroll" tabindex="0" role="region" aria-label="比較表：横スクロール対応"><table><thead><tr><th>候補</th><th>判断の順序</th></tr></thead><tbody>
 <tr><td>RDS for MySQL／MariaDB</td><td>アプリケーションの対応エンジン・バージョン・文字コード・照合順序を確認する</td></tr>
 <tr><td>Aurora MySQL-Compatible</td><td>MySQL互換を前提に、利用するSQL・プラグイン・接続ドライバーを検証する</td></tr>
 <tr><td>RDS for PostgreSQL／Aurora PostgreSQL-Compatible</td><td>PostgreSQL対応アプリケーションを対象とし、拡張機能とバージョンの対応を確認する</td></tr>
 <tr><td>EC2上のDB</td><td>マネージドDBで満たせないOS権限や製品条件がある場合に、保守と復旧の負担を含めて比較する</td></tr></tbody></table></div>
-<p class="source">出典：<a href="https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/CHAP_AuroraOverview.html">Auroraのエンジンと互換性</a></p>
 <h2 id="availability">Multi-AZ・読取り分散・バックアップを分ける</h2>
 <p class="design-table-hint">表は横にスクロールして確認できる</p><div class="table-scroll" tabindex="0" role="region" aria-label="比較表：横スクロール対応"><table><thead><tr><th>機能</th><th>目的</th><th>混同しやすい点</th></tr></thead><tbody>
 <tr><td>RDS Multi-AZ DBインスタンス</td><td>待機系へ切り替えて可用性を高める</td><td>待機系は読取りトラフィックを処理しない</td></tr>
 <tr><td>RDS Multi-AZ DBクラスター</td><td>2つの読取り可能な待機系を持つ構成を利用する</td><td>2台構成のDBインスタンス方式とは要件と構成が異なる</td></tr>
 <tr><td>リードレプリカ</td><td>読取り処理を分散する</td><td>レプリケーション遅延と書込み先を考慮する</td></tr>
 <tr><td>バックアップ／PITR</td><td>誤削除や障害前の状態へデータを復元する</td><td>冗長構成だけでは論理的な誤更新から保護できない</td></tr></tbody></table></div>
-<p class="source">出典：<a href="https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Concepts.MultiAZ.html">RDSの2種類のMulti-AZ構成</a></p>
-<p class="source">出典：<a href="https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_ReadRepl.html">RDSリードレプリカ</a></p>
-<p class="source">出典：<a href="https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_WorkingWithAutomatedBackups.html">RDS自動バックアップ</a></p>
 <h2 id="recovery">RTO・RPOを復旧手順へ落とす</h2>
 <p>RTOは復旧までの目標時間、RPOは許容するデータ損失の時点を表す<br>インスタンス障害、AZ障害、誤更新、リージョン障害では復旧方法が違うため、1つの数値だけで全障害を説明しない</p>
 <p class="design-table-hint">表は横にスクロールして確認できる</p><div class="table-scroll" tabindex="0" role="region" aria-label="比較表：横スクロール対応"><table><thead><tr><th>設計項目</th><th>決める内容</th></tr></thead><tbody>

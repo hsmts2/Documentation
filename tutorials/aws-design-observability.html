@@ -117,8 +117,6 @@
 <tr><td>EC2：複数AZなどの条件を満たす構成</td><td>99.99%</td><td>Region-Level SLAの配置・同時稼働・利用不能の定義を確認する</td></tr>
 <tr><td>RDS：Single DB Instance</td><td>99.5%</td><td>対象となるDBと利用不能の定義を確認する</td></tr>
 <tr><td>RDS：Multi-AZ DB Instance／Cluster</td><td>99.95%</td><td>対象構成を確認する／Auroraへこの値を流用しない</td></tr></tbody></table></div>
-<p class="source">出典：<a href="https://aws.amazon.com/compute/sla/">Amazon Compute SLA：単一インスタンスとリージョンの条件</a></p>
-<p class="source">出典：<a href="https://aws.amazon.com/rds/sla/">Amazon RDS SLA：Single DBとMulti-AZの条件</a></p>
 <p>EC2のRegion-Level SLAは、稼働中のインスタンスを同じリージョンの2つ以上のAZへ同時に配置する条件がある／AZが1つのリージョンでは少なくとも2つのリージョンに配置する<br>AZを増やしただけでアプリケーションの可用性が上がるとは限らず、トラフィックの切替と残存側の処理能力も設計する</p>
 <p>上表は2026年10月3日に確認した水準であり、実測値や無停止の保証を示さない<br>適用除外、申請条件、サービスクレジットは契約本文で確認する／各サービスのSLAを単純に掛け合わせて業務SLAを約束しない</p>
 <h2 id="budget">月間99.9%とRTO 4時間を整合させる</h2>
@@ -134,8 +132,6 @@
 <tr><td>アクセス／認証</td><td>利用状況と不正アクセスを調べる</td><td>記録項目、取得対象、アクセス権、個人情報の最小化を決める</td></tr>
 <tr><td>CloudTrail</td><td>AWS API操作の証跡に使う</td><td>管理イベントと必要なデータイベントの範囲・保存先・費用を確認する</td></tr>
 <tr><td>収集基盤自身</td><td>ログ欠損と転送異常を検知する</td><td>エージェント停止、送信失敗、滞留、容量枯渇、再送を監視する</td></tr></tbody></table></div>
-<p class="source">出典：<a href="https://docs.aws.amazon.com/awscloudtrail/latest/userguide/logging-management-events-with-cloudtrail.html">CloudTrailの管理イベント</a></p>
-<p class="source">出典：<a href="https://docs.aws.amazon.com/awscloudtrail/latest/userguide/logging-data-events-with-cloudtrail.html">CloudTrailのデータイベント</a></p>
 <p>保持期間は「すべて永久保存」ではなく、検索可能な期間と長期保管期間を用途ごとに決める<br>例えば検索30日・保管365日は設計上の候補であり、業務・監査・費用の合意後に設定する／ログの閲覧・削除・暗号鍵の権限も分ける</p>
 <h2 id="monitoring">監視項目を対応行動へ結び付ける</h2>
 <p class="design-table-hint">表は横にスクロールして確認できる</p><div class="table-scroll" tabindex="0" role="region" aria-label="比較表：横スクロール対応"><table><thead><tr><th>監視対象</th><th>検知したいこと</th><th>対応の例</th></tr></thead><tbody>
@@ -144,7 +140,6 @@
 <tr><td>DB</td><td>接続枯渇、遅延、ロック、容量増加を検知する</td><td>アプリケーションの負荷と照合し、待機・切替・増強の判断へつなげる</td></tr>
 <tr><td>バッチ</td><td>予定時刻までに正常完了していないことを検知する</td><td>開始ログだけで正常とせず、完了・期限超過を監視する</td></tr>
 <tr><td>Zabbix自身</td><td>監視停止、処理キュー滞留、履歴DB障害を検知する</td><td>同じ障害で止まらない外部の監視経路から死活を確認する</td></tr></tbody></table></div>
-<p class="source">出典：<a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Install-CloudWatch-Agent.html">CloudWatch agentによるOSメトリクスとログ収集</a></p>
 <p>閾値だけでなく、評価期間、連続回数、欠測の扱い、復旧判定、通知先、時間外対応、一次対応手順を1組にする<br>CPU使用率80%などの値は初期候補として扱い、平常時の傾向と業務影響から調整する</p>
 <h2 id="acceptance">検知から復旧までを試験する</h2>
 <p>試験用の障害やログを発生させ、収集、アラーム、担当者への通知、復旧、通知解除まで通して確認する<br>監視サーバー停止、エージェント停止、転送先の権限不足も試験に含め、監視できていない状態を正常と表示しない</p>

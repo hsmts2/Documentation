@@ -16,7 +16,8 @@ PAGES = [
 
 def p(s): return '<p>' + s + '</p>\n'
 def h(i,s): return f'<h2 id="{i}">{s}</h2>\n'
-def source(url,label): return f'<p class="source">出典：<a href="{url}">{label}</a></p>\n'
+# Keep verification references in the editable source, without displaying them.
+def source(url,label): return ''
 def table(headers,rows):
     return '<p class="design-table-hint">表は横にスクロールして確認できる</p><div class="table-scroll" tabindex="0" role="region" aria-label="比較表：横スクロール対応"><table><thead><tr>' + ''.join(f'<th>{x}</th>' for x in headers) + '</tr></thead><tbody>\n' + '\n'.join('<tr>'+''.join(f'<td>{x}</td>' for x in row)+'</tr>' for row in rows) + '</tbody></table></div>\n'
 def code(s,prompt=None):
@@ -73,7 +74,38 @@ table(['候補','採用しやすい条件','決定前の確認'],[
 source('https://docs.aws.amazon.com/amplify/latest/userguide/welcome.html','Amplify Hostingの対象と機能')+
 source('https://docs.aws.amazon.com/lightsail/latest/userguide/what-is-amazon-lightsail.html','Amazon Lightsailの概要')+
 source('https://docs.aws.amazon.com/AmazonECS/latest/developerguide/Welcome.html','ECSと実行基盤の選択肢')+
-p('「エンタープライズだからEC2」「Lightsailだから本番不可」という分類では判断できない<br>既存の認証・組織統制・ネットワーク・復旧・費用の要件を比較表に当てはめ、満たせない条件を具体的に示す')+
+h('hosting-diagrams','ホスティング別の構成図とWAFの関連付け先')+
+p('<a href="#hosting-ec2">EC2の構成図</a> ／ <a href="#hosting-lightsail">Lightsailの構成図</a> ／ <a href="#hosting-amplify">Amplifyの構成図</a> ／ <a href="#hosting-s3">S3＋CloudFrontの構成図</a>')+
+p('緑の枠はAWS WAFのWeb ACLを追加できる場所を示す／WAFは独立した中継サーバーではなく、対象サービスへ関連付けて利用する<br>各図は構成の比較用であり、WAFは任意の追加機能として示す')+
+table(['構成要素','AWS WAFの直接関連付け','追加する構成'],[
+('EC2インスタンス','対象外','前段のALBまたはCloudFrontへ関連付ける'),
+('ALB','対応する','ALBと同じリージョンのWeb ACLを使用する'),
+('NLB／Classic Load Balancer','対象外','ALBと区別する／WAFはTCP・UDP全般の保護には使わない'),
+('Lightsailインスタンス／Lightsailロードバランサー','対象外','通常のCloudFrontディストリビューションを前段へ追加する構成を検討する'),
+('Amplify Hosting','対応する','AmplifyアプリへWAFを直接統合する／Global（CloudFront）のWeb ACLを使用する'),
+('S3バケット','対象外','前段のCloudFrontへ関連付ける'),
+('CloudFront','対応する','Global（CloudFront）のWeb ACLを使用する')])+
+source('https://docs.aws.amazon.com/waf/latest/developerguide/how-aws-waf-works-resources.html','AWS WAFで保護できるリソース')+
+h('hosting-ec2','EC2：ALBで受けて、複数AZへ振り分ける')+
+fig('hosting-ec2','EC2構成：WAFの関連付け先はALB')+
+p('HTTPSの入口をALBに集約し、EC2のセキュリティグループではALBからのアプリケーション通信だけを許可する<br>EC2へ直接アクセスできる別経路を残すと、その経路はALBのWAFによる検査を受けない')+
+p('図はALBへWAFを関連付ける例を示す／CloudFrontを追加する場合は、CloudFront側へWAFを関連付ける案も比較する<br>ALBとCloudFrontの両方へ追加する場合は、検査の目的・ルールの重複・費用を整理する')+
+h('hosting-lightsail','Lightsail：CloudFrontを前段へ追加する')+
+fig('hosting-lightsail','Lightsail構成：通常のCloudFrontディストリビューションへWAFを関連付ける')+
+p('この図はLightsailのCDNディストリビューションではなく、CloudFront側で作成する通常のディストリビューションを使う<br>Lightsailインスタンスをカスタムオリジンとし、HTTPS接続に使うDNS名とサーバー証明書を用意する')+
+p('オリジンへの直接アクセスを制限するため、CloudFrontで付与する秘密のカスタムヘッダーをWebサーバーで検証し、通信元の制限も検討する<br>ヘッダー値は閲覧用HTMLへ埋め込まず、更新方法とログへの出力抑止を決める／ログイン・管理画面などはキャッシュ対象から外す')+
+p('図のLightsailは1台の構成例であり、CloudFrontやWAFの追加だけではオリジン障害への冗長化にはならない')+
+source('https://aws.amazon.com/blogs/compute/integrating-aws-waf-with-your-amazon-lightsail-instance/','AWS公式：LightsailとWAFの構成')+
+source('https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/add-origin-custom-headers.html','CloudFrontのオリジン用カスタムヘッダー')+
+h('hosting-amplify','Amplify Hosting：アプリへWAFを直接統合する')+
+fig('hosting-amplify','Amplify構成：Amplify HostingアプリへWAFを関連付ける')+
+p('Amplify HostingはAWS WAFとの直接統合に対応するため、WAFを使うためだけに利用者管理のALBを追加する必要はない<br>Amplifyアプリへ関連付けるWeb ACLはGlobal（CloudFront）用を使用する')+
+p('同じAmplifyアプリのブランチに対するWAFの適用範囲を確認する／別URLで提供するAPIは、そのAPI側でも保護を設計する<br>ビルド・デプロイ経路と利用者からのアクセス経路は別に扱い、WAF費用とAmplify側の統合費用を見積もる')+
+source('https://docs.aws.amazon.com/amplify/latest/userguide/WAF-integration.html','Amplify HostingのWAF直接統合')+
+h('hosting-s3','S3＋CloudFront：バケットを非公開にして配信する')+
+fig('hosting-s3','S3構成：WAFはCloudFrontへ、OACはS3へのアクセス制御に使用する')+
+p('S3バケットへWAFを直接関連付けず、CloudFrontを閲覧の入口にする<br>OACとバケットポリシーで対象ディストリビューションからのアクセスを許可し、S3の公開アクセスをブロックする')+
+p('この構成ではS3のWebサイトエンドポイントを使用しない／通常のS3バケットオリジンを使用する<br>OACはオリジンへのアクセス制御、WAFはWebリクエストの検査を担当し、役割が異なる')+
 h('responsibility','EC2とECSの責任分界を混同しない')+
 p('EC2ではAWSが物理基盤などを管理し、利用者がゲストOS・アプリケーション・設定を管理する<br>「EC2はマネージドではない」とだけ記載せず、どの層の管理が残るかを示す')+
 source('https://aws.amazon.com/compliance/shared-responsibility-model/','AWSの責任共有モデル')+
@@ -335,6 +367,53 @@ def web_diagram():
 <path d="M435 480H518" stroke-dasharray="5 4"/></g></svg>'''
     (ROOT/'assets'/'aws-design'/'web.svg').write_text(svg,encoding='utf-8')
 
+def hosting_diagrams():
+    configs=[
+        ('ec2','EC2＋ALB',[
+            ('利用者','HTTPSでアクセスする',None),
+            ('ALB','2つ以上のAZで受け付ける','AWS WAF → ALBへ関連付け（任意）'),
+            ('EC2：AZ A ／ EC2：AZ B','非公開サブネット／ALBからの通信を許可する',None),
+            ('RDS for MySQL：Multi-AZ','EC2からのみ接続／障害切替後の再接続を設計する',None)
+        ],'EC2への直接関連付けは不可／NLBも直接関連付けの対象外'),
+        ('lightsail','Lightsail＋CloudFront',[
+            ('利用者','HTTPSでアクセスする',None),
+            ('CloudFront','通常のCloudFrontディストリビューションを作成する','AWS WAF → CloudFrontへ関連付け（任意）'),
+            ('Lightsailインスタンス','固定IPをDNS名に対応付け、HTTPSで接続する',None),
+            ('Webサーバー＋アプリケーション','オリジン用ヘッダーを検証／DBの配置は別途設計する',None)
+        ],'LightsailのCDN・ロードバランサーと通常のCloudFrontを区別する'),
+        ('amplify','Amplify Hosting',[
+            ('利用者','HTTPSでアクセスする',None),
+            ('Amplify Hostingアプリ','AWSが管理する配信基盤で公開する','AWS WAF → Amplifyアプリへ統合（任意）'),
+            ('静的コンテンツ／対応SSRランタイム','アプリケーションの実行方式に合わせて選択する',None),
+            ('デプロイ経路：Git → ビルド → 公開','この経路は利用者からのリクエスト経路とは別に扱う',None)
+        ],'別URLのAPIは別途保護する／利用者管理のALBは不要'),
+        ('s3','S3＋CloudFront',[
+            ('利用者','HTTPSでアクセスする',None),
+            ('CloudFront','TLS・キャッシュ・配信設定を管理する','AWS WAF → CloudFrontへ関連付け（任意）'),
+            ('OACによる署名付きリクエスト','バケットポリシーで対象ディストリビューションを許可する',None),
+            ('S3：非公開バケット','公開アクセスをブロック／通常のバケットオリジンを使う',None)
+        ],'S3への直接関連付けは不可／Webサイトエンドポイントは使用しない')
+    ]
+    for name,title,rows,foot in configs:
+        out=[f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 690" role="img" aria-labelledby="title"><title id="title">{escape(title)}の構成とWAFの関連付け先</title>',
+            '<defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8Z" fill="#52647c"/></marker></defs>',
+            '<rect width="680" height="690" rx="16" fill="#f3f6fa"/><g font-family="sans-serif" text-anchor="middle" fill="#182b45">',
+            f'<text x="340" y="40" font-size="26" font-weight="700">{escape(title)}</text>',
+            '<text x="340" y="71" font-size="17">緑枠：WAFを追加できる関連付け先</text>']
+        y=98
+        for i,(label,detail,waf) in enumerate(rows):
+            height=136 if waf else 90
+            if i and not(name=='amplify' and i==3):
+                out.append(f'<path d="M340 {y-30}V{y-8}" fill="none" stroke="#52647c" stroke-width="2" marker-end="url(#arrow)"/>')
+            out.append(f'<rect x="24" y="{y}" width="632" height="{height}" rx="12" fill="white" stroke="#849bb7"/>')
+            out.append(f'<text x="340" y="{y+34}" font-size="22" font-weight="700">{escape(label)}</text>')
+            out.append(f'<text x="340" y="{y+65}" font-size="17">{escape(detail)}</text>')
+            if waf:
+                out.append(f'<rect x="40" y="{y+80}" width="600" height="40" rx="8" fill="#e5f7eb" stroke="#26764a"/><text x="340" y="{y+106}" font-size="19" font-weight="700" fill="#165b35">{escape(waf)}</text>')
+            y+=height+32
+        out.append(f'<text x="340" y="{y+12}" font-size="16">{escape(foot)}</text></g></svg>')
+        (ROOT/'assets'/'aws-design'/f'hosting-{name}.svg').write_text(''.join(out),encoding='utf-8')
+
 def main():
     shell=(ROOT/'tutorials'/'amazon-rds-blue-green.html').read_text(encoding='utf-8')
     prefix=shell.split('    <main class="content')[0]
@@ -343,6 +422,7 @@ def main():
         head=re.sub(r'<title>.*?</title>',f'<title>{title} | Documentation</title>',prefix)
         head=re.sub(r'<meta name="description" content="[^"]*">',f'<meta name="description" content="{lead}">',head)
         head=head.replace('</head>','  <link rel="stylesheet" href="../assets/aws-design/design.css">\n</head>')
+        head=head.replace(f'<a href="{slug}.html">',f'<a class="active" aria-current="page" href="{slug}.html">')
         body=bodies[slug]
         toc=''.join(f'<a href="#{i}">{t}</a>\n' for i,t in re.findall(r'<h2 id="([^"]+)">(.*?)</h2>',body))
         related='<nav class="design-series" aria-label="AWS設計シリーズ"><p><strong>AWS設計シリーズ</strong></p><ul>'+''.join(f'<li><a href="{s}.html"'+(' aria-current="page"' if s==slug else '')+f'>{t}</a></li>' for s,t,_ in PAGES)+'</ul></nav>'
@@ -351,5 +431,6 @@ def main():
     diagram('static','静的配信：公開入口と保存先を分離',[[('利用者','HTTPS')],[('CloudFront','TLS・キャッシュ・アクセス制御')],[('S3：通常のバケットオリジン','OACでアクセスを限定／公開アクセスをブロック')]])
     diagram('containers','コンテナWeb：ホスト運用をFargateへ委ねる',[[('利用者 → ALB','HTTPS／ヘルスチェック')],[('AZ A：Fargateタスク','ECSサービスが配置・更新を管理'),('AZ B：Fargateタスク','ECSサービスが配置・更新を管理')],[('DB・オブジェクト・ログの外部保存','タスクの交換後も必要なデータを保持する')]])
     web_diagram()
+    hosting_diagrams()
 
 if __name__=='__main__': main()

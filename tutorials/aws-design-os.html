@@ -110,8 +110,6 @@
 <tr><td>定期処理</td><td>systemd timerを利用する／cronieは標準でインストールされない</td><td>既存のcrontab互換が必要ならcronieを追加する</td></tr>
 <tr><td>OSログ</td><td>systemd journalをjournalctlで参照する／rsyslogは標準でインストールされない</td><td>既存のsyslog転送やテキストログ収集が必要ならrsyslogを追加する</td></tr>
 <tr><td>アプリケーションログ</td><td>stdout／stderrをjournalへ出すか、アプリケーション独自のファイルへ出す</td><td>監視製品の入力形式、構造化ログ、保存・転送要件から選ぶ</td></tr></tbody></table></div>
-<p class="source">出典：<a href="https://docs.aws.amazon.com/linux/al2023/ug/cron.html">AL2023のsystemd timerとcronie</a></p>
-<p class="source">出典：<a href="https://docs.aws.amazon.com/linux/al2023/ug/journald.html">AL2023のjournalとrsyslog</a></p>
 <p>cronieやrsyslogを追加する場合も、systemdやjournaldを単純に置き換える必要はない<br>cronとtimerによる二重実行、journalとsyslogからの重複転送を防ぐように、各処理とログの経路を1つずつ管理する</p>
 <h2 id="jobs">定期処理の基本設計</h2>
 <p class="design-table-hint">表は横にスクロールして確認できる</p><div class="table-scroll" tabindex="0" role="region" aria-label="比較表：横スクロール対応"><table><thead><tr><th>項目</th><th>設計の論点</th></tr></thead><tbody>
@@ -121,7 +119,6 @@
 <tr><td>失敗と長時間処理</td><td>終了コード、タイムアウト、再試行回数、通知、再実行の安全性を決める</td></tr>
 <tr><td>重複実行</td><td>1台内の排他だけでなく、複数台から同じ業務を実行しない仕組みを決める</td></tr></tbody></table></div>
 <p>systemd timerのPersistent=trueはOnCalendarの停止中の実行機会を補う設定であり、取りこぼした全回数を順番に再生する仕組みではない<br>同じserviceが実行中ならtimerはそのserviceを重ねて起動しないが、複数サーバー間の排他は別に設計する</p>
-<p class="source">出典：<a href="https://github.com/systemd/systemd/blob/main/man/systemd.timer.xml">systemd公式：timerの動作とPersistent</a></p>
 <h2 id="inspection">採用AMIの状態を確認する</h2>
 <p>カスタムAMIでは追加パッケージや設定が異なるため、OS名だけで標準状態と判断しない<br>次のコマンドは状態確認用であり、パッケージやサービス設定は変更しない</p>
 <div class="code" data-prompt="$"><div class="code-header"><span>shell</span><button class="copy" type="button">Copy</button></div><pre><code>cat /etc/os-release</code></pre></div>
@@ -139,9 +136,7 @@ journalctl --disk-usage</code></pre></div>
 <div class="code" data-prompt="#"><div class="code-header"><span>root shell</span><button class="copy" type="button">Copy</button></div><pre><code>journalctl -b -p warning --no-pager</code></pre></div>
 <h2 id="journal">journalの保存と収集を設計する</h2>
 <p>journaldのStorage=autoは/var/log/journalの存在などによって永続保存の動作が変わるため、再起動後も残ると決めつけない<br>対象AMIの設定・保存先・容量上限を調べ、実際の再起動試験で保存を確認する</p>
-<p class="source">出典：<a href="https://github.com/systemd/systemd/blob/main/man/journald.conf.xml">systemd公式：Storageとjournalの容量管理</a></p>
 <p>CloudWatch agentのファイル収集に/var/log/journalのバイナリファイルを直接指定する設計は採用しない<br>テキスト収集が必要なら、rsyslogなどで必要なイベントをファイルへ出し、CloudWatch agentへ渡す経路を検証する</p>
-<p class="source">出典：<a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Agent-Configuration-File-Details.html">CloudWatch agentのlogs収集設定</a></p>
 <h2 id="migration">既存運用を移行するときの受入条件</h2>
 <p>既存の設定と収集経路を退避し、定期処理の正常・失敗・長時間実行・再起動後の動作を検証してから旧方式を止める<br>ログは同じ試験イベントが想定回数だけ到着すること、ローテーションと転送停止からの復旧、保持期限での削除まで確認する</p>
 <p>systemd上流の説明には対象AMIより新しい機能も含まれるため、実装時には採用したAL2023上のmanとsystemdバージョンを照合する<br>本ページでは実機での設定変更・再起動・復旧試験は実施していない</p>
