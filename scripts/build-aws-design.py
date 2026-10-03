@@ -346,7 +346,7 @@ def main():
         body=bodies[slug]
         toc=''.join(f'<a href="#{i}">{t}</a>\n' for i,t in re.findall(r'<h2 id="([^"]+)">(.*?)</h2>',body))
         related='<nav class="design-series" aria-label="AWS設計シリーズ"><p><strong>AWS設計シリーズ</strong></p><ul>'+''.join(f'<li><a href="{s}.html"'+(' aria-current="page"' if s==slug else '')+f'>{t}</a></li>' for s,t,_ in PAGES)+'</ul></nav>'
-        page=head+f'<main class="content aws-design-guide"><nav class="breadcrumb" aria-label="Breadcrumb"><a href="../">Home</a><span>AWS設計</span></nav><h1>{title}</h1><p class="lead">{lead}</p>'+body+related+'</main><aside class="toc" aria-label="Table of contents"><h2>ページ内</h2>'+toc+'</aside></div><script src="../assets/app.js?v=20260823-ref1"></script></body></html>\n'
+        page=head+f'<main class="content aws-design-guide"><nav class="breadcrumb" aria-label="Breadcrumb"><a href="../">Home</a><span>AWS設計</span></nav><h1>{title}</h1><p class="lead">{lead}</p>'+body+related+'</main><aside class="toc" aria-label="Table of contents"><h2>ページ内</h2>'+toc+'</aside></div><script src="../assets/app.js?v=20261003-mobile-nav"></script></body></html>\n'
         (ROOT/'tutorials'/f'{slug}.html').write_text(page,encoding='utf-8')
     diagram('static','静的配信：公開入口と保存先を分離',[[('利用者','HTTPS')],[('CloudFront','TLS・キャッシュ・アクセス制御')],[('S3：通常のバケットオリジン','OACでアクセスを限定／公開アクセスをブロック')]])
     diagram('containers','コンテナWeb：ホスト運用をFargateへ委ねる',[[('利用者 → ALB','HTTPS／ヘルスチェック')],[('AZ A：Fargateタスク','ECSサービスが配置・更新を管理'),('AZ B：Fargateタスク','ECSサービスが配置・更新を管理')],[('DB・オブジェクト・ログの外部保存','タスクの交換後も必要なデータを保持する')]])

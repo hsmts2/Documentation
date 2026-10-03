@@ -177,6 +177,10 @@ CloudWatchコンソールで<code class="ui-value">メトリクス</code> ＞ <c
 
 ## 検証
 
+- モバイルのナビゲーションは本文に重ねず、ページ内で開閉する形式を維持する
+- 320px・390px・タブレット幅で、閉じた状態の余白、開いた状態の本文との非重複、メニュー内スクロール、キーボードでの開閉、画面幅変更後の状態を確認する
+- 共通CSS・JavaScriptの修正時はHTMLの参照バージョンも更新し、キャッシュされた旧版との混在を防ぐ
+
 - 文体を一括整形する場合は `powershell -File scripts/normalize-writing-style.ps1` を実行する
 - 文末表現と句点は `powershell -File scripts/check-writing-style.ps1` で確認する
 - `career.html`は職務経歴書専用の文章とレイアウトを維持するため、手順書向けの文体検査対象外とする

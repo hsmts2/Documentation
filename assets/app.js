@@ -23,7 +23,8 @@ themeToggle?.addEventListener("click", () => {
 });
 
 const sidebarToggle = document.querySelector(".sidebar-toggle");
-if (window.matchMedia("(max-width: 980px)").matches) document.body.classList.add("sidebar-collapsed");
+const mobileNavigation = window.matchMedia("(max-width: 980px)");
+if (mobileNavigation.matches) document.body.classList.add("sidebar-collapsed");
 
 const syncSidebarToggle = () => {
   if (!sidebarToggle) return;
@@ -33,6 +34,9 @@ const syncSidebarToggle = () => {
   sidebarToggle.setAttribute("aria-expanded", String(isOpen));
   sidebarToggle.setAttribute("title", isOpen ? "ナビゲーションを閉じる" : "ナビゲーションを開く");
   sidebarToggle.setAttribute("aria-label", isOpen ? "ナビゲーションを閉じる" : "ナビゲーションを開く");
+  sidebarToggle.textContent = mobileNavigation.matches
+    ? (isOpen ? "メニューを閉じる ▲" : "メニューを開く ▼")
+    : "☰";
 };
 
 sidebarToggle?.addEventListener("click", () => {
@@ -42,6 +46,19 @@ sidebarToggle?.addEventListener("click", () => {
 });
 
 syncSidebarToggle();
+
+mobileNavigation.addEventListener("change", () => {
+  document.body.classList.toggle("sidebar-collapsed", mobileNavigation.matches);
+  syncSidebarToggle();
+});
+
+document.querySelector(".sidebar")?.addEventListener("keydown", (event) => {
+  if (event.key === "Escape" && mobileNavigation.matches) {
+    document.body.classList.add("sidebar-collapsed");
+    syncSidebarToggle();
+    sidebarToggle?.focus();
+  }
+});
 
 const removePageToc = () => {
   document.querySelector(".toc")?.remove();
