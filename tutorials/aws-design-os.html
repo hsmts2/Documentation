@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Amazon Linux 2023のOS設計 | Documentation</title>
-  <meta name="description" content="systemd timerとjournaldを中心に、定期処理・ログ保存・既存運用との互換性を設計する">
+  <title>OS・ミドルウェア設計 | Documentation</title>
+  <meta name="description" content="OSの標準機能とミドルウェアの提供バージョンを確認し、互換性・保守期限・定期処理・ログ保存を設計する">
   <link rel="stylesheet" href="../assets/styles.css?v=20261003-mobile-nav">
   <link rel="stylesheet" href="../assets/aws-design/design.css">
 </head>
@@ -71,7 +71,7 @@
       <a href="aws-design-compute.html">コンピューティング設計</a>
       <a href="aws-design-database.html">データベース設計</a>
       <a href="aws-design-storage.html">ストレージ設計</a>
-      <a class="active" aria-current="page" href="aws-design-os.html">Amazon Linux 2023のOS設計</a>
+      <a class="active" aria-current="page" href="aws-design-os.html">OS・ミドルウェア設計</a>
       <a href="aws-design-observability.html">ログ・監視・可用性設計</a>
       <a href="aws-design-governance.html">命名規則・タグ設計</a>
       <a href="cloudformation.html">CloudFormation 運用手順集</a>
@@ -105,7 +105,73 @@
       <a href="eol.html">EOL / ライフサイクル一覧表</a>
     </aside>
 
-<main class="content aws-design-guide"><nav class="breadcrumb" aria-label="Breadcrumb"><a href="../">Home</a><span>AWS設計</span></nav><h1>Amazon Linux 2023のOS設計</h1><p class="lead">systemd timerとjournaldを中心に、定期処理・ログ保存・既存運用との互換性を設計する</p><h2 id="defaults">AL2023の標準と追加できるもの</h2>
+<main class="content aws-design-guide"><nav class="breadcrumb" aria-label="Breadcrumb"><a href="../">Home</a><span>AWS設計</span></nav><h1>OS・ミドルウェア設計</h1><p class="lead">OSの標準機能とミドルウェアの提供バージョンを確認し、互換性・保守期限・定期処理・ログ保存を設計する</p><h2 id="middleware">OSとミドルウェアの採用範囲</h2>
+<p>OSの標準機能と、追加インストールするWeb・AP・DB・キャッシュ・ランタイムを分けて設計する<br>本ページの提供バージョン表はAmazon Linux 2023を対象とし、他のOSや外部リポジトリのバージョンを混在させない</p>
+<p class="design-table-hint">表は横にスクロールして確認できる</p><div class="table-scroll" tabindex="0" role="region" aria-label="比較表：横スクロール対応"><table><thead><tr><th>設計項目</th><th>確定する内容</th></tr></thead><tbody>
+<tr><td>OS・CPU</td><td>AMI ID、AL2023リリース、releasever、x86_64／aarch64、サポート期限を記録する</td></tr>
+<tr><td>Web・AP</td><td>Apache／nginx、PHP-FPM／Tomcatなどの組合せ、モジュール、接続方式、同時処理数を決める</td></tr>
+<tr><td>DB・キャッシュ</td><td>DBのメジャーバージョン、クライアント互換性、永続化、移行・復元手順を決める</td></tr>
+<tr><td>配布元</td><td>標準リポジトリ、ベンダー提供リポジトリ、コンテナイメージを区別し、更新責任を決める</td></tr></tbody></table></div>
+<h2 id="packages">標準リポジトリから導入できるバージョン</h2>
+<p>掲載対象：Amazon Linux 2023、標準リポジトリの固定リリース <code>2023.12.20260817</code>／対象：x86_64・aarch64／確認日：2026-10-03<br>主なパッケージを抜粋する／別のreleaseverで選ばれるバージョン、AMIへの標準インストール有無は別に確認する</p>
+<h3 id="package-group-0">Web / AP</h3><p class="design-table-hint">表は横にスクロールして確認できる</p><div class="table-scroll" tabindex="0" role="region" aria-label="比較表：横スクロール対応"><table><thead><tr><th>パッケージ名</th><th>Version-Release</th><th>AL2023でのサポート終了</th></tr></thead><tbody>
+<tr><td><code>httpd</code></td><td><code>2.4.68-1.amzn2023.0.1</code></td><td>2029-06-30</td></tr>
+<tr><td><code>nginx</code></td><td><code>1.30.4-1.amzn2023.0.1</code></td><td>2029-06-30</td></tr>
+<tr><td><code>haproxy</code></td><td><code>3.0.23-2.amzn2023.0.1</code></td><td>2029-06-30</td></tr>
+<tr><td><code>php8.2-fpm</code></td><td><code>8.2.33-1.amzn2023.0.1</code></td><td>2026-12-31</td></tr>
+<tr><td><code>php8.3-fpm</code></td><td><code>8.3.33-1.amzn2023.0.1</code></td><td>2027-12-31</td></tr>
+<tr><td><code>php8.4-fpm</code></td><td><code>8.4.24-1.amzn2023.0.1</code></td><td>2028-12-31</td></tr>
+<tr><td><code>php8.5-fpm</code></td><td><code>8.5.9-1.amzn2023.0.1</code></td><td>2029-06-30</td></tr>
+<tr><td><code>tomcat9</code></td><td><code>9.0.120-1.amzn2023.0.1</code></td><td>2029-06-30</td></tr>
+<tr><td><code>tomcat10</code></td><td><code>10.1.57-1.amzn2023.0.1</code></td><td>2029-06-30</td></tr></tbody></table></div>
+<h3 id="package-group-1">DB / キャッシュ</h3><p class="design-table-hint">表は横にスクロールして確認できる</p><div class="table-scroll" tabindex="0" role="region" aria-label="比較表：横スクロール対応"><table><thead><tr><th>パッケージ名</th><th>Version-Release</th><th>AL2023でのサポート終了</th></tr></thead><tbody>
+<tr><td><code>mariadb1011-server</code></td><td><code>10.11.18-1.amzn2023.0.1</code></td><td>2028-02-16</td></tr>
+<tr><td><code>mariadb114-server</code></td><td><code>11.4.12-1.amzn2023.0.1</code></td><td>2029-05-29</td></tr>
+<tr><td><code>mariadb118-server</code></td><td><code>11.8.8-1.amzn2023.0.1</code></td><td>2028-06-04</td></tr>
+<tr><td><code>mariadb123-server</code></td><td><code>12.3.2-2.amzn2023.0.1</code></td><td>2029-06-30</td></tr>
+<tr><td><code>postgresql15-server</code></td><td><code>15.18-1.amzn2023.0.1</code></td><td>2027-11-11</td></tr>
+<tr><td><code>postgresql16-server</code></td><td><code>16.14-1.amzn2023.0.1</code></td><td>2028-11-09</td></tr>
+<tr><td><code>postgresql17-server</code></td><td><code>17.10-1.amzn2023.0.1</code></td><td>2029-06-30</td></tr>
+<tr><td><code>postgresql18-server</code></td><td><code>18.4-1.amzn2023.0.1</code></td><td>2029-06-30</td></tr>
+<tr><td><code>valkey</code></td><td><code>9.0.5-1.amzn2023.0.1</code></td><td>2029-06-30</td></tr></tbody></table></div>
+<h3 id="package-group-2">ランタイム / OS運用</h3><p class="design-table-hint">表は横にスクロールして確認できる</p><div class="table-scroll" tabindex="0" role="region" aria-label="比較表：横スクロール対応"><table><thead><tr><th>パッケージ名</th><th>Version-Release</th><th>AL2023でのサポート終了</th></tr></thead><tbody>
+<tr><td><code>nodejs22</code></td><td><code>22.23.2-1.amzn2023.0.2</code></td><td>2027-04-30</td></tr>
+<tr><td><code>nodejs24</code></td><td><code>24.18.1-1.amzn2023.0.2</code></td><td>2028-04-30</td></tr>
+<tr><td><code>python3</code></td><td><code>3.9.25-1.amzn2023.0.9</code></td><td>2029-06-30</td></tr>
+<tr><td><code>docker</code></td><td><code>25.0.16-1.amzn2023.0.4</code></td><td>2029-06-30</td></tr>
+<tr><td><code>systemd</code></td><td><code>252.23-12.amzn2023</code></td><td>2029-06-30</td></tr>
+<tr><td><code>cronie</code></td><td><code>1.5.7-1.amzn2023.0.2</code></td><td>2029-06-30</td></tr>
+<tr><td><code>rsyslog</code></td><td><code>8.2204.0-3.amzn2023.0.4</code></td><td>2029-06-30</td></tr></tbody></table></div>
+<h3 id="package-group-3">サポート終了済みの例</h3><p>リポジトリや一覧に残るパッケージでも、サポート終了済みの系列は新規採用候補から外す／稼働中の場合は互換性とデータ移行を検証して切り替える</p>
+<p class="design-table-hint">表は横にスクロールして確認できる</p><div class="table-scroll" tabindex="0" role="region" aria-label="比較表：横スクロール対応"><table><thead><tr><th>パッケージ名</th><th>Version-Release</th><th>AL2023でのサポート終了</th></tr></thead><tbody>
+<tr><td><code>php8.1-fpm</code></td><td><code>8.1.34-1.amzn2023.0.1</code></td><td>2025-12-31</td></tr>
+<tr><td><code>mariadb105-server</code></td><td><code>10.5.29-1.amzn2023.0.1</code></td><td>2025-06-24</td></tr>
+<tr><td><code>redis6</code></td><td><code>6.2.20-2.amzn2023.0.1</code></td><td>2026-01-31</td></tr>
+<tr><td><code>nodejs</code></td><td><code>18.20.8-1.amzn2023.0.2</code></td><td>2025-04-30</td></tr>
+<tr><td><code>nodejs20</code></td><td><code>20.20.2-1.amzn2023.0.2</code></td><td>2026-04-30</td></tr></tbody></table></div>
+<h2 id="repository-check">採用リポジトリで利用可能な版を確認する</h2>
+<p>AL2023はリポジトリをリリース単位で固定するため、同じOS名でも導入できる版が異なる<br>次の参照コマンドはパッケージをインストール・更新しない／リポジトリ照会ではローカルのメタデータキャッシュが更新されることがある</p>
+<div class="code" data-prompt="$"><div class="code-header"><span>shell</span><button class="copy" type="button">Copy</button></div><pre><code>cat /etc/os-release
+uname -m
+rpm -q system-release</code></pre></div>
+<p>releaseverの上書きファイルと、有効なリポジトリを確認する</p>
+<div class="code" data-prompt="$"><div class="code-header"><span>shell</span><button class="copy" type="button">Copy</button></div><pre><code>if [ -f /etc/dnf/vars/releasever ]; then cat /etc/dnf/vars/releasever; fi
+dnf repolist --enabled</code></pre></div>
+<p>現在参照している標準リポジトリamazonlinuxの提供版を照会する／外部リポジトリを一時的に除外する</p>
+<div class="code" data-prompt="$"><div class="code-header"><span>shell</span><button class="copy" type="button">Copy</button></div><pre><code>dnf --disablerepo=&#x27;*&#x27; --enablerepo=amazonlinux list --showduplicates httpd nginx php8.4-fpm mariadb114-server postgresql17-server valkey</code></pre></div>
+<p>掲載表と同じ固定リリースを照会する場合は、コマンド単位でreleaseverを指定する／OS全体のリポジトリ固定先は変更しない</p>
+<div class="code" data-prompt="$"><div class="code-header"><span>shell</span><button class="copy" type="button">Copy</button></div><pre><code>dnf --releasever=2023.12.20260817 --disablerepo=&#x27;*&#x27; --enablerepo=amazonlinux list --showduplicates httpd nginx php8.4-fpm mariadb114-server postgresql17-server valkey</code></pre></div>
+<p>インストール済みの版と、提供される版は別に記録する／未インストールのパッケージを含むrpm照会は非ゼロで終了する</p>
+<div class="code" data-prompt="$"><div class="code-header"><span>shell</span><button class="copy" type="button">Copy</button></div><pre><code>rpm -q httpd nginx php8.4-fpm mariadb114-server postgresql17-server valkey</code></pre></div>
+<h2 id="compatibility">インストール前に判断する互換性と保守</h2>
+<p>表の値はパッケージのVersion-Releaseであり、上流ソフトウェアのバージョン番号だけでは修正適用状況を判断しない<br>AWSによる修正のバックポート、サポート期限、アドバイザリーと合わせて採用を判断する</p>
+<p class="design-table-hint">表は横にスクロールして確認できる</p><div class="table-scroll" tabindex="0" role="region" aria-label="比較表：横スクロール対応"><table><thead><tr><th>組み合わせ</th><th>設計・試験する項目</th></tr></thead><tbody>
+<tr><td>Apache／nginx ＋ PHP-FPM</td><td>PHP拡張、Unix socket／TCP、実行ユーザー、タイムアウト、同時処理数を合わせる</td></tr>
+<tr><td>Tomcat 9 → 10以降</td><td>javaxからjakartaへの移行など、アプリのAPI・Java要件を検証する／版数だけで入替えない</td></tr>
+<tr><td>MariaDB／PostgreSQLのメジャー変更</td><td>接続ドライバー、SQL、照合順序、バックアップ形式、データ移行と切戻しを検証する</td></tr>
+<tr><td>Redis 6 → Valkey</td><td>クライアント、コマンド、永続データ、レプリケーションを検証する／サポート終了したRedis 6を新規標準にしない</td></tr>
+<tr><td>OSのPython</td><td>OS管理用python3を上書きせず、アプリ用ランタイムと仮想環境を分離する</td></tr></tbody></table></div>
+<h2 id="defaults">AL2023の標準と追加できるもの</h2>
 <p class="design-table-hint">表は横にスクロールして確認できる</p><div class="table-scroll" tabindex="0" role="region" aria-label="比較表：横スクロール対応"><table><thead><tr><th>設計対象</th><th>標準の考え方</th><th>追加・変更する条件</th></tr></thead><tbody>
 <tr><td>定期処理</td><td>systemd timerを利用する／cronieは標準でインストールされない</td><td>既存のcrontab互換が必要ならcronieを追加する</td></tr>
 <tr><td>OSログ</td><td>systemd journalをjournalctlで参照する／rsyslogは標準でインストールされない</td><td>既存のsyslog転送やテキストログ収集が必要ならrsyslogを追加する</td></tr>
@@ -140,7 +206,11 @@ journalctl --disk-usage</code></pre></div>
 <h2 id="migration">既存運用を移行するときの受入条件</h2>
 <p>既存の設定と収集経路を退避し、定期処理の正常・失敗・長時間実行・再起動後の動作を検証してから旧方式を止める<br>ログは同じ試験イベントが想定回数だけ到着すること、ローテーションと転送停止からの復旧、保持期限での削除まで確認する</p>
 <p>systemd上流の説明には対象AMIより新しい機能も含まれるため、実装時には採用したAL2023上のmanとsystemdバージョンを照合する<br>本ページでは実機での設定変更・再起動・復旧試験は実施していない</p>
-<nav class="design-series" aria-label="AWS設計シリーズ"><p><strong>AWS設計シリーズ</strong></p><ul><li><a href="aws-design.html">AWS基本設計・アーキテクチャ</a></li><li><a href="aws-design-compute.html">コンピューティング設計</a></li><li><a href="aws-design-database.html">データベース設計</a></li><li><a href="aws-design-storage.html">ストレージ設計</a></li><li><a href="aws-design-os.html" aria-current="page">Amazon Linux 2023のOS設計</a></li><li><a href="aws-design-observability.html">ログ・監視・可用性設計</a></li><li><a href="aws-design-governance.html">命名規則・タグ設計</a></li></ul></nav></main><aside class="toc" aria-label="Table of contents"><h2>ページ内</h2><a href="#defaults">AL2023の標準と追加できるもの</a>
+<nav class="design-series" aria-label="AWS設計シリーズ"><p><strong>AWS設計シリーズ</strong></p><ul><li><a href="aws-design.html">AWS基本設計・アーキテクチャ</a></li><li><a href="aws-design-compute.html">コンピューティング設計</a></li><li><a href="aws-design-database.html">データベース設計</a></li><li><a href="aws-design-storage.html">ストレージ設計</a></li><li><a href="aws-design-os.html" aria-current="page">OS・ミドルウェア設計</a></li><li><a href="aws-design-observability.html">ログ・監視・可用性設計</a></li><li><a href="aws-design-governance.html">命名規則・タグ設計</a></li></ul></nav></main><aside class="toc" aria-label="Table of contents"><h2>ページ内</h2><a href="#middleware">OSとミドルウェアの採用範囲</a>
+<a href="#packages">標準リポジトリから導入できるバージョン</a>
+<a href="#repository-check">採用リポジトリで利用可能な版を確認する</a>
+<a href="#compatibility">インストール前に判断する互換性と保守</a>
+<a href="#defaults">AL2023の標準と追加できるもの</a>
 <a href="#jobs">定期処理の基本設計</a>
 <a href="#inspection">採用AMIの状態を確認する</a>
 <a href="#journal">journalの保存と収集を設計する</a>

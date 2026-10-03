@@ -71,7 +71,7 @@
       <a href="aws-design-compute.html">コンピューティング設計</a>
       <a class="active" aria-current="page" href="aws-design-database.html">データベース設計</a>
       <a href="aws-design-storage.html">ストレージ設計</a>
-      <a href="aws-design-os.html">Amazon Linux 2023のOS設計</a>
+      <a href="aws-design-os.html">OS・ミドルウェア設計</a>
       <a href="aws-design-observability.html">ログ・監視・可用性設計</a>
       <a href="aws-design-governance.html">命名規則・タグ設計</a>
       <a href="cloudformation.html">CloudFormation 運用手順集</a>
@@ -130,7 +130,7 @@
 <p>自動バックアップの保持期間、メンテナンス時間帯、エンジン更新、削除保護、最終スナップショット、暗号鍵への復旧用権限を設計項目に含める<br>パスワードを設計書やソースコードへ埋め込まず、秘密情報の取得・更新とアプリケーションの再接続を検証する</p>
 <h2 id="review">設計レビューの確認事項</h2>
 <p>「Multi-AZだから無停止」と説明せず、切替時の接続切断と再試行、二重実行、処理途中のトランザクションを確認する<br>エンジンのサポート期限と更新方法を示し、データ復元後に業務が再開できることを受入条件にする</p>
-<nav class="design-series" aria-label="AWS設計シリーズ"><p><strong>AWS設計シリーズ</strong></p><ul><li><a href="aws-design.html">AWS基本設計・アーキテクチャ</a></li><li><a href="aws-design-compute.html">コンピューティング設計</a></li><li><a href="aws-design-database.html" aria-current="page">データベース設計</a></li><li><a href="aws-design-storage.html">ストレージ設計</a></li><li><a href="aws-design-os.html">Amazon Linux 2023のOS設計</a></li><li><a href="aws-design-observability.html">ログ・監視・可用性設計</a></li><li><a href="aws-design-governance.html">命名規則・タグ設計</a></li></ul></nav></main><aside class="toc" aria-label="Table of contents"><h2>ページ内</h2><a href="#compatibility">DB製品より先にアプリケーション互換性を確認する</a>
+<nav class="design-series" aria-label="AWS設計シリーズ"><p><strong>AWS設計シリーズ</strong></p><ul><li><a href="aws-design.html">AWS基本設計・アーキテクチャ</a></li><li><a href="aws-design-compute.html">コンピューティング設計</a></li><li><a href="aws-design-database.html" aria-current="page">データベース設計</a></li><li><a href="aws-design-storage.html">ストレージ設計</a></li><li><a href="aws-design-os.html">OS・ミドルウェア設計</a></li><li><a href="aws-design-observability.html">ログ・監視・可用性設計</a></li><li><a href="aws-design-governance.html">命名規則・タグ設計</a></li></ul></nav></main><aside class="toc" aria-label="Table of contents"><h2>ページ内</h2><a href="#compatibility">DB製品より先にアプリケーション互換性を確認する</a>
 <a href="#availability">Multi-AZ・読取り分散・バックアップを分ける</a>
 <a href="#recovery">RTO・RPOを復旧手順へ落とす</a>
 <a href="#capacity">性能・セキュリティ・変更管理</a>

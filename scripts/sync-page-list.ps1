@@ -78,7 +78,7 @@ $groups = @(
             [pscustomobject]@{ File = 'aws-design-compute.html'; Label = 'コンピューティング設計' }
             [pscustomobject]@{ File = 'aws-design-database.html'; Label = 'データベース設計' }
             [pscustomobject]@{ File = 'aws-design-storage.html'; Label = 'ストレージ設計' }
-            [pscustomobject]@{ File = 'aws-design-os.html'; Label = 'Amazon Linux 2023のOS設計' }
+            [pscustomobject]@{ File = 'aws-design-os.html'; Label = 'OS・ミドルウェア設計' }
             [pscustomobject]@{ File = 'aws-design-observability.html'; Label = 'ログ・監視・可用性設計' }
             [pscustomobject]@{ File = 'aws-design-governance.html'; Label = '命名規則・タグ設計' }
             [pscustomobject]@{ File = 'cloudformation.html'; Label = 'CloudFormation 運用手順集' }

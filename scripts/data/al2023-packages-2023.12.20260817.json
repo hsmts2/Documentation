@@ -1,0 +1,212 @@
+{
+  "release": "2023.12.20260817",
+  "checked": "2026-10-03",
+  "architectures": [
+    "x86_64",
+    "aarch64"
+  ],
+  "source": "https://docs.aws.amazon.com/linux/al2023/release-notes/all-packages-AL2023.12.html",
+  "source_sha256": "b03483f007b124e6c46fdff16d1956f4037089ba4fef0588c7771dfd990cca8e",
+  "groups": [
+    {
+      "name": "Web / AP",
+      "packages": [
+        {
+          "package": "httpd",
+          "version_release": "2.4.68-1.amzn2023.0.1",
+          "architectures": "aarch64, x86_64",
+          "support_end": "2029-06-30"
+        },
+        {
+          "package": "nginx",
+          "version_release": "1.30.4-1.amzn2023.0.1",
+          "architectures": "aarch64, x86_64",
+          "support_end": "2029-06-30"
+        },
+        {
+          "package": "haproxy",
+          "version_release": "3.0.23-2.amzn2023.0.1",
+          "architectures": "aarch64, x86_64",
+          "support_end": "2029-06-30"
+        },
+        {
+          "package": "php8.2-fpm",
+          "version_release": "8.2.33-1.amzn2023.0.1",
+          "architectures": "aarch64, x86_64",
+          "support_end": "2026-12-31"
+        },
+        {
+          "package": "php8.3-fpm",
+          "version_release": "8.3.33-1.amzn2023.0.1",
+          "architectures": "aarch64, x86_64",
+          "support_end": "2027-12-31"
+        },
+        {
+          "package": "php8.4-fpm",
+          "version_release": "8.4.24-1.amzn2023.0.1",
+          "architectures": "aarch64, x86_64",
+          "support_end": "2028-12-31"
+        },
+        {
+          "package": "php8.5-fpm",
+          "version_release": "8.5.9-1.amzn2023.0.1",
+          "architectures": "aarch64, x86_64",
+          "support_end": "2029-06-30"
+        },
+        {
+          "package": "tomcat9",
+          "version_release": "9.0.120-1.amzn2023.0.1",
+          "architectures": "noarch",
+          "support_end": "2029-06-30"
+        },
+        {
+          "package": "tomcat10",
+          "version_release": "10.1.57-1.amzn2023.0.1",
+          "architectures": "noarch",
+          "support_end": "2029-06-30"
+        }
+      ]
+    },
+    {
+      "name": "DB / キャッシュ",
+      "packages": [
+        {
+          "package": "mariadb1011-server",
+          "version_release": "10.11.18-1.amzn2023.0.1",
+          "architectures": "aarch64, x86_64",
+          "support_end": "2028-02-16"
+        },
+        {
+          "package": "mariadb114-server",
+          "version_release": "11.4.12-1.amzn2023.0.1",
+          "architectures": "aarch64, x86_64",
+          "support_end": "2029-05-29"
+        },
+        {
+          "package": "mariadb118-server",
+          "version_release": "11.8.8-1.amzn2023.0.1",
+          "architectures": "aarch64, x86_64",
+          "support_end": "2028-06-04"
+        },
+        {
+          "package": "mariadb123-server",
+          "version_release": "12.3.2-2.amzn2023.0.1",
+          "architectures": "aarch64, x86_64",
+          "support_end": "2029-06-30"
+        },
+        {
+          "package": "postgresql15-server",
+          "version_release": "15.18-1.amzn2023.0.1",
+          "architectures": "aarch64, x86_64",
+          "support_end": "2027-11-11"
+        },
+        {
+          "package": "postgresql16-server",
+          "version_release": "16.14-1.amzn2023.0.1",
+          "architectures": "aarch64, x86_64",
+          "support_end": "2028-11-09"
+        },
+        {
+          "package": "postgresql17-server",
+          "version_release": "17.10-1.amzn2023.0.1",
+          "architectures": "aarch64, x86_64",
+          "support_end": "2029-06-30"
+        },
+        {
+          "package": "postgresql18-server",
+          "version_release": "18.4-1.amzn2023.0.1",
+          "architectures": "aarch64, x86_64",
+          "support_end": "2029-06-30"
+        },
+        {
+          "package": "valkey",
+          "version_release": "9.0.5-1.amzn2023.0.1",
+          "architectures": "aarch64, x86_64",
+          "support_end": "2029-06-30"
+        }
+      ]
+    },
+    {
+      "name": "ランタイム / OS運用",
+      "packages": [
+        {
+          "package": "nodejs22",
+          "version_release": "22.23.2-1.amzn2023.0.2",
+          "architectures": "aarch64, x86_64",
+          "support_end": "2027-04-30"
+        },
+        {
+          "package": "nodejs24",
+          "version_release": "24.18.1-1.amzn2023.0.2",
+          "architectures": "aarch64, x86_64",
+          "support_end": "2028-04-30"
+        },
+        {
+          "package": "python3",
+          "version_release": "3.9.25-1.amzn2023.0.9",
+          "architectures": "aarch64, x86_64",
+          "support_end": "2029-06-30"
+        },
+        {
+          "package": "docker",
+          "version_release": "25.0.16-1.amzn2023.0.4",
+          "architectures": "aarch64, x86_64",
+          "support_end": "2029-06-30"
+        },
+        {
+          "package": "systemd",
+          "version_release": "252.23-12.amzn2023",
+          "architectures": "aarch64, x86_64",
+          "support_end": "2029-06-30"
+        },
+        {
+          "package": "cronie",
+          "version_release": "1.5.7-1.amzn2023.0.2",
+          "architectures": "aarch64, x86_64",
+          "support_end": "2029-06-30"
+        },
+        {
+          "package": "rsyslog",
+          "version_release": "8.2204.0-3.amzn2023.0.4",
+          "architectures": "aarch64, x86_64",
+          "support_end": "2029-06-30"
+        }
+      ]
+    },
+    {
+      "name": "サポート終了済みの例",
+      "packages": [
+        {
+          "package": "php8.1-fpm",
+          "version_release": "8.1.34-1.amzn2023.0.1",
+          "architectures": "aarch64, x86_64",
+          "support_end": "2025-12-31"
+        },
+        {
+          "package": "mariadb105-server",
+          "version_release": "10.5.29-1.amzn2023.0.1",
+          "architectures": "aarch64, x86_64",
+          "support_end": "2025-06-24"
+        },
+        {
+          "package": "redis6",
+          "version_release": "6.2.20-2.amzn2023.0.1",
+          "architectures": "aarch64, x86_64",
+          "support_end": "2026-01-31"
+        },
+        {
+          "package": "nodejs",
+          "version_release": "18.20.8-1.amzn2023.0.2",
+          "architectures": "aarch64, x86_64",
+          "support_end": "2025-04-30"
+        },
+        {
+          "package": "nodejs20",
+          "version_release": "20.20.2-1.amzn2023.0.2",
+          "architectures": "aarch64, x86_64",
+          "support_end": "2026-04-30"
+        }
+      ]
+    }
+  ]
+}

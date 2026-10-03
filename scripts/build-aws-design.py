@@ -2,6 +2,7 @@
 from pathlib import Path
 from html import escape
 import re
+import json
 
 ROOT = Path(__file__).resolve().parent.parent
 PAGES = [
@@ -9,7 +10,7 @@ PAGES = [
     ('aws-design-compute', 'コンピューティング設計', 'EC2、ECS、Lightsail、Amplify、S3とCloudFrontを、実行方式と運用責任から選定する'),
     ('aws-design-database', 'データベース設計', 'アプリケーション互換性を起点に、DBの可用性・性能・復旧方式を決める'),
     ('aws-design-storage', 'ストレージ設計', 'ブロック・ファイル・オブジェクトの違いから保存先を選び、性能と復旧を設計する'),
-    ('aws-design-os', 'Amazon Linux 2023のOS設計', 'systemd timerとjournaldを中心に、定期処理・ログ保存・既存運用との互換性を設計する'),
+    ('aws-design-os', 'OS・ミドルウェア設計', 'OSの標準機能とミドルウェアの提供バージョンを確認し、互換性・保守期限・定期処理・ログ保存を設計する'),
     ('aws-design-observability', 'ログ・監視・可用性設計', 'SLAと業務の稼働目標を区別し、ログ収集・障害検知・復旧確認までを設計する'),
     ('aws-design-governance', '命名規則・タグ設計', '名前とタグの役割を分け、識別・費用配賦・権限制御・例外管理のルールを決める'),
 ]
@@ -26,6 +27,16 @@ def code(s,prompt=None):
     return f'<div class="code"{attr}><div class="code-header"><span>{label}</span><button class="copy" type="button">Copy</button></div><pre><code>{escape(s)}</code></pre></div>\n'
 def fig(name,caption): return f'<figure><figcaption>{caption}／図を選択すると拡大表示できる</figcaption><a href="../assets/aws-design/{name}.svg"><img src="../assets/aws-design/{name}.svg" alt="{caption}" loading="lazy"></a></figure>\n'
 def note(s): return '<div class="callout callout-info"><strong>ℹ️ 情報</strong>'+p(s)+'</div>\n'
+
+def package_catalog():
+    data=json.loads((ROOT/'scripts/data/al2023-packages-2023.12.20260817.json').read_text(encoding='utf-8'))
+    out=p('掲載対象：Amazon Linux 2023、標準リポジトリの固定リリース <code>'+data['release']+'</code>／対象：x86_64・aarch64／確認日：'+data['checked']+'<br>主なパッケージを抜粋する／別のreleaseverで選ばれるバージョン、AMIへの標準インストール有無は別に確認する')
+    for n,group in enumerate(data['groups']):
+        out+=f'<h3 id="package-group-{n}">{group["name"]}</h3>'
+        if n==3:
+            out+=p('リポジトリや一覧に残るパッケージでも、サポート終了済みの系列は新規採用候補から外す／稼働中の場合は互換性とデータ移行を検証して切り替える')
+        out+=table(['パッケージ名','Version-Release','AL2023でのサポート終了'],[(f'<code>{r["package"]}</code>',f'<code>{r["version_release"]}</code>',r['support_end']) for r in group['packages']])
+    return out
 
 bodies={}
 bodies['aws-design'] = (
@@ -76,7 +87,7 @@ source('https://docs.aws.amazon.com/lightsail/latest/userguide/what-is-amazon-li
 source('https://docs.aws.amazon.com/AmazonECS/latest/developerguide/Welcome.html','ECSと実行基盤の選択肢')+
 h('hosting-diagrams','ホスティング別の構成図とWAFの関連付け先')+
 p('<a href="#hosting-ec2">EC2の構成図</a> ／ <a href="#hosting-lightsail">Lightsailの構成図</a> ／ <a href="#hosting-amplify">Amplifyの構成図</a> ／ <a href="#hosting-s3">S3＋CloudFrontの構成図</a>')+
-p('AWS公式アイコンでリソースと配置領域を示す／緑の破線はAWS WAFのWeb ACLを関連付ける対象を示す<br>各図は構成の比較用であり、WAFは任意の追加機能として示す')+
+p('各方式に基本構成と拡張構成を掲載する／拡張図の緑の破線・点線枠は要件に応じて追加するサービスと関連付けを示す<br>拡張図の下段は基本図の対象を抜き出した連携図であり、すべての追加サービスを同時に採用する必要はない')+
 table(['構成要素','AWS WAFの直接関連付け','追加する構成'],[
 ('EC2インスタンス','対象外','前段のALBまたはCloudFrontへ関連付ける'),
 ('ALB','対応する','ALBと同じリージョンのWeb ACLを使用する'),
@@ -87,23 +98,53 @@ table(['構成要素','AWS WAFの直接関連付け','追加する構成'],[
 ('CloudFront','対応する','Global（CloudFront）のWeb ACLを使用する')])+
 source('https://docs.aws.amazon.com/waf/latest/developerguide/how-aws-waf-works-resources.html','AWS WAFで保護できるリソース')+
 h('hosting-ec2','EC2：ALBで受けて、複数AZへ振り分ける')+
-fig('hosting-ec2','EC2構成：WAFの関連付け先はALB')+
+fig('hosting-ec2-basic','EC2の基本構成：ALB・EC2・RDSを2つのAZへ配置する')+
+fig('hosting-ec2','EC2の拡張構成：WAF・監視・バックアップ・DNSを追加する')+
+table(['追加要件','組み合わせるサービス','採用時に決めること'],[
+('Web攻撃の検査','AWS WAF → ALB','ルール・例外・レート制御を決める／NLBへ直接関連付ける構成には流用しない'),
+('メトリクス・OSログ監視','CloudWatch','EC2のメモリ・OSログはエージェント等を設定する／RDSのログ出力も別途有効化する'),
+('復旧・世代保持','AWS Backup','EC2・RDSを保護対象へ登録し、RPO・保持期間・復元試験を決める'),
+('独自ドメイン','Route 53 ＋ ACM','ALBへのAliasと、同一リージョンのTLS証明書を設定する')])+
 p('HTTPSの入口をALBに集約し、EC2のセキュリティグループではALBからのアプリケーション通信だけを許可する<br>EC2へ直接アクセスできる別経路を残すと、その経路はALBのWAFによる検査を受けない')+
 p('図はALBへWAFを関連付ける例を示す／CloudFrontを追加する場合は、CloudFront側へWAFを関連付ける案も比較する<br>ALBとCloudFrontの両方へ追加する場合は、検査の目的・ルールの重複・費用を整理する')+
 h('hosting-lightsail','Lightsail：CloudFrontを前段へ追加する')+
-fig('hosting-lightsail','Lightsail構成：通常のCloudFrontディストリビューションへWAFを関連付ける')+
+fig('hosting-lightsail-basic','Lightsailの基本構成：単一インスタンスへHTTPS接続する')+
+fig('hosting-lightsail','Lightsailの拡張構成：CloudFrontとWAF・ログ保存・復旧機能を追加する')+
+p('LightsailでもWAFによる検査を追加できる／この構成ではLightsailへ直接関連付けず、前段の通常のCloudFrontへWAFを関連付ける<br>WAFが必要ならCloudFrontと組み合わせて追加し、キャッシュだけが必要ならWAFなしでもCloudFrontを利用できる')+
+table(['追加要件','組み合わせるサービス・機能','採用時に決めること'],[
+('Web攻撃の検査・エッジ配信','CloudFront ＋ AWS WAF','カスタムオリジン・TLS・キャッシュ除外・オリジン直アクセス制限を設定する'),
+('アクセス記録の保存','CloudFront標準ログ → S3','配信データとログ用バケットを分け、配信権限・保持期間・ログ費用を決める'),
+('単一サーバーの復旧','Lightsail自動スナップショット','Linux／Unixインスタンスが対象／日次7世代から新規インスタンスへ復元する／HAの代替にはしない'),
+('独自ドメイン','Route 53 ＋ ACM','CloudFront向け証明書はus-east-1で用意し、Lightsail側の証明書も別に用意する')])+
 p('この図はLightsailのCDNディストリビューションではなく、CloudFront側で作成する通常のディストリビューションを使う<br>Lightsailインスタンスをカスタムオリジンとし、HTTPS接続に使うDNS名とサーバー証明書を用意する')+
 p('オリジンへの直接アクセスを制限するため、CloudFrontで付与する秘密のカスタムヘッダーをWebサーバーで検証し、通信元の制限も検討する<br>ヘッダー値は閲覧用HTMLへ埋め込まず、更新方法とログへの出力抑止を決める／ログイン・管理画面などはキャッシュ対象から外す')+
 p('図のLightsailは1台の構成例であり、CloudFrontやWAFの追加だけではオリジン障害への冗長化にはならない')+
 source('https://aws.amazon.com/blogs/compute/integrating-aws-waf-with-your-amazon-lightsail-instance/','AWS公式：LightsailとWAFの構成')+
 source('https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/add-origin-custom-headers.html','CloudFrontのオリジン用カスタムヘッダー')+
+source('https://docs.aws.amazon.com/lightsail/latest/userguide/amazon-lightsail-faq-snapshots.html','Lightsail自動スナップショットの対象と保持')+
 h('hosting-amplify','Amplify Hosting：アプリへWAFを直接統合する')+
-fig('hosting-amplify','Amplify構成：Amplify HostingアプリへWAFを関連付ける')+
+fig('hosting-amplify-basic','Amplifyの基本構成：配信・SSRとビルドの領域を分ける')+
+fig('hosting-amplify','Amplifyの拡張構成：WAF・ユーザー認証・SSRログ・DNSを追加する')+
+table(['追加要件','組み合わせるサービス','採用時に決めること'],[
+('Web攻撃の検査','AWS WAF → Amplifyアプリ','GlobalのWeb ACLを関連付け、ブランチへの適用範囲と統合費用を確認する'),
+('ユーザー認証','Amazon Cognito','アプリへログイン・トークン検証・権限制御を実装する／WAFはログイン認証の代わりにはならない'),
+('SSRの障害調査','CloudWatch Logs','対応するSSR実行環境・ログ出力・IAMサービスロール・保存期間を設定する'),
+('独自ドメイン','Route 53 ＋ Amplifyカスタムドメイン','DNS検証・証明書・ブランチとサブドメインの対応を設定する')])+
 p('Amplify HostingはAWS WAFとの直接統合に対応するため、WAFを使うためだけに利用者管理のALBを追加する必要はない<br>Amplifyアプリへ関連付けるWeb ACLはGlobal（CloudFront）用を使用する')+
 p('同じAmplifyアプリのブランチに対するWAFの適用範囲を確認する／別URLで提供するAPIは、そのAPI側でも保護を設計する<br>ビルド・デプロイ経路と利用者からのアクセス経路は別に扱い、WAF費用とAmplify側の統合費用を見積もる')+
 source('https://docs.aws.amazon.com/amplify/latest/userguide/WAF-integration.html','Amplify HostingのWAF直接統合')+
+source('https://docs.aws.amazon.com/amplify/latest/userguide/server-side-rendering-amplify.html','Amplify SSRのCloudWatch Logs設定')+
 h('hosting-s3','S3＋CloudFront：バケットを非公開にして配信する')+
-fig('hosting-s3','S3構成：WAFはCloudFrontへ、OACはS3へのアクセス制御に使用する')+
+fig('hosting-s3-basic','S3＋CloudFrontの基本構成：OACで非公開バケットから配信する')+
+fig('hosting-s3','S3＋CloudFrontの拡張構成：WAF・アクセスログ・オブジェクト操作監査を追加する')+
+table(['追加要件','組み合わせるサービス・機能','採用時に決めること'],[
+('Web攻撃の検査','AWS WAF → CloudFront','WAFは任意／S3への直接関連付けはしない／OACとバケットの非公開化は基本構成にも含める'),
+('アクセス記録の保存','CloudFront標準ログ → S3','ログ用バケット・配信権限・保持期間を決める／全リクエストの完全な記録は保証されない'),
+('オブジェクト操作の監査','CloudTrailデータイベント','対象バケット・読取り／書込み・記録先・追加料金を決める／CloudFrontのキャッシュヒットはS3の読取りにならない'),
+('独自ドメイン','Route 53 ＋ ACM','Aliasとus-east-1の証明書を設定する'),
+('誤更新・誤削除からの復旧','S3バージョニング ＋ ライフサイクル','旧版の復元・保持期限・削除権限・非現行バージョンの費用を決める')])+
+source('https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/AccessLogs.html','CloudFront標準ログ')+
+source('https://docs.aws.amazon.com/AmazonS3/latest/userguide/cloudtrail-logging-s3-info.html','S3のCloudTrailデータイベント')+
 p('S3バケットへWAFを直接関連付けず、CloudFrontを閲覧の入口にする<br>OACとバケットポリシーで対象ディストリビューションからのアクセスを許可し、S3の公開アクセスをブロックする')+
 p('この構成ではS3のWebサイトエンドポイントを使用しない／通常のS3バケットオリジンを使用する<br>OACはオリジンへのアクセス制御、WAFはWebリクエストの検査を担当し、役割が異なる')+
 h('responsibility','EC2とECSの責任分界を混同しない')+
@@ -194,6 +235,38 @@ source('https://docs.aws.amazon.com/AmazonS3/latest/userguide/storage-class-intr
 )
 
 bodies['aws-design-os']=(
+h('middleware','OSとミドルウェアの採用範囲')+
+p('OSの標準機能と、追加インストールするWeb・AP・DB・キャッシュ・ランタイムを分けて設計する<br>本ページの提供バージョン表はAmazon Linux 2023を対象とし、他のOSや外部リポジトリのバージョンを混在させない')+
+table(['設計項目','確定する内容'],[
+('OS・CPU','AMI ID、AL2023リリース、releasever、x86_64／aarch64、サポート期限を記録する'),
+('Web・AP','Apache／nginx、PHP-FPM／Tomcatなどの組合せ、モジュール、接続方式、同時処理数を決める'),
+('DB・キャッシュ','DBのメジャーバージョン、クライアント互換性、永続化、移行・復元手順を決める'),
+('配布元','標準リポジトリ、ベンダー提供リポジトリ、コンテナイメージを区別し、更新責任を決める')])+
+h('packages','標準リポジトリから導入できるバージョン')+
+package_catalog()+
+source('https://docs.aws.amazon.com/linux/al2023/release-notes/all-packages-AL2023.12.html','AL2023の全パッケージ一覧：2023.12.20260817')+
+h('repository-check','採用リポジトリで利用可能な版を確認する')+
+p('AL2023はリポジトリをリリース単位で固定するため、同じOS名でも導入できる版が異なる<br>次の参照コマンドはパッケージをインストール・更新しない／リポジトリ照会ではローカルのメタデータキャッシュが更新されることがある')+
+code('cat /etc/os-release\nuname -m\nrpm -q system-release', '$')+
+p('releaseverの上書きファイルと、有効なリポジトリを確認する')+
+code('if [ -f /etc/dnf/vars/releasever ]; then cat /etc/dnf/vars/releasever; fi\ndnf repolist --enabled', '$')+
+p('現在参照している標準リポジトリamazonlinuxの提供版を照会する／外部リポジトリを一時的に除外する')+
+code("dnf --disablerepo='*' --enablerepo=amazonlinux list --showduplicates httpd nginx php8.4-fpm mariadb114-server postgresql17-server valkey", '$')+
+p('掲載表と同じ固定リリースを照会する場合は、コマンド単位でreleaseverを指定する／OS全体のリポジトリ固定先は変更しない')+
+code("dnf --releasever=2023.12.20260817 --disablerepo='*' --enablerepo=amazonlinux list --showduplicates httpd nginx php8.4-fpm mariadb114-server postgresql17-server valkey", '$')+
+p('インストール済みの版と、提供される版は別に記録する／未インストールのパッケージを含むrpm照会は非ゼロで終了する')+
+code('rpm -q httpd nginx php8.4-fpm mariadb114-server postgresql17-server valkey', '$')+
+source('https://docs.aws.amazon.com/linux/al2023/ug/managing-repos-os-updates.html','AL2023のバージョン固定リポジトリ')+
+h('compatibility','インストール前に判断する互換性と保守')+
+p('表の値はパッケージのVersion-Releaseであり、上流ソフトウェアのバージョン番号だけでは修正適用状況を判断しない<br>AWSによる修正のバックポート、サポート期限、アドバイザリーと合わせて採用を判断する')+
+table(['組み合わせ','設計・試験する項目'],[
+('Apache／nginx ＋ PHP-FPM','PHP拡張、Unix socket／TCP、実行ユーザー、タイムアウト、同時処理数を合わせる'),
+('Tomcat 9 → 10以降','javaxからjakartaへの移行など、アプリのAPI・Java要件を検証する／版数だけで入替えない'),
+('MariaDB／PostgreSQLのメジャー変更','接続ドライバー、SQL、照合順序、バックアップ形式、データ移行と切戻しを検証する'),
+('Redis 6 → Valkey','クライアント、コマンド、永続データ、レプリケーションを検証する／サポート終了したRedis 6を新規標準にしない'),
+('OSのPython','OS管理用python3を上書きせず、アプリ用ランタイムと仮想環境を分離する')])+
+source('https://tomcat.apache.org/migration-10','Tomcat 9から10へのAPI互換性')+
+source('https://docs.aws.amazon.com/linux/al2023/ug/python.html','AL2023のシステムPythonと追加ランタイム')+
 h('defaults','AL2023の標準と追加できるもの')+
 table(['設計対象','標準の考え方','追加・変更する条件'],[
 ('定期処理','systemd timerを利用する／cronieは標準でインストールされない','既存のcrontab互換が必要ならcronieを追加する'),

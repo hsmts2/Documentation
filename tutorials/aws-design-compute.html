@@ -71,7 +71,7 @@
       <a class="active" aria-current="page" href="aws-design-compute.html">コンピューティング設計</a>
       <a href="aws-design-database.html">データベース設計</a>
       <a href="aws-design-storage.html">ストレージ設計</a>
-      <a href="aws-design-os.html">Amazon Linux 2023のOS設計</a>
+      <a href="aws-design-os.html">OS・ミドルウェア設計</a>
       <a href="aws-design-observability.html">ログ・監視・可用性設計</a>
       <a href="aws-design-governance.html">命名規則・タグ設計</a>
       <a href="cloudformation.html">CloudFormation 運用手順集</a>
@@ -115,7 +115,7 @@
 <tr><td>ECS＋EC2</td><td>コンテナを使いながらホストやインスタンスの選択を制御したい</td><td>ECSの管理に加え、EC2の容量・パッチ・スケーリングを設計する</td></tr></tbody></table></div>
 <h2 id="hosting-diagrams">ホスティング別の構成図とWAFの関連付け先</h2>
 <p><a href="#hosting-ec2">EC2の構成図</a> ／ <a href="#hosting-lightsail">Lightsailの構成図</a> ／ <a href="#hosting-amplify">Amplifyの構成図</a> ／ <a href="#hosting-s3">S3＋CloudFrontの構成図</a></p>
-<p>AWS公式アイコンでリソースと配置領域を示す／緑の破線はAWS WAFのWeb ACLを関連付ける対象を示す<br>各図は構成の比較用であり、WAFは任意の追加機能として示す</p>
+<p>各方式に基本構成と拡張構成を掲載する／拡張図の緑の破線・点線枠は要件に応じて追加するサービスと関連付けを示す<br>拡張図の下段は基本図の対象を抜き出した連携図であり、すべての追加サービスを同時に採用する必要はない</p>
 <p class="design-table-hint">表は横にスクロールして確認できる</p><div class="table-scroll" tabindex="0" role="region" aria-label="比較表：横スクロール対応"><table><thead><tr><th>構成要素</th><th>AWS WAFの直接関連付け</th><th>追加する構成</th></tr></thead><tbody>
 <tr><td>EC2インスタンス</td><td>対象外</td><td>前段のALBまたはCloudFrontへ関連付ける</td></tr>
 <tr><td>ALB</td><td>対応する</td><td>ALBと同じリージョンのWeb ACLを使用する</td></tr>
@@ -125,20 +125,46 @@
 <tr><td>S3バケット</td><td>対象外</td><td>前段のCloudFrontへ関連付ける</td></tr>
 <tr><td>CloudFront</td><td>対応する</td><td>Global（CloudFront）のWeb ACLを使用する</td></tr></tbody></table></div>
 <h2 id="hosting-ec2">EC2：ALBで受けて、複数AZへ振り分ける</h2>
-<figure><figcaption>EC2構成：WAFの関連付け先はALB／図を選択すると拡大表示できる</figcaption><a href="../assets/aws-design/hosting-ec2.svg"><img src="../assets/aws-design/hosting-ec2.svg" alt="EC2構成：WAFの関連付け先はALB" loading="lazy"></a></figure>
+<figure><figcaption>EC2の基本構成：ALB・EC2・RDSを2つのAZへ配置する／図を選択すると拡大表示できる</figcaption><a href="../assets/aws-design/hosting-ec2-basic.svg"><img src="../assets/aws-design/hosting-ec2-basic.svg" alt="EC2の基本構成：ALB・EC2・RDSを2つのAZへ配置する" loading="lazy"></a></figure>
+<figure><figcaption>EC2の拡張構成：WAF・監視・バックアップ・DNSを追加する／図を選択すると拡大表示できる</figcaption><a href="../assets/aws-design/hosting-ec2.svg"><img src="../assets/aws-design/hosting-ec2.svg" alt="EC2の拡張構成：WAF・監視・バックアップ・DNSを追加する" loading="lazy"></a></figure>
+<p class="design-table-hint">表は横にスクロールして確認できる</p><div class="table-scroll" tabindex="0" role="region" aria-label="比較表：横スクロール対応"><table><thead><tr><th>追加要件</th><th>組み合わせるサービス</th><th>採用時に決めること</th></tr></thead><tbody>
+<tr><td>Web攻撃の検査</td><td>AWS WAF → ALB</td><td>ルール・例外・レート制御を決める／NLBへ直接関連付ける構成には流用しない</td></tr>
+<tr><td>メトリクス・OSログ監視</td><td>CloudWatch</td><td>EC2のメモリ・OSログはエージェント等を設定する／RDSのログ出力も別途有効化する</td></tr>
+<tr><td>復旧・世代保持</td><td>AWS Backup</td><td>EC2・RDSを保護対象へ登録し、RPO・保持期間・復元試験を決める</td></tr>
+<tr><td>独自ドメイン</td><td>Route 53 ＋ ACM</td><td>ALBへのAliasと、同一リージョンのTLS証明書を設定する</td></tr></tbody></table></div>
 <p>HTTPSの入口をALBに集約し、EC2のセキュリティグループではALBからのアプリケーション通信だけを許可する<br>EC2へ直接アクセスできる別経路を残すと、その経路はALBのWAFによる検査を受けない</p>
 <p>図はALBへWAFを関連付ける例を示す／CloudFrontを追加する場合は、CloudFront側へWAFを関連付ける案も比較する<br>ALBとCloudFrontの両方へ追加する場合は、検査の目的・ルールの重複・費用を整理する</p>
 <h2 id="hosting-lightsail">Lightsail：CloudFrontを前段へ追加する</h2>
-<figure><figcaption>Lightsail構成：通常のCloudFrontディストリビューションへWAFを関連付ける／図を選択すると拡大表示できる</figcaption><a href="../assets/aws-design/hosting-lightsail.svg"><img src="../assets/aws-design/hosting-lightsail.svg" alt="Lightsail構成：通常のCloudFrontディストリビューションへWAFを関連付ける" loading="lazy"></a></figure>
+<figure><figcaption>Lightsailの基本構成：単一インスタンスへHTTPS接続する／図を選択すると拡大表示できる</figcaption><a href="../assets/aws-design/hosting-lightsail-basic.svg"><img src="../assets/aws-design/hosting-lightsail-basic.svg" alt="Lightsailの基本構成：単一インスタンスへHTTPS接続する" loading="lazy"></a></figure>
+<figure><figcaption>Lightsailの拡張構成：CloudFrontとWAF・ログ保存・復旧機能を追加する／図を選択すると拡大表示できる</figcaption><a href="../assets/aws-design/hosting-lightsail.svg"><img src="../assets/aws-design/hosting-lightsail.svg" alt="Lightsailの拡張構成：CloudFrontとWAF・ログ保存・復旧機能を追加する" loading="lazy"></a></figure>
+<p>LightsailでもWAFによる検査を追加できる／この構成ではLightsailへ直接関連付けず、前段の通常のCloudFrontへWAFを関連付ける<br>WAFが必要ならCloudFrontと組み合わせて追加し、キャッシュだけが必要ならWAFなしでもCloudFrontを利用できる</p>
+<p class="design-table-hint">表は横にスクロールして確認できる</p><div class="table-scroll" tabindex="0" role="region" aria-label="比較表：横スクロール対応"><table><thead><tr><th>追加要件</th><th>組み合わせるサービス・機能</th><th>採用時に決めること</th></tr></thead><tbody>
+<tr><td>Web攻撃の検査・エッジ配信</td><td>CloudFront ＋ AWS WAF</td><td>カスタムオリジン・TLS・キャッシュ除外・オリジン直アクセス制限を設定する</td></tr>
+<tr><td>アクセス記録の保存</td><td>CloudFront標準ログ → S3</td><td>配信データとログ用バケットを分け、配信権限・保持期間・ログ費用を決める</td></tr>
+<tr><td>単一サーバーの復旧</td><td>Lightsail自動スナップショット</td><td>Linux／Unixインスタンスが対象／日次7世代から新規インスタンスへ復元する／HAの代替にはしない</td></tr>
+<tr><td>独自ドメイン</td><td>Route 53 ＋ ACM</td><td>CloudFront向け証明書はus-east-1で用意し、Lightsail側の証明書も別に用意する</td></tr></tbody></table></div>
 <p>この図はLightsailのCDNディストリビューションではなく、CloudFront側で作成する通常のディストリビューションを使う<br>Lightsailインスタンスをカスタムオリジンとし、HTTPS接続に使うDNS名とサーバー証明書を用意する</p>
 <p>オリジンへの直接アクセスを制限するため、CloudFrontで付与する秘密のカスタムヘッダーをWebサーバーで検証し、通信元の制限も検討する<br>ヘッダー値は閲覧用HTMLへ埋め込まず、更新方法とログへの出力抑止を決める／ログイン・管理画面などはキャッシュ対象から外す</p>
 <p>図のLightsailは1台の構成例であり、CloudFrontやWAFの追加だけではオリジン障害への冗長化にはならない</p>
 <h2 id="hosting-amplify">Amplify Hosting：アプリへWAFを直接統合する</h2>
-<figure><figcaption>Amplify構成：Amplify HostingアプリへWAFを関連付ける／図を選択すると拡大表示できる</figcaption><a href="../assets/aws-design/hosting-amplify.svg"><img src="../assets/aws-design/hosting-amplify.svg" alt="Amplify構成：Amplify HostingアプリへWAFを関連付ける" loading="lazy"></a></figure>
+<figure><figcaption>Amplifyの基本構成：配信・SSRとビルドの領域を分ける／図を選択すると拡大表示できる</figcaption><a href="../assets/aws-design/hosting-amplify-basic.svg"><img src="../assets/aws-design/hosting-amplify-basic.svg" alt="Amplifyの基本構成：配信・SSRとビルドの領域を分ける" loading="lazy"></a></figure>
+<figure><figcaption>Amplifyの拡張構成：WAF・ユーザー認証・SSRログ・DNSを追加する／図を選択すると拡大表示できる</figcaption><a href="../assets/aws-design/hosting-amplify.svg"><img src="../assets/aws-design/hosting-amplify.svg" alt="Amplifyの拡張構成：WAF・ユーザー認証・SSRログ・DNSを追加する" loading="lazy"></a></figure>
+<p class="design-table-hint">表は横にスクロールして確認できる</p><div class="table-scroll" tabindex="0" role="region" aria-label="比較表：横スクロール対応"><table><thead><tr><th>追加要件</th><th>組み合わせるサービス</th><th>採用時に決めること</th></tr></thead><tbody>
+<tr><td>Web攻撃の検査</td><td>AWS WAF → Amplifyアプリ</td><td>GlobalのWeb ACLを関連付け、ブランチへの適用範囲と統合費用を確認する</td></tr>
+<tr><td>ユーザー認証</td><td>Amazon Cognito</td><td>アプリへログイン・トークン検証・権限制御を実装する／WAFはログイン認証の代わりにはならない</td></tr>
+<tr><td>SSRの障害調査</td><td>CloudWatch Logs</td><td>対応するSSR実行環境・ログ出力・IAMサービスロール・保存期間を設定する</td></tr>
+<tr><td>独自ドメイン</td><td>Route 53 ＋ Amplifyカスタムドメイン</td><td>DNS検証・証明書・ブランチとサブドメインの対応を設定する</td></tr></tbody></table></div>
 <p>Amplify HostingはAWS WAFとの直接統合に対応するため、WAFを使うためだけに利用者管理のALBを追加する必要はない<br>Amplifyアプリへ関連付けるWeb ACLはGlobal（CloudFront）用を使用する</p>
 <p>同じAmplifyアプリのブランチに対するWAFの適用範囲を確認する／別URLで提供するAPIは、そのAPI側でも保護を設計する<br>ビルド・デプロイ経路と利用者からのアクセス経路は別に扱い、WAF費用とAmplify側の統合費用を見積もる</p>
 <h2 id="hosting-s3">S3＋CloudFront：バケットを非公開にして配信する</h2>
-<figure><figcaption>S3構成：WAFはCloudFrontへ、OACはS3へのアクセス制御に使用する／図を選択すると拡大表示できる</figcaption><a href="../assets/aws-design/hosting-s3.svg"><img src="../assets/aws-design/hosting-s3.svg" alt="S3構成：WAFはCloudFrontへ、OACはS3へのアクセス制御に使用する" loading="lazy"></a></figure>
+<figure><figcaption>S3＋CloudFrontの基本構成：OACで非公開バケットから配信する／図を選択すると拡大表示できる</figcaption><a href="../assets/aws-design/hosting-s3-basic.svg"><img src="../assets/aws-design/hosting-s3-basic.svg" alt="S3＋CloudFrontの基本構成：OACで非公開バケットから配信する" loading="lazy"></a></figure>
+<figure><figcaption>S3＋CloudFrontの拡張構成：WAF・アクセスログ・オブジェクト操作監査を追加する／図を選択すると拡大表示できる</figcaption><a href="../assets/aws-design/hosting-s3.svg"><img src="../assets/aws-design/hosting-s3.svg" alt="S3＋CloudFrontの拡張構成：WAF・アクセスログ・オブジェクト操作監査を追加する" loading="lazy"></a></figure>
+<p class="design-table-hint">表は横にスクロールして確認できる</p><div class="table-scroll" tabindex="0" role="region" aria-label="比較表：横スクロール対応"><table><thead><tr><th>追加要件</th><th>組み合わせるサービス・機能</th><th>採用時に決めること</th></tr></thead><tbody>
+<tr><td>Web攻撃の検査</td><td>AWS WAF → CloudFront</td><td>WAFは任意／S3への直接関連付けはしない／OACとバケットの非公開化は基本構成にも含める</td></tr>
+<tr><td>アクセス記録の保存</td><td>CloudFront標準ログ → S3</td><td>ログ用バケット・配信権限・保持期間を決める／全リクエストの完全な記録は保証されない</td></tr>
+<tr><td>オブジェクト操作の監査</td><td>CloudTrailデータイベント</td><td>対象バケット・読取り／書込み・記録先・追加料金を決める／CloudFrontのキャッシュヒットはS3の読取りにならない</td></tr>
+<tr><td>独自ドメイン</td><td>Route 53 ＋ ACM</td><td>Aliasとus-east-1の証明書を設定する</td></tr>
+<tr><td>誤更新・誤削除からの復旧</td><td>S3バージョニング ＋ ライフサイクル</td><td>旧版の復元・保持期限・削除権限・非現行バージョンの費用を決める</td></tr></tbody></table></div>
 <p>S3バケットへWAFを直接関連付けず、CloudFrontを閲覧の入口にする<br>OACとバケットポリシーで対象ディストリビューションからのアクセスを許可し、S3の公開アクセスをブロックする</p>
 <p>この構成ではS3のWebサイトエンドポイントを使用しない／通常のS3バケットオリジンを使用する<br>OACはオリジンへのアクセス制御、WAFはWebリクエストの検査を担当し、役割が異なる</p>
 <h2 id="responsibility">EC2とECSの責任分界を混同しない</h2>
@@ -156,7 +182,7 @@
 <tr><td>Arm系インスタンス</td><td>使用するZabbix、DB、プラグイン、独自スクリプトとバイナリの対応を確認する</td></tr></tbody></table></div>
 <h2 id="acceptance">採用を確定する試験</h2>
 <p>通常時、ピーク時、定期処理の重複時、片系停止時の4条件で、応答時間・エラー率・処理待ち・リソース使用率を確認する<br>試験結果がない段階ではインスタンスタイプを「初期候補」とし、監視規模に対する保証値として掲載しない</p>
-<nav class="design-series" aria-label="AWS設計シリーズ"><p><strong>AWS設計シリーズ</strong></p><ul><li><a href="aws-design.html">AWS基本設計・アーキテクチャ</a></li><li><a href="aws-design-compute.html" aria-current="page">コンピューティング設計</a></li><li><a href="aws-design-database.html">データベース設計</a></li><li><a href="aws-design-storage.html">ストレージ設計</a></li><li><a href="aws-design-os.html">Amazon Linux 2023のOS設計</a></li><li><a href="aws-design-observability.html">ログ・監視・可用性設計</a></li><li><a href="aws-design-governance.html">命名規則・タグ設計</a></li></ul></nav></main><aside class="toc" aria-label="Table of contents"><h2>ページ内</h2><a href="#selection">ホスティングは処理方式と運用要件で選ぶ</a>
+<nav class="design-series" aria-label="AWS設計シリーズ"><p><strong>AWS設計シリーズ</strong></p><ul><li><a href="aws-design.html">AWS基本設計・アーキテクチャ</a></li><li><a href="aws-design-compute.html" aria-current="page">コンピューティング設計</a></li><li><a href="aws-design-database.html">データベース設計</a></li><li><a href="aws-design-storage.html">ストレージ設計</a></li><li><a href="aws-design-os.html">OS・ミドルウェア設計</a></li><li><a href="aws-design-observability.html">ログ・監視・可用性設計</a></li><li><a href="aws-design-governance.html">命名規則・タグ設計</a></li></ul></nav></main><aside class="toc" aria-label="Table of contents"><h2>ページ内</h2><a href="#selection">ホスティングは処理方式と運用要件で選ぶ</a>
 <a href="#hosting-diagrams">ホスティング別の構成図とWAFの関連付け先</a>
 <a href="#hosting-ec2">EC2：ALBで受けて、複数AZへ振り分ける</a>
 <a href="#hosting-lightsail">Lightsail：CloudFrontを前段へ追加する</a>

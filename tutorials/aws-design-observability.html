@@ -71,7 +71,7 @@
       <a href="aws-design-compute.html">コンピューティング設計</a>
       <a href="aws-design-database.html">データベース設計</a>
       <a href="aws-design-storage.html">ストレージ設計</a>
-      <a href="aws-design-os.html">Amazon Linux 2023のOS設計</a>
+      <a href="aws-design-os.html">OS・ミドルウェア設計</a>
       <a class="active" aria-current="page" href="aws-design-observability.html">ログ・監視・可用性設計</a>
       <a href="aws-design-governance.html">命名規則・タグ設計</a>
       <a href="cloudformation.html">CloudFormation 運用手順集</a>
@@ -143,7 +143,7 @@
 <p>閾値だけでなく、評価期間、連続回数、欠測の扱い、復旧判定、通知先、時間外対応、一次対応手順を1組にする<br>CPU使用率80%などの値は初期候補として扱い、平常時の傾向と業務影響から調整する</p>
 <h2 id="acceptance">検知から復旧までを試験する</h2>
 <p>試験用の障害やログを発生させ、収集、アラーム、担当者への通知、復旧、通知解除まで通して確認する<br>監視サーバー停止、エージェント停止、転送先の権限不足も試験に含め、監視できていない状態を正常と表示しない</p>
-<nav class="design-series" aria-label="AWS設計シリーズ"><p><strong>AWS設計シリーズ</strong></p><ul><li><a href="aws-design.html">AWS基本設計・アーキテクチャ</a></li><li><a href="aws-design-compute.html">コンピューティング設計</a></li><li><a href="aws-design-database.html">データベース設計</a></li><li><a href="aws-design-storage.html">ストレージ設計</a></li><li><a href="aws-design-os.html">Amazon Linux 2023のOS設計</a></li><li><a href="aws-design-observability.html" aria-current="page">ログ・監視・可用性設計</a></li><li><a href="aws-design-governance.html">命名規則・タグ設計</a></li></ul></nav></main><aside class="toc" aria-label="Table of contents"><h2>ページ内</h2><a href="#availability">SLA・SLO・実測稼働率を区別する</a>
+<nav class="design-series" aria-label="AWS設計シリーズ"><p><strong>AWS設計シリーズ</strong></p><ul><li><a href="aws-design.html">AWS基本設計・アーキテクチャ</a></li><li><a href="aws-design-compute.html">コンピューティング設計</a></li><li><a href="aws-design-database.html">データベース設計</a></li><li><a href="aws-design-storage.html">ストレージ設計</a></li><li><a href="aws-design-os.html">OS・ミドルウェア設計</a></li><li><a href="aws-design-observability.html" aria-current="page">ログ・監視・可用性設計</a></li><li><a href="aws-design-governance.html">命名規則・タグ設計</a></li></ul></nav></main><aside class="toc" aria-label="Table of contents"><h2>ページ内</h2><a href="#availability">SLA・SLO・実測稼働率を区別する</a>
 <a href="#budget">月間99.9%とRTO 4時間を整合させる</a>
 <a href="#logging">ログは取得から廃棄まで設計する</a>
 <a href="#monitoring">監視項目を対応行動へ結び付ける</a>
