@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>命名規則・タグ設計 | Documentation</title>
+  <meta name="description" content="名前とタグの役割を分け、識別・費用配賦・権限制御・例外管理のルールを決める">
+  <link rel="stylesheet" href="../assets/styles.css?v=20260823-ref1">
+  <link rel="stylesheet" href="../assets/aws-design/design.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="../">
+      <img src="../assets/icon.jpg" alt="Documentation icon">
+      <span>Documentation</span>
+    </a>
+    <div class="header-actions">
+      <button class="icon-button theme-toggle" type="button" title="テーマを切り替え" aria-label="テーマを切り替え">☀</button>
+      <nav class="nav" aria-label="Global navigation">
+        <a href="https://github.com/hsmts2/Documentation"><span class="nav-icon" aria-hidden="true">◆</span>GitHub</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="layout">
+    <aside id="site-sidebar" class="sidebar" aria-label="Page list">
+      <div class="sidebar-heading">
+        <button class="icon-button sidebar-toggle sidebar-toggle-inline" type="button" aria-controls="site-sidebar" aria-expanded="true" title="ナビゲーションを閉じる" aria-label="ナビゲーションを閉じる">☰</button>
+      </div>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">✎</span>記事</p>
+      <a href="cloudflare-private-site.html">Private GitHubリポジトリをCloudflare Workersで認証付き公開してみた</a>
+      <a href="aws-daily-cost-slack.html">AWS利用料を毎朝3時にSlackへ通知してみた</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">☁︎</span>[PoC] マルチVPC・閉域VDI基盤案件</p>
+          <a href="workspaces-skill-transfer.html">全体構築・運用順序</a>
+          <a href="workspaces-managed-ad.html">Managed Microsoft ADの構築</a>
+          <a href="workspaces-managed-ad-users.html">Managed Microsoft ADのユーザー・グループ管理</a>
+          <a href="workspaces-management-ec2.html">管理用EC2の起動・接続・AD管理</a>
+          <a href="workspaces-ad-connector-account.html">AD Connector用サービスアカウント・権限委任</a>
+          <a href="workspaces-ad-connector.html">AD ConnectorのVPCピアリング・SG設定・作成</a>
+          <a href="workspaces-provisioning-gpo.html">WorkSpaces Personalの構築・接続</a>
+          <a href="workspaces-target-ou.html">WorkSpaces用ターゲットOUの作成・権限委任</a>
+          <a href="workspaces-gpo.html">WorkSpaces用GPOの作成・適用・運用</a>
+          <a href="workspaces-image-bundle.html">WorkSpacesカスタムイメージ作成・共有</a>
+          <a href="workspaces-systems-manager.html">Systems Manager環境構築</a>
+          <a href="workspaces-patch-manager.html">Patch Managerの設定</a>
+          <a href="workspaces-patch-operations.html">Patch Managerの実行・結果確認・運用</a>
+          <a href="workspaces-cost-optimizer.html">Cost Optimizerの構築・設定</a>
+          <a href="workspaces-cost-optimizer-dry-run.html">Cost OptimizerのDry Run解除</a>
+          <a href="workspaces-cost-optimizer-schedule.html">Cost Optimizerの実行スケジュール設定・変更</a>
+          <a href="workspaces-cost-optimizer-reports.html">Cost Optimizerのレポート・監視</a>
+          <a href="workspaces-cloudwatch-monitoring.html">CloudWatchのEC2・Windows OS監視とSNS通知</a>
+          <a href="workspaces-cloudwatch-workspaces.html">CloudWatchのWorkSpaces監視</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">⑂</span>Git / GitHub</p>
+      <a href="git-github.html">Git 概要</a>
+      <a href="git-remote.html">Gitリモート操作</a>
+      <a href="github-pages.html">GitHub Pages</a>
+      <a href="github-pull-request.html">GitHubのPull Requestとレビュー</a>
+      <a href="git-utilities.html">Gitトラブルシューティング</a>
+      <a href="github-ssh.html">GitHub認証</a>
+      <a href="github-slack-integration.html">GitHubとSlackの連携・通知設定</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">◈</span>Terraform</p>
+      <a href="terraform.html">Terraform 概要</a>
+      <a href="hcp-terraform.html">HCP Terraform（Terraform Cloud）</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">◈</span>IaC</p>
+      <a href="iac.html">IaC</a>
+      <a href="iam-identity-center.html">IAM Identity Center</a>
+      <a href="iac-vscode.html">VS Codeの設定</a>
+      <a href="iac-deploy.html">IaCによるリソースのデプロイ</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">☁︎</span>AWS</p>
+      <a href="aws-design.html">AWS基本設計・アーキテクチャ</a>
+      <a href="aws-design-compute.html">コンピューティング設計</a>
+      <a href="aws-design-database.html">データベース設計</a>
+      <a href="aws-design-storage.html">ストレージ設計</a>
+      <a href="aws-design-os.html">Amazon Linux 2023のOS設計</a>
+      <a href="aws-design-observability.html">ログ・監視・可用性設計</a>
+      <a class="active" aria-current="page" href="aws-design-governance.html">命名規則・タグ設計</a>
+      <a href="cloudformation.html">CloudFormation 運用手順集</a>
+      <a href="aws-cli.html">AWS CLI 特殊対応</a>
+      <a href="aws-cli-reference.html">AWS CLI コマンドリファレンス</a>
+      <a href="eventbridge-scheduler.html">EventBridge Scheduler</a>
+      <a href="aws-directory-service.html">AWS Directory Service 運用手順</a>
+      <a href="amazon-workspaces.html">Amazon WorkSpaces</a>
+      <a href="amazon-ses.html">Amazon SES SMTPリレー</a>
+      <a href="amazon-ses-monitoring.html">Amazon SES 配信監視</a>
+      <a href="amazon-rds-blue-green.html">Amazon RDS Blue/Green Deployments</a>
+      <a href="apache-acm-certificate-update.html">証明書更新（ACMエクスポート）</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">⚙︎</span>OS／ミドルウェア</p>
+      <a href="rhel9.html">Red Hat Enterprise Linux 9</a>
+      <a href="rhel10.html">Red Hat Enterprise Linux 10</a>
+      <a href="amazon-linux-2023.html">Amazon Linux 2023</a>
+      <a href="windows-server-2022.html">Windows Server 2022</a>
+      <a href="windows-server-2025.html">Windows Server 2025</a>
+      <a href="windows-server-2016-upgrade.html">Windows Server 2016 インプレースアップグレード</a>
+      <a href="storage.html">ストレージ管理</a>
+      <a href="apache.html">Apache</a>
+      <a href="apache-self-signed-ssl-termination.html">Apache SSL終端（自己署名証明書）</a>
+      <a href="redis.html">Redis（KVS）</a>
+      <a href="nfs.html">NFS</a>
+      <a href="samba.html">Samba</a>
+      <a href="mariadb.html">MariaDB</a>
+      <a href="postgresql.html">PostgreSQL</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">▤</span>リファレンス</p>
+      <a href="../writing-style-guide.html">[GitHub Pages] 記法・テンプレート</a>
+      <a href="troubleshooting.html">障害切り分けチェックリスト</a>
+      <a href="eol.html">EOL / ライフサイクル一覧表</a>
+    </aside>
+
+<main class="content aws-design-guide"><nav class="breadcrumb" aria-label="Breadcrumb"><a href="../">Home</a><span>AWS設計</span></nav><h1>命名規則・タグ設計</h1><p class="lead">名前とタグの役割を分け、識別・費用配賦・権限制御・例外管理のルールを決める</p><h2 id="naming">名前は人の識別、IDはリソースの識別に使う</h2>
+<p>命名規則は用途・環境・役割を読み取れる範囲に絞り、個人名・IPアドレス・パスワードなど変わりやすい情報や秘密情報を含めない<br>EC2のNameタグ、OSホスト名、DNS名、Terraformの論理名、AWSリソースIDは別の識別子として管理する</p>
+<p class="design-table-hint">表は横にスクロールして確認できる</p><div class="table-scroll" tabindex="0" role="region" aria-label="比較表：横スクロール対応"><table><thead><tr><th>対象</th><th>設計例</th><th>例外・注意</th></tr></thead><tbody>
+<tr><td>基本パターン</td><td>システム－環境－役割－連番の順にする／例：portal-prod-web-01</td><td>Auto Scalingの個体へ固定の連番を割り当てる運用は避け、役割と一意なIDを併用する</td></tr>
+<tr><td>環境名</td><td>dev／stg／prodへ統一する</td><td>productionやprdとの混在を避ける</td></tr>
+<tr><td>S3バケットなど</td><td>サービスの文字数・文字種・一意性の要件に合わせる</td><td>共通ルールが使えない場合は短縮規則と識別用サフィックスを記録する</td></tr>
+<tr><td>OS・DNS</td><td>ホスト名とサービス名を分ける</td><td>サーバー交換で利用者向けDNSを変更しない設計を検討する</td></tr></tbody></table></div>
+<p class="source">出典：<a href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Using_Tags.html">EC2のNameタグとタグの性質</a></p>
+<p class="source">出典：<a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/bucketnamingrules.html">S3汎用バケットの命名規則</a></p>
+<h2 id="tags">タグに目的と管理責任を持たせる</h2>
+<p class="design-table-hint">表は横にスクロールして確認できる</p><div class="table-scroll" tabindex="0" role="region" aria-label="比較表：横スクロール対応"><table><thead><tr><th>タグキー例</th><th>値の例</th><th>用途と運用</th></tr></thead><tbody>
+<tr><td>System</td><td>portal</td><td>システム単位で検索・集計する</td></tr>
+<tr><td>Environment</td><td>prod</td><td>環境を識別し、許可する値を統一する</td></tr>
+<tr><td>OwnerTeam</td><td>platform</td><td>個人の連絡先ではなく担当チームを示す</td></tr>
+<tr><td>CostCenter</td><td>cc-example</td><td>費用配賦の単位を示し、管理台帳と対応させる</td></tr>
+<tr><td>DataClassification</td><td>internal</td><td>データ分類を示す／タグだけで暗号化やアクセス制限は適用されない</td></tr>
+<tr><td>BackupPolicy</td><td>daily</td><td>バックアップ方針を示す／バックアップ選択ルールとの連携を確認する</td></tr>
+<tr><td>ManagedBy</td><td>terraform</td><td>変更管理の起点を示す</td></tr></tbody></table></div>
+<p>上表はこのシリーズの設計例であり、AWS共通の必須タグではない<br>大文字・小文字、許容値、必須と任意、付与者、変更承認、未付与時の対応をタグ辞書として管理する</p>
+<p class="source">出典：<a href="https://docs.aws.amazon.com/whitepapers/latest/tagging-best-practices/tagging-best-practices.html">AWSリソースのタグ付けベストプラクティス</a></p>
+<h2 id="enforcement">タグを付けるだけでは統制にならない</h2>
+<p>タグキーと値では大文字・小文字を区別し、AWS予約のaws:プレフィックスを利用者の独自タグに使わない<br>タグは参照できるAPIや画面が多いため、機密情報を格納しない</p>
+<p class="source">出典：<a href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Using_Tags.html">タグ制約と機密情報の注意</a></p>
+<p>費用配賦に使うユーザー定義タグはBilling側での有効化も確認する<br>すべての費用が自動的にタグ別へ配賦されると想定せず、対象リソース・対応サービス・反映後の明細を確認する</p>
+<p class="source">出典：<a href="https://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/activating-tags.html">ユーザー定義コスト配分タグの有効化</a></p>
+<p>タグベースのアクセス制御を使う場合は、タグの変更権限も管理する<br>Environment=prodを書き換えられる利用者が制限を回避できないように、IAM条件・対応アクション・タグ作成と変更の権限を検証する</p>
+<p class="source">出典：<a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/introduction_attribute-based-access-control.html">IAMの属性ベースアクセス制御</a></p>
+<h2 id="exceptions">例外と自動生成リソースの扱い</h2>
+<p class="design-table-hint">表は横にスクロールして確認できる</p><div class="table-scroll" tabindex="0" role="region" aria-label="比較表：横スクロール対応"><table><thead><tr><th>場面</th><th>管理方法</th></tr></thead><tbody>
+<tr><td>名前の長さや文字種が合わない</td><td>承認した短縮名と元の名称を対応表に残す</td></tr>
+<tr><td>AWSが自動生成する名前</td><td>サービスの仕様を優先し、追跡用のタグや親リソースとの関連で識別する</td></tr>
+<tr><td>タグが伝播しない子リソース</td><td>EBS・スナップショットなどの付与結果を個別に確認する</td></tr>
+<tr><td>既存環境への導入</td><td>名前変更による再作成や参照切れを調べ、タグから段階的に導入する</td></tr></tbody></table></div>
+<h2 id="acceptance">レビューで確認すること</h2>
+<p>IaCの入力検査とデプロイ後の棚卸しを組み合わせ、必須タグ・値の揺れ・未管理リソースを確認する<br>例外には理由・責任者・見直し期限を残し、命名規則のためだけに本番リソースを再作成しない</p>
+<nav class="design-series" aria-label="AWS設計シリーズ"><p><strong>AWS設計シリーズ</strong></p><ul><li><a href="aws-design.html">AWS基本設計・アーキテクチャ</a></li><li><a href="aws-design-compute.html">コンピューティング設計</a></li><li><a href="aws-design-database.html">データベース設計</a></li><li><a href="aws-design-storage.html">ストレージ設計</a></li><li><a href="aws-design-os.html">Amazon Linux 2023のOS設計</a></li><li><a href="aws-design-observability.html">ログ・監視・可用性設計</a></li><li><a href="aws-design-governance.html" aria-current="page">命名規則・タグ設計</a></li></ul></nav></main><aside class="toc" aria-label="Table of contents"><h2>ページ内</h2><a href="#naming">名前は人の識別、IDはリソースの識別に使う</a>
+<a href="#tags">タグに目的と管理責任を持たせる</a>
+<a href="#enforcement">タグを付けるだけでは統制にならない</a>
+<a href="#exceptions">例外と自動生成リソースの扱い</a>
+<a href="#acceptance">レビューで確認すること</a>
+</aside></div><script src="../assets/app.js?v=20260823-ref1"></script></body></html>

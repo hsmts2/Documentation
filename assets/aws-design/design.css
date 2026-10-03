@@ -1,0 +1,13 @@
+.aws-design-guide figure { margin: 1.5rem 0; }
+.aws-design-guide figure img { width: 100%; height: auto; border-radius: 12px; }
+.aws-design-guide figcaption { margin-bottom: .7rem; line-height: 1.8; }
+.aws-design-guide .table-scroll { margin: 1.25rem 0; }
+.aws-design-guide th { white-space: normal; }
+.aws-design-guide td { vertical-align: top; line-height: 1.85; }
+.aws-design-guide .design-series { margin-top: 2.5rem; padding-top: 1rem; border-top: 1px solid var(--border, #8993a2); }
+.aws-design-guide .design-series ul { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: .55rem 1.5rem; padding-left: 1.3rem; }
+.aws-design-guide .design-series [aria-current="page"] { font-weight: 700; }
+.aws-design-guide .design-table-hint { display: none; }
+@media (max-width: 700px) {
+  .aws-design-guide .design-table-hint { display: block; font-size: .85rem; margin-bottom: -.7rem; }
+}

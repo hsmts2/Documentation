@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AWS基本設計・アーキテクチャ | Documentation</title>
+  <meta name="description" content="業務要件から構成を選び、判断理由・リスク・受入条件を残すための設計例をまとめる">
+  <link rel="stylesheet" href="../assets/styles.css?v=20260823-ref1">
+  <link rel="stylesheet" href="../assets/aws-design/design.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="../">
+      <img src="../assets/icon.jpg" alt="Documentation icon">
+      <span>Documentation</span>
+    </a>
+    <div class="header-actions">
+      <button class="icon-button theme-toggle" type="button" title="テーマを切り替え" aria-label="テーマを切り替え">☀</button>
+      <nav class="nav" aria-label="Global navigation">
+        <a href="https://github.com/hsmts2/Documentation"><span class="nav-icon" aria-hidden="true">◆</span>GitHub</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="layout">
+    <aside id="site-sidebar" class="sidebar" aria-label="Page list">
+      <div class="sidebar-heading">
+        <button class="icon-button sidebar-toggle sidebar-toggle-inline" type="button" aria-controls="site-sidebar" aria-expanded="true" title="ナビゲーションを閉じる" aria-label="ナビゲーションを閉じる">☰</button>
+      </div>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">✎</span>記事</p>
+      <a href="cloudflare-private-site.html">Private GitHubリポジトリをCloudflare Workersで認証付き公開してみた</a>
+      <a href="aws-daily-cost-slack.html">AWS利用料を毎朝3時にSlackへ通知してみた</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">☁︎</span>[PoC] マルチVPC・閉域VDI基盤案件</p>
+          <a href="workspaces-skill-transfer.html">全体構築・運用順序</a>
+          <a href="workspaces-managed-ad.html">Managed Microsoft ADの構築</a>
+          <a href="workspaces-managed-ad-users.html">Managed Microsoft ADのユーザー・グループ管理</a>
+          <a href="workspaces-management-ec2.html">管理用EC2の起動・接続・AD管理</a>
+          <a href="workspaces-ad-connector-account.html">AD Connector用サービスアカウント・権限委任</a>
+          <a href="workspaces-ad-connector.html">AD ConnectorのVPCピアリング・SG設定・作成</a>
+          <a href="workspaces-provisioning-gpo.html">WorkSpaces Personalの構築・接続</a>
+          <a href="workspaces-target-ou.html">WorkSpaces用ターゲットOUの作成・権限委任</a>
+          <a href="workspaces-gpo.html">WorkSpaces用GPOの作成・適用・運用</a>
+          <a href="workspaces-image-bundle.html">WorkSpacesカスタムイメージ作成・共有</a>
+          <a href="workspaces-systems-manager.html">Systems Manager環境構築</a>
+          <a href="workspaces-patch-manager.html">Patch Managerの設定</a>
+          <a href="workspaces-patch-operations.html">Patch Managerの実行・結果確認・運用</a>
+          <a href="workspaces-cost-optimizer.html">Cost Optimizerの構築・設定</a>
+          <a href="workspaces-cost-optimizer-dry-run.html">Cost OptimizerのDry Run解除</a>
+          <a href="workspaces-cost-optimizer-schedule.html">Cost Optimizerの実行スケジュール設定・変更</a>
+          <a href="workspaces-cost-optimizer-reports.html">Cost Optimizerのレポート・監視</a>
+          <a href="workspaces-cloudwatch-monitoring.html">CloudWatchのEC2・Windows OS監視とSNS通知</a>
+          <a href="workspaces-cloudwatch-workspaces.html">CloudWatchのWorkSpaces監視</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">⑂</span>Git / GitHub</p>
+      <a href="git-github.html">Git 概要</a>
+      <a href="git-remote.html">Gitリモート操作</a>
+      <a href="github-pages.html">GitHub Pages</a>
+      <a href="github-pull-request.html">GitHubのPull Requestとレビュー</a>
+      <a href="git-utilities.html">Gitトラブルシューティング</a>
+      <a href="github-ssh.html">GitHub認証</a>
+      <a href="github-slack-integration.html">GitHubとSlackの連携・通知設定</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">◈</span>Terraform</p>
+      <a href="terraform.html">Terraform 概要</a>
+      <a href="hcp-terraform.html">HCP Terraform（Terraform Cloud）</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">◈</span>IaC</p>
+      <a href="iac.html">IaC</a>
+      <a href="iam-identity-center.html">IAM Identity Center</a>
+      <a href="iac-vscode.html">VS Codeの設定</a>
+      <a href="iac-deploy.html">IaCによるリソースのデプロイ</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">☁︎</span>AWS</p>
+      <a class="active" aria-current="page" href="aws-design.html">AWS基本設計・アーキテクチャ</a>
+      <a href="aws-design-compute.html">コンピューティング設計</a>
+      <a href="aws-design-database.html">データベース設計</a>
+      <a href="aws-design-storage.html">ストレージ設計</a>
+      <a href="aws-design-os.html">Amazon Linux 2023のOS設計</a>
+      <a href="aws-design-observability.html">ログ・監視・可用性設計</a>
+      <a href="aws-design-governance.html">命名規則・タグ設計</a>
+      <a href="cloudformation.html">CloudFormation 運用手順集</a>
+      <a href="aws-cli.html">AWS CLI 特殊対応</a>
+      <a href="aws-cli-reference.html">AWS CLI コマンドリファレンス</a>
+      <a href="eventbridge-scheduler.html">EventBridge Scheduler</a>
+      <a href="aws-directory-service.html">AWS Directory Service 運用手順</a>
+      <a href="amazon-workspaces.html">Amazon WorkSpaces</a>
+      <a href="amazon-ses.html">Amazon SES SMTPリレー</a>
+      <a href="amazon-ses-monitoring.html">Amazon SES 配信監視</a>
+      <a href="amazon-rds-blue-green.html">Amazon RDS Blue/Green Deployments</a>
+      <a href="apache-acm-certificate-update.html">証明書更新（ACMエクスポート）</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">⚙︎</span>OS／ミドルウェア</p>
+      <a href="rhel9.html">Red Hat Enterprise Linux 9</a>
+      <a href="rhel10.html">Red Hat Enterprise Linux 10</a>
+      <a href="amazon-linux-2023.html">Amazon Linux 2023</a>
+      <a href="windows-server-2022.html">Windows Server 2022</a>
+      <a href="windows-server-2025.html">Windows Server 2025</a>
+      <a href="windows-server-2016-upgrade.html">Windows Server 2016 インプレースアップグレード</a>
+      <a href="storage.html">ストレージ管理</a>
+      <a href="apache.html">Apache</a>
+      <a href="apache-self-signed-ssl-termination.html">Apache SSL終端（自己署名証明書）</a>
+      <a href="redis.html">Redis（KVS）</a>
+      <a href="nfs.html">NFS</a>
+      <a href="samba.html">Samba</a>
+      <a href="mariadb.html">MariaDB</a>
+      <a href="postgresql.html">PostgreSQL</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">▤</span>リファレンス</p>
+      <a href="../writing-style-guide.html">[GitHub Pages] 記法・テンプレート</a>
+      <a href="troubleshooting.html">障害切り分けチェックリスト</a>
+      <a href="eol.html">EOL / ライフサイクル一覧表</a>
+    </aside>
+
+<main class="content aws-design-guide"><nav class="breadcrumb" aria-label="Breadcrumb"><a href="../">Home</a><span>AWS設計</span></nav><h1>AWS基本設計・アーキテクチャ</h1><p class="lead">業務要件から構成を選び、判断理由・リスク・受入条件を残すための設計例をまとめる</p><h2 id="requirements">要件から設計判断へつなげる</h2>
+<p>本シリーズは架空の業務要件に対する設計例であり、実案件での導入実績や負荷試験の結果を示すものではない<br>仕様の確認日：2026年10月3日／数値目標・保持期間・構成案は案件ごとの合意と検証で確定する</p>
+<p class="design-table-hint">表は横にスクロールして確認できる</p><div class="table-scroll" tabindex="0" role="region" aria-label="比較表：横スクロール対応"><table><thead><tr><th>確認する要件</th><th>基本設計で決めること</th><th>詳細設計・検証へ渡すこと</th></tr></thead><tbody>
+<tr><td>利用者と処理</td><td>公開サイトか社内業務か、静的配信か動的処理かを決める</td><td>認証・画面・API・外部接続の一覧を作成する</td></tr>
+<tr><td>可用性と復旧</td><td>業務時間、SLI、SLO、障害別のRTO・RPOを合意する</td><td>切替試験と復元試験の判定基準を定める</td></tr>
+<tr><td>性能と費用</td><td>通常・ピークの負荷、応答時間、月額上限と運用工数を整理する</td><td>インスタンス、IOPS、スケール条件を測定して決める</td></tr>
+<tr><td>統制と運用</td><td>責任分界、ネットワーク境界、アクセス・暗号化・監査方針を決める</td><td>CIDR、SGルール、IAMポリシー、KMS設定を具体化する</td></tr></tbody></table></div>
+<p>命名方針や全体構成は基本設計に含められるが、テンプレート作成とWBS更新は設計作業を支える準備・管理活動に当たる<br>基本設計と詳細設計の境界は契約によって異なるため、成果物とレビュー観点を先に合意する</p>
+<h2 id="patterns">代表的な構成と採用条件</h2>
+<figure><figcaption>構成A：静的コンテンツはCloudFrontから非公開のS3バケットへ配信経路を限定する／図を選択すると拡大表示できる</figcaption><a href="../assets/aws-design/static.svg"><img src="../assets/aws-design/static.svg" alt="構成A：静的コンテンツはCloudFrontから非公開のS3バケットへ配信経路を限定する" loading="lazy"></a></figure>
+<p>企業の案内サイトや静的ドキュメントでは、サーバー側の処理が不要であればS3とCloudFrontを候補にする<br>フォーム、認証、検索、CMS編集機能は別の処理として設計し、静的配信だけで満たせる範囲を明確にする</p>
+<p class="source">出典：<a href="https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/private-content-restricting-access-to-s3.html">CloudFrontによるS3オリジンへのアクセス制限</a></p>
+<figure><figcaption>構成B：ALBと2つのAZに分散したEC2、RDS for MySQLのMulti-AZ DBインスタンスを組み合わせる／図を選択すると拡大表示できる</figcaption><a href="../assets/aws-design/web.svg"><img src="../assets/aws-design/web.svg" alt="構成B：ALBと2つのAZに分散したEC2、RDS for MySQLのMulti-AZ DBインスタンスを組み合わせる" loading="lazy"></a></figure>
+<p>既存のPHPアプリケーションやOS設定への依存が大きいシステムでは、EC2を候補にする<br>図は論理構成であり、DB待機系への接続はRDSが切り替える／アプリケーションはエンドポイントへの再接続を実装する</p>
+<p>Webサーバーを複数にする場合は、アップロード・セッション・バッチの状態を各サーバーのローカルディスクへ閉じ込めない<br>共有ファイルはEFS、オブジェクト対応の保存処理はS3など、アプリケーションの対応状況に合わせて外部化する</p>
+<figure><figcaption>構成C：ALBから複数AZのECSサービスへ接続し、Fargateタスクの永続データを外部へ保存する／図を選択すると拡大表示できる</figcaption><a href="../assets/aws-design/containers.svg"><img src="../assets/aws-design/containers.svg" alt="構成C：ALBから複数AZのECSサービスへ接続し、Fargateタスクの永続データを外部へ保存する" loading="lazy"></a></figure>
+<p>コンテナ化と継続的なリリースが前提なら、ECSとFargateを候補にする<br>各AZへ必要数のタスクを配置し、1つのAZを失っても残存側が必要な負荷を処理できるかを検証する</p>
+<p class="source">出典：<a href="https://docs.aws.amazon.com/AmazonECS/latest/developerguide/Welcome.html">Amazon ECSの概要と実行基盤</a></p>
+<h2 id="decision">判断を残す設計記録の例</h2>
+<p class="design-table-hint">表は横にスクロールして確認できる</p><div class="table-scroll" tabindex="0" role="region" aria-label="比較表：横スクロール対応"><table><thead><tr><th>項目</th><th>例：WordPressを使う企業サイト</th></tr></thead><tbody>
+<tr><td>前提</td><td>既存プラグインを継続し、PHPとMySQL互換DBを使う／運用チームはLinux運用に対応する</td></tr>
+<tr><td>採用案</td><td>ALB＋EC2の複数AZ構成＋RDS for MySQL Multi-AZを候補にする</td></tr>
+<tr><td>他案との比較</td><td>静的配信では編集・PHP実行を直接代替できない／ECSはコンテナ運用とデプロイの整備が必要になる</td></tr>
+<tr><td>残るリスク</td><td>共有ストレージの遅延、プラグイン互換性、二重バッチ、DB再接続を検証する</td></tr>
+<tr><td>受入条件</td><td>AZ相当の停止試験、アップロード整合性、バックアップ復元、管理者認証とロールバックを確認する</td></tr></tbody></table></div>
+<h2 id="review">設計レビューで説明できる成果物</h2>
+<p>構成図に加え、採用・不採用の理由、通信一覧、障害シナリオ、概算費用、運用分担、未決事項を残す<br>費用はコンピュートだけでなく、ALB・NAT・ログ・バックアップ・転送・監視・サポートと運用工数を含めて見積もる</p>
+<p class="design-table-hint">表は横にスクロールして確認できる</p><div class="table-scroll" tabindex="0" role="region" aria-label="比較表：横スクロール対応"><table><thead><tr><th>レビュー項目</th><th>説明できる状態</th></tr></thead><tbody>
+<tr><td>セキュリティ</td><td>公開経路と管理経路を分け、最小権限、秘密情報の保存先、暗号鍵の管理者を説明できる</td></tr>
+<tr><td>運用引継ぎ</td><td>検知から一次対応、エスカレーション、復旧判定まで担当を示せる</td></tr>
+<tr><td>根拠と検証</td><td>公式仕様と設計上の仮定を分け、未確認の事項に検証方法と完了条件を付けられる</td></tr></tbody></table></div>
+<nav class="design-series" aria-label="AWS設計シリーズ"><p><strong>AWS設計シリーズ</strong></p><ul><li><a href="aws-design.html" aria-current="page">AWS基本設計・アーキテクチャ</a></li><li><a href="aws-design-compute.html">コンピューティング設計</a></li><li><a href="aws-design-database.html">データベース設計</a></li><li><a href="aws-design-storage.html">ストレージ設計</a></li><li><a href="aws-design-os.html">Amazon Linux 2023のOS設計</a></li><li><a href="aws-design-observability.html">ログ・監視・可用性設計</a></li><li><a href="aws-design-governance.html">命名規則・タグ設計</a></li></ul></nav></main><aside class="toc" aria-label="Table of contents"><h2>ページ内</h2><a href="#requirements">要件から設計判断へつなげる</a>
+<a href="#patterns">代表的な構成と採用条件</a>
+<a href="#decision">判断を残す設計記録の例</a>
+<a href="#review">設計レビューで説明できる成果物</a>
+</aside></div><script src="../assets/app.js?v=20260823-ref1"></script></body></html>

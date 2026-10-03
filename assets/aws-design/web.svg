@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 680" role="img" aria-labelledby="title"><title id="title">2つのAZへ分散したEC2とRDS for MySQLの論理構成</title>
+<defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8Z" fill="#52647c"/></marker></defs>
+<rect width="960" height="680" rx="16" fill="#f3f6fa"/>
+<g font-family="sans-serif" fill="#182b45" text-anchor="middle">
+<text x="480" y="33" font-size="22" font-weight="700">動的Web：2つのAZへ分散する構成例</text>
+<text x="480" y="67" font-size="17">利用者／インターネット</text>
+<rect x="30" y="100" width="900" height="480" rx="12" fill="#e9eff6" stroke="#849bb7"/>
+<text x="75" y="126" font-size="16" font-weight="700">VPC</text>
+<rect x="55" y="195" width="410" height="355" rx="10" fill="#f6f9fc" stroke="#849bb7" stroke-dasharray="6 4"/>
+<rect x="495" y="195" width="410" height="355" rx="10" fill="#f6f9fc" stroke="#849bb7" stroke-dasharray="6 4"/>
+<text x="260" y="225" font-size="18" font-weight="700">AZ A</text><text x="700" y="225" font-size="18" font-weight="700">AZ B</text>
+<rect x="200" y="132" width="560" height="52" rx="8" fill="white" stroke="#849bb7"/>
+<text x="480" y="155" font-size="18" font-weight="700">ALB：HTTPS／ヘルスチェック</text><text x="480" y="174" font-size="13">2つのAZのパブリックサブネットを使用</text>
+<rect x="85" y="255" width="350" height="65" rx="8" fill="white" stroke="#849bb7"/><rect x="525" y="255" width="350" height="65" rx="8" fill="white" stroke="#849bb7"/>
+<text x="260" y="282" font-size="18" font-weight="700">EC2：Webアプリケーション</text><text x="260" y="306" font-size="14">アプリ用の非公開サブネット</text>
+<text x="700" y="282" font-size="18" font-weight="700">EC2：Webアプリケーション</text><text x="700" y="306" font-size="14">アプリ用の非公開サブネット</text>
+<rect x="185" y="355" width="590" height="42" rx="8" fill="white" stroke="#849bb7"/><text x="480" y="382" font-size="16">DBエンドポイント：両方のWebサーバーが同じ接続先を使用</text>
+<rect x="85" y="440" width="350" height="80" rx="8" fill="white" stroke="#849bb7"/><rect x="525" y="440" width="350" height="80" rx="8" fill="white" stroke="#849bb7"/>
+<text x="260" y="469" font-size="18" font-weight="700">RDS for MySQL：Primary</text><text x="260" y="496" font-size="14">DB用の非公開サブネット</text>
+<text x="700" y="469" font-size="18" font-weight="700">RDS：Standby</text><text x="700" y="496" font-size="14">別AZ／通常の読取り不可</text>
+<text x="480" y="608" font-size="15">実線：通常の接続経路／点線：同期レプリケーション</text>
+<text x="480" y="636" font-size="15">切替後は同じDBエンドポイントへ再接続／共有ファイル・セッションは別途外部化</text>
+<text x="480" y="659" font-size="13">論理構成図：管理経路・外向き通信・共有ストレージの配置は省略</text></g>
+<g fill="none" stroke="#52647c" stroke-width="2" marker-end="url(#arrow)">
+<path d="M480 77V126"/><path d="M310 184L260 248"/><path d="M650 184L700 248"/>
+<path d="M260 320V348"/><path d="M700 320V348"/><path d="M260 397V433"/>
+<path d="M435 480H518" stroke-dasharray="5 4"/></g></svg>

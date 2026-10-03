@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>コンピューティング設計 | Documentation</title>
+  <meta name="description" content="EC2、ECS、Lightsail、Amplify、S3とCloudFrontを、実行方式と運用責任から選定する">
+  <link rel="stylesheet" href="../assets/styles.css?v=20260823-ref1">
+  <link rel="stylesheet" href="../assets/aws-design/design.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="../">
+      <img src="../assets/icon.jpg" alt="Documentation icon">
+      <span>Documentation</span>
+    </a>
+    <div class="header-actions">
+      <button class="icon-button theme-toggle" type="button" title="テーマを切り替え" aria-label="テーマを切り替え">☀</button>
+      <nav class="nav" aria-label="Global navigation">
+        <a href="https://github.com/hsmts2/Documentation"><span class="nav-icon" aria-hidden="true">◆</span>GitHub</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="layout">
+    <aside id="site-sidebar" class="sidebar" aria-label="Page list">
+      <div class="sidebar-heading">
+        <button class="icon-button sidebar-toggle sidebar-toggle-inline" type="button" aria-controls="site-sidebar" aria-expanded="true" title="ナビゲーションを閉じる" aria-label="ナビゲーションを閉じる">☰</button>
+      </div>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">✎</span>記事</p>
+      <a href="cloudflare-private-site.html">Private GitHubリポジトリをCloudflare Workersで認証付き公開してみた</a>
+      <a href="aws-daily-cost-slack.html">AWS利用料を毎朝3時にSlackへ通知してみた</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">☁︎</span>[PoC] マルチVPC・閉域VDI基盤案件</p>
+          <a href="workspaces-skill-transfer.html">全体構築・運用順序</a>
+          <a href="workspaces-managed-ad.html">Managed Microsoft ADの構築</a>
+          <a href="workspaces-managed-ad-users.html">Managed Microsoft ADのユーザー・グループ管理</a>
+          <a href="workspaces-management-ec2.html">管理用EC2の起動・接続・AD管理</a>
+          <a href="workspaces-ad-connector-account.html">AD Connector用サービスアカウント・権限委任</a>
+          <a href="workspaces-ad-connector.html">AD ConnectorのVPCピアリング・SG設定・作成</a>
+          <a href="workspaces-provisioning-gpo.html">WorkSpaces Personalの構築・接続</a>
+          <a href="workspaces-target-ou.html">WorkSpaces用ターゲットOUの作成・権限委任</a>
+          <a href="workspaces-gpo.html">WorkSpaces用GPOの作成・適用・運用</a>
+          <a href="workspaces-image-bundle.html">WorkSpacesカスタムイメージ作成・共有</a>
+          <a href="workspaces-systems-manager.html">Systems Manager環境構築</a>
+          <a href="workspaces-patch-manager.html">Patch Managerの設定</a>
+          <a href="workspaces-patch-operations.html">Patch Managerの実行・結果確認・運用</a>
+          <a href="workspaces-cost-optimizer.html">Cost Optimizerの構築・設定</a>
+          <a href="workspaces-cost-optimizer-dry-run.html">Cost OptimizerのDry Run解除</a>
+          <a href="workspaces-cost-optimizer-schedule.html">Cost Optimizerの実行スケジュール設定・変更</a>
+          <a href="workspaces-cost-optimizer-reports.html">Cost Optimizerのレポート・監視</a>
+          <a href="workspaces-cloudwatch-monitoring.html">CloudWatchのEC2・Windows OS監視とSNS通知</a>
+          <a href="workspaces-cloudwatch-workspaces.html">CloudWatchのWorkSpaces監視</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">⑂</span>Git / GitHub</p>
+      <a href="git-github.html">Git 概要</a>
+      <a href="git-remote.html">Gitリモート操作</a>
+      <a href="github-pages.html">GitHub Pages</a>
+      <a href="github-pull-request.html">GitHubのPull Requestとレビュー</a>
+      <a href="git-utilities.html">Gitトラブルシューティング</a>
+      <a href="github-ssh.html">GitHub認証</a>
+      <a href="github-slack-integration.html">GitHubとSlackの連携・通知設定</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">◈</span>Terraform</p>
+      <a href="terraform.html">Terraform 概要</a>
+      <a href="hcp-terraform.html">HCP Terraform（Terraform Cloud）</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">◈</span>IaC</p>
+      <a href="iac.html">IaC</a>
+      <a href="iam-identity-center.html">IAM Identity Center</a>
+      <a href="iac-vscode.html">VS Codeの設定</a>
+      <a href="iac-deploy.html">IaCによるリソースのデプロイ</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">☁︎</span>AWS</p>
+      <a href="aws-design.html">AWS基本設計・アーキテクチャ</a>
+      <a class="active" aria-current="page" href="aws-design-compute.html">コンピューティング設計</a>
+      <a href="aws-design-database.html">データベース設計</a>
+      <a href="aws-design-storage.html">ストレージ設計</a>
+      <a href="aws-design-os.html">Amazon Linux 2023のOS設計</a>
+      <a href="aws-design-observability.html">ログ・監視・可用性設計</a>
+      <a href="aws-design-governance.html">命名規則・タグ設計</a>
+      <a href="cloudformation.html">CloudFormation 運用手順集</a>
+      <a href="aws-cli.html">AWS CLI 特殊対応</a>
+      <a href="aws-cli-reference.html">AWS CLI コマンドリファレンス</a>
+      <a href="eventbridge-scheduler.html">EventBridge Scheduler</a>
+      <a href="aws-directory-service.html">AWS Directory Service 運用手順</a>
+      <a href="amazon-workspaces.html">Amazon WorkSpaces</a>
+      <a href="amazon-ses.html">Amazon SES SMTPリレー</a>
+      <a href="amazon-ses-monitoring.html">Amazon SES 配信監視</a>
+      <a href="amazon-rds-blue-green.html">Amazon RDS Blue/Green Deployments</a>
+      <a href="apache-acm-certificate-update.html">証明書更新（ACMエクスポート）</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">⚙︎</span>OS／ミドルウェア</p>
+      <a href="rhel9.html">Red Hat Enterprise Linux 9</a>
+      <a href="rhel10.html">Red Hat Enterprise Linux 10</a>
+      <a href="amazon-linux-2023.html">Amazon Linux 2023</a>
+      <a href="windows-server-2022.html">Windows Server 2022</a>
+      <a href="windows-server-2025.html">Windows Server 2025</a>
+      <a href="windows-server-2016-upgrade.html">Windows Server 2016 インプレースアップグレード</a>
+      <a href="storage.html">ストレージ管理</a>
+      <a href="apache.html">Apache</a>
+      <a href="apache-self-signed-ssl-termination.html">Apache SSL終端（自己署名証明書）</a>
+      <a href="redis.html">Redis（KVS）</a>
+      <a href="nfs.html">NFS</a>
+      <a href="samba.html">Samba</a>
+      <a href="mariadb.html">MariaDB</a>
+      <a href="postgresql.html">PostgreSQL</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">▤</span>リファレンス</p>
+      <a href="../writing-style-guide.html">[GitHub Pages] 記法・テンプレート</a>
+      <a href="troubleshooting.html">障害切り分けチェックリスト</a>
+      <a href="eol.html">EOL / ライフサイクル一覧表</a>
+    </aside>
+
+<main class="content aws-design-guide"><nav class="breadcrumb" aria-label="Breadcrumb"><a href="../">Home</a><span>AWS設計</span></nav><h1>コンピューティング設計</h1><p class="lead">EC2、ECS、Lightsail、Amplify、S3とCloudFrontを、実行方式と運用責任から選定する</p><h2 id="selection">ホスティングは処理方式と運用要件で選ぶ</h2>
+<p class="design-table-hint">表は横にスクロールして確認できる</p><div class="table-scroll" tabindex="0" role="region" aria-label="比較表：横スクロール対応"><table><thead><tr><th>候補</th><th>採用しやすい条件</th><th>決定前の確認</th></tr></thead><tbody>
+<tr><td>S3＋CloudFront</td><td>HTML・CSS・JavaScriptなどの静的配信が中心になる</td><td>PHPやDB処理は実行しない／API、認証、更新・キャッシュ無効化を別途設計する</td></tr>
+<tr><td>Amplify Hosting</td><td>対応するフロントエンドのビルド・配信を一体化したい</td><td>SSRのフレームワーク・バージョン・機能制約、ビルド権限、秘密情報を確認する</td></tr>
+<tr><td>Lightsail</td><td>定型的なWeb構成で、運用規模とプランを絞りたい</td><td>必要なネットワーク・統制・監視・バックアップと拡張方法が要件に合うか確認する</td></tr>
+<tr><td>EC2</td><td>OS・ミドルウェア設定、常駐エージェント、既存ソフトの条件がある</td><td>OS保守、パッチ、脆弱性対応、障害交換と構成管理を利用者が設計する</td></tr>
+<tr><td>ECS＋Fargate</td><td>コンテナ化済みのアプリケーションを運用し、ホスト管理を減らしたい</td><td>対応するタスク設定、CPU・メモリ、永続化、デプロイ・復旧手順を確認する</td></tr>
+<tr><td>ECS＋EC2</td><td>コンテナを使いながらホストやインスタンスの選択を制御したい</td><td>ECSの管理に加え、EC2の容量・パッチ・スケーリングを設計する</td></tr></tbody></table></div>
+<p class="source">出典：<a href="https://docs.aws.amazon.com/amplify/latest/userguide/welcome.html">Amplify Hostingの対象と機能</a></p>
+<p class="source">出典：<a href="https://docs.aws.amazon.com/lightsail/latest/userguide/what-is-amazon-lightsail.html">Amazon Lightsailの概要</a></p>
+<p class="source">出典：<a href="https://docs.aws.amazon.com/AmazonECS/latest/developerguide/Welcome.html">ECSと実行基盤の選択肢</a></p>
+<p>「エンタープライズだからEC2」「Lightsailだから本番不可」という分類では判断できない<br>既存の認証・組織統制・ネットワーク・復旧・費用の要件を比較表に当てはめ、満たせない条件を具体的に示す</p>
+<h2 id="responsibility">EC2とECSの責任分界を混同しない</h2>
+<p>EC2ではAWSが物理基盤などを管理し、利用者がゲストOS・アプリケーション・設定を管理する<br>「EC2はマネージドではない」とだけ記載せず、どの層の管理が残るかを示す</p>
+<p class="source">出典：<a href="https://aws.amazon.com/compliance/shared-responsibility-model/">AWSの責任共有モデル</a></p>
+<p>ECSはコンテナのオーケストレーションを担い、EC2はその実行基盤にもなるため、「EC2かECSか」は同じ階層の二者択一ではない<br>まずコンテナ化の必要性を判断し、次にFargateやEC2などの実行基盤を選ぶ</p>
+<h2 id="static-origin">S3を非公開にした静的配信の注意点</h2>
+<p>S3の通常のバケットオリジンとCloudFront OACを組み合わせ、バケットへのアクセスを配信元に限定する<br>S3のWebサイトエンドポイントをオリジンにするとOACを使用できないため、Webサイトホスティング設定との混同を避ける</p>
+<p class="source">出典：<a href="https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/private-content-restricting-access-to-s3.html">OACの対応オリジンと制限</a></p>
+<h2 id="zabbix">ZabbixにT系インスタンスを採用する判断</h2>
+<p>Zabbix server、proxy、agentでは処理量が異なるため、一律に同じサイズを割り当てない<br>監視項目数、取得間隔、前処理、履歴保存、DBへの書込み、housekeepingの負荷から試験条件を作る</p>
+<p class="source">出典：<a href="https://www.zabbix.com/documentation/current/en/manual/installation/requirements">Zabbixの必要リソースとDB容量の考え方</a></p>
+<p class="design-table-hint">表は横にスクロールして確認できる</p><div class="table-scroll" tabindex="0" role="region" aria-label="比較表：横スクロール対応"><table><thead><tr><th>条件</th><th>判断と検証</th></tr></thead><tbody>
+<tr><td>小規模・断続的な負荷</td><td>T系も候補になる／実際の監視量でCPUクレジット、処理待ち、DB遅延を測定する</td></tr>
+<tr><td>継続的にCPUベースラインを超える</td><td>M系やC系などと比較する／CPUだけでなくメモリ、DB I/O、費用を確認する</td></tr>
+<tr><td>Standardモード</td><td>クレジット枯渇後はCPU性能がベースラインへ制限されるため、監視遅延を評価する</td></tr>
+<tr><td>Unlimitedモード</td><td>継続した超過使用では追加料金が発生し得る／残高0だけを性能低下の判定にしない</td></tr>
+<tr><td>Arm系インスタンス</td><td>使用するZabbix、DB、プラグイン、独自スクリプトとバイナリの対応を確認する</td></tr></tbody></table></div>
+<p class="source">出典：<a href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/burstable-performance-instances-standard-mode.html">バースト可能インスタンスのStandardモード</a></p>
+<p class="source">出典：<a href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/burstable-performance-instances-unlimited-mode.html">Unlimitedモードと追加料金</a></p>
+<h2 id="acceptance">採用を確定する試験</h2>
+<p>通常時、ピーク時、定期処理の重複時、片系停止時の4条件で、応答時間・エラー率・処理待ち・リソース使用率を確認する<br>試験結果がない段階ではインスタンスタイプを「初期候補」とし、監視規模に対する保証値として掲載しない</p>
+<nav class="design-series" aria-label="AWS設計シリーズ"><p><strong>AWS設計シリーズ</strong></p><ul><li><a href="aws-design.html">AWS基本設計・アーキテクチャ</a></li><li><a href="aws-design-compute.html" aria-current="page">コンピューティング設計</a></li><li><a href="aws-design-database.html">データベース設計</a></li><li><a href="aws-design-storage.html">ストレージ設計</a></li><li><a href="aws-design-os.html">Amazon Linux 2023のOS設計</a></li><li><a href="aws-design-observability.html">ログ・監視・可用性設計</a></li><li><a href="aws-design-governance.html">命名規則・タグ設計</a></li></ul></nav></main><aside class="toc" aria-label="Table of contents"><h2>ページ内</h2><a href="#selection">ホスティングは処理方式と運用要件で選ぶ</a>
+<a href="#responsibility">EC2とECSの責任分界を混同しない</a>
+<a href="#static-origin">S3を非公開にした静的配信の注意点</a>
+<a href="#zabbix">ZabbixにT系インスタンスを採用する判断</a>
+<a href="#acceptance">採用を確定する試験</a>
+</aside></div><script src="../assets/app.js?v=20260823-ref1"></script></body></html>

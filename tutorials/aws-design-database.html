@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>データベース設計 | Documentation</title>
+  <meta name="description" content="アプリケーション互換性を起点に、DBの可用性・性能・復旧方式を決める">
+  <link rel="stylesheet" href="../assets/styles.css?v=20260823-ref1">
+  <link rel="stylesheet" href="../assets/aws-design/design.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="../">
+      <img src="../assets/icon.jpg" alt="Documentation icon">
+      <span>Documentation</span>
+    </a>
+    <div class="header-actions">
+      <button class="icon-button theme-toggle" type="button" title="テーマを切り替え" aria-label="テーマを切り替え">☀</button>
+      <nav class="nav" aria-label="Global navigation">
+        <a href="https://github.com/hsmts2/Documentation"><span class="nav-icon" aria-hidden="true">◆</span>GitHub</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="layout">
+    <aside id="site-sidebar" class="sidebar" aria-label="Page list">
+      <div class="sidebar-heading">
+        <button class="icon-button sidebar-toggle sidebar-toggle-inline" type="button" aria-controls="site-sidebar" aria-expanded="true" title="ナビゲーションを閉じる" aria-label="ナビゲーションを閉じる">☰</button>
+      </div>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">✎</span>記事</p>
+      <a href="cloudflare-private-site.html">Private GitHubリポジトリをCloudflare Workersで認証付き公開してみた</a>
+      <a href="aws-daily-cost-slack.html">AWS利用料を毎朝3時にSlackへ通知してみた</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">☁︎</span>[PoC] マルチVPC・閉域VDI基盤案件</p>
+          <a href="workspaces-skill-transfer.html">全体構築・運用順序</a>
+          <a href="workspaces-managed-ad.html">Managed Microsoft ADの構築</a>
+          <a href="workspaces-managed-ad-users.html">Managed Microsoft ADのユーザー・グループ管理</a>
+          <a href="workspaces-management-ec2.html">管理用EC2の起動・接続・AD管理</a>
+          <a href="workspaces-ad-connector-account.html">AD Connector用サービスアカウント・権限委任</a>
+          <a href="workspaces-ad-connector.html">AD ConnectorのVPCピアリング・SG設定・作成</a>
+          <a href="workspaces-provisioning-gpo.html">WorkSpaces Personalの構築・接続</a>
+          <a href="workspaces-target-ou.html">WorkSpaces用ターゲットOUの作成・権限委任</a>
+          <a href="workspaces-gpo.html">WorkSpaces用GPOの作成・適用・運用</a>
+          <a href="workspaces-image-bundle.html">WorkSpacesカスタムイメージ作成・共有</a>
+          <a href="workspaces-systems-manager.html">Systems Manager環境構築</a>
+          <a href="workspaces-patch-manager.html">Patch Managerの設定</a>
+          <a href="workspaces-patch-operations.html">Patch Managerの実行・結果確認・運用</a>
+          <a href="workspaces-cost-optimizer.html">Cost Optimizerの構築・設定</a>
+          <a href="workspaces-cost-optimizer-dry-run.html">Cost OptimizerのDry Run解除</a>
+          <a href="workspaces-cost-optimizer-schedule.html">Cost Optimizerの実行スケジュール設定・変更</a>
+          <a href="workspaces-cost-optimizer-reports.html">Cost Optimizerのレポート・監視</a>
+          <a href="workspaces-cloudwatch-monitoring.html">CloudWatchのEC2・Windows OS監視とSNS通知</a>
+          <a href="workspaces-cloudwatch-workspaces.html">CloudWatchのWorkSpaces監視</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">⑂</span>Git / GitHub</p>
+      <a href="git-github.html">Git 概要</a>
+      <a href="git-remote.html">Gitリモート操作</a>
+      <a href="github-pages.html">GitHub Pages</a>
+      <a href="github-pull-request.html">GitHubのPull Requestとレビュー</a>
+      <a href="git-utilities.html">Gitトラブルシューティング</a>
+      <a href="github-ssh.html">GitHub認証</a>
+      <a href="github-slack-integration.html">GitHubとSlackの連携・通知設定</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">◈</span>Terraform</p>
+      <a href="terraform.html">Terraform 概要</a>
+      <a href="hcp-terraform.html">HCP Terraform（Terraform Cloud）</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">◈</span>IaC</p>
+      <a href="iac.html">IaC</a>
+      <a href="iam-identity-center.html">IAM Identity Center</a>
+      <a href="iac-vscode.html">VS Codeの設定</a>
+      <a href="iac-deploy.html">IaCによるリソースのデプロイ</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">☁︎</span>AWS</p>
+      <a href="aws-design.html">AWS基本設計・アーキテクチャ</a>
+      <a href="aws-design-compute.html">コンピューティング設計</a>
+      <a class="active" aria-current="page" href="aws-design-database.html">データベース設計</a>
+      <a href="aws-design-storage.html">ストレージ設計</a>
+      <a href="aws-design-os.html">Amazon Linux 2023のOS設計</a>
+      <a href="aws-design-observability.html">ログ・監視・可用性設計</a>
+      <a href="aws-design-governance.html">命名規則・タグ設計</a>
+      <a href="cloudformation.html">CloudFormation 運用手順集</a>
+      <a href="aws-cli.html">AWS CLI 特殊対応</a>
+      <a href="aws-cli-reference.html">AWS CLI コマンドリファレンス</a>
+      <a href="eventbridge-scheduler.html">EventBridge Scheduler</a>
+      <a href="aws-directory-service.html">AWS Directory Service 運用手順</a>
+      <a href="amazon-workspaces.html">Amazon WorkSpaces</a>
+      <a href="amazon-ses.html">Amazon SES SMTPリレー</a>
+      <a href="amazon-ses-monitoring.html">Amazon SES 配信監視</a>
+      <a href="amazon-rds-blue-green.html">Amazon RDS Blue/Green Deployments</a>
+      <a href="apache-acm-certificate-update.html">証明書更新（ACMエクスポート）</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">⚙︎</span>OS／ミドルウェア</p>
+      <a href="rhel9.html">Red Hat Enterprise Linux 9</a>
+      <a href="rhel10.html">Red Hat Enterprise Linux 10</a>
+      <a href="amazon-linux-2023.html">Amazon Linux 2023</a>
+      <a href="windows-server-2022.html">Windows Server 2022</a>
+      <a href="windows-server-2025.html">Windows Server 2025</a>
+      <a href="windows-server-2016-upgrade.html">Windows Server 2016 インプレースアップグレード</a>
+      <a href="storage.html">ストレージ管理</a>
+      <a href="apache.html">Apache</a>
+      <a href="apache-self-signed-ssl-termination.html">Apache SSL終端（自己署名証明書）</a>
+      <a href="redis.html">Redis（KVS）</a>
+      <a href="nfs.html">NFS</a>
+      <a href="samba.html">Samba</a>
+      <a href="mariadb.html">MariaDB</a>
+      <a href="postgresql.html">PostgreSQL</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">▤</span>リファレンス</p>
+      <a href="../writing-style-guide.html">[GitHub Pages] 記法・テンプレート</a>
+      <a href="troubleshooting.html">障害切り分けチェックリスト</a>
+      <a href="eol.html">EOL / ライフサイクル一覧表</a>
+    </aside>
+
+<main class="content aws-design-guide"><nav class="breadcrumb" aria-label="Breadcrumb"><a href="../">Home</a><span>AWS設計</span></nav><h1>データベース設計</h1><p class="lead">アプリケーション互換性を起点に、DBの可用性・性能・復旧方式を決める</p><h2 id="compatibility">DB製品より先にアプリケーション互換性を確認する</h2>
+<p>WordPressの標準的なDB要件はMySQLまたはMariaDBであり、Aurora PostgreSQLをそのまま対応DBとして選定しない<br>PostgreSQLを使う独自の互換対応を検討する場合は、対応層・プラグイン制約・更新時の検証・障害時の保守責任を別途説明する</p>
+<p class="source">出典：<a href="https://wordpress.org/about/requirements/">WordPress公式要件</a></p>
+<p class="design-table-hint">表は横にスクロールして確認できる</p><div class="table-scroll" tabindex="0" role="region" aria-label="比較表：横スクロール対応"><table><thead><tr><th>候補</th><th>判断の順序</th></tr></thead><tbody>
+<tr><td>RDS for MySQL／MariaDB</td><td>アプリケーションの対応エンジン・バージョン・文字コード・照合順序を確認する</td></tr>
+<tr><td>Aurora MySQL-Compatible</td><td>MySQL互換を前提に、利用するSQL・プラグイン・接続ドライバーを検証する</td></tr>
+<tr><td>RDS for PostgreSQL／Aurora PostgreSQL-Compatible</td><td>PostgreSQL対応アプリケーションを対象とし、拡張機能とバージョンの対応を確認する</td></tr>
+<tr><td>EC2上のDB</td><td>マネージドDBで満たせないOS権限や製品条件がある場合に、保守と復旧の負担を含めて比較する</td></tr></tbody></table></div>
+<p class="source">出典：<a href="https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/CHAP_AuroraOverview.html">Auroraのエンジンと互換性</a></p>
+<h2 id="availability">Multi-AZ・読取り分散・バックアップを分ける</h2>
+<p class="design-table-hint">表は横にスクロールして確認できる</p><div class="table-scroll" tabindex="0" role="region" aria-label="比較表：横スクロール対応"><table><thead><tr><th>機能</th><th>目的</th><th>混同しやすい点</th></tr></thead><tbody>
+<tr><td>RDS Multi-AZ DBインスタンス</td><td>待機系へ切り替えて可用性を高める</td><td>待機系は読取りトラフィックを処理しない</td></tr>
+<tr><td>RDS Multi-AZ DBクラスター</td><td>2つの読取り可能な待機系を持つ構成を利用する</td><td>2台構成のDBインスタンス方式とは要件と構成が異なる</td></tr>
+<tr><td>リードレプリカ</td><td>読取り処理を分散する</td><td>レプリケーション遅延と書込み先を考慮する</td></tr>
+<tr><td>バックアップ／PITR</td><td>誤削除や障害前の状態へデータを復元する</td><td>冗長構成だけでは論理的な誤更新から保護できない</td></tr></tbody></table></div>
+<p class="source">出典：<a href="https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Concepts.MultiAZ.html">RDSの2種類のMulti-AZ構成</a></p>
+<p class="source">出典：<a href="https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_ReadRepl.html">RDSリードレプリカ</a></p>
+<p class="source">出典：<a href="https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_WorkingWithAutomatedBackups.html">RDS自動バックアップ</a></p>
+<h2 id="recovery">RTO・RPOを復旧手順へ落とす</h2>
+<p>RTOは復旧までの目標時間、RPOは許容するデータ損失の時点を表す<br>インスタンス障害、AZ障害、誤更新、リージョン障害では復旧方法が違うため、1つの数値だけで全障害を説明しない</p>
+<p class="design-table-hint">表は横にスクロールして確認できる</p><div class="table-scroll" tabindex="0" role="region" aria-label="比較表：横スクロール対応"><table><thead><tr><th>設計項目</th><th>決める内容</th></tr></thead><tbody>
+<tr><td>復元対象</td><td>DB本体だけでなく、ユーザー投稿ファイル・秘密情報・設定・暗号鍵を対象にする</td></tr>
+<tr><td>復元先</td><td>別DBとして復元する場所、接続先の切替、DNSや接続プールの更新を決める</td></tr>
+<tr><td>整合性</td><td>DBの復元時点とファイルの復元時点が違う場合の業務上の扱いを決める</td></tr>
+<tr><td>試験</td><td>検知・判断・復元・接続切替・業務確認の合計時間を測定する</td></tr></tbody></table></div>
+<h2 id="capacity">性能・セキュリティ・変更管理</h2>
+<p>接続数、遅いSQL、ロック、メモリ、ストレージ遅延、増加率を確認し、アプリケーション側の接続プールと合わせてサイズを決める<br>DBを非公開サブネットへ配置し、アプリケーションからの必要な通信だけを許可する設計を基本案にする</p>
+<p>自動バックアップの保持期間、メンテナンス時間帯、エンジン更新、削除保護、最終スナップショット、暗号鍵への復旧用権限を設計項目に含める<br>パスワードを設計書やソースコードへ埋め込まず、秘密情報の取得・更新とアプリケーションの再接続を検証する</p>
+<h2 id="review">設計レビューの確認事項</h2>
+<p>「Multi-AZだから無停止」と説明せず、切替時の接続切断と再試行、二重実行、処理途中のトランザクションを確認する<br>エンジンのサポート期限と更新方法を示し、データ復元後に業務が再開できることを受入条件にする</p>
+<nav class="design-series" aria-label="AWS設計シリーズ"><p><strong>AWS設計シリーズ</strong></p><ul><li><a href="aws-design.html">AWS基本設計・アーキテクチャ</a></li><li><a href="aws-design-compute.html">コンピューティング設計</a></li><li><a href="aws-design-database.html" aria-current="page">データベース設計</a></li><li><a href="aws-design-storage.html">ストレージ設計</a></li><li><a href="aws-design-os.html">Amazon Linux 2023のOS設計</a></li><li><a href="aws-design-observability.html">ログ・監視・可用性設計</a></li><li><a href="aws-design-governance.html">命名規則・タグ設計</a></li></ul></nav></main><aside class="toc" aria-label="Table of contents"><h2>ページ内</h2><a href="#compatibility">DB製品より先にアプリケーション互換性を確認する</a>
+<a href="#availability">Multi-AZ・読取り分散・バックアップを分ける</a>
+<a href="#recovery">RTO・RPOを復旧手順へ落とす</a>
+<a href="#capacity">性能・セキュリティ・変更管理</a>
+<a href="#review">設計レビューの確認事項</a>
+</aside></div><script src="../assets/app.js?v=20260823-ref1"></script></body></html>

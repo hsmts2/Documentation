@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ログ・監視・可用性設計 | Documentation</title>
+  <meta name="description" content="SLAと業務の稼働目標を区別し、ログ収集・障害検知・復旧確認までを設計する">
+  <link rel="stylesheet" href="../assets/styles.css?v=20260823-ref1">
+  <link rel="stylesheet" href="../assets/aws-design/design.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="../">
+      <img src="../assets/icon.jpg" alt="Documentation icon">
+      <span>Documentation</span>
+    </a>
+    <div class="header-actions">
+      <button class="icon-button theme-toggle" type="button" title="テーマを切り替え" aria-label="テーマを切り替え">☀</button>
+      <nav class="nav" aria-label="Global navigation">
+        <a href="https://github.com/hsmts2/Documentation"><span class="nav-icon" aria-hidden="true">◆</span>GitHub</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="layout">
+    <aside id="site-sidebar" class="sidebar" aria-label="Page list">
+      <div class="sidebar-heading">
+        <button class="icon-button sidebar-toggle sidebar-toggle-inline" type="button" aria-controls="site-sidebar" aria-expanded="true" title="ナビゲーションを閉じる" aria-label="ナビゲーションを閉じる">☰</button>
+      </div>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">✎</span>記事</p>
+      <a href="cloudflare-private-site.html">Private GitHubリポジトリをCloudflare Workersで認証付き公開してみた</a>
+      <a href="aws-daily-cost-slack.html">AWS利用料を毎朝3時にSlackへ通知してみた</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">☁︎</span>[PoC] マルチVPC・閉域VDI基盤案件</p>
+          <a href="workspaces-skill-transfer.html">全体構築・運用順序</a>
+          <a href="workspaces-managed-ad.html">Managed Microsoft ADの構築</a>
+          <a href="workspaces-managed-ad-users.html">Managed Microsoft ADのユーザー・グループ管理</a>
+          <a href="workspaces-management-ec2.html">管理用EC2の起動・接続・AD管理</a>
+          <a href="workspaces-ad-connector-account.html">AD Connector用サービスアカウント・権限委任</a>
+          <a href="workspaces-ad-connector.html">AD ConnectorのVPCピアリング・SG設定・作成</a>
+          <a href="workspaces-provisioning-gpo.html">WorkSpaces Personalの構築・接続</a>
+          <a href="workspaces-target-ou.html">WorkSpaces用ターゲットOUの作成・権限委任</a>
+          <a href="workspaces-gpo.html">WorkSpaces用GPOの作成・適用・運用</a>
+          <a href="workspaces-image-bundle.html">WorkSpacesカスタムイメージ作成・共有</a>
+          <a href="workspaces-systems-manager.html">Systems Manager環境構築</a>
+          <a href="workspaces-patch-manager.html">Patch Managerの設定</a>
+          <a href="workspaces-patch-operations.html">Patch Managerの実行・結果確認・運用</a>
+          <a href="workspaces-cost-optimizer.html">Cost Optimizerの構築・設定</a>
+          <a href="workspaces-cost-optimizer-dry-run.html">Cost OptimizerのDry Run解除</a>
+          <a href="workspaces-cost-optimizer-schedule.html">Cost Optimizerの実行スケジュール設定・変更</a>
+          <a href="workspaces-cost-optimizer-reports.html">Cost Optimizerのレポート・監視</a>
+          <a href="workspaces-cloudwatch-monitoring.html">CloudWatchのEC2・Windows OS監視とSNS通知</a>
+          <a href="workspaces-cloudwatch-workspaces.html">CloudWatchのWorkSpaces監視</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">⑂</span>Git / GitHub</p>
+      <a href="git-github.html">Git 概要</a>
+      <a href="git-remote.html">Gitリモート操作</a>
+      <a href="github-pages.html">GitHub Pages</a>
+      <a href="github-pull-request.html">GitHubのPull Requestとレビュー</a>
+      <a href="git-utilities.html">Gitトラブルシューティング</a>
+      <a href="github-ssh.html">GitHub認証</a>
+      <a href="github-slack-integration.html">GitHubとSlackの連携・通知設定</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">◈</span>Terraform</p>
+      <a href="terraform.html">Terraform 概要</a>
+      <a href="hcp-terraform.html">HCP Terraform（Terraform Cloud）</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">◈</span>IaC</p>
+      <a href="iac.html">IaC</a>
+      <a href="iam-identity-center.html">IAM Identity Center</a>
+      <a href="iac-vscode.html">VS Codeの設定</a>
+      <a href="iac-deploy.html">IaCによるリソースのデプロイ</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">☁︎</span>AWS</p>
+      <a href="aws-design.html">AWS基本設計・アーキテクチャ</a>
+      <a href="aws-design-compute.html">コンピューティング設計</a>
+      <a href="aws-design-database.html">データベース設計</a>
+      <a href="aws-design-storage.html">ストレージ設計</a>
+      <a href="aws-design-os.html">Amazon Linux 2023のOS設計</a>
+      <a class="active" aria-current="page" href="aws-design-observability.html">ログ・監視・可用性設計</a>
+      <a href="aws-design-governance.html">命名規則・タグ設計</a>
+      <a href="cloudformation.html">CloudFormation 運用手順集</a>
+      <a href="aws-cli.html">AWS CLI 特殊対応</a>
+      <a href="aws-cli-reference.html">AWS CLI コマンドリファレンス</a>
+      <a href="eventbridge-scheduler.html">EventBridge Scheduler</a>
+      <a href="aws-directory-service.html">AWS Directory Service 運用手順</a>
+      <a href="amazon-workspaces.html">Amazon WorkSpaces</a>
+      <a href="amazon-ses.html">Amazon SES SMTPリレー</a>
+      <a href="amazon-ses-monitoring.html">Amazon SES 配信監視</a>
+      <a href="amazon-rds-blue-green.html">Amazon RDS Blue/Green Deployments</a>
+      <a href="apache-acm-certificate-update.html">証明書更新（ACMエクスポート）</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">⚙︎</span>OS／ミドルウェア</p>
+      <a href="rhel9.html">Red Hat Enterprise Linux 9</a>
+      <a href="rhel10.html">Red Hat Enterprise Linux 10</a>
+      <a href="amazon-linux-2023.html">Amazon Linux 2023</a>
+      <a href="windows-server-2022.html">Windows Server 2022</a>
+      <a href="windows-server-2025.html">Windows Server 2025</a>
+      <a href="windows-server-2016-upgrade.html">Windows Server 2016 インプレースアップグレード</a>
+      <a href="storage.html">ストレージ管理</a>
+      <a href="apache.html">Apache</a>
+      <a href="apache-self-signed-ssl-termination.html">Apache SSL終端（自己署名証明書）</a>
+      <a href="redis.html">Redis（KVS）</a>
+      <a href="nfs.html">NFS</a>
+      <a href="samba.html">Samba</a>
+      <a href="mariadb.html">MariaDB</a>
+      <a href="postgresql.html">PostgreSQL</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">▤</span>リファレンス</p>
+      <a href="../writing-style-guide.html">[GitHub Pages] 記法・テンプレート</a>
+      <a href="troubleshooting.html">障害切り分けチェックリスト</a>
+      <a href="eol.html">EOL / ライフサイクル一覧表</a>
+    </aside>
+
+<main class="content aws-design-guide"><nav class="breadcrumb" aria-label="Breadcrumb"><a href="../">Home</a><span>AWS設計</span></nav><h1>ログ・監視・可用性設計</h1><p class="lead">SLAと業務の稼働目標を区別し、ログ収集・障害検知・復旧確認までを設計する</p><h2 id="availability">SLA・SLO・実測稼働率を区別する</h2>
+<p class="design-table-hint">表は横にスクロールして確認できる</p><div class="table-scroll" tabindex="0" role="region" aria-label="比較表：横スクロール対応"><table><thead><tr><th>用語</th><th>設計での使い方</th></tr></thead><tbody>
+<tr><td>SLA</td><td>サービス提供者が定義する対象・測定方法・適用条件・補償を確認する</td></tr>
+<tr><td>SLO</td><td>自分たちの業務サービスが目指す可用性や応答時間の目標を定める</td></tr>
+<tr><td>SLI</td><td>成功したリクエストの割合など、目標を判定する測定指標を定める</td></tr>
+<tr><td>RTO／RPO</td><td>障害別の復旧時間と許容するデータ損失を決める</td></tr></tbody></table></div>
+<p>AWSサービスのSLAをアプリケーションの稼働率として転記しない<br>OS・アプリケーション・デプロイ・認証・DNS・外部サービスの障害も利用者の体験に影響するため、業務サービスの測定点を別に定める</p>
+<p class="design-table-hint">表は横にスクロールして確認できる</p><div class="table-scroll" tabindex="0" role="region" aria-label="比較表：横スクロール対応"><table><thead><tr><th>サービスと構成</th><th>SLAの水準</th><th>適用条件の読み方</th></tr></thead><tbody>
+<tr><td>EC2：単一インスタンス</td><td>99.5%</td><td>Instance-Level SLAの対象と定義を確認する</td></tr>
+<tr><td>EC2：複数AZなどの条件を満たす構成</td><td>99.99%</td><td>Region-Level SLAの配置・同時稼働・利用不能の定義を確認する</td></tr>
+<tr><td>RDS：Single DB Instance</td><td>99.5%</td><td>対象となるDBと利用不能の定義を確認する</td></tr>
+<tr><td>RDS：Multi-AZ DB Instance／Cluster</td><td>99.95%</td><td>対象構成を確認する／Auroraへこの値を流用しない</td></tr></tbody></table></div>
+<p class="source">出典：<a href="https://aws.amazon.com/compute/sla/">Amazon Compute SLA：単一インスタンスとリージョンの条件</a></p>
+<p class="source">出典：<a href="https://aws.amazon.com/rds/sla/">Amazon RDS SLA：Single DBとMulti-AZの条件</a></p>
+<p>EC2のRegion-Level SLAは、稼働中のインスタンスを同じリージョンの2つ以上のAZへ同時に配置する条件がある／AZが1つのリージョンでは少なくとも2つのリージョンに配置する<br>AZを増やしただけでアプリケーションの可用性が上がるとは限らず、トラフィックの切替と残存側の処理能力も設計する</p>
+<p>上表は2026年10月3日に確認した水準であり、実測値や無停止の保証を示さない<br>適用除外、申請条件、サービスクレジットは契約本文で確認する／各サービスのSLAを単純に掛け合わせて業務SLAを約束しない</p>
+<h2 id="budget">月間99.9%とRTO 4時間を整合させる</h2>
+<p>30日を全時間対象とした時間ベースの目標では、停止許容時間は30×24×60×0.001＝43.2分、すなわち43分12秒になる<br>同じ対象範囲で4時間停止すると約99.444%となり、その月の99.9%目標を満たさない</p>
+<p>RTO 4時間は毎月4時間停止するという意味ではないが、その規模の障害が発生した月にはSLO未達となり得る<br>通常障害の復旧目標を短くするか、災害復旧を別目標にするかを合意し、除外条件を後付けしない</p>
+<p class="design-table-hint">表は横にスクロールして確認できる</p><div class="table-scroll" tabindex="0" role="region" aria-label="比較表：横スクロール対応"><table><thead><tr><th>設計例の対象</th><th>目標の書き方</th><th>確認すること</th></tr></thead><tbody>
+<tr><td>通常運用</td><td>月間SLO 99.9%を仮定する</td><td>対象時間・測定間隔・失敗条件・計画停止の扱いを決める</td></tr>
+<tr><td>インスタンス／AZ障害</td><td>月間停止予算内で復旧できるように切替方式を設計する</td><td>検知・切替・再接続・業務確認の合計と複数回障害を評価する</td></tr>
+<tr><td>災害復旧</td><td>別途RTO 4時間、RPOを合意する</td><td>災害の定義とSLO集計への扱いを明文化する</td></tr></tbody></table></div>
+<h2 id="logging">ログは取得から廃棄まで設計する</h2>
+<p class="design-table-hint">表は横にスクロールして確認できる</p><div class="table-scroll" tabindex="0" role="region" aria-label="比較表：横スクロール対応"><table><thead><tr><th>ログの種類</th><th>主な目的</th><th>設計項目</th></tr></thead><tbody>
+<tr><td>OS／アプリケーション</td><td>障害解析と処理追跡に使う</td><td>journalかファイルか、時刻、相関ID、マスキング、保持先を決める</td></tr>
+<tr><td>アクセス／認証</td><td>利用状況と不正アクセスを調べる</td><td>記録項目、取得対象、アクセス権、個人情報の最小化を決める</td></tr>
+<tr><td>CloudTrail</td><td>AWS API操作の証跡に使う</td><td>管理イベントと必要なデータイベントの範囲・保存先・費用を確認する</td></tr>
+<tr><td>収集基盤自身</td><td>ログ欠損と転送異常を検知する</td><td>エージェント停止、送信失敗、滞留、容量枯渇、再送を監視する</td></tr></tbody></table></div>
+<p class="source">出典：<a href="https://docs.aws.amazon.com/awscloudtrail/latest/userguide/logging-management-events-with-cloudtrail.html">CloudTrailの管理イベント</a></p>
+<p class="source">出典：<a href="https://docs.aws.amazon.com/awscloudtrail/latest/userguide/logging-data-events-with-cloudtrail.html">CloudTrailのデータイベント</a></p>
+<p>保持期間は「すべて永久保存」ではなく、検索可能な期間と長期保管期間を用途ごとに決める<br>例えば検索30日・保管365日は設計上の候補であり、業務・監査・費用の合意後に設定する／ログの閲覧・削除・暗号鍵の権限も分ける</p>
+<h2 id="monitoring">監視項目を対応行動へ結び付ける</h2>
+<p class="design-table-hint">表は横にスクロールして確認できる</p><div class="table-scroll" tabindex="0" role="region" aria-label="比較表：横スクロール対応"><table><thead><tr><th>監視対象</th><th>検知したいこと</th><th>対応の例</th></tr></thead><tbody>
+<tr><td>外形監視</td><td>利用者の主要操作が成功しないことを検知する</td><td>HTTP 200だけでなくログイン・検索など対象操作を確認する</td></tr>
+<tr><td>EC2／OS</td><td>基盤障害、メモリ不足、容量不足、プロセス停止を検知する</td><td>CloudWatchの標準指標とagentによるOS指標を組み合わせる</td></tr>
+<tr><td>DB</td><td>接続枯渇、遅延、ロック、容量増加を検知する</td><td>アプリケーションの負荷と照合し、待機・切替・増強の判断へつなげる</td></tr>
+<tr><td>バッチ</td><td>予定時刻までに正常完了していないことを検知する</td><td>開始ログだけで正常とせず、完了・期限超過を監視する</td></tr>
+<tr><td>Zabbix自身</td><td>監視停止、処理キュー滞留、履歴DB障害を検知する</td><td>同じ障害で止まらない外部の監視経路から死活を確認する</td></tr></tbody></table></div>
+<p class="source">出典：<a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Install-CloudWatch-Agent.html">CloudWatch agentによるOSメトリクスとログ収集</a></p>
+<p>閾値だけでなく、評価期間、連続回数、欠測の扱い、復旧判定、通知先、時間外対応、一次対応手順を1組にする<br>CPU使用率80%などの値は初期候補として扱い、平常時の傾向と業務影響から調整する</p>
+<h2 id="acceptance">検知から復旧までを試験する</h2>
+<p>試験用の障害やログを発生させ、収集、アラーム、担当者への通知、復旧、通知解除まで通して確認する<br>監視サーバー停止、エージェント停止、転送先の権限不足も試験に含め、監視できていない状態を正常と表示しない</p>
+<nav class="design-series" aria-label="AWS設計シリーズ"><p><strong>AWS設計シリーズ</strong></p><ul><li><a href="aws-design.html">AWS基本設計・アーキテクチャ</a></li><li><a href="aws-design-compute.html">コンピューティング設計</a></li><li><a href="aws-design-database.html">データベース設計</a></li><li><a href="aws-design-storage.html">ストレージ設計</a></li><li><a href="aws-design-os.html">Amazon Linux 2023のOS設計</a></li><li><a href="aws-design-observability.html" aria-current="page">ログ・監視・可用性設計</a></li><li><a href="aws-design-governance.html">命名規則・タグ設計</a></li></ul></nav></main><aside class="toc" aria-label="Table of contents"><h2>ページ内</h2><a href="#availability">SLA・SLO・実測稼働率を区別する</a>
+<a href="#budget">月間99.9%とRTO 4時間を整合させる</a>
+<a href="#logging">ログは取得から廃棄まで設計する</a>
+<a href="#monitoring">監視項目を対応行動へ結び付ける</a>
+<a href="#acceptance">検知から復旧までを試験する</a>
+</aside></div><script src="../assets/app.js?v=20260823-ref1"></script></body></html>
