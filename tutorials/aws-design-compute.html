@@ -115,7 +115,7 @@
 <tr><td>ECS＋EC2</td><td>コンテナを使いながらホストやインスタンスの選択を制御したい</td><td>ECSの管理に加え、EC2の容量・パッチ・スケーリングを設計する</td></tr></tbody></table></div>
 <h2 id="hosting-diagrams">ホスティング別の構成図とWAFの関連付け先</h2>
 <p><a href="#hosting-ec2">EC2の構成図</a> ／ <a href="#hosting-lightsail">Lightsailの構成図</a> ／ <a href="#hosting-amplify">Amplifyの構成図</a> ／ <a href="#hosting-s3">S3＋CloudFrontの構成図</a></p>
-<p>緑の枠はAWS WAFのWeb ACLを追加できる場所を示す／WAFは独立した中継サーバーではなく、対象サービスへ関連付けて利用する<br>各図は構成の比較用であり、WAFは任意の追加機能として示す</p>
+<p>AWS公式アイコンでリソースと配置領域を示す／緑の破線はAWS WAFのWeb ACLを関連付ける対象を示す<br>各図は構成の比較用であり、WAFは任意の追加機能として示す</p>
 <p class="design-table-hint">表は横にスクロールして確認できる</p><div class="table-scroll" tabindex="0" role="region" aria-label="比較表：横スクロール対応"><table><thead><tr><th>構成要素</th><th>AWS WAFの直接関連付け</th><th>追加する構成</th></tr></thead><tbody>
 <tr><td>EC2インスタンス</td><td>対象外</td><td>前段のALBまたはCloudFrontへ関連付ける</td></tr>
 <tr><td>ALB</td><td>対応する</td><td>ALBと同じリージョンのWeb ACLを使用する</td></tr>

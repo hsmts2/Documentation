@@ -76,7 +76,7 @@ source('https://docs.aws.amazon.com/lightsail/latest/userguide/what-is-amazon-li
 source('https://docs.aws.amazon.com/AmazonECS/latest/developerguide/Welcome.html','ECSと実行基盤の選択肢')+
 h('hosting-diagrams','ホスティング別の構成図とWAFの関連付け先')+
 p('<a href="#hosting-ec2">EC2の構成図</a> ／ <a href="#hosting-lightsail">Lightsailの構成図</a> ／ <a href="#hosting-amplify">Amplifyの構成図</a> ／ <a href="#hosting-s3">S3＋CloudFrontの構成図</a>')+
-p('緑の枠はAWS WAFのWeb ACLを追加できる場所を示す／WAFは独立した中継サーバーではなく、対象サービスへ関連付けて利用する<br>各図は構成の比較用であり、WAFは任意の追加機能として示す')+
+p('AWS公式アイコンでリソースと配置領域を示す／緑の破線はAWS WAFのWeb ACLを関連付ける対象を示す<br>各図は構成の比較用であり、WAFは任意の追加機能として示す')+
 table(['構成要素','AWS WAFの直接関連付け','追加する構成'],[
 ('EC2インスタンス','対象外','前段のALBまたはCloudFrontへ関連付ける'),
 ('ALB','対応する','ALBと同じリージョンのWeb ACLを使用する'),
@@ -368,51 +368,9 @@ def web_diagram():
     (ROOT/'assets'/'aws-design'/'web.svg').write_text(svg,encoding='utf-8')
 
 def hosting_diagrams():
-    configs=[
-        ('ec2','EC2＋ALB',[
-            ('利用者','HTTPSでアクセスする',None),
-            ('ALB','2つ以上のAZで受け付ける','AWS WAF → ALBへ関連付け（任意）'),
-            ('EC2：AZ A ／ EC2：AZ B','非公開サブネット／ALBからの通信を許可する',None),
-            ('RDS for MySQL：Multi-AZ','EC2からのみ接続／障害切替後の再接続を設計する',None)
-        ],'EC2への直接関連付けは不可／NLBも直接関連付けの対象外'),
-        ('lightsail','Lightsail＋CloudFront',[
-            ('利用者','HTTPSでアクセスする',None),
-            ('CloudFront','通常のCloudFrontディストリビューションを作成する','AWS WAF → CloudFrontへ関連付け（任意）'),
-            ('Lightsailインスタンス','固定IPをDNS名に対応付け、HTTPSで接続する',None),
-            ('Webサーバー＋アプリケーション','オリジン用ヘッダーを検証／DBの配置は別途設計する',None)
-        ],'LightsailのCDN・ロードバランサーと通常のCloudFrontを区別する'),
-        ('amplify','Amplify Hosting',[
-            ('利用者','HTTPSでアクセスする',None),
-            ('Amplify Hostingアプリ','AWSが管理する配信基盤で公開する','AWS WAF → Amplifyアプリへ統合（任意）'),
-            ('静的コンテンツ／対応SSRランタイム','アプリケーションの実行方式に合わせて選択する',None),
-            ('デプロイ経路：Git → ビルド → 公開','この経路は利用者からのリクエスト経路とは別に扱う',None)
-        ],'別URLのAPIは別途保護する／利用者管理のALBは不要'),
-        ('s3','S3＋CloudFront',[
-            ('利用者','HTTPSでアクセスする',None),
-            ('CloudFront','TLS・キャッシュ・配信設定を管理する','AWS WAF → CloudFrontへ関連付け（任意）'),
-            ('OACによる署名付きリクエスト','バケットポリシーで対象ディストリビューションを許可する',None),
-            ('S3：非公開バケット','公開アクセスをブロック／通常のバケットオリジンを使う',None)
-        ],'S3への直接関連付けは不可／Webサイトエンドポイントは使用しない')
-    ]
-    for name,title,rows,foot in configs:
-        out=[f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 690" role="img" aria-labelledby="title"><title id="title">{escape(title)}の構成とWAFの関連付け先</title>',
-            '<defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8Z" fill="#52647c"/></marker></defs>',
-            '<rect width="680" height="690" rx="16" fill="#f3f6fa"/><g font-family="sans-serif" text-anchor="middle" fill="#182b45">',
-            f'<text x="340" y="40" font-size="26" font-weight="700">{escape(title)}</text>',
-            '<text x="340" y="71" font-size="17">緑枠：WAFを追加できる関連付け先</text>']
-        y=98
-        for i,(label,detail,waf) in enumerate(rows):
-            height=136 if waf else 90
-            if i and not(name=='amplify' and i==3):
-                out.append(f'<path d="M340 {y-30}V{y-8}" fill="none" stroke="#52647c" stroke-width="2" marker-end="url(#arrow)"/>')
-            out.append(f'<rect x="24" y="{y}" width="632" height="{height}" rx="12" fill="white" stroke="#849bb7"/>')
-            out.append(f'<text x="340" y="{y+34}" font-size="22" font-weight="700">{escape(label)}</text>')
-            out.append(f'<text x="340" y="{y+65}" font-size="17">{escape(detail)}</text>')
-            if waf:
-                out.append(f'<rect x="40" y="{y+80}" width="600" height="40" rx="8" fill="#e5f7eb" stroke="#26764a"/><text x="340" y="{y+106}" font-size="19" font-weight="700" fill="#165b35">{escape(waf)}</text>')
-            y+=height+32
-        out.append(f'<text x="340" y="{y+12}" font-size="16">{escape(foot)}</text></g></svg>')
-        (ROOT/'assets'/'aws-design'/f'hosting-{name}.svg').write_text(''.join(out),encoding='utf-8')
+    import runpy
+    runpy.run_path(str(ROOT/'scripts'/'build_hosting_architectures.py'), run_name='__main__')
+
 
 def main():
     shell=(ROOT/'tutorials'/'amazon-rds-blue-green.html').read_text(encoding='utf-8')
