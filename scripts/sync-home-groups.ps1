@@ -25,36 +25,43 @@ $groupMatches = [regex]::Matches(
     $sidebarMatch.Groups[1].Value,
     '(?s)<p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">.*?</span>([^<]+)</p>(.*?)(?=<p class="sidebar-group">|$)'
 )
-$sectionIds = @('articles', 'poc', 'git-github', 'terraform', 'iac', 'aws-cloud', 'os-server', 'reference')
-
-if ($groupMatches.Count -ne $sectionIds.Count) {
-    throw "Expected $($sectionIds.Count) sidebar groups, found $($groupMatches.Count)"
+# Build the home directory from the visible sidebar, so new pages and hidden
+# pages use the same source of truth as the navigation.
+$sectionIdsByLabel = @{
+    '記事' = 'articles'
+    '[PoC] マルチVPC・閉域VDI基盤案件' = 'poc'
+    'Git / GitHub' = 'git-github'
+    'Terraform' = 'terraform'
+    'IaC' = 'iac'
+    'AWS' = 'aws-cloud'
+    'OS／ミドルウェア' = 'os-server'
+    'リファレンス' = 'reference'
 }
-
 $sidebarLinks = @{}
-
-foreach ($group in $groupMatches) {
-    foreach ($linkMatch in [regex]::Matches($group.Groups[2].Value, 'href="tutorials/([^"]+)">([^<]+)</a>')) {
-        $sidebarLinks[$linkMatch.Groups[1].Value] = $linkMatch.Groups[2].Value
-    }
-}
-
 $homeSections = @(
-    [pscustomobject]@{ Id = 'aws-design'; Icon = '☁︎'; Label = 'AWS基本設計'; Files = @('aws-design-compute.html', 'aws-design-governance.html') },
-    [pscustomobject]@{ Id = 'articles'; Icon = '&#128221;'; Label = $groupMatches[0].Groups[1].Value; Files = @('cloudflare-private-site.html', 'aws-daily-cost-slack.html', 'workspaces-skill-transfer.html') },
-    [pscustomobject]@{ Id = 'terraform'; Icon = '&#129521;'; Label = 'Terraform'; Files = @('terraform.html', 'hcp-terraform.html') },
-    [pscustomobject]@{ Id = 'git-github'; Icon = '⑂'; Label = 'Git / GitHub'; Files = @('git-github.html', 'git-utilities.html', 'github-ssh.html', 'github-slack-integration.html') },
-    [pscustomobject]@{ Id = 'iac'; Icon = '◈'; Label = 'IaC'; Files = @('iac.html') },
-    [pscustomobject]@{ Id = 'reference'; Icon = '&#128218;'; Label = $groupMatches[7].Groups[1].Value; Files = @('writing-style-guide.html', 'troubleshooting.html', 'eol.html') },
-    [pscustomobject]@{ Id = 'aws-platform'; Icon = '&#128736;&#65039;'; Label = 'AWS &#22522;&#30436;&#65295;CLI'; Files = @('cloudformation.html', 'aws-cli.html', 'aws-cli-reference.html') },
-    [pscustomobject]@{ Id = 'aws-services'; Icon = '&#9729;&#65039;'; Label = 'AWS &#12469;&#12540;&#12499;&#12473;'; Files = @('eventbridge-scheduler.html', 'aws-directory-service.html', 'amazon-workspaces.html', 'amazon-ses.html', 'amazon-ses-monitoring.html', 'amazon-rds-blue-green.html', 'apache-acm-certificate-update.html') },
-    [pscustomobject]@{ Id = 'operating-systems'; Icon = '&#128187;'; Label = 'OS'; Files = @('rhel9.html', 'rhel10.html', 'amazon-linux-2023.html', 'windows-server-2022.html', 'windows-server-2025.html', 'windows-server-2016-upgrade.html') },
-    [pscustomobject]@{ Id = 'web-databases'; Icon = '&#127760;'; Label = 'Web&#65295;&#12487;&#12540;&#12479;&#12505;&#12540;&#12473;'; Files = @('apache.html', 'apache-self-signed-ssl-termination.html', 'redis.html', 'mariadb.html', 'postgresql.html') },
-    [pscustomobject]@{ Id = 'storage-filesharing'; Icon = '&#128190;'; Label = '&#12473;&#12488;&#12524;&#12540;&#12472;&#65295;&#12501;&#12449;&#12452;&#12523;&#20849;&#26377;'; Files = @('storage.html', 'nfs.html', 'samba.html') }
+    for ($groupIndex = 0; $groupIndex -lt $groupMatches.Count; $groupIndex++) {
+        $group = $groupMatches[$groupIndex]
+        $label = $group.Groups[1].Value
+        $icon = [regex]::Match($group.Value, '<span class="sidebar-group-icon" aria-hidden="true">(.*?)</span>').Groups[1].Value
+        $files = @(
+            foreach ($link in [regex]::Matches($group.Groups[2].Value, '<a\b[^>]*href="([^"]+)"[^>]*>([^<]+)</a>')) {
+                $href = $link.Groups[1].Value
+                if ($href -notmatch '^(?:tutorials/)?[^/]+\.html$') {
+                    throw "Unexpected sidebar document URL: $href"
+                }
+                $file = $href -replace '^tutorials/', ''
+                if ($sidebarLinks.ContainsKey($file)) {
+                    throw "Duplicate sidebar document: $file"
+                }
+                $sidebarLinks[$file] = $link.Groups[2].Value
+                $file
+            }
+        )
+        if ($files.Count -eq 0) { throw "Sidebar category has no documents: $label" }
+        $id = if ($sectionIdsByLabel.ContainsKey($label)) { $sectionIdsByLabel[$label] } else { "category-$groupIndex" }
+        [pscustomobject]@{ Id = $id; Icon = $icon; Label = $label; Files = $files }
+    }
 )
-$sidebarLinks['writing-style-guide.html'] = '[GitHub Pages] &#35352;&#27861;&#12539;&#12486;&#12531;&#12503;&#12524;&#12540;&#12488;'
-$sidebarLinks['workspaces-skill-transfer.html'] = '&#12510;&#12523;&#12481;VPC&#12539;&#38281;&#22495;VDI&#22522;&#30436;&#26696;&#20214;&#65288;9&#12506;&#12540;&#12472;&#65289;'
-$skillTransferDescription = '複数VPCへ分離した閉域VDI基盤の構築順序と、Managed Microsoft AD、AD Connector、Amazon WorkSpacesの運用手順'
 
 $lines = [System.Collections.Generic.List[string]]::new()
 $lines.Add('      <!-- home-groups:start -->')
@@ -88,7 +95,6 @@ foreach ($section in $homeSections) {
         }
 
         $description = $descriptionMatch.Groups[1].Value.TrimEnd([char[]]@([char]0x3002, [char]0x002E))
-        if ($file -eq 'workspaces-skill-transfer.html') { $description = $skillTransferDescription }
         $anchor = if ($fileIndex -eq 0) { " id=`"$($section.Id)`"" } else { '' }
         $lines.Add("          <article class=`"document-card`"$anchor>")
         $lines.Add("            <p class=`"document-card-category document-card-category-$($section.Id)`"><span aria-hidden=`"true`">$($section.Icon)</span> $($section.Label)</p>")
