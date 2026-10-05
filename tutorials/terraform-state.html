@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TerraformのState管理と運用 | Documentation</title>
+  <meta name="description" content="Stateの確認、手動変更との整合、Import、アドレス変更、環境分割とBackend移行を整理">
+  <link rel="stylesheet" href="../assets/styles.css?v=20260823-ref4">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="../">
+      <img src="../assets/icon.jpg" alt="Documentation icon">
+      <span>Documentation</span>
+    </a>
+    <div class="header-actions">
+      <button class="icon-button theme-toggle" type="button" title="テーマを切り替え" aria-label="テーマを切り替え">☀</button>
+      <nav class="nav" aria-label="Global navigation">
+        <a href="https://github.com/hsmts2/Documentation"><span class="nav-icon" aria-hidden="true">◆</span>GitHub</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="layout">
+    <aside id="site-sidebar" class="sidebar" aria-label="Page list">
+      <div class="sidebar-heading">
+        <button class="icon-button sidebar-toggle sidebar-toggle-inline" type="button" aria-controls="site-sidebar" aria-expanded="true" title="ナビゲーションを閉じる" aria-label="ナビゲーションを閉じる">☰</button>
+      </div>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">✎</span>記事</p>
+      <a href="cloudflare-private-site.html">Private GitHubリポジトリをCloudflare Workersで認証付き公開してみた</a>
+      <a href="aws-daily-cost-slack.html">AWS利用料を毎朝3時にSlackへ通知してみた</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">☁︎</span>[PoC] マルチVPC・閉域VDI基盤案件</p>
+          <a href="workspaces-skill-transfer.html">全体構築・運用順序</a>
+          <a href="workspaces-managed-ad.html">Managed Microsoft ADの構築</a>
+          <a href="workspaces-managed-ad-users.html">Managed Microsoft ADのユーザー・グループ管理</a>
+          <a href="workspaces-management-ec2.html">管理用EC2の起動・接続・AD管理</a>
+          <a href="workspaces-ad-connector-account.html">AD Connector用サービスアカウント・権限委任</a>
+          <a href="workspaces-ad-connector.html">AD ConnectorのVPCピアリング・SG設定・作成</a>
+          <a href="workspaces-provisioning-gpo.html">WorkSpaces Personalの構築・接続</a>
+          <a href="workspaces-target-ou.html">WorkSpaces用ターゲットOUの作成・権限委任</a>
+          <a href="workspaces-gpo.html">WorkSpaces用GPOの作成・適用・運用</a>
+          <a href="workspaces-image-bundle.html">WorkSpacesカスタムイメージ作成・共有</a>
+          <a href="workspaces-systems-manager.html">Systems Manager環境構築</a>
+          <a href="workspaces-patch-manager.html">Patch Managerの設定</a>
+          <a href="workspaces-patch-operations.html">Patch Managerの実行・結果確認・運用</a>
+          <a href="workspaces-cost-optimizer.html">Cost Optimizerの構築・設定</a>
+          <a href="workspaces-cost-optimizer-dry-run.html">Cost OptimizerのDry Run解除</a>
+          <a href="workspaces-cost-optimizer-schedule.html">Cost Optimizerの実行スケジュール設定・変更</a>
+          <a href="workspaces-cost-optimizer-reports.html">Cost Optimizerのレポート・監視</a>
+          <a href="workspaces-cloudwatch-monitoring.html">CloudWatchのEC2・Windows OS監視とSNS通知</a>
+          <a href="workspaces-cloudwatch-workspaces.html">CloudWatchのWorkSpaces監視</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">⑂</span>Git / GitHub</p>
+      <a href="git-github.html">Git 概要</a>
+      <a href="git-remote.html">Gitリモート操作</a>
+      <a href="github-pages.html">GitHub Pages</a>
+      <a href="github-pull-request.html">GitHubのPull Requestとレビュー</a>
+      <a href="git-utilities.html">Gitトラブルシューティング</a>
+      <a href="github-ssh.html">GitHub認証</a>
+      <a href="github-slack-integration.html">GitHubとSlackの連携・通知設定</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">◈</span>Terraform</p>
+      <a href="terraform.html">Terraform 概要</a>
+      <a href="terraform-basics.html">Terraformの基本操作とHCL</a>
+      <a class="active" aria-current="page" href="terraform-state.html">TerraformのState管理と運用</a>
+      <a href="terraform-modules.html">Terraformのモジュール活用</a>
+      <a href="hcp-terraform.html">HCP Terraform（Terraform Cloud）</a>
+      <a href="terraform-providers.html">TerraformのProviderとマルチクラウド</a>
+      <a href="terraform-sentinel.html">TerraformのSentinelポリシー管理</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">◈</span>IaC</p>
+      <a href="iac.html">IaC</a>
+      <a href="iam-identity-center.html">IAM Identity Center</a>
+      <a href="iac-vscode.html">VS Codeの設定</a>
+      <a href="iac-deploy.html">IaCによるリソースのデプロイ</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">☁︎</span>AWS</p>
+      <a href="aws-design.html">AWS基本設計・アーキテクチャ</a>
+      <a href="aws-design-compute.html">コンピューティング設計</a>
+      <a href="aws-design-database.html">データベース設計</a>
+      <a href="aws-design-storage.html">ストレージ設計</a>
+      <a href="aws-design-os.html">OS・ミドルウェア設計</a>
+      <a href="aws-design-observability.html">ログ・監視・可用性設計</a>
+      <a href="aws-design-governance.html">命名規則・タグ設計</a>
+      <a href="cloudformation.html">CloudFormation 運用手順集</a>
+      <a href="aws-cli.html">AWS CLI 特殊対応</a>
+      <a href="aws-cli-reference.html">AWS CLI コマンドリファレンス</a>
+      <a href="eventbridge-scheduler.html">EventBridge Scheduler</a>
+      <a href="aws-directory-service.html">AWS Directory Service 運用手順</a>
+      <a href="amazon-workspaces.html">Amazon WorkSpaces</a>
+      <a href="amazon-ses.html">Amazon SES SMTPリレー</a>
+      <a href="amazon-ses-monitoring.html">Amazon SES 配信監視</a>
+      <a href="amazon-rds-blue-green.html">Amazon RDS Blue/Green Deployments</a>
+      <a href="apache-acm-certificate-update.html">証明書更新（ACMエクスポート）</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">⚙︎</span>OS／ミドルウェア</p>
+      <a href="rhel9.html">Red Hat Enterprise Linux 9</a>
+      <a href="rhel10.html">Red Hat Enterprise Linux 10</a>
+      <a href="amazon-linux-2023.html">Amazon Linux 2023</a>
+      <a href="windows-server-2022.html">Windows Server 2022</a>
+      <a href="windows-server-2025.html">Windows Server 2025</a>
+      <a href="windows-server-2016-upgrade.html">Windows Server 2016 インプレースアップグレード</a>
+      <a href="storage.html">ストレージ管理</a>
+      <a href="apache.html">Apache</a>
+      <a href="apache-self-signed-ssl-termination.html">Apache SSL終端（自己署名証明書）</a>
+      <a href="redis.html">Redis（KVS）</a>
+      <a href="nfs.html">NFS</a>
+      <a href="samba.html">Samba</a>
+      <a href="mariadb.html">MariaDB</a>
+      <a href="postgresql.html">PostgreSQL</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">▤</span>リファレンス</p>
+      <a href="../writing-style-guide.html">[GitHub Pages] 記法・テンプレート</a>
+      <a href="troubleshooting.html">障害切り分けチェックリスト</a>
+      <a href="eol.html">EOL / ライフサイクル一覧表</a>
+    </aside>
+
+    <main class="content terraform-guide">
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="../"><span class="nav-icon" aria-hidden="true">⌂</span>Home</a>
+        <span>トピック</span>
+      </nav>
+<h1>TerraformのState管理と運用</h1>
+<nav class="section-links" aria-label="主要セクション"><a href="#scope">構成ファイル・State・実リソース</a><a href="#inspect">Stateの確認</a><a href="#drift">手動変更があった場合</a><a href="#import">既存リソースを管理対象へ取り込む</a><a href="#move">リソース名・配置の変更</a><a href="#split">ファイル分割とState分割</a><a href="#backend">S3 Backendへの移行</a><a href="#troubleshooting">ロック・診断・バージョン更新</a></nav>
+<p>Stateの確認、手動変更との整合、Import、アドレス変更、環境分割とBackend移行を整理</p><section>
+<h2 id="scope">構成ファイル・State・実リソース</h2>
+<table><thead><tr><th>対象</th><th>保持する情報</th><th>編集・更新方法</th></tr></thead><tbody><tr><td>構成ファイル（.tf）</td><td>目標とするリソースと属性</td><td>利用者がコードを編集</td></tr><tr><td>State</td><td>Terraformのアドレスと実リソースIDの対応・属性情報</td><td>Terraformのコマンドで管理</td></tr><tr><td>実リソース</td><td>クラウド上の現在の状態</td><td>通常はTerraform経由で変更</td></tr></tbody></table><p>Stateは構成ファイルの代わりではない。Terraformは管理対象の現在値を読み取り、構成との差分をPlanへ表示。コンソールで変更した属性が.tfへ自動で書き戻されるわけではない</p><p>手順内の<code class="inline-code">aws_sqs_queue.practice</code>は<a href="terraform-basics.html">基本操作とHCL</a>の検証用キュー。実際のアドレスはstate listで確認</p>
+</section>
+<section>
+<h2 id="inspect">Stateの確認</h2>
+<p>① 対象フォルダーへ移動し、接続先とWorkspaceを確認</p><div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>Set-Location "$env:USERPROFILE\IaC\Terraform\queue-lab"
+$env:AWS_PROFILE = "iac-admin"
+aws sts get-caller-identity --profile iac-admin
+terraform workspace show</code></pre></div><p>② State内のリソースアドレスを一覧表示</p><div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>terraform state list</code></pre></div><p>③ 検証用キューのState内の属性を確認。実リソースの最新値を必ず再取得するコマンドではない点に注意</p><div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>terraform state show aws_sqs_queue.practice</code></pre></div><p>④ 実リソースとの照合を含む通常Planを表示。予定外の変更がある場合はApplyを保留</p><div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>terraform plan</code></pre></div><div class="callout callout-warning"><strong>⚠️ 注意</strong><p>Stateには秘密値が含まれる可能性があるため、内容をそのままチャットや公開リポジトリに掲載しない。Stateを手動で編集・削除して帳尻を合わせない</p></div>
+</section>
+<section>
+<h2 id="drift">手動変更があった場合</h2>
+<p>例えばSQSの最大メッセージサイズをコンソールから変更した場合は、Planで対象属性を確認したうえで、変更を残すか戻すかを決定</p><table><thead><tr><th>方針</th><th>対応</th><th>注意</th></tr></thead><tbody><tr><td>コードの値へ戻す</td><td>通常のPlanで戻し先を確認してApply</td><td>戻したい属性以外の差分にも注意</td></tr><tr><td>手動変更を正式な構成として残す</td><td>.tf／tfvarsも同じ値に更新し、通常のPlanを再確認</td><td>refresh-onlyだけではコードは更新されない</td></tr><tr><td>実状態をStateへ記録するだけ</td><td>refresh-onlyの計画を確認して適用</td><td>コードが古いままなら次の通常Planで元に戻す変更が出る</td></tr></tbody></table><p>① 実状態をStateへ記録する差分を確認したい場合だけ、refresh-onlyの計画を作成</p><div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>terraform plan -refresh-only -out=refresh.tfplan</code></pre></div><p>② 内容を確認後にStateと出力を更新。実リソースをコードどおりに変更する操作ではない</p><div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>terraform apply refresh.tfplan</code></pre></div><p>③ 通常のPlanでも意図した状態になっていることを確認</p><div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>terraform plan</code></pre></div><p><code class="inline-code">ignore_changes</code>は指定属性を以後の更新計画で無視する設定。別の管理主体が所有する属性に限定し、ドリフトを見えなくするための一括指定は避ける</p>
+</section>
+<section>
+<h2 id="import">既存リソースを管理対象へ取り込む</h2>
+<p>Importは既存リソースとTerraformアドレスの対応をStateへ登録する操作。既に別のStateで管理しているリソースを重複登録しない。ここでは未管理のSQSキューを、別の空の作業フォルダーへ取り込む例</p><p>① AWS Providerの設定を用意し、main.tfとimport.tfを保存。名前・サイズは実リソースの値を調査して設定。<code class="inline-code">&lt;QUEUE_URL&gt;</code>を実際のキューURLへ置換</p><div class="code"><div class="code-header"><span>main.tf</span><button class="copy" type="button">Copy</button></div><pre><code>resource "aws_sqs_queue" "adopted" {
+  name             = "existing-practice-queue"
+  max_message_size = 4096
+}</code></pre></div><div class="code"><div class="code-header"><span>import.tf</span><button class="copy" type="button">Copy</button></div><pre><code>import {
+  to = aws_sqs_queue.adopted
+  id = "&lt;QUEUE_URL&gt;"
+}</code></pre></div><p>② 作業フォルダーを初期化し、Importと属性変更の両方を確認</p><div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>terraform init
+terraform plan -out=import.tfplan</code></pre></div><div class="callout callout-warning"><strong>⚠️ 注意</strong><p>Importの計画に更新・置換・削除が混在している場合は、そのまま適用しない。実リソースに合わせてコードを修正し、取り込みだけの計画になってから進行</p></div><p>③ 確認済みの計画でStateへ登録</p><div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>terraform apply import.tfplan</code></pre></div><p>④ 登録されたアドレスと、意図しない差分がないことを確認</p><div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>terraform state list
+terraform plan</code></pre></div><p>Import用IDの形式はリソース型ごとに異なる。<code class="inline-code">data</code>ブロックは参照専用であり、Importの代わりに管理対象へ取り込むものではない</p>
+</section>
+<section>
+<h2 id="move">リソース名・配置の変更</h2>
+<p>クラウド上のキュー名は変えず、Terraform内部のアドレスだけを変更する例。main.tfのresourceラベルをpracticeからmessagesへ変更し、outputs.tfなどの参照も更新。そのうえで同じルートモジュールに次を追加</p><div class="code"><div class="code-header"><span>moved.tf</span><button class="copy" type="button">Copy</button></div><pre><code>moved {
+  from = aws_sqs_queue.practice
+  to   = aws_sqs_queue.messages
+}</code></pre></div><p>① 移動として認識され、作成・削除が計画されていないことを確認</p><div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>terraform plan -out=move.tfplan</code></pre></div><p>② 確認したアドレス変更をStateへ反映</p><div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>terraform apply move.tfplan</code></pre></div><p>③ 新アドレスと差分がないことを確認</p><div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>terraform state list
+terraform plan</code></pre></div><p>モジュール化する場合も、移動先アドレスを<code class="inline-code">module.queue.aws_sqs_queue.this</code>などへ指定。movedは同じState内の対応変更であり、別Stateへの移管とは別作業</p><div class="callout callout-warning"><strong>⚠️ 注意</strong><p><code class="inline-code">terraform state rm</code>は実リソースを削除せず、管理対象から外す操作。構成を残したままだと次のPlanで新規作成が提案されるため、削除コマンドの代用にはしない</p></div>
+</section>
+<section>
+<h2 id="split">ファイル分割とState分割</h2>
+<table><thead><tr><th>分け方</th><th>効果</th><th>State</th></tr></thead><tbody><tr><td>同じフォルダーでnetwork.tfとapp.tfに分割</td><td>コードの見通しを改善</td><td>同じState</td></tr><tr><td>子モジュールへ分割して同じルートから呼び出す</td><td>共通化・再利用</td><td>同じState</td></tr><tr><td>別のルートフォルダー＋別のBackend key／HCP Workspace</td><td>環境・担当・変更周期を分離</td><td>別State</td></tr></tbody></table><div class="code"><div class="code-header"><span>配置例</span><button class="copy" type="button">Copy</button></div><pre><code>terraform-project/
+  envs/
+    dev/     # dev専用のBackendまたはHCP Workspace
+    prod/    # prod専用のBackendまたはHCP Workspace
+  modules/
+    queue/   # 共通の子モジュール</code></pre></div><p>フォルダーだけを分けても同じBackend keyを指定すると同じStateを共有。CLI Workspaceの切り替えも認証や権限の境界とは別。業務と検証では接続先・権限・State保存先を合わせて分離</p><p>他のStateを参照する場合、<code class="inline-code">terraform_remote_state</code>で利用するのはルートのoutput。ただしBackendの認証はState全体を読める権限につながるため、秘密値の境界としては扱わない。必要な値だけをParameter Store等へ公開する方法も検討</p>
+</section>
+<section>
+<h2 id="backend">S3 Backendへの移行</h2>
+<p>ローカルStateから移行する場合の例。HCP Terraformへの移行は<a href="hcp-terraform.html#state-migration">HCP Terraform</a>を参照。両方式を同時に指定しない</p><p>① State用S3バケットを別管理で準備し、公開アクセス遮断・暗号化・バージョニングを確認。対象Stateへの読み書き、ロック用オブジェクトの作成・読み取り・削除権限を実行ロールへ付与。バケットを移行対象と一緒にdestroyしない構成に分離</p><p>② 既存Stateをアクセス制限された保存先へバックアップし、チーム内の同時実行を停止。ローカルのterraform.tfstateをコピーする場合は暗号化・保管権限も確認</p><p>③ <code class="inline-code">&lt;STATE_BUCKET&gt;</code>を用意したバケット名へ置換し、backend.tfを追加。keyはこの環境専用の値を使用</p><div class="code"><div class="code-header"><span>backend.tf</span><button class="copy" type="button">Copy</button></div><pre><code>terraform {
+  backend "s3" {
+    bucket       = "&lt;STATE_BUCKET&gt;"
+    key          = "queue-lab/dev/terraform.tfstate"
+    region       = "ap-northeast-1"
+    encrypt      = true
+    use_lockfile = true
+  }
+}</code></pre></div><p>④ 移行先の認証を確認してStateを移行。表示される移行元・移行先を確認してから承認</p><div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>terraform init -migrate-state</code></pre></div><p>⑤ 移行後の管理対象とPlanを確認し、S3側でも対象キーの存在を確認</p><div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>terraform state list
+terraform plan</code></pre></div><p><code class="inline-code">use_lockfile</code>には対応するTerraformが必要。この手順はTerraform 1.10以降を前提。古いDynamoDB方式を新規導入する手順とは分離</p><div class="callout callout-warning"><strong>⚠️ 注意</strong><p>移行に失敗した場合は別のBackendでApplyを始めず、どちらが正のStateかを確認。<code class="inline-code">-reconfigure</code>だけではState移行にならない</p></div>
+</section>
+<section>
+<h2 id="troubleshooting">ロック・診断・バージョン更新</h2>
+<table><thead><tr><th>状況</th><th>先に確認する内容</th></tr></thead><tbody><tr><td>Stateロックを取得できない</td><td>他の利用者・CIが実行中か、ロック情報の操作・作成時刻を確認。稼働中のロックを強制解除しない</td></tr><tr><td>Providerの変更が必要</td><td>required_providersとロックファイルを確認。init -upgradeは許容範囲内の依存更新を伴う</td></tr><tr><td>特定リソースを作り直したい</td><td>通常Planを先に確認。必要な場合だけ-replaceで置換計画をレビュー</td></tr><tr><td>Planの終了コードをCIで使う</td><td>-detailed-exitcodeは0が差分なし、1がエラー、2が差分あり</td></tr><tr><td>詳細ログが必要</td><td>TF_LOGを必要な間だけ設定し、ログを秘密情報として保護</td></tr></tbody></table><p>① Provider依存関係を表示</p><div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>terraform providers</code></pre></div><p>② 詳細ログを一時的に取得する場合の例。処理後にこのターミナルのログ設定を解除</p><div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$env:TF_LOG = "DEBUG"
+$env:TF_LOG_PATH = Join-Path $env:TEMP "terraform-debug.log"
+try { terraform plan } finally {
+  Remove-Item Env:TF_LOG
+  Remove-Item Env:TF_LOG_PATH
+}</code></pre></div><p>生成したログは公開しない。障害復旧時も<code class="inline-code">-target</code>や<code class="inline-code">force-unlock</code>を普段の手順へ組み込まず、対象と影響を特定してから使用</p>
+</section>
+</main>
+<aside class="toc" aria-label="Table of contents"><h2>ページ内</h2><a href="#scope">構成ファイル・State・実リソース</a>
+<a href="#inspect">Stateの確認</a>
+<a href="#drift">手動変更があった場合</a>
+<a href="#import">既存リソースを管理対象へ取り込む</a>
+<a href="#move">リソース名・配置の変更</a>
+<a href="#split">ファイル分割とState分割</a>
+<a href="#backend">S3 Backendへの移行</a>
+<a href="#troubleshooting">ロック・診断・バージョン更新</a></aside>
+</div>
+<script src="../assets/app.js?v=20260823-ref1"></script>
+</body>
+</html>

@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TerraformのSentinelポリシー管理 | Documentation</title>
+  <meta name="description" content="SentinelでPlanの設定値を検査し、正常・違反ケースをテストしてHCP Terraformへ適用する手順">
+  <link rel="stylesheet" href="../assets/styles.css?v=20260823-ref4">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="../">
+      <img src="../assets/icon.jpg" alt="Documentation icon">
+      <span>Documentation</span>
+    </a>
+    <div class="header-actions">
+      <button class="icon-button theme-toggle" type="button" title="テーマを切り替え" aria-label="テーマを切り替え">☀</button>
+      <nav class="nav" aria-label="Global navigation">
+        <a href="https://github.com/hsmts2/Documentation"><span class="nav-icon" aria-hidden="true">◆</span>GitHub</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="layout">
+    <aside id="site-sidebar" class="sidebar" aria-label="Page list">
+      <div class="sidebar-heading">
+        <button class="icon-button sidebar-toggle sidebar-toggle-inline" type="button" aria-controls="site-sidebar" aria-expanded="true" title="ナビゲーションを閉じる" aria-label="ナビゲーションを閉じる">☰</button>
+      </div>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">✎</span>記事</p>
+      <a href="cloudflare-private-site.html">Private GitHubリポジトリをCloudflare Workersで認証付き公開してみた</a>
+      <a href="aws-daily-cost-slack.html">AWS利用料を毎朝3時にSlackへ通知してみた</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">☁︎</span>[PoC] マルチVPC・閉域VDI基盤案件</p>
+          <a href="workspaces-skill-transfer.html">全体構築・運用順序</a>
+          <a href="workspaces-managed-ad.html">Managed Microsoft ADの構築</a>
+          <a href="workspaces-managed-ad-users.html">Managed Microsoft ADのユーザー・グループ管理</a>
+          <a href="workspaces-management-ec2.html">管理用EC2の起動・接続・AD管理</a>
+          <a href="workspaces-ad-connector-account.html">AD Connector用サービスアカウント・権限委任</a>
+          <a href="workspaces-ad-connector.html">AD ConnectorのVPCピアリング・SG設定・作成</a>
+          <a href="workspaces-provisioning-gpo.html">WorkSpaces Personalの構築・接続</a>
+          <a href="workspaces-target-ou.html">WorkSpaces用ターゲットOUの作成・権限委任</a>
+          <a href="workspaces-gpo.html">WorkSpaces用GPOの作成・適用・運用</a>
+          <a href="workspaces-image-bundle.html">WorkSpacesカスタムイメージ作成・共有</a>
+          <a href="workspaces-systems-manager.html">Systems Manager環境構築</a>
+          <a href="workspaces-patch-manager.html">Patch Managerの設定</a>
+          <a href="workspaces-patch-operations.html">Patch Managerの実行・結果確認・運用</a>
+          <a href="workspaces-cost-optimizer.html">Cost Optimizerの構築・設定</a>
+          <a href="workspaces-cost-optimizer-dry-run.html">Cost OptimizerのDry Run解除</a>
+          <a href="workspaces-cost-optimizer-schedule.html">Cost Optimizerの実行スケジュール設定・変更</a>
+          <a href="workspaces-cost-optimizer-reports.html">Cost Optimizerのレポート・監視</a>
+          <a href="workspaces-cloudwatch-monitoring.html">CloudWatchのEC2・Windows OS監視とSNS通知</a>
+          <a href="workspaces-cloudwatch-workspaces.html">CloudWatchのWorkSpaces監視</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">⑂</span>Git / GitHub</p>
+      <a href="git-github.html">Git 概要</a>
+      <a href="git-remote.html">Gitリモート操作</a>
+      <a href="github-pages.html">GitHub Pages</a>
+      <a href="github-pull-request.html">GitHubのPull Requestとレビュー</a>
+      <a href="git-utilities.html">Gitトラブルシューティング</a>
+      <a href="github-ssh.html">GitHub認証</a>
+      <a href="github-slack-integration.html">GitHubとSlackの連携・通知設定</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">◈</span>Terraform</p>
+      <a href="terraform.html">Terraform 概要</a>
+      <a href="terraform-basics.html">Terraformの基本操作とHCL</a>
+      <a href="terraform-state.html">TerraformのState管理と運用</a>
+      <a href="terraform-modules.html">Terraformのモジュール活用</a>
+      <a href="hcp-terraform.html">HCP Terraform（Terraform Cloud）</a>
+      <a href="terraform-providers.html">TerraformのProviderとマルチクラウド</a>
+      <a class="active" aria-current="page" href="terraform-sentinel.html">TerraformのSentinelポリシー管理</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">◈</span>IaC</p>
+      <a href="iac.html">IaC</a>
+      <a href="iam-identity-center.html">IAM Identity Center</a>
+      <a href="iac-vscode.html">VS Codeの設定</a>
+      <a href="iac-deploy.html">IaCによるリソースのデプロイ</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">☁︎</span>AWS</p>
+      <a href="aws-design.html">AWS基本設計・アーキテクチャ</a>
+      <a href="aws-design-compute.html">コンピューティング設計</a>
+      <a href="aws-design-database.html">データベース設計</a>
+      <a href="aws-design-storage.html">ストレージ設計</a>
+      <a href="aws-design-os.html">OS・ミドルウェア設計</a>
+      <a href="aws-design-observability.html">ログ・監視・可用性設計</a>
+      <a href="aws-design-governance.html">命名規則・タグ設計</a>
+      <a href="cloudformation.html">CloudFormation 運用手順集</a>
+      <a href="aws-cli.html">AWS CLI 特殊対応</a>
+      <a href="aws-cli-reference.html">AWS CLI コマンドリファレンス</a>
+      <a href="eventbridge-scheduler.html">EventBridge Scheduler</a>
+      <a href="aws-directory-service.html">AWS Directory Service 運用手順</a>
+      <a href="amazon-workspaces.html">Amazon WorkSpaces</a>
+      <a href="amazon-ses.html">Amazon SES SMTPリレー</a>
+      <a href="amazon-ses-monitoring.html">Amazon SES 配信監視</a>
+      <a href="amazon-rds-blue-green.html">Amazon RDS Blue/Green Deployments</a>
+      <a href="apache-acm-certificate-update.html">証明書更新（ACMエクスポート）</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">⚙︎</span>OS／ミドルウェア</p>
+      <a href="rhel9.html">Red Hat Enterprise Linux 9</a>
+      <a href="rhel10.html">Red Hat Enterprise Linux 10</a>
+      <a href="amazon-linux-2023.html">Amazon Linux 2023</a>
+      <a href="windows-server-2022.html">Windows Server 2022</a>
+      <a href="windows-server-2025.html">Windows Server 2025</a>
+      <a href="windows-server-2016-upgrade.html">Windows Server 2016 インプレースアップグレード</a>
+      <a href="storage.html">ストレージ管理</a>
+      <a href="apache.html">Apache</a>
+      <a href="apache-self-signed-ssl-termination.html">Apache SSL終端（自己署名証明書）</a>
+      <a href="redis.html">Redis（KVS）</a>
+      <a href="nfs.html">NFS</a>
+      <a href="samba.html">Samba</a>
+      <a href="mariadb.html">MariaDB</a>
+      <a href="postgresql.html">PostgreSQL</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">▤</span>リファレンス</p>
+      <a href="../writing-style-guide.html">[GitHub Pages] 記法・テンプレート</a>
+      <a href="troubleshooting.html">障害切り分けチェックリスト</a>
+      <a href="eol.html">EOL / ライフサイクル一覧表</a>
+    </aside>
+
+    <main class="content terraform-guide">
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="../"><span class="nav-icon" aria-hidden="true">⌂</span>Home</a>
+        <span>トピック</span>
+      </nav>
+<h1>TerraformのSentinelポリシー管理</h1>
+<nav class="section-links" aria-label="主要セクション"><a href="#role">ポリシーチェックの役割</a><a href="#prepare">Sentinel CLIとファイルの準備</a><a href="#policy">ポリシーの作成</a><a href="#test">正常・違反ケースのテスト</a><a href="#hcp">HCP Terraformへの適用</a><a href="#extend">追加するルールの選び方</a></nav>
+<p>SentinelでPlanの設定値を検査し、正常・違反ケースをテストしてHCP Terraformへ適用する手順</p><section>
+<h2 id="role">ポリシーチェックの役割</h2>
+<p>SentinelはTerraformのPlanなどを検査し、組織のルールに合う変更かを判定する仕組み。Terraformの構文検証やIAM権限とは別の役割</p><table><thead><tr><th>検査</th><th>目的</th></tr></thead><tbody><tr><td>terraform validate</td><td>Terraform構成の構文・整合性を検査</td></tr><tr><td>terraform plan</td><td>追加・変更・削除・置換を確認</td></tr><tr><td>Sentinel</td><td>許可した設定、タグ、利用可能な機能などを判定</td></tr><tr><td>IAM</td><td>AWS APIに対する実際の操作権限を制御</td></tr></tbody></table><p>この例では検証用SQSの最大メッセージサイズを2048または4096バイトに限定。AWSの上限ではなく、この手順の練習用ルール。適用先は検証用Workspaceだけに限定</p>
+</section>
+<section>
+<h2 id="prepare">Sentinel CLIとファイルの準備</h2>
+<p>Sentinel CLIを公式配布からOS・CPUに合う形式で導入し、PATHを設定。Terraform CLIに内蔵されているコマンドではない。HCP Terraformでのポリシー利用可否・管理権限も対象Organizationで確認</p><p>① VS Codeの統合ターミナルでSentinel CLIを確認</p><div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>sentinel version</code></pre></div><p>② Terraform構成とは別のポリシー用フォルダーを作成。既存フォルダーの場合は別名を使用</p><div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>New-Item -ItemType Directory -Path "$env:USERPROFILE\IaC\Sentinel\sqs-policy"
+Set-Location "$env:USERPROFILE\IaC\Sentinel\sqs-policy"
+New-Item -ItemType Directory -Path "test\queue-size"</code></pre></div><div class="code"><div class="code-header"><span>配置例</span><button class="copy" type="button">Copy</button></div><pre><code>sqs-policy/
+  queue-size.sentinel
+  sentinel.hcl
+  test/
+    queue-size/
+      pass.hcl
+      fail.hcl</code></pre></div>
+</section>
+<section>
+<h2 id="policy">ポリシーの作成</h2>
+<p>① queue-size.sentinelを保存。削除だけの変更を除き、SQSの適用後の値を確認。値が計画時点で不明な場合も許可せず、検証対象として扱う</p><div class="code"><div class="code-header"><span>queue-size.sentinel</span><button class="copy" type="button">Copy</button></div><pre><code>import "tfplan/v2" as tfplan
+
+queues = filter tfplan.resource_changes as _, resource {
+  resource.mode is "managed" and
+  resource.type is "aws_sqs_queue" and
+  resource.change.actions is not ["delete"]
+}
+
+main = rule {
+  all queues as _, resource {
+    (resource.change.after.max_message_size else 0) in [2048, 4096]
+  }
+}</code></pre></div><table><thead><tr><th>記述</th><th>役割</th></tr></thead><tbody><tr><td><code class="inline-code">import "tfplan/v2"</code></td><td>HCP Terraformが渡すPlanデータを参照</td></tr><tr><td><code class="inline-code">filter</code></td><td>管理リソース・SQS・削除のみ以外に対象を絞る</td></tr><tr><td><code class="inline-code">rule</code></td><td>真偽値を返す検査ルール</td></tr><tr><td><code class="inline-code">all</code></td><td>対象の全要素が条件を満たすかを確認</td></tr><tr><td><code class="inline-code">else 0</code></td><td>未定義の属性を0として扱い、許可値には一致させない</td></tr><tr><td><code class="inline-code">main</code></td><td>ポリシー全体の判定結果</td></tr></tbody></table><p>対象SQSが0件ならallはtrue。キューが必ず存在することも強制したい場合は、length(queues)の条件を追加。置換のactionsはdeleteだけのリストではないため、置換後の値も検査</p><p>② sentinel.hclを保存。最初は検証用のadvisoryでRunへの影響を確認</p><div class="code"><div class="code-header"><span>sentinel.hcl</span><button class="copy" type="button">Copy</button></div><pre><code>policy "queue-size" {
+  source            = "./queue-size.sentinel"
+  enforcement_level = "advisory"
+}</code></pre></div>
+</section>
+<section>
+<h2 id="test">正常・違反ケースのテスト</h2>
+<p>① 許可する値を持つモックと、期待結果trueを設定</p><div class="code"><div class="code-header"><span>test/queue-size/pass.hcl</span><button class="copy" type="button">Copy</button></div><pre><code>mock "tfplan/v2" {
+  data = {
+    resource_changes = {
+      "aws_sqs_queue.practice" = {
+        mode = "managed"
+        type = "aws_sqs_queue"
+        change = {
+          actions = ["create"]
+          after = {
+            max_message_size = 2048
+          }
+        }
+      }
+    }
+  }
+}
+
+test {
+  rules = {
+    main = true
+  }
+}</code></pre></div><p>② 許可しない値を持つモックと、期待結果falseを設定</p><div class="code"><div class="code-header"><span>test/queue-size/fail.hcl</span><button class="copy" type="button">Copy</button></div><pre><code>mock "tfplan/v2" {
+  data = {
+    resource_changes = {
+      "aws_sqs_queue.practice" = {
+        mode = "managed"
+        type = "aws_sqs_queue"
+        change = {
+          actions = ["create"]
+          after = {
+            max_message_size = 8192
+          }
+        }
+      }
+    }
+  }
+}
+
+test {
+  rules = {
+    main = false
+  }
+}</code></pre></div><p>③ ポリシーフォルダーでテストを実行。両ケースがPASSとなることを確認</p><div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>sentinel test -verbose queue-size.sentinel</code></pre></div><p>fail.hclもPASSが正しい結果。「ルールがfalseを返す」という期待に一致したことを示し、違反設定が許可された意味ではない</p><p>④ 適用前に、4096、許可外の値、属性未定義、削除のみ、置換、対象0件、複数キューのうち1件が違反するケースも追加。手書きモックだけでなく、検証用Runから得たモックでも確認</p><div class="callout callout-warning"><strong>⚠️ 注意</strong><p>ローカルSentinelにはHCP TerraformのPlanが自動で渡らない。tfplan/v2を使うテストにはモックが必要。Runから取得したモックにも秘密値が含まれ得るため公開前に確認</p></div>
+</section>
+<section>
+<h2 id="hcp">HCP Terraformへの適用</h2>
+<p>① ポリシー・sentinel.hcl・テストを専用VCSリポジトリへ保存。検証用モック以外のPlan・State・認証情報を含めないことを確認</p><p>② HCP TerraformのOrganization設定から<code class="ui-value">Policy Sets</code>を開き、<code class="ui-value">Connect a new policy set</code>ボタンを押下</p><p>③ VCSと対象リポジトリを選択し、Policy Frameworkは<code class="ui-value">Sentinel</code>を選択。sentinel.hclがルート以外にある場合はPolicies pathに格納フォルダーを設定</p><p>④ 適用範囲を検証用Workspaceに限定して保存。参照するブランチ・ポリシーのパス・コミット・Enforcement levelを確認</p><p>⑤ 対象Workspaceで許可値のPlanと違反値のPlanを実行し、Policy Checkの判定を確認。違反ケースはApplyせず終了</p><p>⑥ 検証結果を確認してから必要な強制度へ変更。ポリシーを強制する場合は、違反Runが実際にApplyへ進めないことまで確認</p><table><thead><tr><th>Enforcement level</th><th>違反時の扱い</th></tr></thead><tbody><tr><td><code class="inline-code">advisory</code></td><td>通知・確認用。違反してもApplyを阻止しない</td></tr><tr><td><code class="inline-code">soft-mandatory</code></td><td>通常は停止。権限を持つ利用者によるoverrideが可能</td></tr><tr><td><code class="inline-code">hard-mandatory</code></td><td>違反したRunをoverrideして続行できない</td></tr></tbody></table><p>全Workspaceへの一括適用は検証後に判断。利用可能な管理方法はOrganizationの契約・設定で確認し、画面が利用できない場合にプラン変更を自動実施しない</p>
+</section>
+<section>
+<h2 id="extend">追加するルールの選び方</h2>
+<table><thead><tr><th>入力</th><th>検査例</th></tr></thead><tbody><tr><td><code class="inline-code">tfplan/v2</code></td><td>作成後のリソース属性、公開設定、サイズ、タグ</td></tr><tr><td><code class="inline-code">tfconfig/v2</code></td><td>Providerやprovisionerの使用状況</td></tr><tr><td><code class="inline-code">tfstate/v2</code></td><td>Stateに記録されたリソースの情報</td></tr><tr><td><code class="inline-code">tfrun</code></td><td>RunやWorkspaceに関する情報</td></tr></tbody></table><p>ルールは必須タグ、公開範囲、許可リージョン、provisioner制限などから小さく導入。共通処理はSentinelのモジュールへ分離し、取得元バージョンを固定</p><p>Terraformバージョンを制約する場合は文字列の大小比較ではなく、セマンティックバージョンとして比較。通常の実行バージョン制約はrequired_versionでも管理</p><p>誤検知した場合はモックに失敗ケースを追加し、ルールを修正して再テスト。ポリシー無効化や強制適用でその場だけ回避しない</p>
+</section>
+</main>
+<aside class="toc" aria-label="Table of contents"><h2>ページ内</h2><a href="#role">ポリシーチェックの役割</a>
+<a href="#prepare">Sentinel CLIとファイルの準備</a>
+<a href="#policy">ポリシーの作成</a>
+<a href="#test">正常・違反ケースのテスト</a>
+<a href="#hcp">HCP Terraformへの適用</a>
+<a href="#extend">追加するルールの選び方</a></aside>
+</div>
+<script src="../assets/app.js?v=20260823-ref1"></script>
+</body>
+</html>

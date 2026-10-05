@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Terraformのモジュール活用 | Documentation</title>
+  <meta name="description" content="ローカルモジュールの作成、入力と出力、公開モジュールの選定、バージョン固定と共有手順を整理">
+  <link rel="stylesheet" href="../assets/styles.css?v=20260823-ref4">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="../">
+      <img src="../assets/icon.jpg" alt="Documentation icon">
+      <span>Documentation</span>
+    </a>
+    <div class="header-actions">
+      <button class="icon-button theme-toggle" type="button" title="テーマを切り替え" aria-label="テーマを切り替え">☀</button>
+      <nav class="nav" aria-label="Global navigation">
+        <a href="https://github.com/hsmts2/Documentation"><span class="nav-icon" aria-hidden="true">◆</span>GitHub</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="layout">
+    <aside id="site-sidebar" class="sidebar" aria-label="Page list">
+      <div class="sidebar-heading">
+        <button class="icon-button sidebar-toggle sidebar-toggle-inline" type="button" aria-controls="site-sidebar" aria-expanded="true" title="ナビゲーションを閉じる" aria-label="ナビゲーションを閉じる">☰</button>
+      </div>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">✎</span>記事</p>
+      <a href="cloudflare-private-site.html">Private GitHubリポジトリをCloudflare Workersで認証付き公開してみた</a>
+      <a href="aws-daily-cost-slack.html">AWS利用料を毎朝3時にSlackへ通知してみた</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">☁︎</span>[PoC] マルチVPC・閉域VDI基盤案件</p>
+          <a href="workspaces-skill-transfer.html">全体構築・運用順序</a>
+          <a href="workspaces-managed-ad.html">Managed Microsoft ADの構築</a>
+          <a href="workspaces-managed-ad-users.html">Managed Microsoft ADのユーザー・グループ管理</a>
+          <a href="workspaces-management-ec2.html">管理用EC2の起動・接続・AD管理</a>
+          <a href="workspaces-ad-connector-account.html">AD Connector用サービスアカウント・権限委任</a>
+          <a href="workspaces-ad-connector.html">AD ConnectorのVPCピアリング・SG設定・作成</a>
+          <a href="workspaces-provisioning-gpo.html">WorkSpaces Personalの構築・接続</a>
+          <a href="workspaces-target-ou.html">WorkSpaces用ターゲットOUの作成・権限委任</a>
+          <a href="workspaces-gpo.html">WorkSpaces用GPOの作成・適用・運用</a>
+          <a href="workspaces-image-bundle.html">WorkSpacesカスタムイメージ作成・共有</a>
+          <a href="workspaces-systems-manager.html">Systems Manager環境構築</a>
+          <a href="workspaces-patch-manager.html">Patch Managerの設定</a>
+          <a href="workspaces-patch-operations.html">Patch Managerの実行・結果確認・運用</a>
+          <a href="workspaces-cost-optimizer.html">Cost Optimizerの構築・設定</a>
+          <a href="workspaces-cost-optimizer-dry-run.html">Cost OptimizerのDry Run解除</a>
+          <a href="workspaces-cost-optimizer-schedule.html">Cost Optimizerの実行スケジュール設定・変更</a>
+          <a href="workspaces-cost-optimizer-reports.html">Cost Optimizerのレポート・監視</a>
+          <a href="workspaces-cloudwatch-monitoring.html">CloudWatchのEC2・Windows OS監視とSNS通知</a>
+          <a href="workspaces-cloudwatch-workspaces.html">CloudWatchのWorkSpaces監視</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">⑂</span>Git / GitHub</p>
+      <a href="git-github.html">Git 概要</a>
+      <a href="git-remote.html">Gitリモート操作</a>
+      <a href="github-pages.html">GitHub Pages</a>
+      <a href="github-pull-request.html">GitHubのPull Requestとレビュー</a>
+      <a href="git-utilities.html">Gitトラブルシューティング</a>
+      <a href="github-ssh.html">GitHub認証</a>
+      <a href="github-slack-integration.html">GitHubとSlackの連携・通知設定</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">◈</span>Terraform</p>
+      <a href="terraform.html">Terraform 概要</a>
+      <a href="terraform-basics.html">Terraformの基本操作とHCL</a>
+      <a href="terraform-state.html">TerraformのState管理と運用</a>
+      <a class="active" aria-current="page" href="terraform-modules.html">Terraformのモジュール活用</a>
+      <a href="hcp-terraform.html">HCP Terraform（Terraform Cloud）</a>
+      <a href="terraform-providers.html">TerraformのProviderとマルチクラウド</a>
+      <a href="terraform-sentinel.html">TerraformのSentinelポリシー管理</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">◈</span>IaC</p>
+      <a href="iac.html">IaC</a>
+      <a href="iam-identity-center.html">IAM Identity Center</a>
+      <a href="iac-vscode.html">VS Codeの設定</a>
+      <a href="iac-deploy.html">IaCによるリソースのデプロイ</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">☁︎</span>AWS</p>
+      <a href="aws-design.html">AWS基本設計・アーキテクチャ</a>
+      <a href="aws-design-compute.html">コンピューティング設計</a>
+      <a href="aws-design-database.html">データベース設計</a>
+      <a href="aws-design-storage.html">ストレージ設計</a>
+      <a href="aws-design-os.html">OS・ミドルウェア設計</a>
+      <a href="aws-design-observability.html">ログ・監視・可用性設計</a>
+      <a href="aws-design-governance.html">命名規則・タグ設計</a>
+      <a href="cloudformation.html">CloudFormation 運用手順集</a>
+      <a href="aws-cli.html">AWS CLI 特殊対応</a>
+      <a href="aws-cli-reference.html">AWS CLI コマンドリファレンス</a>
+      <a href="eventbridge-scheduler.html">EventBridge Scheduler</a>
+      <a href="aws-directory-service.html">AWS Directory Service 運用手順</a>
+      <a href="amazon-workspaces.html">Amazon WorkSpaces</a>
+      <a href="amazon-ses.html">Amazon SES SMTPリレー</a>
+      <a href="amazon-ses-monitoring.html">Amazon SES 配信監視</a>
+      <a href="amazon-rds-blue-green.html">Amazon RDS Blue/Green Deployments</a>
+      <a href="apache-acm-certificate-update.html">証明書更新（ACMエクスポート）</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">⚙︎</span>OS／ミドルウェア</p>
+      <a href="rhel9.html">Red Hat Enterprise Linux 9</a>
+      <a href="rhel10.html">Red Hat Enterprise Linux 10</a>
+      <a href="amazon-linux-2023.html">Amazon Linux 2023</a>
+      <a href="windows-server-2022.html">Windows Server 2022</a>
+      <a href="windows-server-2025.html">Windows Server 2025</a>
+      <a href="windows-server-2016-upgrade.html">Windows Server 2016 インプレースアップグレード</a>
+      <a href="storage.html">ストレージ管理</a>
+      <a href="apache.html">Apache</a>
+      <a href="apache-self-signed-ssl-termination.html">Apache SSL終端（自己署名証明書）</a>
+      <a href="redis.html">Redis（KVS）</a>
+      <a href="nfs.html">NFS</a>
+      <a href="samba.html">Samba</a>
+      <a href="mariadb.html">MariaDB</a>
+      <a href="postgresql.html">PostgreSQL</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">▤</span>リファレンス</p>
+      <a href="../writing-style-guide.html">[GitHub Pages] 記法・テンプレート</a>
+      <a href="troubleshooting.html">障害切り分けチェックリスト</a>
+      <a href="eol.html">EOL / ライフサイクル一覧表</a>
+    </aside>
+
+    <main class="content terraform-guide">
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="../"><span class="nav-icon" aria-hidden="true">⌂</span>Home</a>
+        <span>トピック</span>
+      </nav>
+<h1>Terraformのモジュール活用</h1>
+<nav class="section-links" aria-label="主要セクション"><a href="#structure">ルートモジュールと子モジュール</a><a href="#child">子モジュールの作成</a><a href="#root">ルートからの呼び出し</a><a href="#run">初期化・計画・適用</a><a href="#registry">公開モジュールの利用</a><a href="#share">モジュールの共有・公開</a></nav>
+<p>ローカルモジュールの作成、入力と出力、公開モジュールの選定、バージョン固定と共有手順を整理</p><section>
+<h2 id="structure">ルートモジュールと子モジュール</h2>
+<p>Terraformを実行するフォルダーがルートモジュール。そこからmoduleブロックで指定する部品が子モジュール。子へは入力変数を渡し、結果はoutput経由で受け取る</p><div class="code"><div class="code-header"><span>配置例</span><button class="copy" type="button">Copy</button></div><pre><code>module-lab/
+  envs/
+    dev/
+      main.tf
+  modules/
+    queue/
+      main.tf
+      variables.tf
+      outputs.tf</code></pre></div><p>同じルートから呼び出した子モジュールは同じStateで管理。モジュール化だけではdev／prodのState・アクセス権は分離されない</p><p>① 既存のqueue-labとは別の検証フォルダーを作成。既に存在する場合は別名を使用</p><div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>New-Item -ItemType Directory -Path "$env:USERPROFILE\IaC\Terraform\module-lab"
+Set-Location "$env:USERPROFILE\IaC\Terraform\module-lab"
+New-Item -ItemType Directory -Path "envs\dev", "modules\queue"</code></pre></div>
+</section>
+<section>
+<h2 id="child">子モジュールの作成</h2>
+<p>VS Codeでmodules/queueに次のファイルを保存。接続先や認証を決めるproviderブロックは子モジュールへ埋め込まず、ルートで設定</p><div class="code"><div class="code-header"><span>modules/queue/main.tf</span><button class="copy" type="button">Copy</button></div><pre><code>terraform {
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "&gt;= 6.0, &lt; 7.0"
+    }
+  }
+}
+
+resource "aws_sqs_queue" "this" {
+  name                    = var.name
+  max_message_size        = var.message_size
+  sqs_managed_sse_enabled = true
+  tags                    = var.tags
+}</code></pre></div><div class="code"><div class="code-header"><span>modules/queue/variables.tf</span><button class="copy" type="button">Copy</button></div><pre><code>variable "name" {
+  type        = string
+  description = "Queue name"
+}
+
+variable "message_size" {
+  type        = number
+  description = "Maximum message size in bytes"
+  default     = 2048
+}
+
+variable "tags" {
+  type        = map(string)
+  description = "Resource tags"
+  default     = {}
+}</code></pre></div><div class="code"><div class="code-header"><span>modules/queue/outputs.tf</span><button class="copy" type="button">Copy</button></div><pre><code>output "url" {
+  description = "Queue URL"
+  value       = aws_sqs_queue.this.url
+}</code></pre></div><p>required_providersは子でも宣言。Providerのsourceとバージョン条件を指定する宣言であり、接続設定そのものではない</p>
+</section>
+<section>
+<h2 id="root">ルートからの呼び出し</h2>
+<p>envs/dev/main.tfへ次を保存。sourceは呼び出し元フォルダーを基準とする相対パス。ローカルモジュールではversion引数を使用しない</p><div class="code"><div class="code-header"><span>envs/dev/main.tf</span><button class="copy" type="button">Copy</button></div><pre><code>terraform {
+  required_version = "&gt;= 1.10, &lt; 2.0"
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~&gt; 6.0"
+    }
+  }
+}
+
+provider "aws" {
+  region = "ap-northeast-1"
+}
+
+module "queue" {
+  source       = "../../modules/queue"
+  name         = "tf-module-dev"
+  message_size = 2048
+  tags = {
+    Environment = "dev"
+    ManagedBy   = "Terraform"
+  }
+}
+
+output "queue_url" {
+  value = module.queue.url
+}</code></pre></div><p><code class="inline-code">module.queue.url</code>は子のoutputを参照する記法。子の内部リソースを呼び出し元から直接参照せず、必要な値をoutputとして公開</p>
+</section>
+<section>
+<h2 id="run">初期化・計画・適用</h2>
+<p>① envs/devへ移動し、接続先を確認</p><div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>Set-Location "$env:USERPROFILE\IaC\Terraform\module-lab\envs\dev"
+$env:AWS_PROFILE = "iac-admin"
+aws sts get-caller-identity --profile iac-admin</code></pre></div><p>② 子モジュールを読み込み、構文を検証。module追加やsource変更後はinitを再実行</p><div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>terraform init
+terraform validate</code></pre></div><p>③ Planを保存。追加対象がtf-module-devのキューだけであることを確認</p><div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>terraform plan -out=module.tfplan</code></pre></div><p>④ 確認済みの計画を適用。保存済みPlanを指定するため再確認なしで実行</p><div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>terraform apply module.tfplan</code></pre></div><p>⑤ 出力とStateを確認。アドレスにmodule.queueが付くことを確認</p><div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>terraform output queue_url
+terraform state list
+terraform plan</code></pre></div><p>子の値を変更する場合は呼び出し側のmessage_size等を変更し、再びPlanをレビュー。片付けは同じenvs/devから<a href="terraform-basics.html#delete">削除手順</a>を実施</p><div class="callout callout-warning"><strong>⚠️ 注意</strong><p>既に作成したリソースをコードだけ子モジュールへ移すと、削除・再作成が提案される場合がある。移設時は<a href="terraform-state.html#move">movedブロック</a>でState上の対応も変更</p></div>
+</section>
+<section>
+<h2 id="registry">公開モジュールの利用</h2>
+<p>Terraform Registryで用途に合うモジュールを探し、選択したバージョンのドキュメントを確認。モジュール名だけで採用せず、次の内容を確認</p><table><thead><tr><th>確認項目</th><th>確認する内容</th></tr></thead><tbody><tr><td>Inputs</td><td>必須入力、既定値、validation、リソース作成の切り替え</td></tr><tr><td>Outputs</td><td>他の構成へ渡す値</td></tr><tr><td>Resources</td><td>NAT Gateway・ロードバランサー等を含む実際の作成対象</td></tr><tr><td>Dependencies</td><td>Terraform・Provider・子モジュールの要件</td></tr><tr><td>README・Examples</td><td>必要権限、前提ネットワーク、利用可能な構成</td></tr><tr><td>ソース・更新履歴</td><td>管理者、変更内容、ライセンス、非互換変更</td></tr></tbody></table><p>RegistryのUsageを基にmoduleブロックを作成し、sourceとversionを明示。以下は置換が必要な記法例であり、そのまま実行するサンプルではない</p><div class="code"><div class="code-header"><span>HCL：Registryモジュールの指定形式</span><button class="copy" type="button">Copy</button></div><pre><code>module "network" {
+  source  = "&lt;NAMESPACE&gt;/&lt;NAME&gt;/&lt;PROVIDER&gt;"
+  version = "&lt;MODULE_VERSION&gt;"
+  # 選択したモジュールの必須入力を追加
+}</code></pre></div><p>Gitリポジトリから取得する場合はsourceのrefでタグまたはコミットを固定。Registryのversion引数とは別の仕組み</p><div class="code"><div class="code-header"><span>HCL：Git取得の指定形式</span><button class="copy" type="button">Copy</button></div><pre><code>module "network" {
+  source = "git::https://github.com/&lt;OWNER&gt;/&lt;REPOSITORY&gt;.git//modules/network?ref=&lt;COMMIT_SHA&gt;"
+}</code></pre></div><p><code class="inline-code">.terraform.lock.hcl</code>が固定する対象はProvider。リモートモジュールのバージョンはmodule側で管理し、変更前後のPlanも確認</p>
+</section>
+<section>
+<h2 id="share">モジュールの共有・公開</h2>
+<p>① main.tf・variables.tf・outputs.tfを基本構成とし、READMEに入力、出力、作成リソース、必要権限、削除時の影響を記載。examplesには単独で検証できる呼び出し例を用意</p><p>② モジュールのルートで整形を確認</p><div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>terraform fmt -check -recursive</code></pre></div><p>③ 呼び出し例のルートでinit／validate／Planを確認。terraform testを使う場合はrunの実行方式と作成されるリソースを確認し、業務環境の認証を渡さない</p><p>④ <code class="inline-code">terraform-aws-queue</code>のようなリポジトリ名でVCSへ配置。認証情報・State・Planを含めないことを確認し、リリース用のバージョンタグを付与</p><p>⑤ HCP TerraformのPrivate Registryで<code class="ui-value">Publish</code>から<code class="ui-value">Module</code>を選択し、VCSとモジュールのリポジトリを指定。取得されたバージョン、Inputs、Outputsを確認。画面の項目名が異なる場合はModule登録の項目を選択</p><p>⑥ 表示されたUsageを呼び出し元へ設定し、認証後にinitを実行。更新は全環境で一括ではなく、検証環境でPlanを確認してから順次反映</p><p>公開Registryはソースや説明が外部へ公開されるため、社内用モジュールはPrivate Registryまたはアクセス制御されたVCSで共有</p>
+</section>
+</main>
+<aside class="toc" aria-label="Table of contents"><h2>ページ内</h2><a href="#structure">ルートモジュールと子モジュール</a>
+<a href="#child">子モジュールの作成</a>
+<a href="#root">ルートからの呼び出し</a>
+<a href="#run">初期化・計画・適用</a>
+<a href="#registry">公開モジュールの利用</a>
+<a href="#share">モジュールの共有・公開</a></aside>
+</div>
+<script src="../assets/app.js?v=20260823-ref1"></script>
+</body>
+</html>

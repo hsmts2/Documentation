@@ -57,7 +57,12 @@ $groups = @(
         Icon = '◈'
         Pages = @(
             [pscustomobject]@{ File = 'terraform.html'; Label = 'Terraform 概要' }
+            [pscustomobject]@{ File = 'terraform-basics.html'; Label = 'Terraformの基本操作とHCL' }
+            [pscustomobject]@{ File = 'terraform-state.html'; Label = 'TerraformのState管理と運用' }
+            [pscustomobject]@{ File = 'terraform-modules.html'; Label = 'Terraformのモジュール活用' }
             [pscustomobject]@{ File = 'hcp-terraform.html'; Label = 'HCP Terraform（Terraform Cloud）' }
+            [pscustomobject]@{ File = 'terraform-providers.html'; Label = 'TerraformのProviderとマルチクラウド' }
+            [pscustomobject]@{ File = 'terraform-sentinel.html'; Label = 'TerraformのSentinelポリシー管理' }
         )
     }
     [pscustomobject]@{

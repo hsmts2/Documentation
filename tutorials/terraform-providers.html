@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TerraformのProviderとマルチクラウド | Documentation</title>
+  <meta name="description" content="Providerの選定、AWSの複数リージョン、Azure・Google Cloudの最小構成と、HCP Terraformの動的認証を整理">
+  <link rel="stylesheet" href="../assets/styles.css?v=20260823-ref4">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="../">
+      <img src="../assets/icon.jpg" alt="Documentation icon">
+      <span>Documentation</span>
+    </a>
+    <div class="header-actions">
+      <button class="icon-button theme-toggle" type="button" title="テーマを切り替え" aria-label="テーマを切り替え">☀</button>
+      <nav class="nav" aria-label="Global navigation">
+        <a href="https://github.com/hsmts2/Documentation"><span class="nav-icon" aria-hidden="true">◆</span>GitHub</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="layout">
+    <aside id="site-sidebar" class="sidebar" aria-label="Page list">
+      <div class="sidebar-heading">
+        <button class="icon-button sidebar-toggle sidebar-toggle-inline" type="button" aria-controls="site-sidebar" aria-expanded="true" title="ナビゲーションを閉じる" aria-label="ナビゲーションを閉じる">☰</button>
+      </div>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">✎</span>記事</p>
+      <a href="cloudflare-private-site.html">Private GitHubリポジトリをCloudflare Workersで認証付き公開してみた</a>
+      <a href="aws-daily-cost-slack.html">AWS利用料を毎朝3時にSlackへ通知してみた</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">☁︎</span>[PoC] マルチVPC・閉域VDI基盤案件</p>
+          <a href="workspaces-skill-transfer.html">全体構築・運用順序</a>
+          <a href="workspaces-managed-ad.html">Managed Microsoft ADの構築</a>
+          <a href="workspaces-managed-ad-users.html">Managed Microsoft ADのユーザー・グループ管理</a>
+          <a href="workspaces-management-ec2.html">管理用EC2の起動・接続・AD管理</a>
+          <a href="workspaces-ad-connector-account.html">AD Connector用サービスアカウント・権限委任</a>
+          <a href="workspaces-ad-connector.html">AD ConnectorのVPCピアリング・SG設定・作成</a>
+          <a href="workspaces-provisioning-gpo.html">WorkSpaces Personalの構築・接続</a>
+          <a href="workspaces-target-ou.html">WorkSpaces用ターゲットOUの作成・権限委任</a>
+          <a href="workspaces-gpo.html">WorkSpaces用GPOの作成・適用・運用</a>
+          <a href="workspaces-image-bundle.html">WorkSpacesカスタムイメージ作成・共有</a>
+          <a href="workspaces-systems-manager.html">Systems Manager環境構築</a>
+          <a href="workspaces-patch-manager.html">Patch Managerの設定</a>
+          <a href="workspaces-patch-operations.html">Patch Managerの実行・結果確認・運用</a>
+          <a href="workspaces-cost-optimizer.html">Cost Optimizerの構築・設定</a>
+          <a href="workspaces-cost-optimizer-dry-run.html">Cost OptimizerのDry Run解除</a>
+          <a href="workspaces-cost-optimizer-schedule.html">Cost Optimizerの実行スケジュール設定・変更</a>
+          <a href="workspaces-cost-optimizer-reports.html">Cost Optimizerのレポート・監視</a>
+          <a href="workspaces-cloudwatch-monitoring.html">CloudWatchのEC2・Windows OS監視とSNS通知</a>
+          <a href="workspaces-cloudwatch-workspaces.html">CloudWatchのWorkSpaces監視</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">⑂</span>Git / GitHub</p>
+      <a href="git-github.html">Git 概要</a>
+      <a href="git-remote.html">Gitリモート操作</a>
+      <a href="github-pages.html">GitHub Pages</a>
+      <a href="github-pull-request.html">GitHubのPull Requestとレビュー</a>
+      <a href="git-utilities.html">Gitトラブルシューティング</a>
+      <a href="github-ssh.html">GitHub認証</a>
+      <a href="github-slack-integration.html">GitHubとSlackの連携・通知設定</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">◈</span>Terraform</p>
+      <a href="terraform.html">Terraform 概要</a>
+      <a href="terraform-basics.html">Terraformの基本操作とHCL</a>
+      <a href="terraform-state.html">TerraformのState管理と運用</a>
+      <a href="terraform-modules.html">Terraformのモジュール活用</a>
+      <a href="hcp-terraform.html">HCP Terraform（Terraform Cloud）</a>
+      <a class="active" aria-current="page" href="terraform-providers.html">TerraformのProviderとマルチクラウド</a>
+      <a href="terraform-sentinel.html">TerraformのSentinelポリシー管理</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">◈</span>IaC</p>
+      <a href="iac.html">IaC</a>
+      <a href="iam-identity-center.html">IAM Identity Center</a>
+      <a href="iac-vscode.html">VS Codeの設定</a>
+      <a href="iac-deploy.html">IaCによるリソースのデプロイ</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">☁︎</span>AWS</p>
+      <a href="aws-design.html">AWS基本設計・アーキテクチャ</a>
+      <a href="aws-design-compute.html">コンピューティング設計</a>
+      <a href="aws-design-database.html">データベース設計</a>
+      <a href="aws-design-storage.html">ストレージ設計</a>
+      <a href="aws-design-os.html">OS・ミドルウェア設計</a>
+      <a href="aws-design-observability.html">ログ・監視・可用性設計</a>
+      <a href="aws-design-governance.html">命名規則・タグ設計</a>
+      <a href="cloudformation.html">CloudFormation 運用手順集</a>
+      <a href="aws-cli.html">AWS CLI 特殊対応</a>
+      <a href="aws-cli-reference.html">AWS CLI コマンドリファレンス</a>
+      <a href="eventbridge-scheduler.html">EventBridge Scheduler</a>
+      <a href="aws-directory-service.html">AWS Directory Service 運用手順</a>
+      <a href="amazon-workspaces.html">Amazon WorkSpaces</a>
+      <a href="amazon-ses.html">Amazon SES SMTPリレー</a>
+      <a href="amazon-ses-monitoring.html">Amazon SES 配信監視</a>
+      <a href="amazon-rds-blue-green.html">Amazon RDS Blue/Green Deployments</a>
+      <a href="apache-acm-certificate-update.html">証明書更新（ACMエクスポート）</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">⚙︎</span>OS／ミドルウェア</p>
+      <a href="rhel9.html">Red Hat Enterprise Linux 9</a>
+      <a href="rhel10.html">Red Hat Enterprise Linux 10</a>
+      <a href="amazon-linux-2023.html">Amazon Linux 2023</a>
+      <a href="windows-server-2022.html">Windows Server 2022</a>
+      <a href="windows-server-2025.html">Windows Server 2025</a>
+      <a href="windows-server-2016-upgrade.html">Windows Server 2016 インプレースアップグレード</a>
+      <a href="storage.html">ストレージ管理</a>
+      <a href="apache.html">Apache</a>
+      <a href="apache-self-signed-ssl-termination.html">Apache SSL終端（自己署名証明書）</a>
+      <a href="redis.html">Redis（KVS）</a>
+      <a href="nfs.html">NFS</a>
+      <a href="samba.html">Samba</a>
+      <a href="mariadb.html">MariaDB</a>
+      <a href="postgresql.html">PostgreSQL</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">▤</span>リファレンス</p>
+      <a href="../writing-style-guide.html">[GitHub Pages] 記法・テンプレート</a>
+      <a href="troubleshooting.html">障害切り分けチェックリスト</a>
+      <a href="eol.html">EOL / ライフサイクル一覧表</a>
+    </aside>
+
+    <main class="content terraform-guide">
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="../"><span class="nav-icon" aria-hidden="true">⌂</span>Home</a>
+        <span>トピック</span>
+      </nav>
+<h1>TerraformのProviderとマルチクラウド</h1>
+<nav class="section-links" aria-label="主要セクション"><a href="#difference">Providerとモジュールの違い</a><a href="#select">Providerの選定と初期化</a><a href="#aws-alias">AWSの複数リージョン・アカウント</a><a href="#azure">Azureでの最小ネットワーク構築</a><a href="#google">Google Cloudでの最小ネットワーク構築</a><a href="#dynamic">HCP Terraformの動的AWS認証</a></nav>
+<p>Providerの選定、AWSの複数リージョン、Azure・Google Cloudの最小構成と、HCP Terraformの動的認証を整理</p><section>
+<h2 id="difference">Providerとモジュールの違い</h2>
+<table><thead><tr><th>要素</th><th>役割</th><th>例</th></tr></thead><tbody><tr><td>Terraform CLI</td><td>構成・State・依存関係を評価して実行</td><td>init／plan／apply</td></tr><tr><td>Provider</td><td>サービスのAPIとリソース型を提供</td><td>hashicorp/aws、hashicorp/azurerm</td></tr><tr><td>モジュール</td><td>複数の構成を再利用可能な部品にまとめる</td><td>VPC構成、SQS構成</td></tr><tr><td>tenv</td><td>Terraformなどの実行バイナリのバージョンを管理</td><td>tenv tf use</td></tr></tbody></table><p>Terraformで共通になるのは操作の流れ。AWSのresourceをそのままAzureへ転用することはできず、認証・権限・ネットワーク・リソース型は各サービスに合わせて定義</p>
+</section>
+<section>
+<h2 id="select">Providerの選定と初期化</h2>
+<p>Registryで対象サービスを検索し、配布元・選択バージョンのDocumentation・対応リソース・Import形式・更新履歴を確認。Official／Partner／Communityは管理主体の区分であり、自分の用途での動作保証を表すものではない</p><table><thead><tr><th>用途</th><th>Providerの例</th><th>確認する内容</th></tr></thead><tbody><tr><td>AWS</td><td>hashicorp/aws、hashicorp/awscc</td><td>対応リソース型、サービス仕様、必要IAM権限</td></tr><tr><td>Azure／Google Cloud</td><td>hashicorp/azurerm、hashicorp/google</td><td>対象Subscription／Project、APIの有効化、認証</td></tr><tr><td>ローカルコンテナ</td><td>kreuzwerker/docker</td><td>実行環境からDocker Engineへ接続できるか</td></tr><tr><td>HCP Terraformの設定</td><td>hashicorp/tfe</td><td>Workspace・チーム・変数等を管理するAPI権限</td></tr><tr><td>HashiCorp Cloud Platform</td><td>hashicorp/hcp</td><td>HCPリソースの管理。TFE Providerとは対象が異なる</td></tr><tr><td>秘密情報の管理</td><td>hashicorp/vault</td><td>取得した値がStateへ保存されるか</td></tr><tr><td>仮想化基盤</td><td>vSphere、Nutanix向けProvider</td><td>管理APIへの接続経路、対象製品の互換性</td></tr><tr><td>CDN・監視・構成管理</td><td>Fastly、Datadog、Splunk、Ansible向けProvider</td><td>対象リソース、APIトークン、Providerの配布元</td></tr></tbody></table><p>① 現在の構成に必要なProviderを確認</p><div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>terraform providers</code></pre></div><p>② 通常の初期化で、制約に適合するロック済みバージョンを使用</p><div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>terraform init</code></pre></div><p>③ 依存関係を更新すると決めた場合のみ実行し、ロックファイルの差分とPlanを確認</p><div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>terraform init -upgrade
+terraform validate
+terraform plan</code></pre></div><p>バージョンは「常に最新」ではなく、対象構成で確認した系列・版を指定。Providerのversion条件と<code class="inline-code">.terraform.lock.hcl</code>を合わせて管理</p>
+</section>
+<section>
+<h2 id="aws-alias">AWSの複数リージョン・アカウント</h2>
+<p>以下はAWS Providerの接続設定とリソースへの割り当て例。既存のproviderブロックへ重複追記せず、別の検証用ルートで使用</p><div class="code"><div class="code-header"><span>HCL：リージョン別のProvider</span><button class="copy" type="button">Copy</button></div><pre><code>provider "aws" {
+  region = "ap-northeast-1"
+}
+
+provider "aws" {
+  alias  = "osaka"
+  region = "ap-northeast-3"
+}
+
+resource "aws_sqs_queue" "tokyo" {
+  name = "tf-region-lab-tokyo"
+}
+
+resource "aws_sqs_queue" "osaka" {
+  provider = aws.osaka
+  name     = "tf-region-lab-osaka"
+}</code></pre></div><p>provider指定のないresourceは既定設定、<code class="inline-code">provider = aws.osaka</code>はalias設定を使用。リージョンを変えてもStateは自動分割されない</p><div class="code"><div class="code-header"><span>HCL：子モジュールへ接続設定を渡す例</span><button class="copy" type="button">Copy</button></div><pre><code>module "osaka_queue" {
+  source = "./modules/queue"
+  providers = {
+    aws = aws.osaka
+  }
+  name = "tf-module-osaka"
+}</code></pre></div><p>子の既定awsへ親のaws.osakaを割り当てる例。子が複数のaliasを直接参照する設計では、子側にもconfiguration_aliasesの宣言が必要</p><p>別アカウントはローカル実行のprofileまたはassume_roleで分離。対象ロールの信頼ポリシーと呼び出し元権限を確認し、アカウントごとにCaller Identityを確認。リソースが残っているProvider設定を先に削除しない</p>
+</section>
+<section>
+<h2 id="azure">Azureでの最小ネットワーク構築</h2>
+<p>Azure CLI導入済み、検証用Subscriptionへの権限と必要なResource Provider登録を前提。AWSとは別の空フォルダーに配置。VM・DBは作成せず、リソースグループとVNetだけを対象</p><p>① 新しい作業フォルダーを作成して移動。既に存在する場合は別名を使用</p><div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>New-Item -ItemType Directory -Path "$env:USERPROFILE\IaC\Terraform\azure-network-lab"
+Set-Location "$env:USERPROFILE\IaC\Terraform\azure-network-lab"</code></pre></div><p>② Azureへログインし、<SUBSCRIPTION_ID>を実際の検証用IDへ置換して選択</p><div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>az login
+az account set --subscription "&lt;SUBSCRIPTION_ID&gt;"
+az account show --query "{name:name,id:id,tenantId:tenantId}"</code></pre></div><p>③ main.tfを保存。ProviderはAzure CLIのログインを利用するローカル実行用</p><div class="code"><div class="code-header"><span>main.tf</span><button class="copy" type="button">Copy</button></div><pre><code>terraform {
+  required_version = "&gt;= 1.10, &lt; 2.0"
+  required_providers {
+    azurerm = {
+      source  = "hashicorp/azurerm"
+      version = "~&gt; 4.0"
+    }
+  }
+}
+
+variable "subscription_id" {
+  type = string
+}
+
+provider "azurerm" {
+  features {}
+  subscription_id = var.subscription_id
+}
+
+resource "azurerm_resource_group" "lab" {
+  name     = "rg-tf-network-lab"
+  location = "Japan East"
+}
+
+resource "azurerm_virtual_network" "lab" {
+  name                = "vnet-tf-network-lab"
+  location            = azurerm_resource_group.lab.location
+  resource_group_name = azurerm_resource_group.lab.name
+  address_space       = ["10.64.0.0/16"]
+}
+
+output "network_id" {
+  value = azurerm_virtual_network.lab.id
+}</code></pre></div><p>④ 選択中のSubscription IDを入力変数へ設定して初期化</p><div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$env:TF_VAR_subscription_id = az account show --query id --output tsv
+terraform init
+terraform validate</code></pre></div><p>⑤ 計画を保存し、対象が検証用のリソースグループとVNetの2件であることを確認</p><div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>terraform plan -out=azure.tfplan</code></pre></div><p>⑥ 確認済みの計画を適用。再確認なしで実行</p><div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>terraform apply azure.tfplan</code></pre></div><p>⑦ 作成されたネットワークIDと、差分がないことを確認</p><div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>terraform output network_id
+terraform plan</code></pre></div><p>不要になったら同じフォルダーから<a href="terraform-basics.html#delete">削除計画と適用</a>を実施。リソースグループへ手作業で追加したリソースがないことも確認</p>
+</section>
+<section>
+<h2 id="google">Google Cloudでの最小ネットワーク構築</h2>
+<p>Google Cloud CLI導入済み、課金設定済みの検証用Projectとネットワーク操作権限を前提。Compute Engine APIを有効化して使用。VM・Cloud SQLは作成せず、カスタムVPCとサブネットだけを対象</p><p>① Azure・AWSとは別の空フォルダーを作成して移動</p><div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>New-Item -ItemType Directory -Path "$env:USERPROFILE\IaC\Terraform\google-network-lab"
+Set-Location "$env:USERPROFILE\IaC\Terraform\google-network-lab"</code></pre></div><p>② <PROJECT_ID>を検証用Projectへ置換し、CLIログインと設定を確認</p><div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>gcloud auth login
+gcloud config set project "&lt;PROJECT_ID&gt;"
+gcloud config get-value project
+gcloud auth list</code></pre></div><p>③ Terraformが使用するApplication Default Credentials（ADC）でログイン。CLIログインとは別の認証保存先</p><div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>gcloud auth application-default login</code></pre></div><p>④ 検証用ProjectでCompute Engine APIを有効化。API有効化権限がない場合は管理者へ依頼</p><div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>gcloud services enable compute.googleapis.com --project="&lt;PROJECT_ID&gt;"</code></pre></div><p>⑤ main.tfを保存</p><div class="code"><div class="code-header"><span>main.tf</span><button class="copy" type="button">Copy</button></div><pre><code>terraform {
+  required_version = "&gt;= 1.10, &lt; 2.0"
+  required_providers {
+    google = {
+      source  = "hashicorp/google"
+      version = "~&gt; 6.0"
+    }
+  }
+}
+
+variable "project_id" {
+  type = string
+}
+
+provider "google" {
+  project = var.project_id
+  region  = "asia-northeast1"
+}
+
+resource "google_compute_network" "lab" {
+  name                    = "tf-network-lab"
+  auto_create_subnetworks = false
+}
+
+resource "google_compute_subnetwork" "lab" {
+  name          = "tf-subnet-lab"
+  ip_cidr_range = "10.72.1.0/24"
+  region        = "asia-northeast1"
+  network       = google_compute_network.lab.id
+}
+
+output "network_id" {
+  value = google_compute_network.lab.id
+}</code></pre></div><p>⑥ Project IDを入力変数へ設定して初期化</p><div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>$env:TF_VAR_project_id = "&lt;PROJECT_ID&gt;"
+terraform init
+terraform validate</code></pre></div><p>⑦ 計画を保存し、検証用ネットワークとサブネットの2件だけが追加されることを確認</p><div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>terraform plan -out=google.tfplan</code></pre></div><p>⑧ 確認済みの計画を適用。再確認なしで実行</p><div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>terraform apply google.tfplan</code></pre></div><p>⑨ 出力と差分を確認</p><div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>terraform output network_id
+terraform plan</code></pre></div><p>不要になったら同じフォルダーから削除計画をレビューして適用。Projectの削除や共有APIの無効化は、このネットワークの削除と一緒に実施しない</p>
+</section>
+<section>
+<h2 id="dynamic">HCP Terraformの動的AWS認証</h2>
+<p>ローカルPCのSSO設定はHCP TerraformのRemote実行環境へ自動転送されない。Remote実行では、OIDCでRunごとにAWSの一時認証情報を取得する構成を使用可能</p><p>① AWS IAMでIDプロバイダーの追加画面を開き、タイプを<code class="ui-value">OpenID Connect</code>、URLを<code class="inline-code">https://app.terraform.io</code>、対象者を<code class="inline-code">aws.workload.identity</code>として登録。既にある場合は既存設定を確認</p><p>② 専用IAMロールを作成し、信頼条件をOrganization・Project・Workspaceに限定。次は信頼ポリシーの例。山括弧の値を置換し、業務用Workspace全体へのワイルドカードは使用しない</p><div class="code"><div class="code-header"><span>IAMロールの信頼ポリシー</span><button class="copy" type="button">Copy</button></div><pre><code>{
+  "Version": "2012-10-17",
+  "Statement": [{
+    "Effect": "Allow",
+    "Principal": {
+      "Federated": "arn:aws:iam::&lt;ACCOUNT_ID&gt;:oidc-provider/app.terraform.io"
+    },
+    "Action": "sts:AssumeRoleWithWebIdentity",
+    "Condition": {
+      "StringEquals": {
+        "app.terraform.io:aud": "aws.workload.identity"
+      },
+      "StringLike": {
+        "app.terraform.io:sub": "organization:&lt;ORGANIZATION&gt;:project:&lt;PROJECT&gt;:workspace:&lt;WORKSPACE&gt;:run_phase:*"
+      }
+    }
+  }]
+}</code></pre></div><p>③ 信頼ポリシーとは別に、管理するサービスとState参照に必要な許可ポリシーを付与。全管理者権限を前提にしない</p><p>④ 対象Workspaceの<code class="ui-value">Variables</code>で環境変数として次を登録。Terraform変数としては登録しない</p><table><thead><tr><th>Key</th><th>Value</th></tr></thead><tbody><tr><td><code class="inline-code">TFC_AWS_PROVIDER_AUTH</code></td><td><code class="inline-code">true</code></td></tr><tr><td><code class="inline-code">TFC_AWS_RUN_ROLE_ARN</code></td><td><code class="inline-code">arn:aws:iam::&lt;ACCOUNT_ID&gt;:role/&lt;ROLE_NAME&gt;</code></td></tr><tr><td><code class="inline-code">AWS_REGION</code></td><td><code class="inline-code">ap-northeast-1</code></td></tr></tbody></table><p>⑤ 検証用Workspaceから先に移行。競合する固定AWSキー・AWS_PROFILE・コード内の認証指定を除き、AWSのdata sourceや管理リソースを含むPlanで接続を確認。固定キーの削除は保管先・他の利用者を確認し、移行成功後に不要なキーを失効</p><p>⑥ Runの成否とAWS側で使用したロールを確認。必要に応じてPlan用とApply用にロールを分け、各フェーズの権限を制限</p><div class="callout callout-warning"><strong>⚠️ 注意</strong><p>Plan成功だけでApplyの書き込み権限まで確認できたとは限らない。VCS連携やRemote実行の基本手順は<a href="hcp-terraform.html">HCP Terraform</a>を参照</p></div>
+</section>
+</main>
+<aside class="toc" aria-label="Table of contents"><h2>ページ内</h2><a href="#difference">Providerとモジュールの違い</a>
+<a href="#select">Providerの選定と初期化</a>
+<a href="#aws-alias">AWSの複数リージョン・アカウント</a>
+<a href="#azure">Azureでの最小ネットワーク構築</a>
+<a href="#google">Google Cloudでの最小ネットワーク構築</a>
+<a href="#dynamic">HCP Terraformの動的AWS認証</a></aside>
+</div>
+<script src="../assets/app.js?v=20260823-ref1"></script>
+</body>
+</html>

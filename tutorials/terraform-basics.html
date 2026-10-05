@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Terraformの基本操作とHCL | Documentation</title>
+  <meta name="description" content="変数・ローカル値・出力を使ったSQSの作成、属性変更、削除と、HCLの繰り返し・テンプレートの記述を整理">
+  <link rel="stylesheet" href="../assets/styles.css?v=20260823-ref4">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="../">
+      <img src="../assets/icon.jpg" alt="Documentation icon">
+      <span>Documentation</span>
+    </a>
+    <div class="header-actions">
+      <button class="icon-button theme-toggle" type="button" title="テーマを切り替え" aria-label="テーマを切り替え">☀</button>
+      <nav class="nav" aria-label="Global navigation">
+        <a href="https://github.com/hsmts2/Documentation"><span class="nav-icon" aria-hidden="true">◆</span>GitHub</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="layout">
+    <aside id="site-sidebar" class="sidebar" aria-label="Page list">
+      <div class="sidebar-heading">
+        <button class="icon-button sidebar-toggle sidebar-toggle-inline" type="button" aria-controls="site-sidebar" aria-expanded="true" title="ナビゲーションを閉じる" aria-label="ナビゲーションを閉じる">☰</button>
+      </div>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">✎</span>記事</p>
+      <a href="cloudflare-private-site.html">Private GitHubリポジトリをCloudflare Workersで認証付き公開してみた</a>
+      <a href="aws-daily-cost-slack.html">AWS利用料を毎朝3時にSlackへ通知してみた</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">☁︎</span>[PoC] マルチVPC・閉域VDI基盤案件</p>
+          <a href="workspaces-skill-transfer.html">全体構築・運用順序</a>
+          <a href="workspaces-managed-ad.html">Managed Microsoft ADの構築</a>
+          <a href="workspaces-managed-ad-users.html">Managed Microsoft ADのユーザー・グループ管理</a>
+          <a href="workspaces-management-ec2.html">管理用EC2の起動・接続・AD管理</a>
+          <a href="workspaces-ad-connector-account.html">AD Connector用サービスアカウント・権限委任</a>
+          <a href="workspaces-ad-connector.html">AD ConnectorのVPCピアリング・SG設定・作成</a>
+          <a href="workspaces-provisioning-gpo.html">WorkSpaces Personalの構築・接続</a>
+          <a href="workspaces-target-ou.html">WorkSpaces用ターゲットOUの作成・権限委任</a>
+          <a href="workspaces-gpo.html">WorkSpaces用GPOの作成・適用・運用</a>
+          <a href="workspaces-image-bundle.html">WorkSpacesカスタムイメージ作成・共有</a>
+          <a href="workspaces-systems-manager.html">Systems Manager環境構築</a>
+          <a href="workspaces-patch-manager.html">Patch Managerの設定</a>
+          <a href="workspaces-patch-operations.html">Patch Managerの実行・結果確認・運用</a>
+          <a href="workspaces-cost-optimizer.html">Cost Optimizerの構築・設定</a>
+          <a href="workspaces-cost-optimizer-dry-run.html">Cost OptimizerのDry Run解除</a>
+          <a href="workspaces-cost-optimizer-schedule.html">Cost Optimizerの実行スケジュール設定・変更</a>
+          <a href="workspaces-cost-optimizer-reports.html">Cost Optimizerのレポート・監視</a>
+          <a href="workspaces-cloudwatch-monitoring.html">CloudWatchのEC2・Windows OS監視とSNS通知</a>
+          <a href="workspaces-cloudwatch-workspaces.html">CloudWatchのWorkSpaces監視</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">⑂</span>Git / GitHub</p>
+      <a href="git-github.html">Git 概要</a>
+      <a href="git-remote.html">Gitリモート操作</a>
+      <a href="github-pages.html">GitHub Pages</a>
+      <a href="github-pull-request.html">GitHubのPull Requestとレビュー</a>
+      <a href="git-utilities.html">Gitトラブルシューティング</a>
+      <a href="github-ssh.html">GitHub認証</a>
+      <a href="github-slack-integration.html">GitHubとSlackの連携・通知設定</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">◈</span>Terraform</p>
+      <a href="terraform.html">Terraform 概要</a>
+      <a class="active" aria-current="page" href="terraform-basics.html">Terraformの基本操作とHCL</a>
+      <a href="terraform-state.html">TerraformのState管理と運用</a>
+      <a href="terraform-modules.html">Terraformのモジュール活用</a>
+      <a href="hcp-terraform.html">HCP Terraform（Terraform Cloud）</a>
+      <a href="terraform-providers.html">TerraformのProviderとマルチクラウド</a>
+      <a href="terraform-sentinel.html">TerraformのSentinelポリシー管理</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">◈</span>IaC</p>
+      <a href="iac.html">IaC</a>
+      <a href="iam-identity-center.html">IAM Identity Center</a>
+      <a href="iac-vscode.html">VS Codeの設定</a>
+      <a href="iac-deploy.html">IaCによるリソースのデプロイ</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">☁︎</span>AWS</p>
+      <a href="aws-design.html">AWS基本設計・アーキテクチャ</a>
+      <a href="aws-design-compute.html">コンピューティング設計</a>
+      <a href="aws-design-database.html">データベース設計</a>
+      <a href="aws-design-storage.html">ストレージ設計</a>
+      <a href="aws-design-os.html">OS・ミドルウェア設計</a>
+      <a href="aws-design-observability.html">ログ・監視・可用性設計</a>
+      <a href="aws-design-governance.html">命名規則・タグ設計</a>
+      <a href="cloudformation.html">CloudFormation 運用手順集</a>
+      <a href="aws-cli.html">AWS CLI 特殊対応</a>
+      <a href="aws-cli-reference.html">AWS CLI コマンドリファレンス</a>
+      <a href="eventbridge-scheduler.html">EventBridge Scheduler</a>
+      <a href="aws-directory-service.html">AWS Directory Service 運用手順</a>
+      <a href="amazon-workspaces.html">Amazon WorkSpaces</a>
+      <a href="amazon-ses.html">Amazon SES SMTPリレー</a>
+      <a href="amazon-ses-monitoring.html">Amazon SES 配信監視</a>
+      <a href="amazon-rds-blue-green.html">Amazon RDS Blue/Green Deployments</a>
+      <a href="apache-acm-certificate-update.html">証明書更新（ACMエクスポート）</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">⚙︎</span>OS／ミドルウェア</p>
+      <a href="rhel9.html">Red Hat Enterprise Linux 9</a>
+      <a href="rhel10.html">Red Hat Enterprise Linux 10</a>
+      <a href="amazon-linux-2023.html">Amazon Linux 2023</a>
+      <a href="windows-server-2022.html">Windows Server 2022</a>
+      <a href="windows-server-2025.html">Windows Server 2025</a>
+      <a href="windows-server-2016-upgrade.html">Windows Server 2016 インプレースアップグレード</a>
+      <a href="storage.html">ストレージ管理</a>
+      <a href="apache.html">Apache</a>
+      <a href="apache-self-signed-ssl-termination.html">Apache SSL終端（自己署名証明書）</a>
+      <a href="redis.html">Redis（KVS）</a>
+      <a href="nfs.html">NFS</a>
+      <a href="samba.html">Samba</a>
+      <a href="mariadb.html">MariaDB</a>
+      <a href="postgresql.html">PostgreSQL</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">▤</span>リファレンス</p>
+      <a href="../writing-style-guide.html">[GitHub Pages] 記法・テンプレート</a>
+      <a href="troubleshooting.html">障害切り分けチェックリスト</a>
+      <a href="eol.html">EOL / ライフサイクル一覧表</a>
+    </aside>
+
+    <main class="content terraform-guide">
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="../"><span class="nav-icon" aria-hidden="true">⌂</span>Home</a>
+        <span>トピック</span>
+      </nav>
+<h1>Terraformの基本操作とHCL</h1>
+<nav class="section-links" aria-label="主要セクション"><a href="#prepare">実行場所・接続先の確認</a><a href="#files">構成ファイルの作成</a><a href="#create">初期化・作成・確認</a><a href="#change">変数の指定・属性変更</a><a href="#expressions">繰り返し・式・テンプレート</a><a href="#delete">検証用リソースの削除</a><a href="#git">Gitで管理するファイル</a></nav>
+<p>変数・ローカル値・出力を使ったSQSの作成、属性変更、削除と、HCLの繰り返し・テンプレートの記述を整理</p><section>
+<h2 id="prepare">実行場所・接続先の確認</h2>
+<p>TerraformとAWS CLIを導入済みのWindowsで、VS Codeの統合ターミナル（PowerShell）を使用。認証は<a href="iam-identity-center.html">IAM Identity Center</a>、導入は<a href="iac.html">IaC</a>を参照。既存のSQSとは別名の検証用キューを作成</p><p>① 既存構成とStateを分離するため、新しい作業フォルダーを作成して移動。既に同名フォルダーがある場合は中身を確認し、別名を使用</p><div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>New-Item -ItemType Directory -Path "$env:USERPROFILE\IaC\Terraform\queue-lab"
+Set-Location "$env:USERPROFILE\IaC\Terraform\queue-lab"
+Get-Location
+Get-ChildItem -Force</code></pre></div><p>② SSOにログインし、このターミナルで使用するプロファイルを指定</p><div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>aws sso login --profile iac-admin
+$env:AWS_PROFILE = "iac-admin"
+$env:AWS_REGION = "ap-northeast-1"</code></pre></div><p>③ AWSアカウント・ロールとTerraformのバージョンを確認。接続先が意図した検証環境と異なる場合は中止</p><div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>aws sts get-caller-identity --profile iac-admin
+terraform version</code></pre></div><div class="callout callout-warning"><strong>⚠️ 注意</strong><p>以降のapplyはAWSのリソースを変更。利用量に応じた料金や、削除によるメッセージ消失が発生するため、業務環境とは分離して実施</p></div>
+</section>
+<section>
+<h2 id="files">構成ファイルの作成</h2>
+<p>VS Codeで同じ作業フォルダーに次の4ファイルを保存。下位フォルダー内の.tfファイルは自動では読み込まれない</p><table><thead><tr><th>ファイル</th><th>役割</th></tr></thead><tbody><tr><td>versions.tf</td><td>Terraform・Providerのバージョン条件と接続リージョン</td></tr><tr><td>variables.tf</td><td>外部から受け取る値と入力条件</td></tr><tr><td>main.tf</td><td>共通値と作成するリソース</td></tr><tr><td>outputs.tf</td><td>作成後に取り出す値</td></tr></tbody></table><div class="code"><div class="code-header"><span>versions.tf</span><button class="copy" type="button">Copy</button></div><pre><code>terraform {
+  required_version = "&gt;= 1.10, &lt; 2.0"
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~&gt; 6.0"
+    }
+  }
+}
+
+provider "aws" {
+  region = "ap-northeast-1"
+}</code></pre></div><div class="code"><div class="code-header"><span>variables.tf</span><button class="copy" type="button">Copy</button></div><pre><code>variable "environment" {
+  type        = string
+  description = "Name used to separate the practice environment"
+  default     = "dev"
+
+  validation {
+    condition     = contains(["dev", "stg"], var.environment)
+    error_message = "Choose dev or stg."
+  }
+}
+
+variable "message_size" {
+  type        = number
+  description = "Maximum message size in bytes"
+  default     = 2048
+
+  validation {
+    condition     = contains([2048, 4096], var.message_size)
+    error_message = "Use 2048 or 4096 for this exercise."
+  }
+}</code></pre></div><div class="code"><div class="code-header"><span>main.tf</span><button class="copy" type="button">Copy</button></div><pre><code>locals {
+  queue_name = "tf-practice-${var.environment}"
+  common_tags = {
+    Environment = var.environment
+    ManagedBy   = "Terraform"
+  }
+}
+
+resource "aws_sqs_queue" "practice" {
+  name                      = local.queue_name
+  max_message_size          = var.message_size
+  sqs_managed_sse_enabled   = true
+  tags                      = merge(local.common_tags, { Name = local.queue_name })
+}</code></pre></div><div class="code"><div class="code-header"><span>outputs.tf</span><button class="copy" type="button">Copy</button></div><pre><code>output "queue_url" {
+  description = "URL of the practice queue"
+  value       = aws_sqs_queue.practice.url
+}</code></pre></div><p><code class="inline-code">var.environment</code>は外部入力、<code class="inline-code">local.queue_name</code>は内部で組み立てた値、<code class="inline-code">aws_sqs_queue.practice.url</code>はリソース属性の参照。同じフォルダーのファイルはまとめて評価され、ファイル名で実行順序は決まらない</p>
+</section>
+<section>
+<h2 id="create">初期化・作成・確認</h2>
+<p>① Providerをダウンロードし、依存関係を初期化</p><div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>terraform init</code></pre></div><p>② HCLを整形して構文・整合性を検証。validateだけではAWS権限や作成可否の確認は未完了</p><div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>terraform fmt
+terraform validate</code></pre></div><p>③ 作成計画をファイルへ保存。対象がtf-practice-devのみで、追加1件・変更0件・削除0件であることを確認</p><div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>terraform plan -out=create.tfplan</code></pre></div><p>④ 確認した計画を適用。保存済みPlanを指定するため、yesの再入力はなく即時実行</p><div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>terraform apply create.tfplan</code></pre></div><p>⑤ キューURLとState上の管理対象を確認</p><div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>terraform output queue_url
+terraform state list</code></pre></div><p>⑥ 再度Planを実行し、差分がないことを確認</p><div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>terraform plan</code></pre></div><div class="callout callout-warning"><strong>⚠️ 注意</strong><p>Stateと保存済みPlanには秘密値が含まれる場合があるため、Gitへ登録しない。<code class="inline-code">sensitive = true</code>は表示抑制であり、Stateの暗号化指定ではない</p></div>
+</section>
+<section>
+<h2 id="change">変数の指定・属性変更</h2>
+<p>① 作業フォルダーに次のterraform.tfvarsを保存。environmentは変更せず、最大メッセージサイズだけを2048から4096へ変更</p><div class="code"><div class="code-header"><span>terraform.tfvars</span><button class="copy" type="button">Copy</button></div><pre><code>environment  = "dev"
+message_size = 4096</code></pre></div><p>② 変更計画を保存。max_message_sizeの更新だけで、置換・削除がないことを確認</p><div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>terraform plan -out=update.tfplan</code></pre></div><p>③ 確認した更新を適用し、再実行時の差分がないことを確認</p><div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>terraform apply update.tfplan
+terraform plan</code></pre></div><table><thead><tr><th>指定方法</th><th>読み込み方</th></tr></thead><tbody><tr><td><code class="inline-code">variable</code>の<code class="inline-code">default</code></td><td>入力値を渡さない場合の既定値</td></tr><tr><td><code class="inline-code">TF_VAR_message_size</code></td><td>PowerShellでは $env:TF_VAR_message_size = "4096" の形式</td></tr><tr><td><code class="inline-code">terraform.tfvars</code> / <code class="inline-code">terraform.tfvars.json</code></td><td>ルートモジュールで自動読み込み</td></tr><tr><td><code class="inline-code">*.auto.tfvars</code> / <code class="inline-code">*.auto.tfvars.json</code></td><td>ファイル名の辞書順で自動読み込み</td></tr><tr><td><code class="inline-code">-var</code> / <code class="inline-code">-var-file</code></td><td>コマンド実行時に明示的に指定</td></tr></tbody></table><p>ローカルCLIでは表の下ほど優先。複数の-var／-var-fileは後の指定を優先。HCP Terraformの変数セット・優先変数は別途優先順位の確認が必要</p><p>別名のファイル（例：stg.tfvars）は自動では読み込まれない。次の例はPlanのみで確認し、environmentを変えるとキュー名の変更・置換が生じ得る点に注意</p><div class="code"><div class="code-header"><span>stg.tfvars</span><button class="copy" type="button">Copy</button></div><pre><code>environment  = "stg"
+message_size = 2048</code></pre></div><p>④ 別の変数ファイルで計画を表示。適用はせず、tfvarsを変えてもStateが別環境に分離されないことを確認</p><div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>terraform plan -var-file=stg.tfvars</code></pre></div>
+</section>
+<section>
+<h2 id="expressions">繰り返し・式・テンプレート</h2>
+<p>以降は記法の例。作成済みのキュー定義への追記ではなく、別の検証用構成で使用</p><table><thead><tr><th>記法</th><th>使い分け</th></tr></thead><tbody><tr><td><code class="inline-code">for_each</code></td><td>MapのキーやSetの要素で個別管理。キーは計画時点で確定させる</td></tr><tr><td><code class="inline-code">count</code></td><td>個数や0／1での有効・無効切り替え。要素の並びを変えると数値インデックスの対応に注意</td></tr><tr><td><code class="inline-code">for</code></td><td>既存コレクションを別のList／Mapに変換</td></tr><tr><td><code class="inline-code">dynamic</code></td><td>Providerが定義する繰り返し可能なネストブロックを生成。resource自体の複製にはfor_each／countを使用</td></tr></tbody></table><div class="code"><div class="code-header"><span>HCL：for_eachと出力の例</span><button class="copy" type="button">Copy</button></div><pre><code>variable "queue_names" {
+  type    = set(string)
+  default = ["orders", "notifications"]
+}
+
+resource "aws_sqs_queue" "batch" {
+  for_each = var.queue_names
+  name     = "tf-lab-${each.key}"
+}
+
+output "queue_urls" {
+  value = { for name, queue in aws_sqs_queue.batch : name =&gt; queue.url }
+}</code></pre></div><p>この例は2キューを管理。State上のアドレスは<code class="inline-code">aws_sqs_queue.batch["orders"]</code>のようにキー付きになる。countの全用途が非推奨という意味ではない</p><div class="code"><div class="code-header"><span>HCL：テンプレートの読み込み例</span><button class="copy" type="button">Copy</button></div><pre><code>locals {
+  rendered_message = templatefile("${path.module}/message.tftpl", {
+    environment = var.environment
+  })
+}
+
+output "message" {
+  value = local.rendered_message
+}</code></pre></div><div class="code"><div class="code-header"><span>message.tftpl</span><button class="copy" type="button">Copy</button></div><pre><code>Environment: ${environment}</code></pre></div><p>長いテキストは外部テンプレートへ分離。<code class="inline-code">file()</code>は文字列をそのまま読み込み、<code class="inline-code">templatefile()</code>は指定した変数を展開</p><p>① 式の結果だけを対話確認。起動後に次の式を1行ずつ入力し、exitで終了</p><div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>terraform console</code></pre></div><div class="code"><div class="code-header"><span>Terraform console</span><button class="copy" type="button">Copy</button></div><pre><code>upper("dev")
+contains(["dev", "stg"], "dev")
+{ for name in ["orders", "notifications"] : name =&gt; upper(name) }
+exit</code></pre></div>
+</section>
+<section>
+<h2 id="delete">検証用リソースの削除</h2>
+<p>queue-labで作成したキューを今後のState・モジュール練習に使う場合は削除を後回し。構成とStateを残したまま、Terraformから削除</p><p>① 実行場所と管理対象を確認。予定外のリソースが含まれていれば中止</p><div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>Get-Location
+terraform state list</code></pre></div><p>② 削除計画を保存。対象の検証用キュー以外が含まれないことを確認</p><div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>terraform plan -destroy -out=destroy.tfplan</code></pre></div><div class="callout callout-warning"><strong>⚠️ 注意</strong><p>次のコマンドは保存済みの削除計画を確認入力なしで実行。キュー内のメッセージも失われるため、不要になった検証用キューだけを対象に実施</p></div><p>③ 確認した削除計画を実行</p><div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>terraform apply destroy.tfplan</code></pre></div><p>④ 管理リソースがStateから除かれたことを確認</p><div class="code"><div class="code-header"><span>PowerShell</span><button class="copy" type="button">Copy</button></div><pre><code>terraform state list</code></pre></div><p>構成ファイルを残した状態の通常Planは再作成を提案。削除後にNo changesとなることを完了条件にはしない</p>
+</section>
+<section>
+<h2 id="git">Gitで管理するファイル</h2>
+<p>構成ファイルと<code class="inline-code">.terraform.lock.hcl</code>はバージョン管理。ローカル作業用の.gitignoreに次を追加し、秘密値を含むtfvarsは登録対象から除外</p><div class="code"><div class="code-header"><span>.gitignore</span><button class="copy" type="button">Copy</button></div><pre><code>.terraform/
+*.tfstate
+*.tfstate.*
+*.tfplan
+crash.log
+crash.*.log
+*.tfvars
+*.tfvars.json
+.terraformrc
+terraform.rc
+</code></pre></div><p>共有用の入力例は秘密値を除いたterraform.tfvars.exampleで管理。既に追跡済みのファイルには.gitignoreが遡って適用されないため、コミット前に差分を確認</p>
+</section>
+</main>
+<aside class="toc" aria-label="Table of contents"><h2>ページ内</h2><a href="#prepare">実行場所・接続先の確認</a>
+<a href="#files">構成ファイルの作成</a>
+<a href="#create">初期化・作成・確認</a>
+<a href="#change">変数の指定・属性変更</a>
+<a href="#expressions">繰り返し・式・テンプレート</a>
+<a href="#delete">検証用リソースの削除</a>
+<a href="#git">Gitで管理するファイル</a></aside>
+</div>
+<script src="../assets/app.js?v=20260823-ref1"></script>
+</body>
+</html>
