@@ -1711,6 +1711,10 @@ pre {
   color: #ff9900;
 }
 
+.terraform-guide .code .user-value {
+  color: #c4a7ff;
+}
+
 code {
   font-family: Consolas, "SFMono-Regular", Menlo, monospace;
   font-size: 14px;
