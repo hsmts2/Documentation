@@ -72,12 +72,7 @@
       <a href="iac-vscode.html">VS Codeの設定</a>
       <a href="iac-deploy.html">IaCによるリソースのデプロイ</a>
       <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">☁︎</span>AWS</p>
-      <a href="aws-design.html">AWS基本設計・アーキテクチャ</a>
       <a class="active" aria-current="page" href="aws-design-compute.html">コンピューティング設計</a>
-      <a href="aws-design-database.html">データベース設計</a>
-      <a href="aws-design-storage.html">ストレージ設計</a>
-      <a href="aws-design-os.html">OS・ミドルウェア設計</a>
-      <a href="aws-design-observability.html">ログ・監視・可用性設計</a>
       <a href="aws-design-governance.html">命名規則・タグ設計</a>
       <a href="cloudformation.html">CloudFormation 運用手順集</a>
       <a href="aws-cli.html">AWS CLI 特殊対応</a>
@@ -172,29 +167,10 @@
 <tr><td>誤更新・誤削除からの復旧</td><td>S3バージョニング ＋ ライフサイクル</td><td>旧版の復元・保持期限・削除権限・非現行バージョンの費用を決める</td></tr></tbody></table></div>
 <p>S3バケットへWAFを直接関連付けず、CloudFrontを閲覧の入口にする<br>OACとバケットポリシーで対象ディストリビューションからのアクセスを許可し、S3の公開アクセスをブロックする</p>
 <p>この構成ではS3のWebサイトエンドポイントを使用しない／通常のS3バケットオリジンを使用する<br>OACはオリジンへのアクセス制御、WAFはWebリクエストの検査を担当し、役割が異なる</p>
-<h2 id="responsibility">EC2とECSの責任分界を混同しない</h2>
-<p>EC2ではAWSが物理基盤などを管理し、利用者がゲストOS・アプリケーション・設定を管理する<br>「EC2はマネージドではない」とだけ記載せず、どの層の管理が残るかを示す</p>
-<p>ECSはコンテナのオーケストレーションを担い、EC2はその実行基盤にもなるため、「EC2かECSか」は同じ階層の二者択一ではない<br>まずコンテナ化の必要性を判断し、次にFargateやEC2などの実行基盤を選ぶ</p>
-<h2 id="static-origin">S3を非公開にした静的配信の注意点</h2>
-<p>S3の通常のバケットオリジンとCloudFront OACを組み合わせ、バケットへのアクセスを配信元に限定する<br>S3のWebサイトエンドポイントをオリジンにするとOACを使用できないため、Webサイトホスティング設定との混同を避ける</p>
-<h2 id="zabbix">ZabbixにT系インスタンスを採用する判断</h2>
-<p>Zabbix server、proxy、agentでは処理量が異なるため、一律に同じサイズを割り当てない<br>監視項目数、取得間隔、前処理、履歴保存、DBへの書込み、housekeepingの負荷から試験条件を作る</p>
-<p class="design-table-hint">表は横にスクロールして確認できる</p><div class="table-scroll" tabindex="0" role="region" aria-label="比較表：横スクロール対応"><table><thead><tr><th>条件</th><th>判断と検証</th></tr></thead><tbody>
-<tr><td>小規模・断続的な負荷</td><td>T系も候補になる／実際の監視量でCPUクレジット、処理待ち、DB遅延を測定する</td></tr>
-<tr><td>継続的にCPUベースラインを超える</td><td>M系やC系などと比較する／CPUだけでなくメモリ、DB I/O、費用を確認する</td></tr>
-<tr><td>Standardモード</td><td>クレジット枯渇後はCPU性能がベースラインへ制限されるため、監視遅延を評価する</td></tr>
-<tr><td>Unlimitedモード</td><td>継続した超過使用では追加料金が発生し得る／残高0だけを性能低下の判定にしない</td></tr>
-<tr><td>Arm系インスタンス</td><td>使用するZabbix、DB、プラグイン、独自スクリプトとバイナリの対応を確認する</td></tr></tbody></table></div>
-<h2 id="acceptance">採用を確定する試験</h2>
-<p>通常時、ピーク時、定期処理の重複時、片系停止時の4条件で、応答時間・エラー率・処理待ち・リソース使用率を確認する<br>試験結果がない段階ではインスタンスタイプを「初期候補」とし、監視規模に対する保証値として掲載しない</p>
-<nav class="design-series" aria-label="AWS設計シリーズ"><p><strong>AWS設計シリーズ</strong></p><ul><li><a href="aws-design.html">AWS基本設計・アーキテクチャ</a></li><li><a href="aws-design-compute.html" aria-current="page">コンピューティング設計</a></li><li><a href="aws-design-database.html">データベース設計</a></li><li><a href="aws-design-storage.html">ストレージ設計</a></li><li><a href="aws-design-os.html">OS・ミドルウェア設計</a></li><li><a href="aws-design-observability.html">ログ・監視・可用性設計</a></li><li><a href="aws-design-governance.html">命名規則・タグ設計</a></li></ul></nav></main><aside class="toc" aria-label="Table of contents"><h2>ページ内</h2><a href="#selection">ホスティングは処理方式と運用要件で選ぶ</a>
+<nav class="design-series" aria-label="AWS設計シリーズ"><p><strong>AWS設計シリーズ</strong></p><ul><li><a href="aws-design-compute.html" aria-current="page">コンピューティング設計</a></li><li><a href="aws-design-governance.html">命名規則・タグ設計</a></li></ul></nav></main><aside class="toc" aria-label="Table of contents"><h2>ページ内</h2><a href="#selection">ホスティングは処理方式と運用要件で選ぶ</a>
 <a href="#hosting-diagrams">ホスティング別の構成図とWAFの関連付け先</a>
 <a href="#hosting-ec2">EC2：ALBで受けて、複数AZへ振り分ける</a>
 <a href="#hosting-lightsail">Lightsail：CloudFrontを前段へ追加する</a>
 <a href="#hosting-amplify">Amplify Hosting：アプリへWAFを直接統合する</a>
 <a href="#hosting-s3">S3＋CloudFront：バケットを非公開にして配信する</a>
-<a href="#responsibility">EC2とECSの責任分界を混同しない</a>
-<a href="#static-origin">S3を非公開にした静的配信の注意点</a>
-<a href="#zabbix">ZabbixにT系インスタンスを採用する判断</a>
-<a href="#acceptance">採用を確定する試験</a>
 </aside></div><script src="../assets/app.js?v=20261003-mobile-nav"></script></body></html>

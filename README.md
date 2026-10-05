@@ -22,7 +22,9 @@ https://documentation.hsmts2.workers.dev/
 
 ## AWS設計シリーズ
 
-- 入口：[`tutorials/aws-design.html`](tutorials/aws-design.html)
+- 公開対象：コンピューティング設計、命名規則・タグ設計
+- 入口：[`tutorials/aws-design-compute.html`](tutorials/aws-design-compute.html)
+- その他5ページは公開停止用HTMLとし、本文は`scripts/build-aws-design.py`に保持する。再公開時は同ファイルの`PUBLISHED`と一覧・ホームの設定を更新する
 - 構成・コンピューティング・DB・ストレージ・AL2023・ログ／監視／可用性・命名／タグの7ページ
 - 設計例と公式仕様を整理した資料であり、実機試験済みの構成や実案件の実績を示すものではない
 - 本文とSVG構成図の編集元：`scripts/build-aws-design.py`

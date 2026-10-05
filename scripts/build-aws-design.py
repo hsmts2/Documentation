@@ -3,6 +3,7 @@ from pathlib import Path
 from html import escape
 import re
 import json
+import sys
 
 ROOT = Path(__file__).resolve().parent.parent
 PAGES = [
@@ -14,6 +15,8 @@ PAGES = [
     ('aws-design-observability', 'ログ・監視・可用性設計', 'SLAと業務の稼働目標を区別し、ログ収集・障害検知・復旧確認までを設計する'),
     ('aws-design-governance', '命名規則・タグ設計', '名前とタグの役割を分け、識別・費用配賦・権限制御・例外管理のルールを決める'),
 ]
+
+PUBLISHED = {'aws-design-compute', 'aws-design-governance'}
 
 def p(s): return '<p>' + s + '</p>\n'
 def h(i,s): return f'<h2 id="{i}">{s}</h2>\n'
@@ -146,27 +149,8 @@ table(['追加要件','組み合わせるサービス・機能','採用時に決
 source('https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/AccessLogs.html','CloudFront標準ログ')+
 source('https://docs.aws.amazon.com/AmazonS3/latest/userguide/cloudtrail-logging-s3-info.html','S3のCloudTrailデータイベント')+
 p('S3バケットへWAFを直接関連付けず、CloudFrontを閲覧の入口にする<br>OACとバケットポリシーで対象ディストリビューションからのアクセスを許可し、S3の公開アクセスをブロックする')+
-p('この構成ではS3のWebサイトエンドポイントを使用しない／通常のS3バケットオリジンを使用する<br>OACはオリジンへのアクセス制御、WAFはWebリクエストの検査を担当し、役割が異なる')+
-h('responsibility','EC2とECSの責任分界を混同しない')+
-p('EC2ではAWSが物理基盤などを管理し、利用者がゲストOS・アプリケーション・設定を管理する<br>「EC2はマネージドではない」とだけ記載せず、どの層の管理が残るかを示す')+
-source('https://aws.amazon.com/compliance/shared-responsibility-model/','AWSの責任共有モデル')+
-p('ECSはコンテナのオーケストレーションを担い、EC2はその実行基盤にもなるため、「EC2かECSか」は同じ階層の二者択一ではない<br>まずコンテナ化の必要性を判断し、次にFargateやEC2などの実行基盤を選ぶ')+
-h('static-origin','S3を非公開にした静的配信の注意点')+
-p('S3の通常のバケットオリジンとCloudFront OACを組み合わせ、バケットへのアクセスを配信元に限定する<br>S3のWebサイトエンドポイントをオリジンにするとOACを使用できないため、Webサイトホスティング設定との混同を避ける')+
-source('https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/private-content-restricting-access-to-s3.html','OACの対応オリジンと制限')+
-h('zabbix','ZabbixにT系インスタンスを採用する判断')+
-p('Zabbix server、proxy、agentでは処理量が異なるため、一律に同じサイズを割り当てない<br>監視項目数、取得間隔、前処理、履歴保存、DBへの書込み、housekeepingの負荷から試験条件を作る')+
-source('https://www.zabbix.com/documentation/current/en/manual/installation/requirements','Zabbixの必要リソースとDB容量の考え方')+
-table(['条件','判断と検証'],[
-('小規模・断続的な負荷','T系も候補になる／実際の監視量でCPUクレジット、処理待ち、DB遅延を測定する'),
-('継続的にCPUベースラインを超える','M系やC系などと比較する／CPUだけでなくメモリ、DB I/O、費用を確認する'),
-('Standardモード','クレジット枯渇後はCPU性能がベースラインへ制限されるため、監視遅延を評価する'),
-('Unlimitedモード','継続した超過使用では追加料金が発生し得る／残高0だけを性能低下の判定にしない'),
-('Arm系インスタンス','使用するZabbix、DB、プラグイン、独自スクリプトとバイナリの対応を確認する')])+
-source('https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/burstable-performance-instances-standard-mode.html','バースト可能インスタンスのStandardモード')+
-source('https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/burstable-performance-instances-unlimited-mode.html','Unlimitedモードと追加料金')+
-h('acceptance','採用を確定する試験')+
-p('通常時、ピーク時、定期処理の重複時、片系停止時の4条件で、応答時間・エラー率・処理待ち・リソース使用率を確認する<br>試験結果がない段階ではインスタンスタイプを「初期候補」とし、監視規模に対する保証値として掲載しない')
+p('この構成ではS3のWebサイトエンドポイントを使用しない／通常のS3バケットオリジンを使用する<br>OACはオリジンへのアクセス制御、WAFはWebリクエストの検査を担当し、役割が異なる')
+
 )
 
 bodies['aws-design-database']=(
@@ -450,15 +434,21 @@ def main():
     prefix=shell.split('    <main class="content')[0]
     prefix=re.sub(r'<a class="active" aria-current="page"', '<a', prefix)
     for slug,title,lead in PAGES:
+        if slug not in PUBLISHED:
+            page = '<!DOCTYPE html>\n<html lang="ja"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="robots" content="noindex, nofollow"><title>公開停止中 | Documentation</title><link rel="stylesheet" href="../assets/styles.css"></head><body><main class="content"><h1>公開停止中</h1><p>このページは現在公開していない</p><p><a href="../">Homeへ戻る</a></p></main></body></html>\n'
+            (ROOT/'tutorials'/f'{slug}.html').write_text(page,encoding='utf-8')
+            continue
         head=re.sub(r'<title>.*?</title>',f'<title>{title} | Documentation</title>',prefix)
         head=re.sub(r'<meta name="description" content="[^"]*">',f'<meta name="description" content="{lead}">',head)
         head=head.replace('</head>','  <link rel="stylesheet" href="../assets/aws-design/design.css">\n</head>')
         head=head.replace(f'<a href="{slug}.html">',f'<a class="active" aria-current="page" href="{slug}.html">')
         body=bodies[slug]
         toc=''.join(f'<a href="#{i}">{t}</a>\n' for i,t in re.findall(r'<h2 id="([^"]+)">(.*?)</h2>',body))
-        related='<nav class="design-series" aria-label="AWS設計シリーズ"><p><strong>AWS設計シリーズ</strong></p><ul>'+''.join(f'<li><a href="{s}.html"'+(' aria-current="page"' if s==slug else '')+f'>{t}</a></li>' for s,t,_ in PAGES)+'</ul></nav>'
+        related='<nav class="design-series" aria-label="AWS設計シリーズ"><p><strong>AWS設計シリーズ</strong></p><ul>'+''.join(f'<li><a href="{s}.html"'+(' aria-current="page"' if s==slug else '')+f'>{t}</a></li>' for s,t,_ in PAGES if s in PUBLISHED)+'</ul></nav>'
         page=head+f'<main class="content aws-design-guide"><nav class="breadcrumb" aria-label="Breadcrumb"><a href="../">Home</a><span>AWS設計</span></nav><h1>{title}</h1><p class="lead">{lead}</p>'+body+related+'</main><aside class="toc" aria-label="Table of contents"><h2>ページ内</h2>'+toc+'</aside></div><script src="../assets/app.js?v=20261003-mobile-nav"></script></body></html>\n'
         (ROOT/'tutorials'/f'{slug}.html').write_text(page,encoding='utf-8')
+    if '--pages-only' in sys.argv:
+        return
     diagram('static','静的配信：公開入口と保存先を分離',[[('利用者','HTTPS')],[('CloudFront','TLS・キャッシュ・アクセス制御')],[('S3：通常のバケットオリジン','OACでアクセスを限定／公開アクセスをブロック')]])
     diagram('containers','コンテナWeb：ホスト運用をFargateへ委ねる',[[('利用者 → ALB','HTTPS／ヘルスチェック')],[('AZ A：Fargateタスク','ECSサービスが配置・更新を管理'),('AZ B：Fargateタスク','ECSサービスが配置・更新を管理')],[('DB・オブジェクト・ログの外部保存','タスクの交換後も必要なデータを保持する')]])
     web_diagram()

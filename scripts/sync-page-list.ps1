@@ -79,12 +79,7 @@ $groups = @(
         Label = 'AWS'
         Icon = '☁︎'
         Pages = @(
-            [pscustomobject]@{ File = 'aws-design.html'; Label = 'AWS基本設計・アーキテクチャ' }
             [pscustomobject]@{ File = 'aws-design-compute.html'; Label = 'コンピューティング設計' }
-            [pscustomobject]@{ File = 'aws-design-database.html'; Label = 'データベース設計' }
-            [pscustomobject]@{ File = 'aws-design-storage.html'; Label = 'ストレージ設計' }
-            [pscustomobject]@{ File = 'aws-design-os.html'; Label = 'OS・ミドルウェア設計' }
-            [pscustomobject]@{ File = 'aws-design-observability.html'; Label = 'ログ・監視・可用性設計' }
             [pscustomobject]@{ File = 'aws-design-governance.html'; Label = '命名規則・タグ設計' }
             [pscustomobject]@{ File = 'cloudformation.html'; Label = 'CloudFormation 運用手順集' }
             [pscustomobject]@{ File = 'aws-cli.html'; Label = 'AWS CLI 特殊対応' }
@@ -150,6 +145,12 @@ $hiddenAliasFiles = [System.Collections.Generic.HashSet[string]]::new(
 [void]$hiddenAliasFiles.Add('aws-certificate-manager.html')
 [void]$hiddenAliasFiles.Add('git-github-basics.html')
 [void]$hiddenAliasFiles.Add('git-github-practical.html')
+# Temporarily unpublished AWS design pages retain only a public placeholder.
+[void]$hiddenAliasFiles.Add('aws-design.html')
+[void]$hiddenAliasFiles.Add('aws-design-database.html')
+[void]$hiddenAliasFiles.Add('aws-design-storage.html')
+[void]$hiddenAliasFiles.Add('aws-design-os.html')
+[void]$hiddenAliasFiles.Add('aws-design-observability.html')
 
 $errors = [System.Collections.Generic.List[string]]::new()
 $pageFiles = [System.Collections.Generic.HashSet[string]]::new([System.StringComparer]::OrdinalIgnoreCase)
