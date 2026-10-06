@@ -91,6 +91,7 @@ $groups = @(
             [pscustomobject]@{ File = 'amazon-ses-monitoring.html'; Label = 'Amazon SES 配信監視' }
             [pscustomobject]@{ File = 'amazon-rds-blue-green.html'; Label = 'Amazon RDS Blue/Green Deployments' }
             [pscustomobject]@{ File = 'apache-acm-certificate-update.html'; Label = '証明書更新（ACMエクスポート）' }
+            [pscustomobject]@{ File = 'acm-ec2-auto-renewal.html'; Label = 'ACM証明書の自動更新とEC2への自動反映' }
         )
     }
     [pscustomobject]@{

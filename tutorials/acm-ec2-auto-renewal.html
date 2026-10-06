@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ACM証明書の自動更新とEC2への自動反映 | Documentation</title>
+  <meta name="description" content="Route 53で管理するzexample.comのACM証明書を、EventBridge・Lambda・Systems ManagerでEC2へ反映する構成と確認手順">
+  <link rel="stylesheet" href="../assets/styles.css?v=20261003-mobile-nav">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="../"><img src="../assets/icon.jpg" alt="Documentation icon"><span>Documentation</span></a>
+    <div class="header-actions">
+      <button class="icon-button theme-toggle" type="button" title="テーマを切り替え" aria-label="テーマを切り替え">☀</button>
+      <nav class="nav" aria-label="Global navigation"><a href="https://github.com/hsmts2/Documentation"><span class="nav-icon" aria-hidden="true">↗</span>GitHub</a></nav>
+    </div>
+  </header>
+  <div class="layout">
+    <aside id="site-sidebar" class="sidebar" aria-label="Page list">
+      <div class="sidebar-heading">
+        <button class="icon-button sidebar-toggle sidebar-toggle-inline" type="button" aria-controls="site-sidebar" aria-expanded="true" title="ナビゲーションを閉じる" aria-label="ナビゲーションを閉じる">☰</button>
+      </div>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">✎</span>記事</p>
+      <a href="cloudflare-private-site.html">Private GitHubリポジトリをCloudflare Workersで認証付き公開してみた</a>
+      <a href="aws-daily-cost-slack.html">AWS利用料を毎朝3時にSlackへ通知してみた</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">☁︎</span>[PoC] マルチVPC・閉域VDI基盤案件</p>
+          <a href="workspaces-skill-transfer.html">全体構築・運用順序</a>
+          <a href="workspaces-managed-ad.html">Managed Microsoft ADの構築</a>
+          <a href="workspaces-managed-ad-users.html">Managed Microsoft ADのユーザー・グループ管理</a>
+          <a href="workspaces-management-ec2.html">管理用EC2の起動・接続・AD管理</a>
+          <a href="workspaces-ad-connector-account.html">AD Connector用サービスアカウント・権限委任</a>
+          <a href="workspaces-ad-connector.html">AD ConnectorのVPCピアリング・SG設定・作成</a>
+          <a href="workspaces-provisioning-gpo.html">WorkSpaces Personalの構築・接続</a>
+          <a href="workspaces-target-ou.html">WorkSpaces用ターゲットOUの作成・権限委任</a>
+          <a href="workspaces-gpo.html">WorkSpaces用GPOの作成・適用・運用</a>
+          <a href="workspaces-image-bundle.html">WorkSpacesカスタムイメージ作成・共有</a>
+          <a href="workspaces-systems-manager.html">Systems Manager環境構築</a>
+          <a href="workspaces-patch-manager.html">Patch Managerの設定</a>
+          <a href="workspaces-patch-operations.html">Patch Managerの実行・結果確認・運用</a>
+          <a href="workspaces-cost-optimizer.html">Cost Optimizerの構築・設定</a>
+          <a href="workspaces-cost-optimizer-dry-run.html">Cost OptimizerのDry Run解除</a>
+          <a href="workspaces-cost-optimizer-schedule.html">Cost Optimizerの実行スケジュール設定・変更</a>
+          <a href="workspaces-cost-optimizer-reports.html">Cost Optimizerのレポート・監視</a>
+          <a href="workspaces-cloudwatch-monitoring.html">CloudWatchのEC2・Windows OS監視とSNS通知</a>
+          <a href="workspaces-cloudwatch-workspaces.html">CloudWatchのWorkSpaces監視</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">⑂</span>Git / GitHub</p>
+      <a href="git-github.html">Git 概要</a>
+      <a href="git-remote.html">Gitリモート操作</a>
+      <a href="github-pages.html">GitHub Pages</a>
+      <a href="github-pull-request.html">GitHubのPull Requestとレビュー</a>
+      <a href="git-utilities.html">Gitトラブルシューティング</a>
+      <a href="github-ssh.html">GitHub認証</a>
+      <a href="github-slack-integration.html">GitHubとSlackの連携・通知設定</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">◈</span>Terraform</p>
+      <a href="terraform.html">Terraform 概要</a>
+      <a href="terraform-basics.html">Terraformの基本操作とHCL</a>
+      <a href="terraform-state.html">TerraformのState管理と運用</a>
+      <a href="terraform-modules.html">Terraformのモジュール活用</a>
+      <a href="hcp-terraform.html">HCP Terraform（Terraform Cloud）</a>
+      <a href="terraform-providers.html">TerraformのProviderとマルチクラウド</a>
+      <a href="terraform-sentinel.html">TerraformのSentinelポリシー管理</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">◈</span>IaC</p>
+      <a href="iac.html">IaC</a>
+      <a href="iam-identity-center.html">IAM Identity Center</a>
+      <a href="iac-vscode.html">VS Codeの設定</a>
+      <a href="iac-deploy.html">IaCによるリソースのデプロイ</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">☁︎</span>AWS</p>
+      <a href="aws-design-compute.html">コンピューティング設計</a>
+      <a href="aws-design-governance.html">命名規則・タグ設計</a>
+      <a href="cloudformation.html">CloudFormation 運用手順集</a>
+      <a href="aws-cli.html">AWS CLI 特殊対応</a>
+      <a href="aws-cli-reference.html">AWS CLI コマンドリファレンス</a>
+      <a href="eventbridge-scheduler.html">EventBridge Scheduler</a>
+      <a href="aws-directory-service.html">AWS Directory Service 運用手順</a>
+      <a href="amazon-workspaces.html">Amazon WorkSpaces</a>
+      <a href="amazon-ses.html">Amazon SES SMTPリレー</a>
+      <a href="amazon-ses-monitoring.html">Amazon SES 配信監視</a>
+      <a href="amazon-rds-blue-green.html">Amazon RDS Blue/Green Deployments</a>
+      <a href="apache-acm-certificate-update.html">証明書更新（ACMエクスポート）</a>
+      <a class="active" aria-current="page" href="acm-ec2-auto-renewal.html">ACM証明書の自動更新とEC2への自動反映</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">⚙︎</span>OS／ミドルウェア</p>
+      <a href="rhel9.html">Red Hat Enterprise Linux 9</a>
+      <a href="rhel10.html">Red Hat Enterprise Linux 10</a>
+      <a href="amazon-linux-2023.html">Amazon Linux 2023</a>
+      <a href="windows-server-2022.html">Windows Server 2022</a>
+      <a href="windows-server-2025.html">Windows Server 2025</a>
+      <a href="windows-server-2016-upgrade.html">Windows Server 2016 インプレースアップグレード</a>
+      <a href="storage.html">ストレージ管理</a>
+      <a href="apache.html">Apache</a>
+      <a href="apache-self-signed-ssl-termination.html">Apache SSL終端（自己署名証明書）</a>
+      <a href="redis.html">Redis（KVS）</a>
+      <a href="nfs.html">NFS</a>
+      <a href="samba.html">Samba</a>
+      <a href="mariadb.html">MariaDB</a>
+      <a href="postgresql.html">PostgreSQL</a>
+      <p class="sidebar-group"><span class="sidebar-group-icon" aria-hidden="true">▤</span>リファレンス</p>
+      <a href="../writing-style-guide.html">[GitHub Pages] 記法・テンプレート</a>
+      <a href="troubleshooting.html">障害切り分けチェックリスト</a>
+      <a href="eol.html">EOL / ライフサイクル一覧表</a>
+    </aside>
+    <main class="content">
+      <nav class="breadcrumb" aria-label="Breadcrumb"><a href="../">ホーム</a><span>/</span><span>AWS</span></nav>
+      <h1>ACM証明書の自動更新とEC2への自動反映</h1>
+      <p class="lead">Route 53で管理する<code class="inline-code">zexample.com</code>のACM証明書について、更新イベントを起点にEC2上のWebサーバーへ反映する構成を整理する<br>DNS検証、EventBridge・Lambda・Systems Managerの処理、反映確認と障害時の対応をまとめる</p>
+
+      <h2 id="architecture">1. 全体構成</h2>
+      <figure>
+        <figcaption>Documentation用に独自作成した構成図／DNS管理・更新制御・EC2での反映を分け、掲載コードの取得方式に統一</figcaption>
+        <a href="../assets/aws-design/acm-ec2-auto-renewal.svg" target="_blank" rel="noopener"><img src="../assets/aws-design/acm-ec2-auto-renewal.svg" alt="Route 53のDNS管理、ACM更新を起点としたEventBridge・Lambda・Run Commandによる実行制御、EC2からの証明書とシークレットの直接取得" width="1600" height="1220"></a>
+      </figure>
+      <p>構成図を選択すると拡大表示できる<br>実線はイベントと処理の流れを示し、EventBridgeのイベントに証明書や秘密鍵の実体を含める意味ではない</p>
+      <div class="callout callout-info"><strong>ℹ️ 情報：ACMの更新とEC2への反映は別の処理</strong><p>ACMが証明書を更新しても、EC2上のファイルは自動では差し替わらない<br>更新済み証明書の取得、ファイル配置、Webサーバーの再読み込み、接続確認までを自動化の対象とする</p></div>
+      <p>掲載する実装例では、秘密情報をコマンド履歴に渡さないため、LambdaではなくEC2が証明書とパスフレーズを直接取得する</p>
+
+      <h2 id="dns">2. Route 53と証明書の前提</h2>
+      <table><thead><tr><th>No.</th><th>項目</th><th>設定・確認内容</th></tr></thead><tbody>
+        <tr><td>1</td><td>ドメイン管理</td><td>Route 53のパブリックホストゾーンで<code class="inline-code">zexample.com</code>を管理する<br>ドメインの委任先NSがホストゾーンと一致していることを確認する</td></tr>
+        <tr><td>2</td><td>公開先の名前解決</td><td>EC2へ直接公開する構成ではAレコードなどを実際の公開先に合わせる<br>EC2を指すAレコードと、証明書検証用のCNAMEレコードを混同しない</td></tr>
+        <tr><td>3</td><td>証明書</td><td>対象のホスト名を含む、エクスポート可能なACMパブリック証明書を使用する<br><code class="inline-code">zexample.com</code>と<code class="inline-code">www.zexample.com</code>の両方を使用する場合は、両方が証明書の対象に含まれることを確認する</td></tr>
+        <tr><td>4</td><td>DNS検証</td><td>ACMが提示する検証用CNAMEをRoute 53へ登録し、発行後も保持する<br>公開先IPの変更だけを理由に検証用CNAMEを削除しない</td></tr>
+        <tr><td>5</td><td>更新対象</td><td>発行後または前回更新後のエクスポートなど、ACMのマネージド更新条件を満たすことを確認する<br>ACMへインポートした証明書はマネージド更新の対象外となる</td></tr>
+        <tr><td>6</td><td>EC2の管理</td><td>SSM Agent、インスタンスプロファイル、必要なAWSエンドポイントへの通信を用意する<br>Public subnetに配置するだけではRun Commandを使用できない</td></tr>
+      </tbody></table>
+      <p>初回発行・手動配置は<a href="apache-acm-certificate-update.html">証明書更新（ACMエクスポート）</a>を参照する<br>エクスポート可能なパブリック証明書には発行・更新の料金があるため、導入時に料金と対象ドメイン数を確認する</p>
+
+      <h2 id="flow">3. 自動反映の処理</h2>
+      <ol>
+        <li>ACMによる証明書更新と、更新済み証明書が利用可能になったことを示すイベントの発行</li>
+        <li>EventBridgeで対象の証明書ARNと更新イベントを絞り込み、Lambdaを起動</li>
+        <li>Lambdaでイベントの対象を検証し、固定のSSMドキュメントを指定EC2で実行</li>
+        <li>EC2のインスタンスロールでSecrets ManagerとACMへアクセスし、パスフレーズと更新済み証明書・証明書チェーン・暗号化秘密鍵を取得</li>
+        <li>EC2で候補ファイルを検査し、配置・構文確認後にWebサーバーを再読み込み</li>
+        <li>対象EC2ごとのRun Command結果と、HTTPS接続で提示される証明書を確認</li>
+      </ol>
+      <p>ACMの更新では証明書ARNを維持するため、ARNが同じでも証明書の内容は変わる<br>反映済みの判定には有効期限やSHA-256フィンガープリントを使用する</p>
+      <h3 id="event">3.1. EventBridgeの絞り込み</h3>
+      <p>更新だけを対象とするルール例を示す<br><code class="inline-code">ACM Certificate Available</code>には初回発行なども含まれるため、<code class="inline-code">Action</code>と証明書ARNを指定する</p>
+      <div class="code"><div class="code-header"><span>JSON</span><button class="copy" type="button">Copy</button></div><pre><code>{
+  "source": ["aws.acm"],
+  "detail-type": ["ACM Certificate Available"],
+  "resources": ["&lt;CERTIFICATE_ARN&gt;"],
+  "detail": {
+    "Action": ["RENEWAL"],
+    "CertificateType": ["AMAZON_ISSUED"]
+  }
+}</code></pre></div>
+      <p>このルールでは初回発行を処理しないため、初回配置は別途実施する<br>Lambda側でも許可した証明書と配布先の対応を確認し、同じ更新の再実行で不要な再読み込みを行わないようにする</p>
+
+      <h2 id="security">4. 権限と秘密情報の扱い</h2>
+      <table><thead><tr><th>対象</th><th>設計・確認内容</th></tr></thead><tbody>
+        <tr><td>Lambda</td><td>指定EC2と固定SSMドキュメントへのコマンド送信、実行結果の取得に制限する<br>証明書のエクスポート権限やシークレットの読取り権限は付与しない</td></tr>
+        <tr><td>EC2</td><td>Systems Managerに必要な権限と通信、対象証明書のエクスポート、対象シークレットの取得権限を付与する<br>長期アクセスキーを配置せず、インスタンスロールを使用する</td></tr>
+        <tr><td>パスフレーズ・秘密鍵</td><td>ソースコード、環境変数への平文固定、Run Commandのコマンド文字列やログへ埋め込まない<br>Base64化は暗号化ではなく、秘密情報の保護にはならない</td></tr>
+        <tr><td>配置先・一時ファイル</td><td>所有者・アクセス権を限定し、作業用ディレクトリは他ユーザーから読めないようにする<br>秘密鍵、復号用ファイル、旧世代の保管・削除方法も定める</td></tr>
+        <tr><td>完了判定</td><td><code class="inline-code">SendCommand</code>の受付成功だけで完了としない<br>対象ごとの実行結果と、公開先が提示する証明書まで確認する</td></tr>
+      </tbody></table>
+      <div class="callout callout-warning"><strong>⚠️ 注意：実装例と対応実績を区別する</strong><p>以下はこのページ用に作成した実装例であり、既存環境の稼働コードを採取したものではない<br>実環境へは未デプロイのため、検証環境で正常系・異常系・切り戻しを確認してから適用する</p></div>
+
+      <h2 id="implementation">5. 実装コード（展開形式）</h2>
+      <p>各項目を選択するとコード全文を展開できる<br>Copyボタンでコピーでき、個別ファイルとしてもダウンロードできる</p>
+      <p>対象はLinuxのEC2 1台、証明書1枚、443番のNGINXまたはApache（httpd）とする<br>ALBでのTLS終端、Windows、複数台への一括反映はこのコードの対象外とする</p>
+      <table><thead><tr><th>配置先</th><th>設定・前提</th></tr></thead><tbody>
+        <tr><td>Lambda</td><td>ハンドラーは<code class="inline-code">lambda_function.lambda_handler</code>、タイムアウトは600秒に設定する<br>環境変数に<code class="inline-code">CERTIFICATE_ARN</code>、<code class="inline-code">INSTANCE_ID</code>、<code class="inline-code">SSM_DOCUMENT_NAME</code>、<code class="inline-code">SSM_DOCUMENT_VERSION</code>を設定する</td></tr>
+        <tr><td>SSMドキュメント</td><td><code class="inline-code">DeployAcmCertificate</code>というCommandタイプのドキュメントとして登録する<br>Lambdaからはレビュー済みの数値バージョンを指定し、ドキュメントを変更できる管理者を制限する</td></tr>
+        <tr><td>EC2の実行環境</td><td>Python 3.10以降、boto3、cryptography 42以降、OpenSSL、systemd、restoreconを用意する<br><code class="inline-code">/opt/acm-renewal/venv/bin/python</code>からライブラリを読み込めるようにし、スクリプトと親ディレクトリはrootのみ変更可能とする</td></tr>
+        <tr><td>EC2の設定</td><td><code class="inline-code">host-config.json</code>を<code class="inline-code">/etc/acm-renewal.json</code>へ配置し、root所有・600にする<br>証明書ARNはLambda側と一致させ、<code class="inline-code">web_server</code>は<code class="inline-code">nginx</code>または<code class="inline-code">httpd</code>を指定する</td></tr>
+        <tr><td>Secrets Manager</td><td>対象シークレットのSecretStringに、<code class="inline-code">passphrase</code>キーを持つJSONを保存する<br>パスフレーズそのものは設定ファイルやLambda環境変数へ書かない</td></tr>
+        <tr><td>既存のHTTPS</td><td>初回配置済みの有効な証明書が必要となる<br>Webサーバーは<code class="inline-code">current/fullchain.pem</code>と<code class="inline-code">current/private.key</code>を参照し、127.0.0.1:443でも同じSNIの証明書を提示するようにする</td></tr>
+      </tbody></table>
+      <p>Lambda実行ロールには基本のログ出力権限を別途付与し、EventBridgeからLambdaを起動できるリソースベースポリシーを対象ルールARNに限定する<br>EC2ロールには<code class="inline-code">AmazonSSMManagedInstanceCore</code>相当の権限を別途付与する<br>シークレットにカスタマーマネージドKMSキーを使用する場合は、そのキーの<code class="inline-code">kms:Decrypt</code>とキーポリシーも確認する</p>
+      <p><code class="inline-code">ssm:GetCommandInvocation</code>はリソース単位の指定に対応しないため、掲載ポリシーではこのアクションだけ<code class="inline-code">Resource: "*"</code>とする<br>コマンド送信先は対象EC2とSSMドキュメントのARNで制限する</p>
+      <!-- acm-code:start -->
+      <details class="example-details acm-code-example">
+        <summary>① Lambda：更新イベントの検証・SSM実行・結果確認を展開</summary>
+        <p><a href="../assets/code/acm-renewal/lambda_function.py" download>lambda_function.pyをダウンロード</a></p>
+        <div class="code"><div class="code-header"><span>Python · lambda_function.py</span><button class="copy" type="button">Copy</button></div><pre><code>&quot;&quot;&quot;Example: one allowed certificate -&gt; one EC2, with execution-result checking.
+
+Handler: lambda_function.lambda_handler. Lambda timeout: 600 seconds.
+No certificate, private key or passphrase is sent to Run Command.
+&quot;&quot;&quot;
+import os
+import time
+
+import boto3
+from botocore.config import Config
+from botocore.exceptions import ClientError
+
+
+def lambda_handler(event, context):
+    certificate_arn = os.environ[&quot;CERTIFICATE_ARN&quot;]
+    instance_id = os.environ[&quot;INSTANCE_ID&quot;]
+    document_name = os.environ[&quot;SSM_DOCUMENT_NAME&quot;]
+    document_version = os.environ[&quot;SSM_DOCUMENT_VERSION&quot;]
+    arn_parts = certificate_arn.split(&quot;:&quot;, 5)
+    detail = event.get(&quot;detail&quot;, {})
+    if not (
+        event.get(&quot;source&quot;) == &quot;aws.acm&quot;
+        and event.get(&quot;detail-type&quot;) == &quot;ACM Certificate Available&quot;
+        and event.get(&quot;resources&quot;) == [certificate_arn]
+        and event.get(&quot;account&quot;) == arn_parts[4]
+        and event.get(&quot;region&quot;) == arn_parts[3]
+        and detail.get(&quot;Action&quot;) == &quot;RENEWAL&quot;
+        and detail.get(&quot;CertificateType&quot;) == &quot;AMAZON_ISSUED&quot;
+    ):
+        return {&quot;status&quot;: &quot;ignored&quot;}
+
+    if context.get_remaining_time_in_millis() &lt; 540_000:
+        raise RuntimeError(&quot;Configure the Lambda timeout to 600 seconds&quot;)
+
+    ssm = boto3.client(
+        &quot;ssm&quot;, region_name=arn_parts[3],
+        config=Config(connect_timeout=5, read_timeout=10,
+                      retries={&quot;mode&quot;: &quot;standard&quot;, &quot;total_max_attempts&quot;: 2}),
+    )
+    result = ssm.send_command(
+        InstanceIds=[instance_id],
+        DocumentName=document_name,
+        DocumentVersion=document_version,
+        Parameters={},  # Fixed document + root-owned host config, no secrets
+        TimeoutSeconds=60,
+        Comment=&quot;ACM renewal: deploy the configured certificate&quot;,
+    )
+    command_id = result[&quot;Command&quot;][&quot;CommandId&quot;]
+    print({&quot;command_id&quot;: command_id, &quot;status&quot;: &quot;submitted&quot;})
+    deadline = time.monotonic() + 440
+    while time.monotonic() &lt; deadline:
+        try:
+            invocation = ssm.get_command_invocation(
+                CommandId=command_id, InstanceId=instance_id,
+            )
+        except ClientError as error:
+            if error.response[&quot;Error&quot;][&quot;Code&quot;] != &quot;InvocationDoesNotExist&quot;:
+                raise
+        else:
+            status = invocation[&quot;Status&quot;]
+            if status == &quot;Success&quot;:
+                if invocation.get(&quot;ResponseCode&quot;) != 0:
+                    raise RuntimeError(f&quot;Unexpected response code: {command_id}&quot;)
+                print({&quot;command_id&quot;: command_id, &quot;status&quot;: &quot;verified-on-host&quot;})
+                return {&quot;status&quot;: &quot;verified-on-host&quot;, &quot;command_id&quot;: command_id}
+            if status in {&quot;Failed&quot;, &quot;Cancelled&quot;, &quot;TimedOut&quot;}:
+                # Deliberately do not print command stdout/stderr or API payloads
+                raise RuntimeError(f&quot;Run Command {status}: {command_id}&quot;)
+        time.sleep(5)
+
+    # A timed-out observer must not claim the host operation has been cancelled
+    raise RuntimeError(f&quot;Result not confirmed; inspect Run Command: {command_id}&quot;)
+</code></pre></div>
+      </details>
+      <details class="example-details acm-code-example">
+        <summary>② SSMドキュメント：EC2上の固定スクリプトを実行を展開</summary>
+        <p><a href="../assets/code/acm-renewal/ssm-document.json" download>ssm-document.jsonをダウンロード</a></p>
+        <div class="code"><div class="code-header"><span>JSON · ssm-document.json</span><button class="copy" type="button">Copy</button></div><pre><code>{
+  &quot;schemaVersion&quot;: &quot;2.2&quot;,
+  &quot;description&quot;: &quot;Deploy the certificate configured on this Linux host; no secret parameters&quot;,
+  &quot;mainSteps&quot;: [
+    {
+      &quot;action&quot;: &quot;aws:runShellScript&quot;,
+      &quot;name&quot;: &quot;DeployCertificate&quot;,
+      &quot;inputs&quot;: {
+        &quot;timeoutSeconds&quot;: &quot;300&quot;,
+        &quot;runCommand&quot;: [
+          &quot;#!/bin/sh&quot;,
+          &quot;set -eu&quot;,
+          &quot;test \&quot;$(uname -s)\&quot; = Linux&quot;,
+          &quot;test \&quot;$(id -u)\&quot; = 0&quot;,
+          &quot;exec /opt/acm-renewal/venv/bin/python /opt/acm-renewal/deploy_certificate.py&quot;
+        ]
+      }
+    }
+  ]
+}
+</code></pre></div>
+      </details>
+      <details class="example-details acm-code-example">
+        <summary>③ EC2：取得・検証・世代切替・reload・切り戻しを展開</summary>
+        <p><a href="../assets/code/acm-renewal/deploy_certificate.py" download>deploy_certificate.pyをダウンロード</a></p>
+        <div class="code"><div class="code-header"><span>Python · deploy_certificate.py</span><button class="copy" type="button">Copy</button></div><pre><code>&quot;&quot;&quot;Linux/root example. Requires boto3 and cryptography&gt;=42, OpenSSL, systemd.
+
+Initialize /etc/pki/tls/acm-zexample/current with a working certificate first.
+The web server must reference current/fullchain.pem and current/private.key.
+&quot;&quot;&quot;
+import hashlib
+import json
+import os
+from pathlib import Path
+import socket
+import ssl
+import stat
+import subprocess
+import sys
+import time
+import uuid
+from datetime import datetime, timedelta, timezone
+
+import boto3
+from botocore.config import Config
+from cryptography import x509
+from cryptography.hazmat.primitives import serialization
+
+BASE = Path(&quot;/etc/pki/tls/acm-zexample&quot;)
+CONFIG = Path(&quot;/etc/acm-renewal.json&quot;)
+SERVERS = {
+    &quot;nginx&quot;: ([&quot;/usr/sbin/nginx&quot;, &quot;-t&quot;], &quot;nginx&quot;),
+    &quot;httpd&quot;: ([&quot;/usr/sbin/httpd&quot;, &quot;-t&quot;], &quot;httpd&quot;),
+}
+
+
+def run(arguments):
+    # No shell, no inherited verbose logging, no secret in process arguments
+    subprocess.run(arguments, check=True, stdout=subprocess.PIPE,
+                   stderr=subprocess.PIPE, timeout=15)
+
+
+def private_root_path(path, directory=False):
+    info = path.lstat()
+    correct_type = stat.S_ISDIR(info.st_mode) if directory else stat.S_ISREG(info.st_mode)
+    if not correct_type or info.st_uid != 0 or info.st_mode &amp; 0o077:
+        raise RuntimeError(&quot;Expected a root-owned private file/directory&quot;)
+
+
+def write_file(path, contents):
+    # Parent is a new, root-only version directory
+    with path.open(&quot;xb&quot;) as handle:
+        os.chmod(path, 0o600)
+        handle.write(contents)
+        handle.flush()
+        os.fsync(handle.fileno())
+
+
+def fingerprint(pem):
+    der = x509.load_pem_x509_certificate(pem).public_bytes(serialization.Encoding.DER)
+    return hashlib.sha256(der).hexdigest()
+
+
+def validate_material(cert_pem, chain_pem, encrypted_key, passphrase, directory, hostname):
+    cert = x509.load_pem_x509_certificate(cert_pem)
+    now = datetime.now(timezone.utc)
+    if not cert.not_valid_before_utc &lt;= now &lt; cert.not_valid_after_utc - timedelta(days=1):
+        raise RuntimeError(&quot;Certificate is not currently usable&quot;)
+    key = serialization.load_pem_private_key(encrypted_key, password=passphrase)
+    public_format = serialization.PublicFormat.SubjectPublicKeyInfo
+    cert_public = cert.public_key().public_bytes(serialization.Encoding.DER, public_format)
+    key_public = key.public_key().public_bytes(serialization.Encoding.DER, public_format)
+    if cert_public != key_public:
+        raise RuntimeError(&quot;Certificate/key mismatch&quot;)
+    write_file(directory / &quot;certificate.pem&quot;, cert_pem)
+    write_file(directory / &quot;chain.pem&quot;, chain_pem)
+    write_file(directory / &quot;fullchain.pem&quot;, cert_pem.rstrip() + b&quot;\n&quot; + chain_pem)
+    write_file(directory / &quot;private.key&quot;, key.private_bytes(
+        serialization.Encoding.PEM, serialization.PrivateFormat.PKCS8,
+        serialization.NoEncryption(),
+    ))
+    run([&quot;/usr/bin/openssl&quot;, &quot;verify&quot;, &quot;-purpose&quot;, &quot;sslserver&quot;,
+         &quot;-verify_hostname&quot;, hostname, &quot;-untrusted&quot;, str(directory / &quot;chain.pem&quot;),
+         str(directory / &quot;certificate.pem&quot;)])
+
+
+def served_fingerprint(hostname):
+    # Verifies the CA chain and hostname using SNI, without disabling TLS checks
+    context = ssl.create_default_context()
+    with socket.create_connection((&quot;127.0.0.1&quot;, 443), timeout=5) as raw:
+        with context.wrap_socket(raw, server_hostname=hostname) as connection:
+            return hashlib.sha256(connection.getpeercert(binary_form=True)).hexdigest()
+
+
+def wait_for_certificate(hostname, expected):
+    for _ in range(6):
+        try:
+            if served_fingerprint(hostname) == expected:
+                return
+        except (OSError, ssl.SSLError):
+            pass
+        time.sleep(2)
+    raise RuntimeError(&quot;Served certificate verification failed&quot;)
+
+
+def switch_current(target):
+    temporary = BASE / (&quot;.next-&quot; + uuid.uuid4().hex)
+    try:
+        temporary.symlink_to(target)
+        os.replace(temporary, BASE / &quot;current&quot;)
+    finally:
+        temporary.unlink(missing_ok=True)
+
+
+def activate(candidate, previous, test_command, service, hostname, new_fp, old_fp):
+    try:
+        switch_current(candidate)
+        # Restore inherited SELinux labels before the service reads the files
+        run([&quot;/usr/sbin/restorecon&quot;, &quot;-R&quot;, str(BASE)])
+        run(test_command)
+        run([&quot;/usr/bin/systemctl&quot;, &quot;reload&quot;, service])
+        wait_for_certificate(hostname, new_fp)
+    except Exception:
+        try:
+            switch_current(previous)
+            run(test_command)
+            run([&quot;/usr/bin/systemctl&quot;, &quot;reload&quot;, service])
+            wait_for_certificate(hostname, old_fp)
+        except Exception:
+            raise RuntimeError(&quot;Rollback not verified; manual recovery required&quot;) from None
+        raise RuntimeError(&quot;Deployment failed; previous certificate restored&quot;) from None
+
+
+def deploy(config):
+    test_command, service = SERVERS[config[&quot;web_server&quot;]]
+    current = BASE / &quot;current&quot;
+    if not current.is_symlink():
+        raise RuntimeError(&quot;Initialize current with a working certificate first&quot;)
+    previous = current.resolve(strict=True)
+    if previous.parent != (BASE / &quot;versions&quot;).resolve(strict=True):
+        raise RuntimeError(&quot;Unexpected current target&quot;)
+    private_root_path(previous, directory=True)
+    old_fp = fingerprint((previous / &quot;fullchain.pem&quot;).read_bytes())
+    # Refuse automatic replacement if the existing endpoint is already unhealthy
+    if served_fingerprint(config[&quot;hostname&quot;]) != old_fp:
+        raise RuntimeError(&quot;Current files and running endpoint do not match&quot;)
+
+    sdk_config = Config(connect_timeout=5, read_timeout=10,
+                        retries={&quot;mode&quot;: &quot;standard&quot;, &quot;total_max_attempts&quot;: 2})
+    acm = boto3.client(&quot;acm&quot;, region_name=config[&quot;region&quot;], config=sdk_config)
+    secrets = boto3.client(&quot;secretsmanager&quot;, region_name=config[&quot;region&quot;], config=sdk_config)
+    secret = secrets.get_secret_value(SecretId=config[&quot;secret_arn&quot;])
+    passphrase = json.loads(secret[&quot;SecretString&quot;])[&quot;passphrase&quot;].encode(&quot;utf-8&quot;)
+    exported = acm.export_certificate(CertificateArn=config[&quot;certificate_arn&quot;], Passphrase=passphrase)
+    cert_pem = exported[&quot;Certificate&quot;].encode(&quot;ascii&quot;)
+    new_fp = fingerprint(cert_pem)
+    new_fullchain = cert_pem.rstrip() + b&quot;\n&quot; + exported[&quot;CertificateChain&quot;].encode(&quot;ascii&quot;)
+    if new_fp == old_fp and new_fullchain == (previous / &quot;fullchain.pem&quot;).read_bytes():
+        print(&quot;UNCHANGED: certificate already served&quot;)
+        return
+
+    candidate = BASE / &quot;versions&quot; / uuid.uuid4().hex
+    candidate.mkdir(mode=0o700)
+    # Failed candidates and the previous generation remain root-only for recovery
+    validate_material(cert_pem, exported[&quot;CertificateChain&quot;].encode(&quot;ascii&quot;),
+                      exported[&quot;PrivateKey&quot;].encode(&quot;ascii&quot;), passphrase,
+                      candidate, config[&quot;hostname&quot;])
+    activate(candidate, previous, test_command, service, config[&quot;hostname&quot;], new_fp, old_fp)
+    print(&quot;SUCCESS: configuration, reload and local TLS verified&quot;)
+
+
+def main():
+    import fcntl  # Linux only
+    if os.geteuid() != 0:
+        raise RuntimeError(&quot;Run as root&quot;)
+    os.umask(0o077)
+    private_root_path(CONFIG)
+    private_root_path(BASE, directory=True)
+    private_root_path(BASE / &quot;versions&quot;, directory=True)
+    config = json.loads(CONFIG.read_text(encoding=&quot;utf-8&quot;))
+    if config[&quot;certificate_arn&quot;].split(&quot;:&quot;)[3] != config[&quot;region&quot;]:
+        raise RuntimeError(&quot;Certificate region mismatch&quot;)
+    with (BASE / &quot;.deploy.lock&quot;).open(&quot;a&quot;) as lock:
+        fcntl.flock(lock.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+        deploy(config)
+
+
+if __name__ == &quot;__main__&quot;:
+    try:
+        main()
+    except Exception:
+        # Do not output exceptions, AWS responses, PEM material or passphrases
+        print(&quot;FAILED: inspect host state; no secret values logged&quot;, file=sys.stderr)
+        sys.exit(1)
+</code></pre></div>
+      </details>
+      <details class="example-details acm-code-example">
+        <summary>④ EC2の設定ファイルを展開</summary>
+        <p><a href="../assets/code/acm-renewal/host-config.json" download>host-config.jsonをダウンロード</a></p>
+        <div class="code"><div class="code-header"><span>JSON · host-config.json</span><button class="copy" type="button">Copy</button></div><pre><code>{
+  &quot;certificate_arn&quot;: &quot;&lt;CERTIFICATE_ARN&gt;&quot;,
+  &quot;secret_arn&quot;: &quot;&lt;SECRET_ARN&gt;&quot;,
+  &quot;region&quot;: &quot;ap-northeast-1&quot;,
+  &quot;hostname&quot;: &quot;zexample.com&quot;,
+  &quot;web_server&quot;: &quot;nginx&quot;
+}
+</code></pre></div>
+      </details>
+      <details class="example-details acm-code-example">
+        <summary>⑤ Lambda実行ロールに追加するIAMポリシーを展開</summary>
+        <p><a href="../assets/code/acm-renewal/lambda-policy.json" download>lambda-policy.jsonをダウンロード</a></p>
+        <div class="code"><div class="code-header"><span>JSON · lambda-policy.json</span><button class="copy" type="button">Copy</button></div><pre><code>{
+  &quot;Version&quot;: &quot;2012-10-17&quot;,
+  &quot;Statement&quot;: [
+    {
+      &quot;Effect&quot;: &quot;Allow&quot;,
+      &quot;Action&quot;: &quot;ssm:SendCommand&quot;,
+      &quot;Resource&quot;: [
+        &quot;arn:aws:ssm:&lt;REGION&gt;:&lt;ACCOUNT_ID&gt;:document/DeployAcmCertificate&quot;,
+        &quot;arn:aws:ec2:&lt;REGION&gt;:&lt;ACCOUNT_ID&gt;:instance/&lt;INSTANCE_ID&gt;&quot;
+      ]
+    },
+    {
+      &quot;Effect&quot;: &quot;Allow&quot;,
+      &quot;Action&quot;: &quot;ssm:GetCommandInvocation&quot;,
+      &quot;Resource&quot;: &quot;*&quot;
+    }
+  ]
+}
+</code></pre></div>
+      </details>
+      <details class="example-details acm-code-example">
+        <summary>⑥ EC2インスタンスロールに追加するIAMポリシーを展開</summary>
+        <p><a href="../assets/code/acm-renewal/ec2-policy.json" download>ec2-policy.jsonをダウンロード</a></p>
+        <div class="code"><div class="code-header"><span>JSON · ec2-policy.json</span><button class="copy" type="button">Copy</button></div><pre><code>{
+  &quot;Version&quot;: &quot;2012-10-17&quot;,
+  &quot;Statement&quot;: [
+    {
+      &quot;Effect&quot;: &quot;Allow&quot;,
+      &quot;Action&quot;: &quot;acm:ExportCertificate&quot;,
+      &quot;Resource&quot;: &quot;&lt;CERTIFICATE_ARN&gt;&quot;
+    },
+    {
+      &quot;Effect&quot;: &quot;Allow&quot;,
+      &quot;Action&quot;: &quot;secretsmanager:GetSecretValue&quot;,
+      &quot;Resource&quot;: &quot;&lt;SECRET_ARN&gt;&quot;
+    }
+  ]
+}
+</code></pre></div>
+      </details>
+<!-- acm-code:end -->
+      <details class="example-details"><summary>⑦ EC2への配置・初回準備を展開</summary>
+        <p>以下はrootで実施する初回準備の例となる<br>既存の証明書・秘密鍵・Webサーバー設定をバックアップし、未使用の専用ディレクトリで作業する</p>
+        <div class="code" data-prompt="#"><div class="code-header"><span>root shell</span><button class="copy" type="button">Copy</button></div><pre><code>install -d -m 700 /opt/acm-renewal
+python3 -m venv /opt/acm-renewal/venv
+/opt/acm-renewal/venv/bin/python -m pip install boto3 'cryptography&gt;=42'</code></pre></div>
+        <p>ダウンロードしたファイルを配置する<br>依存ライブラリは組織の承認版に固定して管理し、Python、OpenSSL、Webサーバーの実行ファイルのパスを確認する</p>
+        <div class="code" data-prompt="#"><div class="code-header"><span>root shell</span><button class="copy" type="button">Copy</button></div><pre><code>install -o root -g root -m 700 deploy_certificate.py /opt/acm-renewal/deploy_certificate.py
+install -o root -g root -m 600 host-config.json /etc/acm-renewal.json</code></pre></div>
+        <p>初期世代に、現在HTTPSで使用している有効なフルチェーンと対応する復号済み秘密鍵を配置する<br><code class="inline-code">current</code>が既に存在する場合はここで停止し、既存構成を確認する</p>
+        <div class="code" data-prompt="#"><div class="code-header"><span>root shell</span><button class="copy" type="button">Copy</button></div><pre><code>test ! -e /etc/pki/tls/acm-zexample &amp;&amp; test ! -L /etc/pki/tls/acm-zexample &amp;&amp; \
+install -d -m 700 /etc/pki/tls/acm-zexample /etc/pki/tls/acm-zexample/versions /etc/pki/tls/acm-zexample/versions/bootstrap</code></pre></div>
+        <p>上のコマンドが成功した場合だけ、初期世代を配置する</p>
+        <div class="code" data-prompt="#"><div class="code-header"><span>root shell</span><button class="copy" type="button">Copy</button></div><pre><code>install -m 600 &lt;EXISTING_FULLCHAIN_FILE&gt; /etc/pki/tls/acm-zexample/versions/bootstrap/fullchain.pem
+install -m 600 &lt;EXISTING_PRIVATE_KEY_FILE&gt; /etc/pki/tls/acm-zexample/versions/bootstrap/private.key
+ln -s /etc/pki/tls/acm-zexample/versions/bootstrap /etc/pki/tls/acm-zexample/current
+restorecon -R /etc/pki/tls/acm-zexample</code></pre></div>
+        <p>Webサーバーの証明書参照先を以下へ変更し、構文確認・reload・HTTPS接続確認を実施する<br>既存設定全体を置換する例ではなく、対象VirtualHost/serverブロックの証明書パスだけを変更する</p>
+        <div class="code"><div class="code-header"><span>NGINXの証明書設定</span><button class="copy" type="button">Copy</button></div><pre><code>ssl_certificate /etc/pki/tls/acm-zexample/current/fullchain.pem;
+ssl_certificate_key /etc/pki/tls/acm-zexample/current/private.key;</code></pre></div>
+        <div class="code"><div class="code-header"><span>Apacheの証明書設定</span><button class="copy" type="button">Copy</button></div><pre><code>SSLCertificateFile /etc/pki/tls/acm-zexample/current/fullchain.pem
+SSLCertificateKeyFile /etc/pki/tls/acm-zexample/current/private.key</code></pre></div>
+        <p>NGINXの場合は構文確認が成功した場合のみ再読み込みを実施する</p>
+        <div class="code" data-prompt="#"><div class="code-header"><span>root shell</span><button class="copy" type="button">Copy</button></div><pre><code>nginx -t &amp;&amp; systemctl reload nginx</code></pre></div>
+        <p>Apacheの場合は構文確認が成功した場合のみ再読み込みを実施する</p>
+        <div class="code" data-prompt="#"><div class="code-header"><span>root shell</span><button class="copy" type="button">Copy</button></div><pre><code>httpd -t &amp;&amp; systemctl reload httpd</code></pre></div>
+        <p>初回準備後の手動実行は、ACMの現在の証明書を取得し、差分があれば実際に配置・reloadする変更操作となる</p>
+        <div class="code" data-prompt="#"><div class="code-header"><span>root shell</span><button class="copy" type="button">Copy</button></div><pre><code>/opt/acm-renewal/venv/bin/python /opt/acm-renewal/deploy_certificate.py</code></pre></div>
+      </details>
+      <p>更新イベントの疑似テストでも実際のRun Commandが起動するため、検証用EC2で実施する<br>重複イベントはホストの排他ロックと証明書比較で処理し、内容が同じ場合はreloadしない</p>
+      <p>この例はホスト内のTLS照合までを自動判定し、外部からの到達性とアプリケーション応答は次節で確認する<br>タイムアウトやプロセス強制終了では切り戻し処理が完走しない可能性があるため、手動復旧手順も用意する<br>旧世代・失敗した候補のファイルは復旧用に保持するため、保持世代数と削除作業を別途管理する</p>
+      <p>EventBridgeの配信失敗だけでなく、Lambdaの実行エラー・非同期失敗先、Run Commandのタイムアウト、証明書期限を監視する</p>
+
+      <h2 id="verification">6. 反映確認</h2>
+      <h3 id="acm-status">6.1. ACMの状態確認</h3>
+      <p>管理端末から証明書の状態、有効期限、更新対象かどうかを確認する</p>
+      <div class="code" data-prompt="$"><div class="code-header"><span>shell</span><button class="copy" type="button">Copy</button></div><pre><code>aws acm describe-certificate --certificate-arn &lt;CERTIFICATE_ARN&gt; --region &lt;REGION&gt; --profile &lt;AWS_PROFILE&gt; --query 'Certificate.{Status:Status,NotAfter:NotAfter,RenewalEligibility:RenewalEligibility,RenewalStatus:RenewalSummary.RenewalStatus}' --output table</code></pre></div>
+      <h3 id="ssm-status">6.2. Run Commandの結果確認</h3>
+      <p>コマンドIDと対象EC2のインスタンスIDを指定し、実行結果を確認する<br>反映直後に結果が未取得の場合は間隔を空けて再確認する</p>
+      <div class="code" data-prompt="$"><div class="code-header"><span>shell</span><button class="copy" type="button">Copy</button></div><pre><code>aws ssm get-command-invocation --command-id &lt;COMMAND_ID&gt; --instance-id &lt;INSTANCE_ID&gt; --region &lt;REGION&gt; --profile &lt;AWS_PROFILE&gt; --query '{Status:Status,ResponseCode:ResponseCode}' --output table</code></pre></div>
+      <h3 id="served-certificate">6.3. 配置済み・公開中の証明書確認</h3>
+      <p>EC2上で、Webサーバーの設定が参照する証明書ファイルを確認する<br>このブロックはrootユーザーで実行する</p>
+      <div class="code" data-prompt="#"><div class="code-header"><span>root shell</span><button class="copy" type="button">Copy</button></div><pre><code>openssl x509 -in &lt;CERTIFICATE_FILE&gt; -noout -subject -issuer -dates -fingerprint -sha256</code></pre></div>
+      <p>外部の確認端末から、SNIに対象ホスト名を指定して公開中の証明書を取得する<br>出力されたフィンガープリントと有効期限を配置済みファイルと照合する</p>
+      <div class="code" data-prompt="$"><div class="code-header"><span>shell</span><button class="copy" type="button">Copy</button></div><pre><code>openssl s_client -connect zexample.com:443 -servername zexample.com &lt;/dev/null 2&gt;/dev/null | openssl x509 -noout -subject -issuer -dates -fingerprint -sha256</code></pre></div>
+      <p>証明書を取得できることと信頼性の検証は別のため、証明書検証を無効化せずにHTTPS接続も確認する</p>
+      <div class="code" data-prompt="$"><div class="code-header"><span>shell</span><button class="copy" type="button">Copy</button></div><pre><code>curl --verbose --output /dev/null https://zexample.com/</code></pre></div>
+      <p>証明書エラーがないことに加え、HTTPステータスとアプリケーションの応答が想定どおりであることを確認する<br>公開先がサブドメインの場合は、接続先とSNIの両方を実際のホスト名へ変更する</p>
+
+      <h2 id="operations">7. 障害時の対応と確認範囲</h2>
+      <table><thead><tr><th>状態</th><th>確認と対応</th></tr></thead><tbody>
+        <tr><td>ACMの更新失敗</td><td>DNS検証用CNAME、CAAの制約、更新対象条件を確認する<br>更新失敗や期限接近を検知する通知を用意する</td></tr>
+        <tr><td>Lambda・配布処理の失敗</td><td>IAM権限、対象ARN、シークレット取得、SSMの管理状態と通信を確認する<br>EventBridgeの再試行・DLQだけでEC2の処理失敗まで検知できるとは考えない</td></tr>
+        <tr><td>配置・構文確認の失敗</td><td>現在使用中の証明書を維持し、候補ファイルの形式、証明書と秘密鍵の組合せ、所有者・権限を確認する</td></tr>
+        <tr><td>再読み込みの失敗</td><td>有効な旧世代へ戻し、構文確認と再読み込み後にHTTPSで再確認する<br>期限切れ・失効済み証明書へは戻さない</td></tr>
+        <tr><td>ACMは新しいが公開先は古い</td><td>対象インスタンス、参照パス、VirtualHost、SNI、DNS、複数台への反映漏れを確認する</td></tr>
+      </tbody></table>
+      <p>動作確認の記録では、初回配置、疑似イベントによる反映、実際のACM更新後の反映を分ける<br>疑似イベントの成功だけで、実更新日をまたいだ自動更新まで確認済みとはしない</p>
+
+      <h2 id="wcp">8. WCP方式との違い</h2>
+      <p>AWS Workload Credentials Provider（WCP）は、EC2などのホスト側で証明書を定期取得する別の方式となる<br>このページのイベント駆動構成に必須の部品ではなく、対応実績とは分けて比較する</p>
+      <table><thead><tr><th>項目</th><th>イベント駆動方式</th><th>WCP方式</th></tr></thead><tbody>
+        <tr><td>起点</td><td>ACMの更新イベント</td><td>ホスト上のサービス起動と定期チェック</td></tr>
+        <tr><td>取得・配置</td><td>LambdaとRun Commandなどで制御する</td><td>WCPが取得して指定パスへ配置する</td></tr>
+        <tr><td>再読み込み</td><td>配布処理で構文確認とreloadを実装する</td><td>内容が変わった場合に<code class="inline-code">refresh_command</code>を実行する</td></tr>
+        <tr><td>確認間隔</td><td>イベントを契機に実行する</td><td>定期チェックは24時間間隔となる</td></tr>
+        <tr><td>運用対象</td><td>ルール、Lambda、配布処理、実行結果を管理する</td><td>各ホストのWCPサービス、設定、権限、ログを管理する</td></tr>
+      </tbody></table>
+      <details><summary>仕様・参考資料</summary>
+        <p class="source">出典：<a href="https://docs.aws.amazon.com/acm/latest/userguide/managed-renewal.html">ACMのマネージド更新</a></p>
+        <p class="source">出典：<a href="https://docs.aws.amazon.com/acm/latest/userguide/dns-validation.html">DNS検証</a></p>
+        <p class="source">出典：<a href="https://docs.aws.amazon.com/acm/latest/userguide/supported-events.html">EventBridgeイベント</a></p>
+        <p class="source">出典：<a href="https://docs.aws.amazon.com/systems-manager/latest/userguide/running-commands.html">Run Commandの実行</a></p>
+        <p class="source">出典：<a href="https://docs.aws.amazon.com/boto3/latest/reference/services/acm/client/export_certificate.html">証明書エクスポートAPI</a></p>
+        <p class="source">出典：<a href="https://docs.aws.amazon.com/systems-manager/latest/APIReference/API_GetCommandInvocation.html">Run Commandの結果取得API</a></p>
+        <p class="source">出典：<a href="https://docs.aws.amazon.com/acm/latest/userguide/acm-certificate-automation.html">WCPによる自動化</a></p>
+        <p class="source">出典：<a href="https://aws.amazon.com/certificate-manager/pricing/">ACM料金</a></p>
+        <p class="source">出典：<a href="https://blog.serverworks.co.jp/acm-exported-certificate-nginx-ssl-auto-renewal-on-ec2">サーバーワークス：イベント駆動による証明書反映</a></p>
+        <p class="source">出典：<a href="https://dev.classmethod.jp/articles/aws-workload-credentials-provider-acm-deploy/">DevelopersIO：WCPによる証明書デプロイ</a></p>
+      </details>
+    </main>
+    <aside class="toc" aria-label="Table of contents">
+      <h2>ページ内</h2>
+      <a href="#architecture">1. 全体構成</a>
+      <a href="#dns">2. Route 53と証明書の前提</a>
+      <a href="#flow">3. 自動反映の処理</a>
+      <a href="#event">3.1. EventBridgeの絞り込み</a>
+      <a href="#security">4. 権限と秘密情報の扱い</a>
+      <a href="#implementation">5. 実装コード（展開形式）</a>
+      <a href="#verification">6. 反映確認</a>
+      <a href="#acm-status">6.1. ACMの状態確認</a>
+      <a href="#ssm-status">6.2. Run Commandの結果確認</a>
+      <a href="#served-certificate">6.3. 配置済み・公開中の証明書確認</a>
+      <a href="#operations">7. 障害時の対応と確認範囲</a>
+      <a href="#wcp">8. WCP方式との違い</a>
+    </aside>
+  </div>
+  <script src="../assets/app.js?v=20261003-mobile-nav"></script>
+</body>
+</html>

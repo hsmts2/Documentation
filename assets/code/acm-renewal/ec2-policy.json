@@ -1,0 +1,15 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": "acm:ExportCertificate",
+      "Resource": "<CERTIFICATE_ARN>"
+    },
+    {
+      "Effect": "Allow",
+      "Action": "secretsmanager:GetSecretValue",
+      "Resource": "<SECRET_ARN>"
+    }
+  ]
+}

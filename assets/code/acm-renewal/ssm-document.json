@@ -1,0 +1,20 @@
+{
+  "schemaVersion": "2.2",
+  "description": "Deploy the certificate configured on this Linux host; no secret parameters",
+  "mainSteps": [
+    {
+      "action": "aws:runShellScript",
+      "name": "DeployCertificate",
+      "inputs": {
+        "timeoutSeconds": "300",
+        "runCommand": [
+          "#!/bin/sh",
+          "set -eu",
+          "test \"$(uname -s)\" = Linux",
+          "test \"$(id -u)\" = 0",
+          "exec /opt/acm-renewal/venv/bin/python /opt/acm-renewal/deploy_certificate.py"
+        ]
+      }
+    }
+  ]
+}

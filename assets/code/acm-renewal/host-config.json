@@ -1,0 +1,7 @@
+{
+  "certificate_arn": "<CERTIFICATE_ARN>",
+  "secret_arn": "<SECRET_ARN>",
+  "region": "ap-northeast-1",
+  "hostname": "zexample.com",
+  "web_server": "nginx"
+}
