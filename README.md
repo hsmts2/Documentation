@@ -4,7 +4,15 @@ AWS基盤、OS、IaC、運用に関する技術ドキュメントとプロフィ
 
 ## 公開URL
 
-https://documentation.hsmts2.workers.dev/
+https://hsmts2.github.io/Documentation/
+
+## 公開方法
+
+- GitHub Pagesの公開元はGitHub Actions
+- `main`へのpushで`.github/workflows/pages.yml`を実行
+- 配信対象はルートと`tutorials`のHTML、`.nojekyll`、`assets`内の公開用ファイル
+- 作業用スクリプト、一時ファイル、編集用PowerPointはWebサイトに配信しない
+- Cloudflare側の公開URLと自動ビルドは停止したまま維持
 
 ## 掲載内容
 
